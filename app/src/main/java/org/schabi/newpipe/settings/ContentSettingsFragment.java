@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.preference.Preference;
 
 import com.nononsenseapps.filepicker.Utils;
@@ -105,15 +106,14 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
 
     @Override
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
+        final File homeDir = ContextCompat.getDataDir(requireContext());
+        databasesDir = new File(homeDir, "/databases");
+        newpipeDb = new File(homeDir, "/databases/newpipe.db");
+        newpipeDbJournal = new File(homeDir, "/databases/newpipe.db-journal");
+        newpipeDbShm = new File(homeDir, "/databases/newpipe.db-shm");
+        newpipeDbWal = new File(homeDir, "/databases/newpipe.db-wal");
 
-        String homeDir = getActivity().getApplicationInfo().dataDir;
-        databasesDir = new File(homeDir + "/databases");
-        newpipeDb = new File(homeDir + "/databases/newpipe.db");
-        newpipeDbJournal = new File(homeDir + "/databases/newpipe.db-journal");
-        newpipeDbShm = new File(homeDir + "/databases/newpipe.db-shm");
-        newpipeDbWal = new File(homeDir + "/databases/newpipe.db-wal");
-
-        newpipeSettings = new File(homeDir + "/databases/newpipe.settings");
+        newpipeSettings = new File(homeDir, "/databases/newpipe.settings");
         newpipeSettings.delete();
 
         addPreferencesFromResource(R.xml.content_settings);
