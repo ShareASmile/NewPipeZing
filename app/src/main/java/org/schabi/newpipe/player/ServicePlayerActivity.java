@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -511,6 +512,7 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
                                            final boolean playbackSkipSilence) {
         if (player != null) {
             player.setPlaybackParameters(playbackTempo, playbackPitch, playbackSkipSilence);
+            onPlaybackParameterChanged(player.getPlaybackParameters());
         }
     }
 
@@ -692,7 +694,7 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
         shuffleButton.setImageAlpha(shuffleAlpha);
     }
 
-    private void onPlaybackParameterChanged(final PlaybackParameters parameters) {
+    private void onPlaybackParameterChanged(@Nullable final PlaybackParameters parameters) {
         if (parameters != null) {
             if (menu != null && player != null) {
                 final MenuItem item = menu.findItem(R.id.action_playback_speed);
