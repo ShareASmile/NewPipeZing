@@ -29,7 +29,7 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfo> {
 
     private boolean mIsVisibleToUser = false;
 
-    private TextView commentsDisabledView;
+    private TextView emptyStateDesc;
 
     public static CommentsFragment getInstance(final int serviceId, final  String url,
                                                final String name) {
@@ -42,7 +42,7 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfo> {
     protected void initViews(final View rootView, final Bundle savedInstanceState) {
         super.initViews(rootView, savedInstanceState);
 
-        commentsDisabledView = rootView.findViewById(R.id.comments_disabled);
+        emptyStateDesc = rootView.findViewById(R.id.empty_state_desc);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -102,8 +102,10 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfo> {
     public void handleResult(@NonNull final CommentsInfo result) {
         super.handleResult(result);
 
-        commentsDisabledView.setVisibility(
-                result.isCommentsDisabled() ? View.VISIBLE : View.GONE);
+        emptyStateDesc.setText(
+                result.isCommentsDisabled()
+                        ? R.string.comments_are_disabled
+                        : R.string.no_comments);
 
         AnimationUtils.slideUp(getView(), 120, 150, 0.06f);
 
