@@ -3286,7 +3286,8 @@ public final class Player implements
         if (audioPlayerSelected()) {
             return audioResolver.resolve(info);
         } else {
-            if (isAudioOnly && !videoResolver.isVideoStreamVideoOnly()) {
+            if (isAudioOnly
+                    && !videoResolver.wasLastResolvedVideoAndAudioSeparated().orElse(false)) {
                 return audioResolver.resolve(info);
             }
 
@@ -4182,8 +4183,9 @@ public final class Player implements
 
         final boolean isVideoStreamTypeAndIsVideoOnlyStreamOrNoAudioStreamsAvailable =
                 (streamType == StreamType.VIDEO_STREAM || streamType == StreamType.LIVE_STREAM)
-                        && (videoResolver.isVideoStreamVideoOnly()
+                        && (videoResolver.wasLastResolvedVideoAndAudioSeparated().orElse(false)
                             || isNullOrEmpty(info.getAudioStreams()));
+
         if (videoRenderIndex != RENDERER_UNAVAILABLE
                 && isVideoStreamTypeAndIsVideoOnlyStreamOrNoAudioStreamsAvailable) {
             final TrackGroupArray videoTrackGroupArray = Objects.requireNonNull(
