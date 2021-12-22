@@ -25,6 +25,8 @@ import androidx.core.widget.TextViewCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.player.MainPlayer;
 import org.schabi.newpipe.player.NotificationConstants;
@@ -194,7 +196,7 @@ public class NotificationActionsPreference extends Preference {
                     R.layout.single_choice_dialog_view, null, false);
             final RadioGroup radioGroup = rootLayout.findViewById(android.R.id.list);
 
-            final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+            final AlertDialog alertDialog = new MaterialAlertDialogBuilder(getContext())
                     .setTitle(SLOT_TITLES[i])
                     .setView(radioGroup)
                     .setCancelable(true)

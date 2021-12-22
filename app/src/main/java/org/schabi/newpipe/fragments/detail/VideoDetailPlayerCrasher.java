@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.ListRadioIconItemBinding;
@@ -107,7 +108,8 @@ public final class VideoDetailPlayerCrasher {
         final RadioGroup radioGroup = SingleChoiceDialogViewBinding.inflate(layoutInflater)
                 .list;
 
-        final AlertDialog alertDialog = new AlertDialog.Builder(getThemeWrapperContext(context))
+        final AlertDialog alertDialog = new MaterialAlertDialogBuilder(
+                getThemeWrapperContext(context))
                 .setTitle("Choose an exception")
                 .setView(radioGroup)
                 .setCancelable(true)

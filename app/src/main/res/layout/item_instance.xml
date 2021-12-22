@@ -28,7 +28,7 @@
             tools:ignore="ContentDescription,RtlHardcoded"
             tools:src="@drawable/place_holder_peertube" />
 
-        <TextView
+        <org.schabi.newpipe.views.NewPipeMaterialTextView
             android:id="@+id/instanceName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
             tools:ignore="RtlHardcoded"
             tools:text="Framatube" />
 
-        <TextView
+        <org.schabi.newpipe.views.NewPipeMaterialTextView
             android:id="@+id/instanceUrl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Base64
 import android.webkit.WebView
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -21,8 +22,8 @@ object LicenseFragmentHelper {
     /**
      * @param context the context to use
      * @param license the license
-     * @return String which contains a HTML formatted license page
-     * styled according to the context's theme
+     * @return String which contains a HTML formatted license page styled according to the
+     * context's theme
      */
     private fun getFormattedLicense(context: Context, license: License): String {
         val licenseContent = StringBuilder()
@@ -103,7 +104,7 @@ object LicenseFragmentHelper {
                     )
                     val webView = WebView(context)
                     webView.loadData(webViewData, "text/html; charset=UTF-8", "base64")
-                    val alert = AlertDialog.Builder(context)
+                    val alert = MaterialAlertDialogBuilder(context)
                     alert.setTitle(license.name)
                     alert.setView(webView)
                     Localization.assureCorrectAppLanguage(context)

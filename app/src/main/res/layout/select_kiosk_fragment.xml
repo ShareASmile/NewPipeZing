@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:padding="13dp">
 
-    <org.schabi.newpipe.views.NewPipeTextView
+    <org.schabi.newpipe.views.NewPipeMaterialTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"

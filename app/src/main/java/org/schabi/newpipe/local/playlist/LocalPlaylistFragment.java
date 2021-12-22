@@ -20,10 +20,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -347,7 +348,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     public boolean onOptionsItemSelected(final MenuItem item) {
         if (item.getItemId() == R.id.menu_item_remove_watched) {
             if (!isRemovingWatched) {
-                new AlertDialog.Builder(requireContext())
+                new MaterialAlertDialogBuilder(requireContext())
                         .setMessage(R.string.remove_watched_popup_warning)
                         .setTitle(R.string.remove_watched_popup_title)
                         .setPositiveButton(R.string.ok,
@@ -529,7 +530,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         dialogBinding.dialogEditText.setSelection(dialogBinding.dialogEditText.getText().length());
         dialogBinding.dialogEditText.setText(name);
 
-        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext())
+        final MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(
+                getContext())
                 .setTitle(R.string.rename_playlist)
                 .setView(dialogBinding.getRoot())
                 .setCancelable(true)

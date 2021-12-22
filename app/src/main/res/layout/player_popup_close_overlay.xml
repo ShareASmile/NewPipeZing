@@ -13,5 +13,6 @@
         app:backgroundTint="@color/light_youtube_primary_color"
         app:borderWidth="0dp"
         app:fabSize="normal"
-        app:srcCompat="@drawable/ic_close" />
+        app:srcCompat="@drawable/ic_close"
+        android:contentDescription="@string/close" />
 </FrameLayout>

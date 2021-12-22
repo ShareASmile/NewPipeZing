@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
@@ -16,6 +15,8 @@ import icepick.Icepick;
 import icepick.State;
 
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class ImportConfirmationDialog extends DialogFragment {
     @State
@@ -36,7 +37,7 @@ public class ImportConfirmationDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable final Bundle savedInstanceState) {
         assureCorrectAppLanguage(getContext());
-        return new AlertDialog.Builder(requireContext())
+        return new MaterialAlertDialogBuilder(requireContext())
                 .setMessage(R.string.import_network_expensive_warning)
                 .setCancelable(true)
                 .setNegativeButton(R.string.cancel, null)
@@ -61,7 +62,7 @@ public class ImportConfirmationDialog extends DialogFragment {
     }
 
     @Override
-    public void onSaveInstanceState(final Bundle outState) {
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         Icepick.saveInstanceState(this, outState);
     }

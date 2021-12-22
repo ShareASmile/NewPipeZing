@@ -15,6 +15,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.ErrorInfo;
@@ -74,7 +76,7 @@ public final class InfoItemDialog {
         final DialogInterface.OnClickListener action = (d, index) ->
             entries.get(index).action.onClick(fragment, info);
 
-        dialog = new AlertDialog.Builder(activity)
+        dialog = new MaterialAlertDialogBuilder(activity)
                 .setCustomTitle(bannerView)
                 .setItems(items, action)
                 .create();
@@ -277,7 +279,7 @@ public final class InfoItemDialog {
         }
 
         /**
-         * Adds {@link StreamDialogDefaultEntry.MARK_AS_WATCHED} if the watch history is enabled
+         * Adds {@link StreamDialogDefaultEntry#MARK_AS_WATCHED} if the watch history is enabled
          * and the stream is not a livestream.
          * @return the current {@link Builder} instance
          */
@@ -294,7 +296,7 @@ public final class InfoItemDialog {
         }
 
         /**
-         * Adds the {@link StreamDialogDefaultEntry.PLAY_WITH_KODI} entry if it is needed.
+         * Adds the {@link StreamDialogDefaultEntry#PLAY_WITH_KODI} entry if it is needed.
          * @return the current {@link Builder} instance
          */
         public Builder addPlayWithKodiEntryIfNeeded() {

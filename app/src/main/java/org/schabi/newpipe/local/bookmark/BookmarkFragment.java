@@ -10,8 +10,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentManager;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -262,7 +263,7 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
         dialogBinding.dialogEditText.setInputType(InputType.TYPE_CLASS_TEXT);
         dialogBinding.dialogEditText.setText(selectedItem.name);
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
         builder.setView(dialogBinding.getRoot())
                 .setPositiveButton(R.string.rename_playlist, (dialog, which) ->
                         changeLocalPlaylistName(
@@ -283,7 +284,7 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
             return;
         }
 
-        new AlertDialog.Builder(activity)
+        new MaterialAlertDialogBuilder(activity)
                 .setTitle(name)
                 .setMessage(R.string.delete_playlist_prompt)
                 .setCancelable(true)

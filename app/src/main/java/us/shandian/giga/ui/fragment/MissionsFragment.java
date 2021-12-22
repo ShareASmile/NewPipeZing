@@ -21,13 +21,13 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.nononsenseapps.filepicker.Utils;
 
 import org.schabi.newpipe.R;
@@ -69,15 +69,17 @@ public class MissionsFragment extends Fragment {
 
     private DownloadMission unsafeMissionTarget = null;
     private final ActivityResultLauncher<Intent> requestDownloadSaveAsLauncher =
-            registerForActivityResult(new StartActivityForResult(), this::requestDownloadSaveAsResult);
+            registerForActivityResult(new StartActivityForResult(),
+                    this::requestDownloadSaveAsResult);
     private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
+        public void onServiceConnected(final ComponentName name, final IBinder binder) {
             mBinder = (DownloadManagerBinder) binder;
             mBinder.clearDownloadNotifications();
 
-            mAdapter = new MissionAdapter(mContext, mBinder.getDownloadManager(), mEmpty, getView());
+            mAdapter = new MissionAdapter(mContext, mBinder.getDownloadManager(), mEmpty,
+                    getView());
 
             mAdapter.setRecover(MissionsFragment.this::recoverMission);
 
@@ -90,7 +92,7 @@ public class MissionsFragment extends Fragment {
         }
 
         @Override
-        public void onServiceDisconnected(ComponentName name) {
+        public void onServiceDisconnected(final ComponentName name) {
             // What to do?
         }
 
@@ -98,14 +100,17 @@ public class MissionsFragment extends Fragment {
     };
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.missions, container, false);
+    public View onCreateView(@NonNull final LayoutInflater inflater,
+                             final ViewGroup container,
+                             final Bundle savedInstanceState) {
+        final View v = inflater.inflate(R.layout.missions, container, false);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
         mLinear = mPrefs.getBoolean("linear", false);
 
         // Bind the service
-        mContext.bindService(new Intent(mContext, DownloadManagerService.class), mConnection, Context.BIND_AUTO_CREATE);
+        mContext.bindService(new Intent(mContext, DownloadManagerService.class), mConnection,
+                Context.BIND_AUTO_CREATE);
 
         // Views
         mEmpty = v.findViewById(R.id.list_empty_view);
@@ -115,7 +120,7 @@ public class MissionsFragment extends Fragment {
         mGridManager = new GridLayoutManager(getActivity(), SPAN_SIZE);
         mGridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
-            public int getSpanSize(int position) {
+            public int getSpanSize(final int position) {
                 switch (mAdapter.getItemViewType(position)) {
                     case DownloadManager.SPECIAL_PENDING:
                     case DownloadManager.SPECIAL_FINISHED:
@@ -136,22 +141,22 @@ public class MissionsFragment extends Fragment {
      * Added in API level 23.
      */
     @Override
-    public void onAttach(@NonNull Context context) {
+    public void onAttach(@NonNull final Context context) {
         super.onAttach(context);
 
-        // Bug: in api< 23 this is never called
-        // so mActivity=null
+        // Bug: in API < 23 this is never called
+        // so mActivity = null
         // so app crashes with null-pointer exception
         mContext = context;
     }
 
     /**
      * deprecated in API level 23,
-     * but must remain to allow compatibility with api<23
+     * but must remain to allow compatibility with api < 23
      */
     @SuppressWarnings("deprecation")
     @Override
-    public void onAttach(@NonNull Activity activity) {
+    public void onAttach(@NonNull final Activity activity) {
         super.onAttach(activity);
 
         mContext = activity;
@@ -161,7 +166,9 @@ public class MissionsFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mBinder == null || mAdapter == null) return;
+        if (mBinder == null || mAdapter == null) {
+            return;
+        }
 
         mBinder.removeMissionEventListener(mAdapter);
         mBinder.enableNotifications(true);
@@ -173,31 +180,35 @@ public class MissionsFragment extends Fragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull final Menu menu) {
         mSwitch = menu.findItem(R.id.switch_mode);
         mClear = menu.findItem(R.id.clear_list);
         mStart = menu.findItem(R.id.start_downloads);
         mPause = menu.findItem(R.id.pause_downloads);
 
-        if (mAdapter != null) setAdapterButtons();
+        if (mAdapter != null) {
+            setAdapterButtons();
+        }
 
         super.onPrepareOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.switch_mode:
                 mLinear = !mLinear;
                 updateList();
                 return true;
             case R.id.clear_list:
-                AlertDialog.Builder prompt = new AlertDialog.Builder(mContext);
+                final MaterialAlertDialogBuilder prompt = new MaterialAlertDialogBuilder(mContext);
                 prompt.setTitle(R.string.clear_download_history);
                 prompt.setMessage(R.string.confirm_prompt);
                 // Intentionally misusing button's purpose in order to achieve good order
-                prompt.setNegativeButton(R.string.clear_download_history, (dialog, which) -> mAdapter.clearFinishedDownloads(false));
-                prompt.setPositiveButton(R.string.delete_downloaded_files, (dialog, which) -> mAdapter.clearFinishedDownloads(true));
+                prompt.setNegativeButton(R.string.clear_download_history, (dialog, which)
+                        -> mAdapter.clearFinishedDownloads(false));
+                prompt.setPositiveButton(R.string.delete_downloaded_files, (dialog, which)
+                        -> mAdapter.clearFinishedDownloads(true));
                 prompt.setNeutralButton(R.string.cancel, null);
                 prompt.create().show();
                 return true;
@@ -206,7 +217,7 @@ public class MissionsFragment extends Fragment {
                 return true;
             case R.id.pause_downloads:
                 mBinder.getDownloadManager().pauseAllMissions(false);
-                mAdapter.refreshMissionItems();// update items view
+                mAdapter.refreshMissionItems(); // update items view
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -237,13 +248,15 @@ public class MissionsFragment extends Fragment {
     }
 
     private void setAdapterButtons() {
-        if (mClear == null || mStart == null || mPause == null) return;
+        if (mClear == null || mStart == null || mPause == null) {
+            return;
+        }
 
         mAdapter.setClearButton(mClear);
         mAdapter.setMasterButtons(mStart, mPause);
     }
 
-    private void recoverMission(@NonNull DownloadMission mission) {
+    private void recoverMission(@NonNull final DownloadMission mission) {
         unsafeMissionTarget = mission;
 
         final Uri initialPath;
@@ -283,7 +296,9 @@ public class MissionsFragment extends Fragment {
             mBinder.addMissionEventListener(mAdapter);
             mAdapter.checkMasterButtonsVisibility();
         }
-        if (mBinder != null) mBinder.enableNotifications(false);
+        if (mBinder != null) {
+            mBinder.enableNotifications(false);
+        }
     }
 
     @Override
@@ -296,10 +311,12 @@ public class MissionsFragment extends Fragment {
             mAdapter.onPaused();
         }
 
-        if (mBinder != null) mBinder.enableNotifications(true);
+        if (mBinder != null) {
+            mBinder.enableNotifications(true);
+        }
     }
 
-    private void requestDownloadSaveAsResult(final ActivityResult result) {
+    private void requestDownloadSaveAsResult(@NonNull final ActivityResult result) {
         if (result.getResultCode() != Activity.RESULT_OK) {
             return;
         }
@@ -310,14 +327,15 @@ public class MissionsFragment extends Fragment {
 
         try {
             Uri fileUri = result.getData().getData();
-            if (fileUri.getAuthority() != null && FilePickerActivityHelper.isOwnFileUri(mContext, fileUri)) {
+            if (fileUri.getAuthority() != null && FilePickerActivityHelper.isOwnFileUri(mContext,
+                    fileUri)) {
                 fileUri = Uri.fromFile(Utils.getFileForUri(fileUri));
             }
 
-            String tag = unsafeMissionTarget.storage.getTag();
+            final String tag = unsafeMissionTarget.storage.getTag();
             unsafeMissionTarget.storage = new StoredFileHelper(mContext, null, fileUri, tag);
             mAdapter.recoverMission(unsafeMissionTarget);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Toast.makeText(mContext, R.string.general_error, Toast.LENGTH_LONG).show();
         }
     }

@@ -720,4 +720,5 @@
     <string name="loading_channel_details">Loading Channel Details…</string>
     <!-- Progressive Load Interval -->
     <string name="progressive_load_interval_default">ExoPlayer default</string>
+    <string name="add_tab">Add a new tab</string>
 </resources>
