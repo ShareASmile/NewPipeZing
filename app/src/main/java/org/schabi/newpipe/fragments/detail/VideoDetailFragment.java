@@ -36,7 +36,6 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -47,6 +46,7 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Callback;
 
@@ -2137,7 +2137,7 @@ public final class VideoDetailFragment
     }
 
     private void showClearingQueueConfirmation(final Runnable onAllow) {
-        new AlertDialog.Builder(activity)
+        new MaterialAlertDialogBuilder(activity)
                 .setTitle(R.string.clear_queue_confirmation_description)
                 .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton(R.string.ok, (dialog, which) -> {
@@ -2154,7 +2154,7 @@ public final class VideoDetailFragment
         for (int i = 0; i < sortedVideoStreams.size(); i++) {
             resolutions[i] = sortedVideoStreams.get(i).getResolution();
         }
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity)
+        final MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity)
                 .setNegativeButton(R.string.cancel, null)
                 .setNeutralButton(R.string.open_in_browser, (dialog, i) ->
                         ShareUtils.openUrlInBrowser(requireActivity(), url)

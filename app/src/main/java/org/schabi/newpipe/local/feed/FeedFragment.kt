@@ -39,7 +39,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.annotation.AttrRes
 import androidx.annotation.Nullable
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
@@ -48,6 +47,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.OnAsyncUpdateListener
@@ -231,7 +231,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
                 else -> R.string.feed_use_dedicated_fetch_method_enable_button
             }
 
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setMessage(R.string.feed_use_dedicated_fetch_method_help_text)
                 .setNeutralButton(enableDisableButtonText) { _, _ ->
                     sharedPreferences.edit {
@@ -522,7 +522,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             getString(R.string.feed_use_dedicated_fetch_method_key), false
         )
 
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.feed_load_error)
             .setPositiveButton(
                 R.string.unsubscribe

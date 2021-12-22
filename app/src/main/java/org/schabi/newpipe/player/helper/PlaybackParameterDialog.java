@@ -14,9 +14,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceManager;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.SliderStrategy;
@@ -156,7 +157,8 @@ public class PlaybackParameterDialog extends DialogFragment {
         final View view = View.inflate(getContext(), R.layout.dialog_playback_parameter, null);
         setupControlViews(view);
 
-        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(requireActivity())
+        final MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(
+                requireActivity())
                 .setView(view)
                 .setCancelable(true)
                 .setNegativeButton(R.string.cancel, (dialogInterface, i) ->

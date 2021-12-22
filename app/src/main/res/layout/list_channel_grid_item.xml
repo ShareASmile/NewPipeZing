@@ -20,7 +20,7 @@
         android:src="@drawable/buddy_channel_item"
         tools:ignore="RtlHardcoded" />
 
-    <TextView
+    <org.schabi.newpipe.views.NewPipeMaterialTextView
         android:id="@+id/itemTitleView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         tools:ignore="RtlHardcoded"
         tools:text="Channel Title, Lorem ipsum" />
 
-    <TextView
+    <org.schabi.newpipe.views.NewPipeMaterialTextView
         android:id="@+id/itemAdditionalDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

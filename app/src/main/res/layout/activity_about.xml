@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/appbar_padding_top"
-        android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar">
+        android:theme="@style/Theme.Material3.DayNight"
+        app:popupTheme="@style/Theme.Material3.DayNight">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/about_toolbar"

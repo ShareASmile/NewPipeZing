@@ -9,16 +9,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.schabi.newpipe.util.external_communication.ShareUtils;
-import org.schabi.newpipe.views.NewPipeEditText;
-import org.schabi.newpipe.views.NewPipeTextView;
+import org.schabi.newpipe.views.NewPipeTextInputEditText;
+import org.schabi.newpipe.views.NewPipeMaterialTextView;
 
 public final class NewPipeTextViewHelper {
     private NewPipeTextViewHelper() {
     }
 
     /**
-     * Share the selected text of {@link NewPipeTextView NewPipeTextViews} and
-     * {@link NewPipeEditText NewPipeEditTexts} with
+     * Share the selected text of {@link NewPipeMaterialTextView NewPipeTextViews} and
+     * {@link NewPipeTextInputEditText NewPipeEditTexts} with
      * {@link ShareUtils#shareText(Context, String, String)}.
      *
      * <p>
@@ -27,8 +27,8 @@ public final class NewPipeTextViewHelper {
      * </p>
      *
      * @param textView the {@link TextView} on which sharing the selected text. It should be a
-     *                 {@link NewPipeTextView} or a {@link NewPipeEditText} (even if
-     *                 {@link TextView standard TextViews} are supported).
+     *                 {@link NewPipeMaterialTextView} or a {@link NewPipeTextInputEditText} (even
+     *                 if {@link TextView standard TextViews} are supported).
      */
     public static void shareSelectedTextWithShareUtils(@NonNull final TextView textView) {
         final CharSequence textViewText = textView.getText();

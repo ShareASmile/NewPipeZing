@@ -29,13 +29,13 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.nononsenseapps.filepicker.Utils;
 
 import org.schabi.newpipe.MainActivity;
@@ -679,7 +679,7 @@ public class DownloadDialog extends DialogFragment
 
     private void showFailedDialog(@StringRes final int msg) {
         assureCorrectAppLanguage(getContext());
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.general_error)
                 .setMessage(msg)
                 .setNegativeButton(getString(R.string.ok), null)
@@ -871,7 +871,7 @@ public class DownloadDialog extends DialogFragment
                 return; // unreachable
         }
 
-        final AlertDialog.Builder askDialog = new AlertDialog.Builder(context)
+        final MaterialAlertDialogBuilder askDialog = new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.download_dialog_title)
                 .setMessage(msgBody)
                 .setNegativeButton(R.string.cancel, null);

@@ -14,10 +14,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreferenceCompat;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.nononsenseapps.filepicker.Utils;
 
 import org.schabi.newpipe.R;
@@ -177,7 +177,7 @@ public class DownloadSettingsFragment extends BasePreferenceFragment {
     }
 
     private void showMessageDialog(@StringRes final int title, @StringRes final int message) {
-        final AlertDialog.Builder msg = new AlertDialog.Builder(ctx);
+        final MaterialAlertDialogBuilder msg = new MaterialAlertDialogBuilder(ctx);
         msg.setTitle(title);
         msg.setMessage(message);
         msg.setPositiveButton(getString(R.string.ok), null);

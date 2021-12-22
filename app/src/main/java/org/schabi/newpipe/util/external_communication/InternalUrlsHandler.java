@@ -4,7 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
@@ -165,7 +166,7 @@ public final class InternalUrlsHandler {
                     if (DEBUG) {
                         Log.e(TAG, "Could not play on popup: " + url, throwable);
                     }
-                    new AlertDialog.Builder(context)
+                    new MaterialAlertDialogBuilder(context)
                             .setTitle(R.string.player_stream_failure)
                             .setMessage(
                                     ErrorPanelHelper.Companion.getExceptionDescription(throwable))

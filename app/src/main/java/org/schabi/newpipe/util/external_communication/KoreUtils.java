@@ -3,8 +3,9 @@ package org.schabi.newpipe.util.external_communication;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.preference.PreferenceManager;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.ServiceList;
@@ -26,7 +27,7 @@ public final class KoreUtils {
     }
 
     public static void showInstallKoreDialog(@NonNull final Context context) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        final MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         builder.setMessage(R.string.kore_not_found)
                 .setPositiveButton(R.string.install, (dialog, which) ->
                         NavigationHelper.installKore(context))

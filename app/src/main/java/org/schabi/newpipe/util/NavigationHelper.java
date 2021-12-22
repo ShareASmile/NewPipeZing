@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -59,6 +58,7 @@ import java.util.ArrayList;
 
 import static org.schabi.newpipe.util.external_communication.ShareUtils.installApp;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
 public final class NavigationHelper {
@@ -260,7 +260,7 @@ public final class NavigationHelper {
             ShareUtils.openIntentInApp(context, intent, false);
         } else {
             if (context instanceof Activity) {
-                new AlertDialog.Builder(context)
+                new MaterialAlertDialogBuilder(context)
                         .setMessage(R.string.no_player_found)
                         .setPositiveButton(R.string.install,
                                 (dialog, which) -> ShareUtils.openUrlInBrowser(context,

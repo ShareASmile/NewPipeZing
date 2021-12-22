@@ -15,9 +15,9 @@ import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.grack.nanojson.JsonWriter;
 
 import org.schabi.newpipe.BuildConfig;
@@ -153,7 +153,7 @@ public class ErrorActivity extends AppCompatActivity {
     }
 
     private void openPrivacyPolicyDialog(final Context context, final String action) {
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.privacy_policy_title)
                 .setMessage(R.string.start_accept_privacy_policy)

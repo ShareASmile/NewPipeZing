@@ -6,7 +6,9 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.schabi.newpipe.R;
 
@@ -25,7 +27,7 @@ public final class NoFileManagerSafeGuard {
     private static void showActivityNotFoundAlert(final Context context) {
         if (context == null) {
             throw new IllegalArgumentException(
-                    "Unable to open no file manager alert dialog: Context is null");
+                    "Unable to open no file manager alert dialog: context is null");
         }
 
         final String message;
@@ -38,8 +40,7 @@ public final class NoFileManagerSafeGuard {
                     context.getString(R.string.downloads_storage_use_saf_title));
         }
 
-
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.no_app_to_open_intent)
                 .setMessage(message)
                 .setPositiveButton(R.string.ok, null)
@@ -47,10 +48,10 @@ public final class NoFileManagerSafeGuard {
     }
 
     /**
-     * Launches the file manager safely.
+     * Launch the file manager safely.
      *
      * If no file manager is found (which is normally only the case when the user uninstalled
-     * the default file manager or the OS lacks one) an alert dialog shows up, asking the user
+     * the default file manager or the OS lacks one), an alert dialog shows up, asking the user
      * to fix the situation.
      *
      * @param activityResultLauncher see {@link ActivityResultLauncher#launch(Object)}
@@ -60,15 +61,14 @@ public final class NoFileManagerSafeGuard {
      * @param <I> see {@link ActivityResultLauncher#launch(Object)}
      */
     public static <I> void launchSafe(
-            final ActivityResultLauncher<I> activityResultLauncher,
+            @NonNull final ActivityResultLauncher<I> activityResultLauncher,
             final I input,
             final String tag,
-            final Context context
-    ) {
+            final Context context) {
         try {
             activityResultLauncher.launch(input);
-        } catch (final ActivityNotFoundException aex) {
-            Log.w(tag, "Unable to launch file/directory picker", aex);
+        } catch (final ActivityNotFoundException e) {
+            Log.w(tag, "Unable to launch file/directory picker", e);
             NoFileManagerSafeGuard.showActivityNotFoundAlert(context);
         }
     }

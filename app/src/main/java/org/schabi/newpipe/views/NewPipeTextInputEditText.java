@@ -5,32 +5,34 @@ import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatTextView;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.schabi.newpipe.util.NewPipeTextViewHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 /**
- * An {@link AppCompatTextView} which uses {@link ShareUtils#shareText(Context, String, String)}
+ * An {@link TextInputEditText} which uses {@link ShareUtils#shareText(Context, String, String)}
  * when sharing selected text by using the {@code Share} command of the floating actions.
  * <p>
  * This allows NewPipe to show Android share sheet instead of EMUI share sheet when sharing text
- * from {@link AppCompatTextView} on EMUI devices.
+ * from {@link TextInputEditText} on EMUI devices.
  * </p>
  */
-public class NewPipeTextView extends AppCompatTextView {
+public class NewPipeTextInputEditText extends TextInputEditText {
 
-    public NewPipeTextView(@NonNull final Context context) {
+    public NewPipeTextInputEditText(@NonNull final Context context) {
         super(context);
     }
 
-    public NewPipeTextView(@NonNull final Context context, @Nullable final AttributeSet attrs) {
+    public NewPipeTextInputEditText(@NonNull final Context context,
+                                    @Nullable final AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public NewPipeTextView(@NonNull final Context context,
-                           @Nullable final AttributeSet attrs,
-                           final int defStyleAttr) {
+    public NewPipeTextInputEditText(@NonNull final Context context,
+                                    @Nullable final AttributeSet attrs,
+                                    final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

@@ -16,10 +16,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.xwray.groupie.Group
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
@@ -310,7 +310,7 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
         dialogTitleBinding.itemTitleView.text = selectedItem.name
         dialogTitleBinding.itemAdditionalDetails.visibility = View.GONE
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setCustomTitle(dialogTitleBinding.root)
             .setItems(commands, actions)
             .create()

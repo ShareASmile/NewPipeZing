@@ -33,6 +33,8 @@ import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.ListRadioIconItemBinding;
 import org.schabi.newpipe.databinding.SingleChoiceDialogViewBinding;
@@ -241,7 +243,7 @@ public class RouterActivity extends AppCompatActivity {
 
     private void showUnsupportedUrlDialog(final String url) {
         final Context context = getThemeWrapperContext();
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.unsupported_url)
                 .setMessage(R.string.unsupported_url_dialog_message)
                 .setIcon(R.drawable.ic_share)
@@ -347,7 +349,7 @@ public class RouterActivity extends AppCompatActivity {
             }
         };
 
-        alertDialogChoice = new AlertDialog.Builder(themeWrapperContext)
+        alertDialogChoice = new MaterialAlertDialogBuilder(themeWrapperContext)
                 .setTitle(R.string.preferred_open_action_share_menu_title)
                 .setView(radioGroup)
                 .setCancelable(true)

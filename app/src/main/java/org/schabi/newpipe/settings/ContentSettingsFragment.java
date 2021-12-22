@@ -12,7 +12,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
@@ -40,6 +39,8 @@ import java.util.Objects;
 
 import static org.schabi.newpipe.extractor.utils.Utils.isBlank;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class ContentSettingsFragment extends BasePreferenceFragment {
     private static final String ZIP_MIME_TYPE = "application/zip";
@@ -192,7 +193,7 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
             final StoredFileHelper file
                     = new StoredFileHelper(getContext(), result.getData().getData(), ZIP_MIME_TYPE);
 
-            new AlertDialog.Builder(requireActivity())
+            new MaterialAlertDialogBuilder(requireActivity())
                     .setMessage(R.string.override_current_data)
                     .setPositiveButton(R.string.ok, (d, id) ->
                             importDatabase(file, lastImportDataUri))
@@ -239,7 +240,8 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
 
             // if settings file exist, ask if it should be imported.
             if (manager.extractSettings(file)) {
-                final AlertDialog.Builder alert = new AlertDialog.Builder(requireContext());
+                final MaterialAlertDialogBuilder alert = new MaterialAlertDialogBuilder(
+                        requireContext());
                 alert.setTitle(R.string.import_settings);
 
                 alert.setNegativeButton(R.string.cancel, (dialog, which) -> {
