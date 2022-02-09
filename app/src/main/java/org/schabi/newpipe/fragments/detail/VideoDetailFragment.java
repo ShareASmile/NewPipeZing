@@ -55,8 +55,8 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.FragmentVideoDetailBinding;
 import org.schabi.newpipe.download.DownloadDialog;
-import org.schabi.newpipe.error.ErrorActivity;
 import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
@@ -89,17 +89,14 @@ import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
-import org.schabi.newpipe.util.ReturnYouTubeDislikeUtils;
-import org.schabi.newpipe.util.VideoSegment;
-import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.PicassoHelper;
-import org.schabi.newpipe.util.SponsorBlockUtils;
-import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.util.external_communication.KoreUtils;
+import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -111,7 +108,6 @@ import java.util.concurrent.TimeUnit;
 
 import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -189,8 +185,6 @@ public final class VideoDetailFragment
     private final CompositeDisposable disposables = new CompositeDisposable();
     @Nullable
     private Disposable positionSubscriber = null;
-    @Nullable
-    private Disposable videoSegmentsSubscriber = null;
 
     private List<VideoStream> sortedVideoStreams;
     private int selectedVideoStreamIndex = -1;
@@ -382,9 +376,6 @@ public final class VideoDetailFragment
         if (positionSubscriber != null) {
             positionSubscriber.dispose();
         }
-        if (videoSegmentsSubscriber != null) {
-            videoSegmentsSubscriber.dispose();
-        }
         if (currentWorker != null) {
             currentWorker.dispose();
         }
@@ -542,7 +533,7 @@ public final class VideoDetailFragment
             NavigationHelper.openChannelFragment(getFM(), currentInfo.getServiceId(),
                     subChannelUrl, subChannelName);
         } catch (final Exception e) {
-            ErrorActivity.reportUiErrorInSnackbar(this, "Opening channel fragment", e);
+            ErrorUtil.showUiErrorSnackbar(this, "Opening channel fragment", e);
         }
     }
 
@@ -694,7 +685,7 @@ public final class VideoDetailFragment
         });
 
         setupBottomPlayer();
-        if (!playerHolder.bound) {
+        if (!playerHolder.isBound()) {
             setHeightThumbnail();
         } else {
             playerHolder.startService(false, this);
@@ -1107,6 +1098,11 @@ public final class VideoDetailFragment
 
         toggleFullscreenIfInFullscreenMode();
 
+        if (isPlayerAvailable()) {
+            // FIXME Workaround #7427
+            player.setRecovery();
+        }
+
         if (!useExternalAudioPlayer) {
             openNormalBackgroundPlayer(append);
         } else {
@@ -1123,6 +1119,9 @@ public final class VideoDetailFragment
         // See UI changes while remote playQueue changes
         if (!isPlayerAvailable()) {
             playerHolder.startService(false, this);
+        } else {
+            // FIXME Workaround #7427
+            player.setRecovery();
         }
 
         toggleFullscreenIfInFullscreenMode();
@@ -1443,7 +1442,7 @@ public final class VideoDetailFragment
                             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                         }
                         // Rebound to the service if it was closed via notification or mini player
-                        if (!playerHolder.bound) {
+                        if (!playerHolder.isBound()) {
                             playerHolder.startService(
                                     false, VideoDetailFragment.this);
                         }
@@ -1530,6 +1529,8 @@ public final class VideoDetailFragment
         animate(binding.detailThumbnailPlayButton, true, 200);
         binding.detailVideoTitleView.setText(title);
 
+        binding.detailSubChannelThumbnailView.setVisibility(View.GONE);
+
         if (!isEmpty(info.getSubChannelName())) {
             displayBothUploaderAndSubChannel(info);
         } else if (!isEmpty(info.getUploaderName())) {
@@ -1567,19 +1568,6 @@ public final class VideoDetailFragment
 
             binding.detailThumbsDisabledView.setVisibility(View.VISIBLE);
         } else {
-            if (info.getDislikeCount() == -1) {
-                new Thread(() -> {
-                    info.setDislikeCount(ReturnYouTubeDislikeUtils.getDislikes(getContext(), info));
-                    if (info.getDislikeCount() >= 0) {
-                        activity.runOnUiThread(() -> {
-                            binding.detailThumbsDownCountView.setText(Localization
-                                    .shortCount(activity, info.getDislikeCount()));
-                            binding.detailThumbsDownCountView.setVisibility(View.VISIBLE);
-                            binding.detailThumbsDownImgView.setVisibility(View.VISIBLE);
-                        });
-                    }
-                }).start();
-            }
             if (info.getDislikeCount() >= 0) {
                 binding.detailThumbsDownCountView.setText(Localization
                         .shortCount(activity, info.getDislikeCount()));
@@ -1625,6 +1613,7 @@ public final class VideoDetailFragment
                 activity,
                 info.getVideoStreams(),
                 info.getVideoOnlyStreams(),
+                false,
                 false);
         selectedVideoStreamIndex = ListHelper
                 .getDefaultResolutionIndex(activity, sortedVideoStreams);
@@ -1694,38 +1683,18 @@ public final class VideoDetailFragment
             return;
         }
 
-        videoSegmentsSubscriber = Single.fromCallable(() -> {
-            VideoSegment[] videoSegments = null;
+        try {
+            final DownloadDialog downloadDialog = DownloadDialog.newInstance(currentInfo);
+            downloadDialog.setVideoStreams(sortedVideoStreams);
+            downloadDialog.setAudioStreams(currentInfo.getAudioStreams());
+            downloadDialog.setSelectedVideoStream(selectedVideoStreamIndex);
+            downloadDialog.setSubtitleStreams(currentInfo.getSubtitles());
 
-            try {
-                videoSegments =
-                        SponsorBlockUtils.getYouTubeVideoSegments(getContext(), currentInfo);
-            } catch (final Exception e) {
-                // TODO: handle?
-            }
-
-            return videoSegments == null
-                    ? new VideoSegment[0]
-                    : videoSegments;
-        })
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(videoSegments -> {
-            try {
-                final DownloadDialog downloadDialog = DownloadDialog.newInstance(currentInfo);
-                downloadDialog.setVideoStreams(sortedVideoStreams);
-                downloadDialog.setAudioStreams(currentInfo.getAudioStreams());
-                downloadDialog.setSelectedVideoStream(selectedVideoStreamIndex);
-                downloadDialog.setSubtitleStreams(currentInfo.getSubtitles());
-                downloadDialog.setVideoSegments(videoSegments);
-                downloadDialog.show(activity.getSupportFragmentManager(), "downloadDialog");
-            } catch (final Exception e) {
-                ErrorActivity.reportErrorInSnackbar(activity,
-                        new ErrorInfo(e, UserAction.DOWNLOAD_OPEN_DIALOG,
-                                "Showing download dialog",
-                                currentInfo));
-            }
-        });
+            downloadDialog.show(activity.getSupportFragmentManager(), "downloadDialog");
+        } catch (final Exception e) {
+            ErrorUtil.showSnackbar(activity, new ErrorInfo(e, UserAction.DOWNLOAD_OPEN_DIALOG,
+                    "Showing download dialog", currentInfo));
+        }
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -2022,7 +1991,9 @@ public final class VideoDetailFragment
         // Prevent jumping of the player on devices with cutout
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             activity.getWindow().getAttributes().layoutInDisplayCutoutMode =
-                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT;
+                    isMultiWindowOrFullscreen()
+                            ? WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER
+                            : WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT;
         }
         activity.getWindow().getDecorView().setSystemUiVisibility(0);
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -2044,7 +2015,9 @@ public final class VideoDetailFragment
         // Prevent jumping of the player on devices with cutout
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             activity.getWindow().getAttributes().layoutInDisplayCutoutMode =
-                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                    isMultiWindowOrFullscreen()
+                            ? WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER
+                            : WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
         int visibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -2061,7 +2034,7 @@ public final class VideoDetailFragment
         activity.getWindow().getDecorView().setSystemUiVisibility(visibility);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                && (isInMultiWindow || (isPlayerAvailable() && player.isFullscreen()))) {
+                && isMultiWindowOrFullscreen()) {
             activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
             activity.getWindow().setNavigationBarColor(Color.TRANSPARENT);
         }
@@ -2075,6 +2048,11 @@ public final class VideoDetailFragment
                 && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             hideSystemUi();
         }
+    }
+
+    private boolean isMultiWindowOrFullscreen() {
+        return DeviceUtils.isInMultiWindow(activity)
+                || (isPlayerAvailable() && player.isFullscreen());
     }
 
     private boolean playerIsNotStopped() {
@@ -2239,12 +2217,20 @@ public final class VideoDetailFragment
             mainFragment.setDescendantFocusability(afterDescendants);
             toolbar.setDescendantFocusability(afterDescendants);
             ((ViewGroup) requireView()).setDescendantFocusability(blockDescendants);
-            mainFragment.requestFocus();
+            // Only focus the mainFragment if the mainFragment (e.g. search-results)
+            // or the toolbar (e.g. Textfield for search) don't have focus.
+            // This was done to fix problems with the keyboard input, see also #7490
+            if (!mainFragment.hasFocus() && !toolbar.hasFocus()) {
+                mainFragment.requestFocus();
+            }
         } else {
             mainFragment.setDescendantFocusability(blockDescendants);
             toolbar.setDescendantFocusability(blockDescendants);
             ((ViewGroup) requireView()).setDescendantFocusability(afterDescendants);
-            binding.detailThumbnailRootLayout.requestFocus();
+            // Only focus the player if it not already has focus
+            if (!binding.getRoot().hasFocus()) {
+                binding.detailThumbnailRootLayout.requestFocus();
+            }
         }
     }
 
