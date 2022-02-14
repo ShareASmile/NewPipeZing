@@ -157,9 +157,8 @@ public final class NavigationHelper {
             return;
         }
 
-        if (PlayerHolder.getInstance().getType() != PlayerType.POPUP) {
-            Toast.makeText(context, R.string.popup_playing_toast, Toast.LENGTH_SHORT).show();
-        }
+        Toast.makeText(context, R.string.popup_playing_toast, Toast.LENGTH_SHORT).show();
+
         final Intent intent = getPlayerIntent(context, MainPlayer.class, queue, resumePlayback);
         intent.putExtra(Player.PLAYER_TYPE, MainPlayer.PlayerType.POPUP.ordinal());
         ContextCompat.startForegroundService(context, intent);
@@ -168,10 +167,9 @@ public final class NavigationHelper {
     public static void playOnBackgroundPlayer(final Context context,
                                               final PlayQueue queue,
                                               final boolean resumePlayback) {
-        if (PlayerHolder.getInstance().getType() != MainPlayer.PlayerType.AUDIO) {
-            Toast.makeText(context, R.string.background_player_playing_toast, Toast.LENGTH_SHORT)
-                    .show();
-        }
+        Toast.makeText(context, R.string.background_player_playing_toast, Toast.LENGTH_SHORT)
+                .show();
+
         final Intent intent = getPlayerIntent(context, MainPlayer.class, queue, resumePlayback);
         intent.putExtra(Player.PLAYER_TYPE, MainPlayer.PlayerType.AUDIO.ordinal());
         ContextCompat.startForegroundService(context, intent);
@@ -216,7 +214,8 @@ public final class NavigationHelper {
     // External Players
     //////////////////////////////////////////////////////////////////////////*/
 
-    public static void playOnExternalAudioPlayer(final Context context, final StreamInfo info) {
+    public static void playOnExternalAudioPlayer(@NonNull final Context context,
+                                                 @NonNull final StreamInfo info) {
         final int index = ListHelper.getDefaultAudioFormat(context, info.getAudioStreams());
 
         if (index == -1) {
@@ -228,9 +227,11 @@ public final class NavigationHelper {
         playOnExternalPlayer(context, info.getName(), info.getUploaderName(), audioStream);
     }
 
-    public static void playOnExternalVideoPlayer(final Context context, final StreamInfo info) {
+    public static void playOnExternalVideoPlayer(@NonNull final Context context,
+                                                 @NonNull final StreamInfo info) {
         final ArrayList<VideoStream> videoStreamsList = new ArrayList<>(
-                ListHelper.getSortedStreamVideosList(context, info.getVideoStreams(), null, false));
+                ListHelper.getSortedStreamVideosList(context, info.getVideoStreams(), null, false,
+                        false));
         final int index = ListHelper.getDefaultResolutionIndex(context, videoStreamsList);
 
         if (index == -1) {
@@ -242,8 +243,10 @@ public final class NavigationHelper {
         playOnExternalPlayer(context, info.getName(), info.getUploaderName(), videoStream);
     }
 
-    public static void playOnExternalPlayer(final Context context, final String name,
-                                            final String artist, final Stream stream) {
+    public static void playOnExternalPlayer(@NonNull final Context context,
+                                            @Nullable final String name,
+                                            @Nullable final String artist,
+                                            @NonNull final Stream stream) {
         final Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(stream.getUrl()), stream.getFormat().getMimeType());
@@ -255,7 +258,8 @@ public final class NavigationHelper {
         resolveActivityOrAskToInstall(context, intent);
     }
 
-    public static void resolveActivityOrAskToInstall(final Context context, final Intent intent) {
+    public static void resolveActivityOrAskToInstall(@NonNull final Context context,
+                                                     @NonNull final Intent intent) {
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             ShareUtils.openIntentInApp(context, intent, false);
         } else {
