@@ -14,7 +14,7 @@
 
 NewPipe does not use any Google framework libraries, nor the YouTube API. Websites are only parsed to fetch required info, so this app can be used on devices without Google services installed. Also, you don't need a YouTube account to use NewPipe, which is copylefted libre software.
 
-The only changes you need to make are in the colors_services.xml file inside ```../NewPipe-dev/app/src/main/res/valuesres/values/``` folder
+The only changes you need to make are in the colors_services.xml file inside ```../NewPipe-dev/app/src/main/res/values/``` folder
 
 ```
 <color name="dark_youtube_primary_color">#4C566A</color>
