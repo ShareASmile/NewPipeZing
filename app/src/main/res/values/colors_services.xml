@@ -8,8 +8,8 @@
 
     <color name="dark_youtube_primary_color">#4C566A</color>
     <color name="dark_youtube_dark_color">#3B4252</color>
-    <color name="dark youtube accent color">#FFFFFF</color>
-    <color name="dark youtube statusbar color">#4C566A</color>
+    <color name="dark_youtube_accent_color">#FFFFFF</color>
+    <color name="dark_youtube_statusbar_color">#4C566A</color>
 
     <!-- SoundCloud -->
     <color name="light_soundcloud_primary_color">#f57c00</color>
