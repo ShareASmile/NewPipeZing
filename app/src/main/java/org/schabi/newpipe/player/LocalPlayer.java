@@ -326,6 +326,9 @@ public class LocalPlayer implements EventListener {
                     toastText = context
                             .getString(R.string.sponsor_block_skip_preview_toast);
                     break;
+                case "filler":
+                    toastText = context.getString(R.string.sponsor_block_skip_filler_toast);
+                    break;
             }
 
             Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show();

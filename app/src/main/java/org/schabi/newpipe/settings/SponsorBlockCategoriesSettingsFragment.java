@@ -62,6 +62,10 @@ public class SponsorBlockCategoriesSettingsFragment extends BasePreferenceFragme
                                 R.string.sponsor_block_category_preview_color_key,
                                 R.color.preview_segment);
 
+                        setColorPreference(editor,
+                                R.string.sponsor_block_category_filler_color_key,
+                                R.color.filler_segment);
+
                         editor.apply();
 
                         Toast.makeText(p.getContext(), R.string.sponsor_block_reset_colors_toast,

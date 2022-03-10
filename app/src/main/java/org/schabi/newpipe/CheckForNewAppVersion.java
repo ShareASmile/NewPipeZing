@@ -33,7 +33,7 @@ public final class CheckForNewAppVersion {
     private static final boolean DEBUG = MainActivity.DEBUG;
     private static final String TAG = CheckForNewAppVersion.class.getSimpleName();
     private static final String API_URL =
-            "https://api.github.com/repos/polymorphicshade/NewPipe/releases/latest";
+            "https://api.github.com/repos/pantsufan/SkipTube/releases/latest";
 
     /**
      * Method to compare the current and latest available app version.

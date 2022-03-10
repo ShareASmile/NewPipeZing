@@ -162,6 +162,8 @@
     <string name="settings_category_sponsor_block_category_non_music_summary">Only for use in music videos. This includes introductions or outros in music videos.</string>
     <string name="settings_category_sponsor_block_category_preview_title">Preview/Recap</string>
     <string name="settings_category_sponsor_block_category_preview_summary">Quick recap of previous episodes, or a preview of what\'s coming up later in the current video. Meant for edited together clips, not for spoken summaries.</string>
+    <string name="settings_category_sponsor_block_category_filler_title">Filler</string>
+    <string name="settings_category_sponsor_block_category_filler_summary">Tangential scenes added only for filler or humor that are not required to understand the main content of the video.</string>
     <string name="background_player_playing_toast">Playing in background</string>
     <string name="popup_playing_toast">Playing in popup mode</string>
     <string name="content">Content</string>
@@ -359,12 +361,12 @@
     <string name="charset_most_special_characters">Most special characters</string>
     <string name="toast_no_player">No app installed to play this file</string>
     <!-- About -->
-    <string name="title_activity_about">About NewPipe</string>
+    <string name="title_activity_about">About SkipTube</string>
     <string name="title_licenses">Third-party Licenses</string>
     <string name="copyright">© %1$s by %2$s under %3$s</string>
     <string name="tab_about">About</string>
     <string name="tab_licenses">Licenses</string>
-    <string name="app_description">Libre lightweight streaming on Android.</string>
+    <string name="app_description">Mod Based on Newpipe x SponosrBlock.</string>
     <string name="contribution_title">Contribute</string>
     <string name="contribution_encouragement">Whether you have ideas of; translation, design changes, code cleaning, or real heavy code changes—help is always welcome. The more is done the better it gets!</string>
     <string name="view_on_github">View on GitHub</string>
@@ -555,7 +557,7 @@
     <string name="low_quality_smaller">Low quality (smaller)</string>
     <string name="dont_show">Don\'t show</string>
     <!-- App update notification -->
-    <string name="app_update_notification_content_title">NewPipe update is available!</string>
+    <string name="app_update_notification_content_title">SkipTube update is available!</string>
     <string name="app_update_notification_content_text">Tap to download</string>
     <string name="missions_header_finished">Finished</string>
     <string name="missions_header_pending">Pending</string>
@@ -762,6 +764,7 @@
     <string name="sponsor_block_skip_self_promo_toast">Skipped unpaid/self promo</string>
     <string name="sponsor_block_skip_non_music_toast">Skipped non-music</string>
     <string name="sponsor_block_skip_preview_toast">Skipped preview/recap</string>
+    <string name="sponsor_block_skip_filler_toast">Skipped filler</string>
     <string name="sponsor_block_toggle_skipping">Toggle skipping sponsors</string>
     <string name="sponsor_block_clear_whitelist_title">Clear Whitelist</string>
     <string name="sponsor_block_clear_whitelist_summary">Clear the list of uploaders SponsorBlock will ignore.</string>
