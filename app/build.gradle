@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "org.pantsufan.newpipe"
-        resValue "string", "app_name", "NewPipe SponsorBlock"
+        resValue "string", "app_name", "SkipTube"
         minSdk 19
         targetSdk 29
         versionCode 984
@@ -55,7 +55,7 @@ android {
         release {
             if (System.properties.containsKey('packageSuffix')) {
                 applicationIdSuffix System.getProperty('packageSuffix')
-                resValue "string", "app_name", "NewPipe " + System.getProperty('packageSuffix')
+                resValue "string", "app_name", "SkipTube " + System.getProperty('packageSuffix')
                 archivesBaseName = 'SkipTube_' + System.getProperty('packageSuffix')
             }
             minifyEnabled true
