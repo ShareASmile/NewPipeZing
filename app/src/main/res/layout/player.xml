@@ -754,7 +754,7 @@
         android:id="@+id/closingOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#AAFF0000"
+        android:background="#843EFF"
         android:visibility="gone" />
 
     <Button

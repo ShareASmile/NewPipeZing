@@ -8,9 +8,8 @@
         android:key="@string/update_app_key"
         android:summary="@string/updates_setting_description"
         android:title="@string/updates_setting_title"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
-
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="false" />
     <Preference
         android:key="@string/manual_update_key"
         android:summary="@string/manual_update_description"

@@ -325,7 +325,7 @@ public class DownloadDialog extends DialogFragment
 
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
-        final int threads = prefs.getInt(getString(R.string.default_download_threads), 3);
+        final int threads = prefs.getInt(getString(R.string.default_download_threads), 16);
         dialogBinding.threadsCount.setText(String.valueOf(threads));
         dialogBinding.threads.setProgress(threads - 1);
         dialogBinding.threads.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

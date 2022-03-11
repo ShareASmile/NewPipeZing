@@ -21,7 +21,7 @@
     <color name="light_border_color">#33000000</color>
 
     <!-- Dark Theme -->
-    <color name="dark_background_color">#222222</color>
+    <color name="dark_background_color">#342C51</color>
     <color name="dark_dialog_background_color">#424242</color>
     <color name="dark_settings_accent_color">#5C359F</color>
     <color name="dark_separator_color">#0affffff</color>
@@ -49,7 +49,7 @@
     <color name="queue_background_color">@color/dark_queue_background_color</color>
     <color name="drawer_header_font_color">#F2FFFFFF</color>
     <color name="duration_background_color">#aa000000</color>
-    <color name="live_duration_background_color">#c8E53935</color>
+    <color name="live_duration_background_color">#843EFF</color>
     <color name="playlist_stream_count_background_color">#e6000000</color>
     <color name="duration_text_color">#EEFFFFFF</color>
     <color name="video_overlay_color">#64000000</color>
@@ -59,7 +59,7 @@
     <color name="subscribed_text_color">#717171</color>
 
     <color name="transparent_background_color">#00000000</color>
-    <color name="selected_background_color">#96717171</color>
+    <color name="selected_background_color">#241F39</color>
 
     <!-- GigaGet theme -->
     <color name="bluegray">#607D8B</color>
@@ -67,8 +67,8 @@
     <!-- GigaGet download Theme colors -->
     <color name="audio_left_to_load_color">#555555</color>
     <color name="audio_already_load_color">#000000</color>
-    <color name="video_left_to_load_color">#CD5656</color>
-    <color name="video_already_load_color">#BC211D</color>
+    <color name="video_left_to_load_color">#241F39</color>
+    <color name="video_already_load_color">#843EFF</color>
     <color name="subtitle_left_to_load_color">#008ea4</color>
     <color name="subtitle_already_load_color">#005a71</color>
 
@@ -88,5 +88,5 @@
     <color name="self_promo_segment">#ffff00</color>
     <color name="non_music_segment">#ff9900</color>
     <color name="preview_segment">#008fd6</color>
-    <color name="filler_segment">#6E8EED</color>
+    <color name="filler_segment">#342C51</color>
 </resources>
