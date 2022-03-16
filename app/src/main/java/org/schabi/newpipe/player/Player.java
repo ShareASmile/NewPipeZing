@@ -73,7 +73,6 @@ import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -89,7 +88,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -100,7 +98,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GestureDetectorCompat;
@@ -3373,6 +3373,9 @@ public final class Player implements
                         binding.itemsListPanel.setTranslationY(
                                 -binding.itemsListPanel.getHeight() * 5);
                     });
+
+            // clear focus, otherwise a white rectangle remains on top of the player
+            binding.itemsListClose.clearFocus();
             binding.playPauseButton.requestFocus();
         }
     }
@@ -4008,8 +4011,9 @@ public final class Player implements
             case KeyEvent.KEYCODE_DPAD_DOWN:
             case KeyEvent.KEYCODE_DPAD_RIGHT:
             case KeyEvent.KEYCODE_DPAD_CENTER:
-                if (binding.getRoot().hasFocus() && !binding.playbackControlRoot.hasFocus()) {
-                    // do not interfere with focus in playlist etc.
+                if ((binding.getRoot().hasFocus() && !binding.playbackControlRoot.hasFocus())
+                        || isQueueVisible) {
+                    // do not interfere with focus in playlist and play queue etc.
                     return false;
                 }
 
@@ -4017,15 +4021,13 @@ public final class Player implements
                     return true;
                 }
 
-                if (!isControlsVisible()) {
-                    if (!isQueueVisible) {
-                        binding.playPauseButton.requestFocus();
-                    }
+                if (isControlsVisible()) {
+                    hideControls(DEFAULT_CONTROLS_DURATION, DPAD_CONTROLS_HIDE_TIME);
+                } else {
+                    binding.playPauseButton.requestFocus();
                     showControlsThenHide();
                     showSystemUIPartially();
                     return true;
-                } else {
-                    hideControls(DEFAULT_CONTROLS_DURATION, DPAD_CONTROLS_HIDE_TIME);
                 }
                 break;
         }
