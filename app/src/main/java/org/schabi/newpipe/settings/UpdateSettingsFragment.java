@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.preference.Preference;
 
+import org.schabi.newpipe.NewVersionWorker;
 import org.schabi.newpipe.R;
 
 import static org.schabi.newpipe.CheckForNewAppVersion.checkNewVersion;
