@@ -1639,6 +1639,7 @@ public final class VideoDetailFragment
                 activity,
                 info.getVideoStreams(),
                 info.getVideoOnlyStreams(),
+                false,
                 false);
         selectedVideoStreamIndex = ListHelper
                 .getDefaultResolutionIndex(activity, sortedVideoStreams);

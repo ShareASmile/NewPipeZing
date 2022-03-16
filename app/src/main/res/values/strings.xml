@@ -78,6 +78,8 @@
     <string name="use_inexact_seek_title">Use fast inexact seek</string>
     <string name="use_inexact_seek_summary">Inexact seek allows the player to seek to positions faster with reduced precision. Seeking for 5, 15 or 25 seconds doesn\'t work with this</string>
     <string name="seek_duration_title">Fast-forward/-rewind seek duration</string>
+    <string name="progressive_load_interval_title">Playback load interval size</string>
+    <string name="progressive_load_interval_summary">Change the load interval size (currently %s). A lower value may speed up initial video loading. Changes require a player restart.</string>
     <string name="clear_queue_confirmation_title">Ask for confirmation before clearing a queue</string>
     <string name="clear_queue_confirmation_summary">Switching from one player to another may replace your queue</string>
     <string name="clear_queue_confirmation_description">The active player queue will be replaced</string>
@@ -511,7 +513,9 @@
     <string name="playback_pitch">Pitch</string>
     <string name="unhook_checkbox">Unhook (may cause distortion)</string>
     <string name="skip_silence_checkbox">Fast-forward during silence</string>
+    <string name="adjust_by_semitones_checkbox">Adjust pitch by musical semitones</string>
     <string name="playback_step">Step</string>
+    <string name="playback_tempo_step">Tempo step</string>
     <string name="playback_reset">Reset</string>
     <!-- GDPR dialog -->
     <string name="start_accept_privacy_policy">In order to comply with the European General Data Protection Regulation (GDPR), we hereby draw your attention to NewPipe\'s privacy policy. Please read it carefully.
@@ -788,4 +792,6 @@
     <string name="disable_error_reports_summary">Prevent all error reporting screens from appearing. This may result in the app behaving unexpectedly. <b>USE AT YOUR OWN RISK!</b></string>
     <string name="enable_return_youtube_dislike_title">Show Dislike Count</string>
     <string name="enable_return_youtube_dislike_summary">Use the ReturnYouTubeDislike API to show the amount of dislikes for a video. This only works for YouTube videos.\n<b>WARNING: Your IP address will be visible to the API. Use at your own risk!</b></string>
+    <!-- Progressive Load Interval -->
+    <string name="progressive_load_interval_default">ExoPlayer default</string>
 </resources>
