@@ -431,6 +431,7 @@
     <string name="enqueued_next">Enqueued next</string>
     <string name="start_here_on_background">Start playing in the background</string>
     <string name="start_here_on_popup">Start playing in a popup</string>
+    <string name="loading_stream_details">Loading stream details…</string>
     <!-- Drawer -->
     <string name="drawer_open">Open Drawer</string>
     <string name="drawer_close">Close Drawer</string>
