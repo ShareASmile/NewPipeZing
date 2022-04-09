@@ -12,8 +12,8 @@ android {
     buildToolsVersion '30.0.3'
 
     defaultConfig {
-        applicationId "org.polymorphicshade.newpipe"
-        resValue "string", "app_name", "NewPipe SponsorBlock"
+        applicationId "com.mxtech.videoplayer.ad"
+        resValue "string", "app_name", "NewPipe SponsorBlock MX"
         minSdk 19
         targetSdk 29
         versionCode 984
@@ -34,19 +34,6 @@ android {
     buildTypes {
         debug {
             debuggable true
-
-            // suffix the app id and the app name with git branch name
-            def workingBranch = getGitWorkingBranch()
-            def normalizedWorkingBranch = workingBranch.replaceFirst("^[^A-Za-z]+", "").replaceAll("[^0-9A-Za-z]+", "")
-            if (normalizedWorkingBranch.isEmpty() || workingBranch == "master" || workingBranch == "dev") {
-                // default values when branch name could not be determined or is master or dev
-                applicationIdSuffix ".debug"
-                resValue "string", "app_name", "NewPipe Debug"
-            } else {
-                applicationIdSuffix ".debug." + normalizedWorkingBranch
-                resValue "string", "app_name", "NewPipe " + workingBranch
-                archivesBaseName = 'NewPipe_' + normalizedWorkingBranch
-            }
         }
 
         // Keep the release build type at the end of the list to override 'archivesBaseName' of
