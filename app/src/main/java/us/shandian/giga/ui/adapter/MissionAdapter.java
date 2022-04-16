@@ -41,7 +41,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.BuildConfig;
-import org.schabi.newpipe.LocalPlayerActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.NewPipe;
@@ -357,13 +356,6 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             Log.v(TAG, "Mime: " + mimeType + " package: " + BuildConfig.APPLICATION_ID + ".provider");
 
         Uri uri = resolveShareableUri(mission);
-
-        Intent intent = new Intent(mContext, LocalPlayerActivity.class);
-        intent.setDataAndType(uri, mimeType);
-        intent.putExtra("segments", mission.segmentsJson);
-        intent.setFlags(FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-
-        mContext.startActivity(intent);
     }
 
     private void openExternally(Mission mission) {

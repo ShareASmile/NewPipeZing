@@ -618,7 +618,6 @@ public final class PlayQueueActivity extends AppCompatActivity
 
             //2) Icon change accordingly to current App Theme
             // using rootView.getContext() because getApplicationContext() didn't work
-            final Context context = queueControlBinding.getRoot().getContext();
             item.setIcon(player.isMuted() ? R.drawable.ic_volume_off : R.drawable.ic_volume_up);
         }
     }
