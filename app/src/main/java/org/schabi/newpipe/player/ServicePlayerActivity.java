@@ -152,6 +152,10 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu_play_queue, m);
         getMenuInflater().inflate(getPlayerOptionMenuResource(), m);
         onMaybeMuteChanged();
+        // to avoid null reference
+        if (player != null) {
+            onPlaybackParameterChanged(player.getPlaybackParameters());
+        }
         return true;
     }
 
