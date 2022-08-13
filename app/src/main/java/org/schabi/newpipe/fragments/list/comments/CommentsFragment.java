@@ -19,6 +19,7 @@ import org.schabi.newpipe.extractor.comments.CommentsInfo;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.report.UserAction;
 import org.schabi.newpipe.util.AnimationUtils;
+import org.schabi.newpipe.util.CompatibilityUtil;
 import org.schabi.newpipe.util.ExtractorHelper;
 
 import io.reactivex.Single;
@@ -111,7 +112,7 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfo> {
 
         if (!result.getErrors().isEmpty()) {
             showSnackBarError(result.getErrors(), UserAction.REQUESTED_COMMENTS,
-                    NewPipe.getNameOfService(result.getServiceId()), result.getUrl(), 0);
+                    CompatibilityUtil.getNameOfService(result.getServiceId()), result.getUrl(), 0);
         }
 
         if (disposables != null) {
@@ -125,7 +126,7 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfo> {
 
         if (!result.getErrors().isEmpty()) {
             showSnackBarError(result.getErrors(), UserAction.REQUESTED_COMMENTS,
-                    NewPipe.getNameOfService(serviceId), "Get next page of: " + url,
+                    CompatibilityUtil.getNameOfService(serviceId), "Get next page of: " + url,
                     R.string.general_error);
         }
     }
@@ -142,7 +143,7 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfo> {
 
         hideLoading();
         showSnackBarError(exception, UserAction.REQUESTED_COMMENTS,
-                NewPipe.getNameOfService(serviceId), url, R.string.error_unable_to_load_comments);
+                CompatibilityUtil.getNameOfService(serviceId), url, R.string.error_unable_to_load_comments);
         return true;
     }
 
