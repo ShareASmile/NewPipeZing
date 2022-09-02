@@ -58,7 +58,7 @@ import org.schabi.newpipe.local.subscription.services.SubscriptionsImportService
 import org.schabi.newpipe.streams.io.StoredFileHelper
 import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.OnClickGesture
-import org.schabi.newpipe.util.ThemeHelper.getGridSpanCount
+import org.schabi.newpipe.util.ThemeHelper.getGridSpanCountChannels
 import org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout
 import org.schabi.newpipe.util.external_communication.ShareUtils
 import java.text.SimpleDateFormat
@@ -110,13 +110,6 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
         setupInitialLayout()
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (activity != null && isVisibleToUser) {
-            setTitle(activity.getString(R.string.tab_subscriptions))
-        }
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         subscriptionManager = SubscriptionManager(requireContext())
@@ -154,11 +147,8 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
-        val supportActionBar = activity.supportActionBar
-        if (supportActionBar != null) {
-            supportActionBar.setDisplayShowTitleEnabled(true)
-            setTitle(getString(R.string.tab_subscriptions))
-        }
+        activity.supportActionBar?.setDisplayShowTitleEnabled(true)
+        activity.supportActionBar?.setTitle(R.string.tab_subscriptions)
     }
 
     private fun setupBroadcastReceiver() {
@@ -189,7 +179,7 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
     }
 
     private fun onImportPreviousSelected() {
-        requestImportLauncher.launch(StoredFileHelper.getPicker(activity))
+        requestImportLauncher.launch(StoredFileHelper.getPicker(activity, JSON_MIME_TYPE))
     }
 
     private fun onExportSelected() {
@@ -197,7 +187,7 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
         val exportName = "newpipe_subscriptions_$date.json"
 
         requestExportLauncher.launch(
-            StoredFileHelper.getNewPicker(activity, exportName, "application/json", null)
+            StoredFileHelper.getNewPicker(activity, exportName, JSON_MIME_TYPE, null)
         )
     }
 
@@ -205,7 +195,7 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
         FeedGroupReorderDialog().show(parentFragmentManager, null)
     }
 
-    fun requestExportResult(result: ActivityResult) {
+    private fun requestExportResult(result: ActivityResult) {
         if (result.data != null && result.resultCode == Activity.RESULT_OK) {
             activity.startService(
                 Intent(activity, SubscriptionsExportService::class.java)
@@ -214,7 +204,7 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
         }
     }
 
-    fun requestImportResult(result: ActivityResult) {
+    private fun requestImportResult(result: ActivityResult) {
         if (result.data != null && result.resultCode == Activity.RESULT_OK) {
             ImportConfirmationDialog.show(
                 this,
@@ -277,7 +267,7 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
         super.initViews(rootView, savedInstanceState)
         _binding = FragmentSubscriptionBinding.bind(rootView)
 
-        groupAdapter.spanCount = if (shouldUseGridLayout(context)) getGridSpanCount(context) else 1
+        groupAdapter.spanCount = if (shouldUseGridLayout(context)) getGridSpanCountChannels(context) else 1
         binding.itemsList.layoutManager = GridLayoutManager(requireContext(), groupAdapter.spanCount).apply {
             spanSizeLookup = groupAdapter.spanSizeLookup
         }
@@ -416,5 +406,9 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
     override fun hideLoading() {
         super.hideLoading()
         binding.itemsList.animate(true, 200)
+    }
+
+    companion object {
+        const val JSON_MIME_TYPE = "application/json"
     }
 }

@@ -12,13 +12,10 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.NewPipeDatabase;
@@ -30,9 +27,11 @@ import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.util.ZipHelper;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -43,16 +42,15 @@ import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 public class ContentSettingsFragment extends BasePreferenceFragment {
     private static final String ZIP_MIME_TYPE = "application/zip";
-    private static final SimpleDateFormat EXPORT_DATE_FORMAT
+
+    private final SimpleDateFormat exportDateFormat
             = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
 
     private ContentSettingsManager manager;
 
     private String importExportDataPathKey;
-    private String thumbnailLoadToggleKey;
     private String youtubeRestrictedModeEnabledKey;
 
-    @Nullable private Uri lastImportExportDataUri = null;
     private Localization initialSelectedLocalization;
     private ContentCountry initialSelectedContentCountry;
     private String initialLanguage;
@@ -69,7 +67,6 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
         manager.deleteSettingsFile();
 
         importExportDataPathKey = getString(R.string.import_export_data_path);
-        thumbnailLoadToggleKey = getString(R.string.download_thumbnail_key);
         youtubeRestrictedModeEnabledKey = getString(R.string.youtube_restricted_mode_enabled);
 
         addPreferencesFromResource(R.xml.content_settings);
@@ -77,7 +74,8 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
         final Preference importDataPreference = requirePreference(R.string.import_data);
         importDataPreference.setOnPreferenceClickListener((Preference p) -> {
             requestImportPathLauncher.launch(
-                    StoredFileHelper.getPicker(requireContext(), getImportExportDataUri()));
+                    StoredFileHelper.getPicker(requireContext(),
+                            ZIP_MIME_TYPE, getImportExportDataUri()));
             return true;
         });
 
@@ -86,7 +84,7 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
 
             requestExportPathLauncher.launch(
                     StoredFileHelper.getNewPicker(requireContext(),
-                            "NewPipeData-" + EXPORT_DATE_FORMAT.format(new Date()) + ".zip",
+                            "NewPipeData-" + exportDateFormat.format(new Date()) + ".zip",
                             ZIP_MIME_TYPE, getImportExportDataUri()));
             return true;
         });
@@ -95,8 +93,7 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
                 .getPreferredLocalization(requireContext());
         initialSelectedContentCountry = org.schabi.newpipe.util.Localization
                 .getPreferredContentCountry(requireContext());
-        initialLanguage = PreferenceManager
-                .getDefaultSharedPreferences(requireContext()).getString("app_language_key", "en");
+        initialLanguage = defaultPreferences.getString(getString(R.string.app_language_key), "en");
 
         final Preference clearCookiePref = requirePreference(R.string.clear_cookie_key);
         clearCookiePref.setOnPreferenceClickListener(preference -> {
@@ -112,20 +109,24 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
         if (defaultPreferences.getString(getString(R.string.recaptcha_cookies_key), "").isEmpty()) {
             clearCookiePref.setVisible(false);
         }
+
+        findPreference(getString(R.string.download_thumbnail_key)).setOnPreferenceChangeListener(
+                (preference, newValue) -> {
+                    PicassoHelper.setShouldLoadImages((Boolean) newValue);
+                    try {
+                        PicassoHelper.clearCache(preference.getContext());
+                        Toast.makeText(preference.getContext(),
+                                R.string.thumbnail_cache_wipe_complete_notice, Toast.LENGTH_SHORT)
+                                .show();
+                    } catch (final IOException e) {
+                        Log.e(TAG, "Unable to clear Picasso cache", e);
+                    }
+                    return true;
+                });
     }
 
     @Override
     public boolean onPreferenceTreeClick(final Preference preference) {
-        if (preference.getKey().equals(thumbnailLoadToggleKey)) {
-            final ImageLoader imageLoader = ImageLoader.getInstance();
-            imageLoader.stop();
-            imageLoader.clearDiskCache();
-            imageLoader.clearMemoryCache();
-            imageLoader.resume();
-            Toast.makeText(preference.getContext(), R.string.thumbnail_cache_wipe_complete_notice,
-                    Toast.LENGTH_SHORT).show();
-        }
-
         if (preference.getKey().equals(youtubeRestrictedModeEnabledKey)) {
             final Context context = getContext();
             if (context != null) {
@@ -146,8 +147,8 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
                 .getPreferredLocalization(requireContext());
         final ContentCountry selectedContentCountry = org.schabi.newpipe.util.Localization
                 .getPreferredContentCountry(requireContext());
-        final String selectedLanguage = PreferenceManager
-                .getDefaultSharedPreferences(requireContext()).getString("app_language_key", "en");
+        final String selectedLanguage =
+                defaultPreferences.getString(getString(R.string.app_language_key), "en");
 
         if (!selectedLocalization.equals(initialSelectedLocalization)
                 || !selectedContentCountry.equals(initialSelectedContentCountry)
@@ -162,27 +163,29 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
     private void requestExportPathResult(final ActivityResult result) {
         assureCorrectAppLanguage(getContext());
         if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-            lastImportExportDataUri = result.getData().getData(); // will be saved only on success
+            // will be saved only on success
+            final Uri lastExportDataUri = result.getData().getData();
 
             final StoredFileHelper file
                     = new StoredFileHelper(getContext(), result.getData().getData(), ZIP_MIME_TYPE);
 
-            exportDatabase(file);
+            exportDatabase(file, lastExportDataUri);
         }
     }
 
     private void requestImportPathResult(final ActivityResult result) {
         assureCorrectAppLanguage(getContext());
         if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-            lastImportExportDataUri = result.getData().getData(); // will be saved only on success
+            // will be saved only on success
+            final Uri lastImportDataUri = result.getData().getData();
 
             final StoredFileHelper file
                     = new StoredFileHelper(getContext(), result.getData().getData(), ZIP_MIME_TYPE);
 
             new AlertDialog.Builder(requireActivity())
                     .setMessage(R.string.override_current_data)
-                    .setPositiveButton(R.string.finish, (d, id) ->
-                            importDatabase(file))
+                    .setPositiveButton(R.string.ok, (d, id) ->
+                            importDatabase(file, lastImportDataUri))
                     .setNegativeButton(R.string.cancel, (d, id) ->
                             d.cancel())
                     .create()
@@ -190,33 +193,33 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
         }
     }
 
-    private void exportDatabase(final StoredFileHelper file) {
+    private void exportDatabase(final StoredFileHelper file, final Uri exportDataUri) {
         try {
             //checkpoint before export
             NewPipeDatabase.checkpoint();
 
             final SharedPreferences preferences = PreferenceManager
-                .getDefaultSharedPreferences(requireContext());
+                    .getDefaultSharedPreferences(requireContext());
             manager.exportDatabase(preferences, file);
 
-            saveLastImportExportDataUri(false); // save export path only on success
+            saveLastImportExportDataUri(exportDataUri); // save export path only on success
             Toast.makeText(getContext(), R.string.export_complete_toast, Toast.LENGTH_SHORT).show();
         } catch (final Exception e) {
             ErrorActivity.reportUiErrorInSnackbar(this, "Exporting database", e);
         }
     }
 
-    private void importDatabase(final StoredFileHelper file) {
+    private void importDatabase(final StoredFileHelper file, final Uri importDataUri) {
         // check if file is supported
         if (!ZipHelper.isValidZipFile(file)) {
             Toast.makeText(getContext(), R.string.no_valid_zip_file, Toast.LENGTH_SHORT)
-                .show();
+                    .show();
             return;
         }
 
         try {
             if (!manager.ensureDbDirectoryExists()) {
-                throw new Exception("Could not create databases dir");
+                throw new IOException("Could not create databases dir");
             }
 
             if (!manager.extractDb(file)) {
@@ -229,19 +232,19 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
                 final AlertDialog.Builder alert = new AlertDialog.Builder(requireContext());
                 alert.setTitle(R.string.import_settings);
 
-                alert.setNegativeButton(android.R.string.no, (dialog, which) -> {
+                alert.setNegativeButton(R.string.cancel, (dialog, which) -> {
                     dialog.dismiss();
-                    finishImport();
+                    finishImport(importDataUri);
                 });
-                alert.setPositiveButton(getString(R.string.finish), (dialog, which) -> {
+                alert.setPositiveButton(R.string.ok, (dialog, which) -> {
                     dialog.dismiss();
                     manager.loadSharedPreferences(PreferenceManager
-                        .getDefaultSharedPreferences(requireContext()));
-                    finishImport();
+                            .getDefaultSharedPreferences(requireContext()));
+                    finishImport(importDataUri);
                 });
                 alert.show();
             } else {
-                finishImport();
+                finishImport(importDataUri);
             }
         } catch (final Exception e) {
             ErrorActivity.reportUiErrorInSnackbar(this, "Importing database", e);
@@ -250,10 +253,12 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
 
     /**
      * Save import path and restart system.
+     *
+     * @param importDataUri The import path to save
      */
-    private void finishImport() {
-        // save import path only on success; save immediately because app is about to exit
-        saveLastImportExportDataUri(true);
+    private void finishImport(final Uri importDataUri) {
+        // save import path only on success
+        saveLastImportExportDataUri(importDataUri);
         // restart app to properly load db
         NavigationHelper.restartApp(requireActivity());
     }
@@ -263,16 +268,9 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
         return isBlank(path) ? null : Uri.parse(path);
     }
 
-    private void saveLastImportExportDataUri(final boolean immediately) {
-        if (lastImportExportDataUri != null) {
-            final SharedPreferences.Editor editor = defaultPreferences.edit()
-                    .putString(importExportDataPathKey, lastImportExportDataUri.toString());
-            if (immediately) {
-                // noinspection ApplySharedPref
-                editor.commit(); // app about to be restarted, commit immediately
-            } else {
-                editor.apply();
-            }
-        }
+    private void saveLastImportExportDataUri(final Uri importExportDataUri) {
+        final SharedPreferences.Editor editor = defaultPreferences.edit()
+                .putString(importExportDataPathKey, importExportDataUri.toString());
+        editor.apply();
     }
 }
