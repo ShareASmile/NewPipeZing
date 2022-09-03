@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,6 +32,7 @@ import org.schabi.newpipe.database.history.model.StreamHistoryEntry;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.database.stream.model.StreamStateEntity;
+import org.schabi.newpipe.databinding.DialogEditTextBinding;
 import org.schabi.newpipe.databinding.LocalPlaylistHeaderBinding;
 import org.schabi.newpipe.databinding.PlaylistControlBinding;
 import org.schabi.newpipe.error.ErrorInfo;
@@ -41,6 +42,7 @@ import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.info_list.InfoItemDialog;
 import org.schabi.newpipe.local.BaseLocalListFragment;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
+import org.schabi.newpipe.player.MainPlayer.PlayerType;
 import org.schabi.newpipe.player.helper.PlayerHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
@@ -66,7 +68,6 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 
-import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
 
@@ -493,12 +494,12 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                 NavigationHelper.playOnBackgroundPlayer(activity, getPlayQueue(), false));
 
         playlistControlBinding.playlistCtrlPlayPopupButton.setOnLongClickListener(view -> {
-            NavigationHelper.enqueueOnPopupPlayer(activity, getPlayQueue(), true);
+            NavigationHelper.enqueueOnPlayer(activity, getPlayQueue(), PlayerType.POPUP);
             return true;
         });
 
         playlistControlBinding.playlistCtrlPlayBgButton.setOnLongClickListener(view -> {
-            NavigationHelper.enqueueOnBackgroundPlayer(activity, getPlayQueue(), true);
+            NavigationHelper.enqueueOnPlayer(activity, getPlayQueue(), PlayerType.AUDIO);
             return true;
         });
 
@@ -526,18 +527,20 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             return;
         }
 
-        final View dialogView = View.inflate(getContext(), R.layout.dialog_playlist_name, null);
-        final EditText nameEdit = dialogView.findViewById(R.id.playlist_name);
-        nameEdit.setText(name);
-        nameEdit.setSelection(nameEdit.getText().length());
+        final DialogEditTextBinding dialogBinding
+                = DialogEditTextBinding.inflate(getLayoutInflater());
+        dialogBinding.dialogEditText.setHint(R.string.name);
+        dialogBinding.dialogEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+        dialogBinding.dialogEditText.setSelection(dialogBinding.dialogEditText.getText().length());
+        dialogBinding.dialogEditText.setText(name);
 
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.rename_playlist)
-                .setView(dialogView)
+                .setView(dialogBinding.getRoot())
                 .setCancelable(true)
                 .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton(R.string.rename, (dialogInterface, i) ->
-                        changePlaylistName(nameEdit.getText().toString()));
+                        changePlaylistName(dialogBinding.dialogEditText.getText().toString()));
 
         dialogBuilder.show();
     }
@@ -706,8 +709,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                     return false;
                 }
 
-                final int sourceIndex = source.getAdapterPosition();
-                final int targetIndex = target.getAdapterPosition();
+                final int sourceIndex = source.getBindingAdapterPosition();
+                final int targetIndex = target.getBindingAdapterPosition();
                 final boolean isSwapped = itemListAdapter.swapItems(sourceIndex, targetIndex);
                 if (isSwapped) {
                     saveChanges();
@@ -750,8 +753,12 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
         final ArrayList<StreamDialogEntry> entries = new ArrayList<>();
 
-        if (PlayerHolder.getType() != null) {
+        if (PlayerHolder.getInstance().isPlayQueueReady()) {
             entries.add(StreamDialogEntry.enqueue);
+
+            if (PlayerHolder.getInstance().getQueueSize() > 1) {
+                entries.add(StreamDialogEntry.enqueue_next);
+            }
         }
         if (infoItem.getStreamType() == StreamType.AUDIO_STREAM) {
             entries.addAll(Arrays.asList(
@@ -776,9 +783,16 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             entries.add(StreamDialogEntry.play_with_kodi);
         }
 
-        if (!isNullOrEmpty(infoItem.getUploaderUrl())) {
-            entries.add(StreamDialogEntry.show_channel_details);
+        // show "mark as watched" only when watch history is enabled
+        if (StreamDialogEntry.shouldAddMarkAsWatched(
+                item.getStreamEntity().getStreamType(),
+                context
+        )) {
+            entries.add(
+                    StreamDialogEntry.mark_as_watched
+            );
         }
+        entries.add(StreamDialogEntry.show_channel_details);
 
         StreamDialogEntry.setEnabledEntries(entries);
 

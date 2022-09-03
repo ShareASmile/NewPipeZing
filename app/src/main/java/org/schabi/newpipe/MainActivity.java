@@ -20,6 +20,9 @@
 
 package org.schabi.newpipe;
 
+import static org.schabi.newpipe.CheckForNewAppVersion.checkNewVersion;
+import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -60,7 +63,7 @@ import org.schabi.newpipe.databinding.DrawerHeaderBinding;
 import org.schabi.newpipe.databinding.DrawerLayoutBinding;
 import org.schabi.newpipe.databinding.InstanceSpinnerLayoutBinding;
 import org.schabi.newpipe.databinding.ToolbarLayoutBinding;
-import org.schabi.newpipe.error.ErrorActivity;
+import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
@@ -90,8 +93,6 @@ import org.schabi.newpipe.views.FocusOverlayView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -156,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             setupDrawer();
         } catch (final Exception e) {
-            ErrorActivity.reportUiErrorInSnackbar(this, "Setting up drawer", e);
+            ErrorUtil.showUiErrorSnackbar(this, "Setting up drawer", e);
         }
 
         if (DeviceUtils.isTv(this)) {
@@ -165,7 +166,51 @@ public class MainActivity extends AppCompatActivity {
         openMiniPlayerUponPlayerStarted();
     }
 
-    private void setupDrawer() throws Exception {
+    @Override
+    protected void onPostCreate(final Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Start the service which is checking all conditions
+        // and eventually searching for a new version.
+        // The service searching for a new NewPipe version must not be started in background.
+        checkNewVersion();
+    }
+
+    private void setupDrawer() throws ExtractionException {
+        addDrawerMenuForCurrentService();
+
+        toggle = new ActionBarDrawerToggle(this, mainBinding.getRoot(),
+                toolbarLayoutBinding.toolbar, R.string.drawer_open, R.string.drawer_close);
+        toggle.syncState();
+        mainBinding.getRoot().addDrawerListener(toggle);
+        mainBinding.getRoot().addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            private int lastService;
+
+            @Override
+            public void onDrawerOpened(final View drawerView) {
+                lastService = ServiceHelper.getSelectedServiceId(MainActivity.this);
+            }
+
+            @Override
+            public void onDrawerClosed(final View drawerView) {
+                if (servicesShown) {
+                    toggleServices();
+                }
+                if (lastService != ServiceHelper.getSelectedServiceId(MainActivity.this)) {
+                    ActivityCompat.recreate(MainActivity.this);
+                }
+            }
+        });
+
+        drawerLayoutBinding.navigation.setNavigationItemSelectedListener(this::drawerItemSelected);
+        setupDrawerHeader();
+    }
+
+    /**
+     * Builds the drawer menu for the current service.
+     *
+     * @throws ExtractionException if the service didn't provide available kiosks
+     */
+    private void addDrawerMenuForCurrentService() throws ExtractionException {
         //Tabs
         final int currentServiceId = ServiceHelper.getSelectedServiceId(this);
         final StreamingService service = NewPipe.getService(currentServiceId);
@@ -204,32 +249,6 @@ public class MainActivity extends AppCompatActivity {
         drawerLayoutBinding.navigation.getMenu()
                 .add(R.id.menu_options_about_group, ITEM_ID_ABOUT, ORDER, R.string.tab_about)
                 .setIcon(R.drawable.ic_info_outline);
-
-        toggle = new ActionBarDrawerToggle(this, mainBinding.getRoot(),
-                toolbarLayoutBinding.toolbar, R.string.drawer_open, R.string.drawer_close);
-        toggle.syncState();
-        mainBinding.getRoot().addDrawerListener(toggle);
-        mainBinding.getRoot().addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
-            private int lastService;
-
-            @Override
-            public void onDrawerOpened(final View drawerView) {
-                lastService = ServiceHelper.getSelectedServiceId(MainActivity.this);
-            }
-
-            @Override
-            public void onDrawerClosed(final View drawerView) {
-                if (servicesShown) {
-                    toggleServices();
-                }
-                if (lastService != ServiceHelper.getSelectedServiceId(MainActivity.this)) {
-                    ActivityCompat.recreate(MainActivity.this);
-                }
-            }
-        });
-
-        drawerLayoutBinding.navigation.setNavigationItemSelectedListener(this::drawerItemSelected);
-        setupDrawerHeader();
     }
 
     private boolean drawerItemSelected(final MenuItem item) {
@@ -241,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     tabSelected(item);
                 } catch (final Exception e) {
-                    ErrorActivity.reportUiErrorInSnackbar(this, "Selecting main page tab", e);
+                    ErrorUtil.showUiErrorSnackbar(this, "Selecting main page tab", e);
                 }
                 break;
             case R.id.menu_options_about_group:
@@ -337,20 +356,22 @@ public class MainActivity extends AppCompatActivity {
         drawerLayoutBinding.navigation.getMenu().removeGroup(R.id.menu_tabs_group);
         drawerLayoutBinding.navigation.getMenu().removeGroup(R.id.menu_options_about_group);
 
+        // Show up or down arrow
+        drawerHeaderBinding.drawerArrow.setImageResource(
+                servicesShown ? R.drawable.ic_arrow_drop_up : R.drawable.ic_arrow_drop_down);
+
         if (servicesShown) {
             showServices();
         } else {
             try {
-                showTabs();
+                addDrawerMenuForCurrentService();
             } catch (final Exception e) {
-                ErrorActivity.reportUiErrorInSnackbar(this, "Showing main page tabs", e);
+                ErrorUtil.showUiErrorSnackbar(this, "Showing main page tabs", e);
             }
         }
     }
 
     private void showServices() {
-        drawerHeaderBinding.drawerArrow.setImageResource(R.drawable.ic_arrow_drop_up);
-
         for (final StreamingService s : NewPipe.getServices()) {
             final String title = s.getServiceInfo().getName()
                     + (ServiceHelper.isBeta(s) ? " (beta)" : "");
@@ -402,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     getSupportFragmentManager().popBackStack(null,
                             FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    recreate();
+                    ActivityCompat.recreate(MainActivity.this);
                 }, 300);
             }
 
@@ -412,48 +433,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         menuItem.setActionView(spinner);
-    }
-
-    private void showTabs() throws ExtractionException {
-        drawerHeaderBinding.drawerArrow.setImageResource(R.drawable.ic_arrow_drop_down);
-
-        //Tabs
-        final int currentServiceId = ServiceHelper.getSelectedServiceId(this);
-        final StreamingService service = NewPipe.getService(currentServiceId);
-
-        int kioskId = 0;
-
-        for (final String ks : service.getKioskList().getAvailableKiosks()) {
-            drawerLayoutBinding.navigation.getMenu()
-                    .add(R.id.menu_tabs_group, kioskId, ORDER,
-                            KioskTranslator.getTranslatedKioskName(ks, this))
-                    .setIcon(KioskTranslator.getKioskIcon(ks, this));
-            kioskId++;
-        }
-
-        drawerLayoutBinding.navigation.getMenu()
-                .add(R.id.menu_tabs_group, ITEM_ID_SUBSCRIPTIONS, ORDER, R.string.tab_subscriptions)
-                .setIcon(R.drawable.ic_tv);
-        drawerLayoutBinding.navigation.getMenu()
-                .add(R.id.menu_tabs_group, ITEM_ID_FEED, ORDER, R.string.fragment_feed_title)
-                .setIcon(R.drawable.ic_rss_feed);
-        drawerLayoutBinding.navigation.getMenu()
-                .add(R.id.menu_tabs_group, ITEM_ID_BOOKMARKS, ORDER, R.string.tab_bookmarks)
-                .setIcon(R.drawable.ic_bookmark);
-        drawerLayoutBinding.navigation.getMenu()
-                .add(R.id.menu_tabs_group, ITEM_ID_DOWNLOADS, ORDER, R.string.downloads)
-                .setIcon(R.drawable.ic_file_download);
-        drawerLayoutBinding.navigation.getMenu()
-                .add(R.id.menu_tabs_group, ITEM_ID_HISTORY, ORDER, R.string.action_history)
-                .setIcon(R.drawable.ic_history);
-
-        //Settings and About
-        drawerLayoutBinding.navigation.getMenu()
-                .add(R.id.menu_options_about_group, ITEM_ID_SETTINGS, ORDER, R.string.settings)
-                .setIcon(R.drawable.ic_settings);
-        drawerLayoutBinding.navigation.getMenu()
-                .add(R.id.menu_options_about_group, ITEM_ID_ABOUT, ORDER, R.string.tab_about)
-                .setIcon(R.drawable.ic_info_outline);
     }
 
     @Override
@@ -490,7 +469,7 @@ public class MainActivity extends AppCompatActivity {
             drawerHeaderBinding.drawerHeaderActionButton.setContentDescription(
                     getString(R.string.drawer_header_description) + selectedServiceName);
         } catch (final Exception e) {
-            ErrorActivity.reportUiErrorInSnackbar(this, "Setting up service toggle", e);
+            ErrorUtil.showUiErrorSnackbar(this, "Setting up service toggle", e);
         }
 
         final SharedPreferences sharedPreferences
@@ -800,7 +779,7 @@ public class MainActivity extends AppCompatActivity {
                 NavigationHelper.gotoMainFragment(getSupportFragmentManager());
             }
         } catch (final Exception e) {
-            ErrorActivity.reportUiErrorInSnackbar(this, "Handling intent", e);
+            ErrorUtil.showUiErrorSnackbar(this, "Handling intent", e);
         }
     }
 
@@ -823,7 +802,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (PlayerHolder.isPlayerOpen()) {
+        if (PlayerHolder.getInstance().isPlayerOpen()) {
             // if the player is already open, no need for a broadcast receiver
             openMiniPlayerIfMissing();
         } else {

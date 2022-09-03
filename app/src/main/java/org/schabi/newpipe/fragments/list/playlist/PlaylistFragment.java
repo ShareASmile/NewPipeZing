@@ -24,8 +24,8 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.playlist.model.PlaylistRemoteEntity;
 import org.schabi.newpipe.databinding.PlaylistControlBinding;
 import org.schabi.newpipe.databinding.PlaylistHeaderBinding;
-import org.schabi.newpipe.error.ErrorActivity;
 import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.ListExtractor;
@@ -37,11 +37,12 @@ import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.info_list.InfoItemDialog;
 import org.schabi.newpipe.local.playlist.RemotePlaylistManager;
+import org.schabi.newpipe.player.MainPlayer.PlayerType;
 import org.schabi.newpipe.player.helper.PlayerHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlaylistPlayQueue;
 import org.schabi.newpipe.util.ExtractorHelper;
-import org.schabi.newpipe.util.ImageDisplayConstants;
+import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
@@ -64,12 +65,16 @@ import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateHideRecyclerViewAllowingScrolling;
 
 public class PlaylistFragment extends BaseListInfoFragment<PlaylistInfo> {
+
+    private static final String PICASSO_PLAYLIST_TAG = "PICASSO_PLAYLIST_TAG";
+
     private CompositeDisposable disposables;
     private Subscription bookmarkReactor;
     private AtomicBoolean isBookmarkButtonReady;
 
     private RemotePlaylistManager remotePlaylistManager;
     private PlaylistRemoteEntity playlistEntity;
+
     /*//////////////////////////////////////////////////////////////////////////
     // Views
     //////////////////////////////////////////////////////////////////////////*/
@@ -144,9 +149,14 @@ public class PlaylistFragment extends BaseListInfoFragment<PlaylistInfo> {
 
         final ArrayList<StreamDialogEntry> entries = new ArrayList<>();
 
-        if (PlayerHolder.getType() != null) {
+        if (PlayerHolder.getInstance().isPlayQueueReady()) {
             entries.add(StreamDialogEntry.enqueue);
+
+            if (PlayerHolder.getInstance().getQueueSize() > 1) {
+                entries.add(StreamDialogEntry.enqueue_next);
+            }
         }
+
         if (item.getStreamType() == StreamType.AUDIO_STREAM) {
             entries.addAll(Arrays.asList(
                     StreamDialogEntry.start_here_on_background,
@@ -166,6 +176,12 @@ public class PlaylistFragment extends BaseListInfoFragment<PlaylistInfo> {
             entries.add(StreamDialogEntry.play_with_kodi);
         }
 
+        // show "mark as watched" only when watch history is enabled
+        if (StreamDialogEntry.shouldAddMarkAsWatched(item.getStreamType(), context)) {
+            entries.add(
+                    StreamDialogEntry.mark_as_watched
+            );
+        }
         if (!isNullOrEmpty(item.getUploaderUrl())) {
             entries.add(StreamDialogEntry.show_channel_details);
         }
@@ -252,7 +268,10 @@ public class PlaylistFragment extends BaseListInfoFragment<PlaylistInfo> {
                 ShareUtils.openUrlInBrowser(requireContext(), url);
                 break;
             case R.id.menu_item_share:
-                ShareUtils.shareText(requireContext(), name, url, currentInfo.getThumbnailUrl());
+                if (currentInfo != null) {
+                    ShareUtils.shareText(requireContext(), name, url,
+                            currentInfo.getThumbnailUrl());
+                }
                 break;
             case R.id.menu_item_bookmark:
                 onBookmarkClicked();
@@ -274,7 +293,7 @@ public class PlaylistFragment extends BaseListInfoFragment<PlaylistInfo> {
         animate(headerBinding.getRoot(), false, 200);
         animateHideRecyclerViewAllowingScrolling(itemsList);
 
-        IMAGE_LOADER.cancelDisplayTask(headerBinding.uploaderAvatarView);
+        PicassoHelper.cancelTag(PICASSO_PLAYLIST_TAG);
         animate(headerBinding.uploaderLayout, false, 200);
     }
 
@@ -294,7 +313,7 @@ public class PlaylistFragment extends BaseListInfoFragment<PlaylistInfo> {
                         NavigationHelper.openChannelFragment(getFM(), result.getServiceId(),
                                 result.getUploaderUrl(), result.getUploaderName());
                     } catch (final Exception e) {
-                        ErrorActivity.reportUiErrorInSnackbar(this, "Opening channel fragment", e);
+                        ErrorUtil.showUiErrorSnackbar(this, "Opening channel fragment", e);
                     }
                 });
             }
@@ -317,8 +336,8 @@ public class PlaylistFragment extends BaseListInfoFragment<PlaylistInfo> {
                     R.drawable.ic_radio)
             );
         } else {
-            IMAGE_LOADER.displayImage(avatarUrl, headerBinding.uploaderAvatarView,
-                    ImageDisplayConstants.DISPLAY_AVATAR_OPTIONS);
+            PicassoHelper.loadAvatar(avatarUrl).tag(PICASSO_PLAYLIST_TAG)
+                    .into(headerBinding.uploaderAvatarView);
         }
 
         headerBinding.playlistStreamCount.setText(Localization
@@ -343,12 +362,12 @@ public class PlaylistFragment extends BaseListInfoFragment<PlaylistInfo> {
                 NavigationHelper.playOnBackgroundPlayer(activity, getPlayQueue(), false));
 
         playlistControlBinding.playlistCtrlPlayPopupButton.setOnLongClickListener(view -> {
-            NavigationHelper.enqueueOnPopupPlayer(activity, getPlayQueue(), true);
+            NavigationHelper.enqueueOnPlayer(activity, getPlayQueue(), PlayerType.POPUP);
             return true;
         });
 
         playlistControlBinding.playlistCtrlPlayBgButton.setOnLongClickListener(view -> {
-            NavigationHelper.enqueueOnBackgroundPlayer(activity, getPlayQueue(), true);
+            NavigationHelper.enqueueOnPlayer(activity, getPlayQueue(), PlayerType.AUDIO);
             return true;
         });
     }

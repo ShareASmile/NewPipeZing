@@ -21,7 +21,7 @@ import androidx.viewbinding.ViewBinding;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.PignateFooterBinding;
-import org.schabi.newpipe.error.ErrorActivity;
+import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
@@ -143,7 +143,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
             final View focusedItem = itemsList.getFocusedChild();
             final RecyclerView.ViewHolder itemHolder =
                     itemsList.findContainingViewHolder(focusedItem);
-            return itemHolder.getAdapterPosition();
+            return itemHolder.getBindingAdapterPosition();
         } catch (final NullPointerException e) {
             return -1;
         }
@@ -293,7 +293,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
                             selectedItem.getUrl(),
                             selectedItem.getName());
                 } catch (final Exception e) {
-                    ErrorActivity.reportUiErrorInSnackbar(
+                    ErrorUtil.showUiErrorSnackbar(
                             BaseListFragment.this, "Opening channel fragment", e);
                 }
             }
@@ -309,7 +309,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
                             selectedItem.getUrl(),
                             selectedItem.getName());
                 } catch (final Exception e) {
-                    ErrorActivity.reportUiErrorInSnackbar(BaseListFragment.this,
+                    ErrorUtil.showUiErrorSnackbar(BaseListFragment.this,
                             "Opening playlist fragment", e);
                 }
             }
@@ -350,12 +350,16 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         if (context == null || context.getResources() == null || activity == null) {
             return;
         }
-
         final List<StreamDialogEntry> entries = new ArrayList<>();
 
-        if (PlayerHolder.getType() != null) {
+        if (PlayerHolder.getInstance().isPlayQueueReady()) {
             entries.add(StreamDialogEntry.enqueue);
+
+            if (PlayerHolder.getInstance().getQueueSize() > 1) {
+                entries.add(StreamDialogEntry.enqueue_next);
+            }
         }
+
         if (item.getStreamType() == StreamType.AUDIO_STREAM) {
             entries.addAll(Arrays.asList(
                     StreamDialogEntry.start_here_on_background,
@@ -373,6 +377,13 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         entries.add(StreamDialogEntry.open_in_browser);
         if (KoreUtils.shouldShowPlayWithKodi(context, item.getServiceId())) {
             entries.add(StreamDialogEntry.play_with_kodi);
+        }
+
+        // show "mark as watched" only when watch history is enabled
+        if (StreamDialogEntry.shouldAddMarkAsWatched(item.getStreamType(), context)) {
+            entries.add(
+                    StreamDialogEntry.mark_as_watched
+            );
         }
         if (!isNullOrEmpty(item.getUploaderUrl())) {
             entries.add(StreamDialogEntry.show_channel_details);

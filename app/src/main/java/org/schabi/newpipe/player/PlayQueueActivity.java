@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -12,11 +13,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.SeekBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,11 +25,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.exoplayer2.PlaybackParameters;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.ActivityPlayerQueueControlBinding;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
-import org.schabi.newpipe.local.dialog.PlaylistAppendDialog;
-import org.schabi.newpipe.local.dialog.PlaylistCreationDialog;
+import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.player.event.PlayerEventListener;
 import org.schabi.newpipe.player.helper.PlaybackParameterDialog;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
@@ -40,14 +41,17 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItemTouchCallback;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PermissionHelper;
+import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.ThemeHelper;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.schabi.newpipe.QueueItemMenuUtil.openPopupMenu;
 import static org.schabi.newpipe.player.helper.PlayerHelper.formatSpeed;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
-import static org.schabi.newpipe.util.external_communication.ShareUtils.shareText;
+
+import static org.schabi.newpipe.util.SponsorBlockUtils.markSegments;
 
 public final class PlayQueueActivity extends AppCompatActivity
         implements PlayerEventListener, SeekBar.OnSeekBarChangeListener,
@@ -55,7 +59,6 @@ public final class PlayQueueActivity extends AppCompatActivity
 
     private static final String TAG = PlayQueueActivity.class.getSimpleName();
 
-    private static final int RECYCLER_ITEM_POPUP_MENU_GROUP_ID = 47;
     private static final int SMOOTH_SCROLL_MAXIMUM_DISTANCE = 80;
 
     protected Player player;
@@ -83,7 +86,7 @@ public final class PlayQueueActivity extends AppCompatActivity
     protected void onCreate(final Bundle savedInstanceState) {
         assureCorrectAppLanguage(this);
         super.onCreate(savedInstanceState);
-        ThemeHelper.setTheme(this);
+        ThemeHelper.setTheme(this, ServiceHelper.getSelectedServiceId(this));
 
         queueControlBinding = ActivityPlayerQueueControlBinding.inflate(getLayoutInflater());
         setContentView(queueControlBinding.getRoot());
@@ -225,6 +228,12 @@ public final class PlayQueueActivity extends AppCompatActivity
                 } else {
                     buildComponents();
                     if (player != null) {
+                        final PlayQueueItem item = player.getPlayQueue().getItem();
+                        final Context context = getApplicationContext();
+                        final SharedPreferences prefs =
+                                PreferenceManager.getDefaultSharedPreferences(context);
+                        markSegments(item, queueControlBinding.seekBar, context, prefs);
+
                         player.setActivityListener(PlayQueueActivity.this);
                     }
                 }
@@ -278,49 +287,6 @@ public final class PlayQueueActivity extends AppCompatActivity
         queueControlBinding.controlShuffle.setOnClickListener(this);
     }
 
-    private void buildItemPopupMenu(final PlayQueueItem item, final View view) {
-        final PopupMenu popupMenu = new PopupMenu(this, view);
-        final MenuItem remove = popupMenu.getMenu().add(RECYCLER_ITEM_POPUP_MENU_GROUP_ID, 0,
-                Menu.NONE, R.string.play_queue_remove);
-        remove.setOnMenuItemClickListener(menuItem -> {
-            if (player == null) {
-                return false;
-            }
-
-            final int index = player.getPlayQueue().indexOf(item);
-            if (index != -1) {
-                player.getPlayQueue().remove(index);
-            }
-            return true;
-        });
-
-        final MenuItem detail = popupMenu.getMenu().add(RECYCLER_ITEM_POPUP_MENU_GROUP_ID, 1,
-                Menu.NONE, R.string.play_queue_stream_detail);
-        detail.setOnMenuItemClickListener(menuItem -> {
-            // playQueue is null since we don't want any queue change
-            NavigationHelper.openVideoDetail(this, item.getServiceId(), item.getUrl(),
-                    item.getTitle(), null, false);
-            return true;
-        });
-
-        final MenuItem append = popupMenu.getMenu().add(RECYCLER_ITEM_POPUP_MENU_GROUP_ID, 2,
-                Menu.NONE, R.string.append_playlist);
-        append.setOnMenuItemClickListener(menuItem -> {
-            openPlaylistAppendDialog(Collections.singletonList(item));
-            return true;
-        });
-
-        final MenuItem share = popupMenu.getMenu().add(RECYCLER_ITEM_POPUP_MENU_GROUP_ID, 3,
-                Menu.NONE, R.string.share);
-        share.setOnMenuItemClickListener(menuItem -> {
-            shareText(getApplicationContext(), item.getTitle(), item.getUrl(),
-                    item.getThumbnailUrl());
-            return true;
-        });
-
-        popupMenu.show();
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     // Component Helpers
     ////////////////////////////////////////////////////////////////////////////
@@ -368,13 +334,9 @@ public final class PlayQueueActivity extends AppCompatActivity
 
             @Override
             public void held(final PlayQueueItem item, final View view) {
-                if (player == null) {
-                    return;
-                }
-
-                final int index = player.getPlayQueue().indexOf(item);
-                if (index != -1) {
-                    buildItemPopupMenu(item, view);
+                if (player != null && player.getPlayQueue().indexOf(item) != -1) {
+                    openPopupMenu(player.getPlayQueue(), item, view, false,
+                            getSupportFragmentManager(), PlayQueueActivity.this);
                 }
             }
 
@@ -501,12 +463,12 @@ public final class PlayQueueActivity extends AppCompatActivity
         }
     }
 
-    private void openPlaylistAppendDialog(final List<PlayQueueItem> playlist) {
-        final PlaylistAppendDialog d = PlaylistAppendDialog.fromPlayQueueItems(playlist);
-
-        PlaylistAppendDialog.onPlaylistFound(getApplicationContext(),
-            () -> d.show(getSupportFragmentManager(), TAG),
-            () -> PlaylistCreationDialog.newInstance(d).show(getSupportFragmentManager(), TAG));
+    private void openPlaylistAppendDialog(final List<PlayQueueItem> playQueueItems) {
+        PlaylistDialog.createCorrespondingDialog(
+                getApplicationContext(),
+                playQueueItems.stream().map(StreamEntity::new).collect(Collectors.toList()),
+                dialog -> dialog.show(getSupportFragmentManager(), TAG)
+        );
     }
 
     ////////////////////////////////////////////////////////////////////////////

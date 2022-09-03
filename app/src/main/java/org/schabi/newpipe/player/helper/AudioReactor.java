@@ -50,6 +50,7 @@ public class AudioReactor implements AudioManager.OnAudioFocusChangeListener, An
     public void dispose() {
         abandonAudioFocus();
         player.removeAnalyticsListener(this);
+        notifyAudioSessionUpdate(false, player.getAudioSessionId());
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -148,12 +149,16 @@ public class AudioReactor implements AudioManager.OnAudioFocusChangeListener, An
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
-    public void onAudioSessionId(final EventTime eventTime, final int audioSessionId) {
+    public void onAudioSessionIdChanged(final EventTime eventTime, final int audioSessionId) {
+        notifyAudioSessionUpdate(true, audioSessionId);
+    }
+    private void notifyAudioSessionUpdate(final boolean active, final int audioSessionId) {
         if (!PlayerHelper.isUsingDSP()) {
             return;
         }
-
-        final Intent intent = new Intent(AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION);
+        final Intent intent = new Intent(active
+                ? AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION
+                : AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION);
         intent.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId);
         intent.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, context.getPackageName());
         context.sendBroadcast(intent);

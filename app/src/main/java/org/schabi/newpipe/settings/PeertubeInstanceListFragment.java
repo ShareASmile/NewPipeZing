@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -35,6 +34,7 @@ import com.grack.nanojson.JsonStringWriter;
 import com.grack.nanojson.JsonWriter;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.databinding.DialogEditTextBinding;
 import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.PeertubeHelper;
@@ -207,20 +207,22 @@ public class PeertubeInstanceListFragment extends Fragment {
     }
 
     private void showAddItemDialog(final Context c) {
-        final EditText urlET = new EditText(c);
-        urlET.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-        urlET.setHint(R.string.peertube_instance_add_help);
-        final AlertDialog dialog = new AlertDialog.Builder(c)
+        final DialogEditTextBinding dialogBinding
+                = DialogEditTextBinding.inflate(getLayoutInflater());
+        dialogBinding.dialogEditText.setInputType(
+                InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        dialogBinding.dialogEditText.setHint(R.string.peertube_instance_add_help);
+
+        new AlertDialog.Builder(c)
                 .setTitle(R.string.peertube_instance_add_title)
                 .setIcon(R.drawable.place_holder_peertube)
+                .setView(dialogBinding.getRoot())
                 .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.finish, (dialog1, which) -> {
-                    final String url = urlET.getText().toString();
+                .setPositiveButton(R.string.ok, (dialog1, which) -> {
+                    final String url = dialogBinding.dialogEditText.getText().toString();
                     addInstance(url);
                 })
-                .create();
-        dialog.setView(urlET, 50, 0, 50, 0);
-        dialog.show();
+                .show();
     }
 
     private void addInstance(final String url) {
@@ -301,8 +303,8 @@ public class PeertubeInstanceListFragment extends Fragment {
                     return false;
                 }
 
-                final int sourceIndex = source.getAdapterPosition();
-                final int targetIndex = target.getAdapterPosition();
+                final int sourceIndex = source.getBindingAdapterPosition();
+                final int targetIndex = target.getBindingAdapterPosition();
                 instanceListAdapter.swapItems(sourceIndex, targetIndex);
                 return true;
             }
@@ -320,7 +322,7 @@ public class PeertubeInstanceListFragment extends Fragment {
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder,
                                  final int swipeDir) {
-                final int position = viewHolder.getAdapterPosition();
+                final int position = viewHolder.getBindingAdapterPosition();
                 // do not allow swiping the selected instance
                 if (instanceList.get(position).getUrl().equals(selectedInstance.getUrl())) {
                     instanceListAdapter.notifyItemChanged(position);

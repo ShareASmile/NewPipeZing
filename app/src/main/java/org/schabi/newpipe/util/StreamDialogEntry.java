@@ -2,36 +2,38 @@ package org.schabi.newpipe.util;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.local.dialog.PlaylistAppendDialog;
-import org.schabi.newpipe.local.dialog.PlaylistCreationDialog;
-import org.schabi.newpipe.player.MainPlayer;
-import org.schabi.newpipe.player.helper.PlayerHolder;
+import org.schabi.newpipe.local.dialog.PlaylistDialog;
+import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
-import static org.schabi.newpipe.player.MainPlayer.PlayerType.AUDIO;
-import static org.schabi.newpipe.player.MainPlayer.PlayerType.POPUP;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public enum StreamDialogEntry {
     //////////////////////////////////////
     // enum values with DEFAULT actions //
     //////////////////////////////////////
 
-    show_channel_details(R.string.show_channel_details, (fragment, item) ->
-        // For some reason `getParentFragmentManager()` doesn't work, but this does.
-        NavigationHelper.openChannelFragment(
-                fragment.requireActivity().getSupportFragmentManager(),
-                item.getServiceId(), item.getUploaderUrl(), item.getUploaderName())
-    ),
+    show_channel_details(R.string.show_channel_details, (fragment, item) -> {
+        SaveUploaderUrlHelper.saveUploaderUrlIfNeeded(fragment, item,
+                uploaderUrl -> openChannelFragment(fragment, item, uploaderUrl));
+    }),
 
     /**
      * Enqueues the stream automatically to the current PlayerType.<br>
@@ -39,27 +41,24 @@ public enum StreamDialogEntry {
      * Info: Add this entry within showStreamDialog.
      */
     enqueue(R.string.enqueue_stream, (fragment, item) -> {
-        final MainPlayer.PlayerType type = PlayerHolder.getType();
-
-        if (type == AUDIO) {
-            NavigationHelper.enqueueOnBackgroundPlayer(fragment.getContext(),
-                    new SinglePlayQueue(item), false);
-        } else if (type == POPUP) {
-            NavigationHelper.enqueueOnPopupPlayer(fragment.getContext(),
-                    new SinglePlayQueue(item), false);
-        } else /* type == VIDEO */ {
-            NavigationHelper.enqueueOnVideoPlayer(fragment.getContext(),
-                    new SinglePlayQueue(item), false);
-        }
+        fetchItemInfoIfSparse(fragment, item, fullItem ->
+                NavigationHelper.enqueueOnPlayer(fragment.getContext(), fullItem));
     }),
 
-    start_here_on_background(R.string.start_here_on_background, (fragment, item) ->
-            NavigationHelper.playOnBackgroundPlayer(fragment.getContext(),
-                    new SinglePlayQueue(item), true)),
+    enqueue_next(R.string.enqueue_next_stream, (fragment, item) -> {
+        fetchItemInfoIfSparse(fragment, item, fullItem ->
+                NavigationHelper.enqueueNextOnPlayer(fragment.getContext(), fullItem));
+    }),
 
-    start_here_on_popup(R.string.start_here_on_popup, (fragment, item) ->
-            NavigationHelper.playOnPopupPlayer(fragment.getContext(),
-                    new SinglePlayQueue(item), true)),
+    start_here_on_background(R.string.start_here_on_background, (fragment, item) -> {
+        fetchItemInfoIfSparse(fragment, item, fullItem ->
+                NavigationHelper.playOnBackgroundPlayer(fragment.getContext(), fullItem, true));
+    }),
+
+    start_here_on_popup(R.string.start_here_on_popup, (fragment, item) -> {
+        fetchItemInfoIfSparse(fragment, item, fullItem ->
+                NavigationHelper.playOnPopupPlayer(fragment.getContext(), fullItem, true));
+    }),
 
     set_as_playlist_thumbnail(R.string.set_as_playlist_thumbnail, (fragment, item) -> {
     }), // has to be set manually
@@ -67,14 +66,16 @@ public enum StreamDialogEntry {
     delete(R.string.delete, (fragment, item) -> {
     }), // has to be set manually
 
-    append_playlist(R.string.append_playlist, (fragment, item) -> {
-        final PlaylistAppendDialog d = PlaylistAppendDialog
-                .fromStreamInfoItems(Collections.singletonList(item));
-
-        PlaylistAppendDialog.onPlaylistFound(fragment.getContext(),
-            () -> d.show(fragment.getParentFragmentManager(), "StreamDialogEntry@append_playlist"),
-            () -> PlaylistCreationDialog.newInstance(d)
-                    .show(fragment.getParentFragmentManager(), "StreamDialogEntry@create_playlist")
+    append_playlist(R.string.add_to_playlist, (fragment, item) -> {
+        PlaylistDialog.createCorrespondingDialog(
+                fragment.getContext(),
+                Collections.singletonList(new StreamEntity(item)),
+                dialog -> dialog.show(
+                        fragment.getParentFragmentManager(),
+                        "StreamDialogEntry@"
+                                + (dialog instanceof PlaylistAppendDialog ? "append" : "create")
+                                + "_playlist"
+                )
         );
     }),
 
@@ -83,17 +84,25 @@ public enum StreamDialogEntry {
         try {
             NavigationHelper.playWithKore(fragment.requireContext(), videoUrl);
         } catch (final Exception e) {
-            KoreUtils.showInstallKoreDialog(fragment.getActivity());
+            KoreUtils.showInstallKoreDialog(fragment.requireActivity());
         }
     }),
 
     share(R.string.share, (fragment, item) ->
-            ShareUtils.shareText(fragment.getContext(), item.getName(), item.getUrl(),
+            ShareUtils.shareText(fragment.requireContext(), item.getName(), item.getUrl(),
                     item.getThumbnailUrl())),
 
     open_in_browser(R.string.open_in_browser, (fragment, item) ->
-            ShareUtils.openUrlInBrowser(fragment.getContext(), item.getUrl()));
+            ShareUtils.openUrlInBrowser(fragment.requireContext(), item.getUrl())),
 
+
+    mark_as_watched(R.string.mark_as_watched, (fragment, item) -> {
+        new HistoryRecordManager(fragment.getContext())
+                .markAsWatched(item)
+                .onErrorComplete()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    });
 
     ///////////////
     // variables //
@@ -167,5 +176,63 @@ public enum StreamDialogEntry {
 
     public interface StreamDialogEntryAction {
         void onClick(Fragment fragment, StreamInfoItem infoItem);
+    }
+
+    public static boolean shouldAddMarkAsWatched(final StreamType streamType,
+                                                 final Context context) {
+        final boolean isWatchHistoryEnabled = PreferenceManager
+                .getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.enable_watch_history_key), false);
+        return streamType != StreamType.AUDIO_LIVE_STREAM
+                && streamType != StreamType.LIVE_STREAM
+                && isWatchHistoryEnabled;
+    }
+
+    /////////////////////////////////////////////
+    // private method to open channel fragment //
+    /////////////////////////////////////////////
+
+    private static void openChannelFragment(final Fragment fragment,
+                                            final StreamInfoItem item,
+                                            final String uploaderUrl) {
+        // For some reason `getParentFragmentManager()` doesn't work, but this does.
+        NavigationHelper.openChannelFragment(
+                fragment.requireActivity().getSupportFragmentManager(),
+                item.getServiceId(), uploaderUrl, item.getUploaderName());
+    }
+
+    /////////////////////////////////////////////
+    // helper functions                        //
+    /////////////////////////////////////////////
+
+    private static void fetchItemInfoIfSparse(final Fragment fragment,
+            final StreamInfoItem item,
+            final Consumer<SinglePlayQueue> callback) {
+        if (!(item.getStreamType() == StreamType.LIVE_STREAM
+                || item.getStreamType() == StreamType.AUDIO_LIVE_STREAM)
+                && item.getDuration() < 0) {
+            // Sparse item: fetched by fast fetch
+            ExtractorHelper.getStreamInfo(
+                    item.getServiceId(),
+                    item.getUrl(),
+                    false
+            )
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(result -> {
+                        final HistoryRecordManager recordManager =
+                                new HistoryRecordManager(fragment.getContext());
+                        recordManager.saveStreamState(result, 0)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnError(throwable -> Log.e("StreamDialogEntry",
+                                        throwable.toString()))
+                                .subscribe();
+
+                        callback.accept(new SinglePlayQueue(result));
+                    }, throwable -> Log.e("StreamDialogEntry", throwable.toString()));
+        } else {
+            callback.accept(new SinglePlayQueue(item));
+        }
     }
 }

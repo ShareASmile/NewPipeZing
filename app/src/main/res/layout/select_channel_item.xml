@@ -17,11 +17,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="5dp"
-        android:contentDescription="@string/list_thumbnail_view_description"
         android:src="@drawable/buddy"
         tools:ignore="RtlHardcoded" />
 
-    <TextView
+    <org.schabi.newpipe.views.NewPipeTextView
         android:id="@+id/itemTitleView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

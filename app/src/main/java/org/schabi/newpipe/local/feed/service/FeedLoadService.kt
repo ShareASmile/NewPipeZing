@@ -183,28 +183,23 @@ class FeedLoadService : Service() {
 
         subscriptions
             .take(1)
-
             .doOnNext {
                 currentProgress.set(0)
                 maxProgress.set(it.size)
             }
             .filter { it.isNotEmpty() }
-
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
                 startForeground(NOTIFICATION_ID, notificationBuilder.build())
                 updateNotificationProgress(null)
                 broadcastProgress()
             }
-
             .observeOn(Schedulers.io())
             .flatMap { Flowable.fromIterable(it) }
             .takeWhile { !cancelSignal.get() }
-
             .parallel(PARALLEL_EXTRACTIONS, PARALLEL_EXTRACTIONS * 2)
             .runOn(Schedulers.io(), PARALLEL_EXTRACTIONS * 2)
             .filter { !cancelSignal.get() }
-
             .map { subscriptionEntity ->
                 var error: Throwable? = null
                 try {
@@ -239,14 +234,11 @@ class FeedLoadService : Service() {
                 }
             }
             .sequential()
-
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext(notificationsConsumer)
-
             .observeOn(Schedulers.io())
             .buffer(BUFFER_COUNT_BEFORE_INSERT)
             .doOnNext(databaseConsumer)
-
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(resultSubscriber)
@@ -300,6 +292,12 @@ class FeedLoadService : Service() {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { _, throwable ->
+                            // There seems to be a bug in the kotlin plugin as it tells you when
+                            // building that this can't be null:
+                            // "Condition 'throwable != null' is always 'true'"
+                            // However it can indeed be null
+                            // The suppression may be removed in further versions
+                            @Suppress("SENSELESS_COMPARISON")
                             if (throwable != null) {
                                 Log.e(TAG, "Error while storing result", throwable)
                                 handleError(throwable)

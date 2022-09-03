@@ -41,8 +41,8 @@ import com.nononsenseapps.filepicker.Utils;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.DownloadDialogBinding;
-import org.schabi.newpipe.error.ErrorActivity;
 import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.NewPipe;
@@ -53,6 +53,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.settings.NewPipeSettings;
+import org.schabi.newpipe.streams.io.NoFileManagerSafeGuard;
 import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 import org.schabi.newpipe.util.FilePickerActivityHelper;
@@ -63,6 +64,7 @@ import org.schabi.newpipe.util.SecondaryStreamHelper;
 import org.schabi.newpipe.util.StreamItemAdapter;
 import org.schabi.newpipe.util.StreamItemAdapter.StreamSizeWrapper;
 import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.util.VideoSegment;
 
 import java.io.File;
 import java.io.IOException;
@@ -122,6 +124,8 @@ public class DownloadDialog extends DialogFragment
 
     private SharedPreferences prefs;
 
+    private VideoSegment[] segments;
+
     // Variables for file name and MIME type when picking new folder because it's not set yet
     private String filenameTmp;
     private String mimeTmp;
@@ -150,7 +154,7 @@ public class DownloadDialog extends DialogFragment
     public static DownloadDialog newInstance(final Context context, final StreamInfo info) {
         final ArrayList<VideoStream> streamsList = new ArrayList<>(ListHelper
                 .getSortedStreamVideosList(context, info.getVideoStreams(),
-                        info.getVideoOnlyStreams(), false));
+                        info.getVideoOnlyStreams(), false, false));
         final int selectedStreamIndex = ListHelper.getDefaultResolutionIndex(context, streamsList);
 
         final DownloadDialog instance = newInstance(info);
@@ -206,6 +210,10 @@ public class DownloadDialog extends DialogFragment
 
     public void setSelectedSubtitleStream(final int ssi) {
         this.selectedSubtitleIndex = ssi;
+    }
+
+    public void setVideoSegments(final VideoSegment[] seg) {
+        this.segments = seg;
     }
 
     public void setOnDismissListener(@Nullable final OnDismissListener onDismissListener) {
@@ -402,7 +410,7 @@ public class DownloadDialog extends DialogFragment
                             == R.id.video_button) {
                         setupVideoSpinner();
                     }
-                }, throwable -> ErrorActivity.reportErrorInSnackbar(context,
+                }, throwable -> ErrorUtil.showSnackbar(context,
                         new ErrorInfo(throwable, UserAction.DOWNLOAD_OPEN_DIALOG,
                                 "Downloading video stream size",
                                 currentInfo.getServiceId()))));
@@ -412,7 +420,7 @@ public class DownloadDialog extends DialogFragment
                             == R.id.audio_button) {
                         setupAudioSpinner();
                     }
-                }, throwable -> ErrorActivity.reportErrorInSnackbar(context,
+                }, throwable -> ErrorUtil.showSnackbar(context,
                         new ErrorInfo(throwable, UserAction.DOWNLOAD_OPEN_DIALOG,
                                 "Downloading audio stream size",
                                 currentInfo.getServiceId()))));
@@ -422,7 +430,7 @@ public class DownloadDialog extends DialogFragment
                             == R.id.subtitle_button) {
                         setupSubtitleSpinner();
                     }
-                }, throwable -> ErrorActivity.reportErrorInSnackbar(context,
+                }, throwable -> ErrorUtil.showSnackbar(context,
                         new ErrorInfo(throwable, UserAction.DOWNLOAD_OPEN_DIALOG,
                                 "Downloading subtitle stream size",
                                 currentInfo.getServiceId()))));
@@ -681,13 +689,18 @@ public class DownloadDialog extends DialogFragment
         new AlertDialog.Builder(context)
                 .setTitle(R.string.general_error)
                 .setMessage(msg)
-                .setNegativeButton(getString(R.string.finish), null)
+                .setNegativeButton(getString(R.string.ok), null)
                 .create()
                 .show();
     }
 
     private void launchDirectoryPicker(final ActivityResultLauncher<Intent> launcher) {
-        launcher.launch(StoredDirectoryHelper.getPicker(context));
+        NoFileManagerSafeGuard.launchSafe(
+                launcher,
+                StoredDirectoryHelper.getPicker(context),
+                TAG,
+                context
+        );
     }
 
     private void prepareSelectedDownload() {
@@ -766,8 +779,12 @@ public class DownloadDialog extends DialogFragment
                 initialPath = Uri.parse(initialSavePath.getAbsolutePath());
             }
 
-            requestDownloadSaveAsLauncher.launch(StoredFileHelper.getNewPicker(context,
-                    filenameTmp, mimeTmp, initialPath));
+            NoFileManagerSafeGuard.launchSafe(
+                    requestDownloadSaveAsLauncher,
+                    StoredFileHelper.getNewPicker(context, filenameTmp, mimeTmp, initialPath),
+                    TAG,
+                    context
+            );
 
             return;
         }
@@ -799,7 +816,7 @@ public class DownloadDialog extends DialogFragment
                         mainStorage.getTag());
             }
         } catch (final Exception e) {
-            ErrorActivity.reportErrorInSnackbar(this,
+            ErrorUtil.createNotification(requireContext(),
                     new ErrorInfo(e, UserAction.DOWNLOAD_FAILED, "Getting storage"));
             return;
         }
@@ -864,7 +881,7 @@ public class DownloadDialog extends DialogFragment
         final AlertDialog.Builder askDialog = new AlertDialog.Builder(context)
                 .setTitle(R.string.download_dialog_title)
                 .setMessage(msgBody)
-                .setNegativeButton(android.R.string.cancel, null);
+                .setNegativeButton(R.string.cancel, null);
         final StoredFileHelper finalStorage = storage;
 
 
@@ -1030,7 +1047,8 @@ public class DownloadDialog extends DialogFragment
         }
 
         DownloadManagerService.startMission(context, urls, storage, kind, threads,
-                currentInfo.getUrl(), psName, psArgs, nearLength, recoveryInfo);
+                currentInfo.getUrl(), psName, psArgs, nearLength, recoveryInfo,
+                segments);
 
         Toast.makeText(context, getString(R.string.download_has_started),
                 Toast.LENGTH_SHORT).show();

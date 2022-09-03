@@ -53,8 +53,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 
-import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
-
 public class StatisticsPlaylistFragment
         extends BaseLocalListFragment<List<StreamStatisticsEntry>, Void> {
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -103,9 +101,9 @@ public class StatisticsPlaylistFragment
     }
 
     @Override
-    public void setUserVisibleHint(final boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (activity != null && isVisibleToUser) {
+    public void onResume() {
+        super.onResume();
+        if (activity != null) {
             setTitle(activity.getString(R.string.title_activity_history));
         }
     }
@@ -340,9 +338,14 @@ public class StatisticsPlaylistFragment
 
         final ArrayList<StreamDialogEntry> entries = new ArrayList<>();
 
-        if (PlayerHolder.getType() != null) {
+        if (PlayerHolder.getInstance().isPlayQueueReady()) {
             entries.add(StreamDialogEntry.enqueue);
+
+            if (PlayerHolder.getInstance().getQueueSize() > 1) {
+                entries.add(StreamDialogEntry.enqueue_next);
+            }
         }
+
         if (infoItem.getStreamType() == StreamType.AUDIO_STREAM) {
             entries.addAll(Arrays.asList(
                     StreamDialogEntry.start_here_on_background,
@@ -364,9 +367,16 @@ public class StatisticsPlaylistFragment
             entries.add(StreamDialogEntry.play_with_kodi);
         }
 
-        if (!isNullOrEmpty(infoItem.getUploaderUrl())) {
-            entries.add(StreamDialogEntry.show_channel_details);
+        // show "mark as watched" only when watch history is enabled
+        if (StreamDialogEntry.shouldAddMarkAsWatched(
+                item.getStreamEntity().getStreamType(),
+                context
+        )) {
+            entries.add(
+                    StreamDialogEntry.mark_as_watched
+            );
         }
+        entries.add(StreamDialogEntry.show_channel_details);
 
         StreamDialogEntry.setEnabledEntries(entries);
 

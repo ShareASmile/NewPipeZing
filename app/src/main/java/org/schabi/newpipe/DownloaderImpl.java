@@ -17,7 +17,6 @@ import org.schabi.newpipe.util.InfoCache;
 import org.schabi.newpipe.util.TLSSocketFactoryCompat;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -53,6 +52,7 @@ public final class DownloaderImpl extends Downloader {
     private static DownloaderImpl instance;
     private final Map<String, String> mCookies;
     private final OkHttpClient client;
+    private Integer customTimeout;
 
     private DownloaderImpl(final OkHttpClient.Builder builder) {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
@@ -131,6 +131,11 @@ public final class DownloaderImpl extends Downloader {
         }
     }
 
+    public DownloaderImpl setCustomTimeout(final Integer value) {
+        this.customTimeout = value;
+        return this;
+    }
+
     public String getCookies(final String url) {
         final List<String> resultCookies = new ArrayList<>();
         if (url.contains(YOUTUBE_DOMAIN)) {
@@ -194,36 +199,6 @@ public final class DownloaderImpl extends Downloader {
         }
     }
 
-    public InputStream stream(final String siteUrl) throws IOException {
-        try {
-            final okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
-                    .method("GET", null).url(siteUrl)
-                    .addHeader("User-Agent", USER_AGENT);
-
-            final String cookies = getCookies(siteUrl);
-            if (!cookies.isEmpty()) {
-                requestBuilder.addHeader("Cookie", cookies);
-            }
-
-            final okhttp3.Request request = requestBuilder.build();
-            final okhttp3.Response response = client.newCall(request).execute();
-            final ResponseBody body = response.body();
-
-            if (response.code() == 429) {
-                throw new ReCaptchaException("reCaptcha Challenge requested", siteUrl);
-            }
-
-            if (body == null) {
-                response.close();
-                return null;
-            }
-
-            return body.byteStream();
-        } catch (final ReCaptchaException e) {
-            throw new IOException(e.getMessage(), e.getCause());
-        }
-    }
-
     @Override
     public Response execute(@NonNull final Request request)
             throws IOException, ReCaptchaException {
@@ -261,7 +236,16 @@ public final class DownloaderImpl extends Downloader {
 
         }
 
-        final okhttp3.Response response = client.newCall(requestBuilder.build()).execute();
+        OkHttpClient tmpClient = client;
+        final okhttp3.Response response;
+
+        if (customTimeout != null) {
+            tmpClient = new OkHttpClient.Builder()
+                    .readTimeout(customTimeout, TimeUnit.SECONDS)
+                    .build();
+        }
+
+        response = tmpClient.newCall(requestBuilder.build()).execute();
 
         if (response.code() == 429) {
             response.close();

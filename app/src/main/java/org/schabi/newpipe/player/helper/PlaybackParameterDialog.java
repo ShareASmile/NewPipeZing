@@ -1,5 +1,8 @@
 package org.schabi.newpipe.player.helper;
 
+import static org.schabi.newpipe.player.Player.DEBUG;
+import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -17,9 +20,6 @@ import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.SliderStrategy;
-
-import static org.schabi.newpipe.player.Player.DEBUG;
-import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 public class PlaybackParameterDialog extends DialogFragment {
     // Minimum allowable range in ExoPlayer
@@ -157,14 +157,13 @@ public class PlaybackParameterDialog extends DialogFragment {
         setupControlViews(view);
 
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(requireActivity())
-                .setTitle(R.string.playback_speed_control)
                 .setView(view)
                 .setCancelable(true)
                 .setNegativeButton(R.string.cancel, (dialogInterface, i) ->
                         setPlaybackParameters(initialTempo, initialPitch, initialSkipSilence))
                 .setNeutralButton(R.string.playback_reset, (dialogInterface, i) ->
                         setPlaybackParameters(DEFAULT_TEMPO, DEFAULT_PITCH, DEFAULT_SKIP_SILENCE))
-                .setPositiveButton(R.string.finish, (dialogInterface, i) ->
+                .setPositiveButton(R.string.ok, (dialogInterface, i) ->
                         setCurrentPlaybackParameters());
 
         return dialogBuilder.create();
