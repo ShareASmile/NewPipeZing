@@ -1,5 +1,9 @@
 package org.schabi.newpipe;
 
+import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.AUDIO;
+import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.VIDEO;
+import static org.schabi.newpipe.ktx.ViewUtils.animateRotation;
+
 import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Context;
@@ -7,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
@@ -14,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -24,14 +30,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.ServiceCompat;
 import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
+import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.ListRadioIconItemBinding;
-import org.schabi.newpipe.databinding.SingleChoiceDialogViewBinding;
 import org.schabi.newpipe.download.DownloadDialog;
 import org.schabi.newpipe.error.ErrorActivity;
 import org.schabi.newpipe.error.ErrorInfo;
@@ -56,6 +63,7 @@ import org.schabi.newpipe.extractor.playlist.PlaylistInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.ktx.ExceptionUtils;
+import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.player.MainPlayer;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.helper.PlayerHolder;
@@ -69,14 +77,15 @@ import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PermissionHelper;
-import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.urlfinder.UrlFinder;
 import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import icepick.Icepick;
@@ -88,9 +97,6 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-
-import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.AUDIO;
-import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.VIDEO;
 
 /**
  * Get the url from the intent and open it in the chosen preferred player.
@@ -107,6 +113,7 @@ public class RouterActivity extends AppCompatActivity {
     protected String currentUrl;
     private StreamingService currentService;
     private boolean selectionIsDownload = false;
+    private boolean selectionIsAddToPlaylist = false;
     private AlertDialog alertDialogChoice = null;
 
     @Override
@@ -325,8 +332,12 @@ public class RouterActivity extends AppCompatActivity {
         final Context themeWrapperContext = getThemeWrapperContext();
 
         final LayoutInflater inflater = LayoutInflater.from(themeWrapperContext);
-        final RadioGroup radioGroup = SingleChoiceDialogViewBinding.inflate(getLayoutInflater())
-                .list;
+        final View dialogView = View.inflate(
+                themeWrapperContext,
+                R.layout.dialog_share_context,
+                null);
+
+        final RadioGroup radioGroup = dialogView.findViewById(R.id.player_group);
 
         final DialogInterface.OnClickListener dialogButtonsClickListener = (dialog, which) -> {
             final int indexOfChild = radioGroup.indexOfChild(
@@ -343,14 +354,16 @@ public class RouterActivity extends AppCompatActivity {
             }
         };
 
+        initAdvancedOptions(dialogView);
+
         alertDialogChoice = new AlertDialog.Builder(themeWrapperContext)
                 .setTitle(R.string.preferred_open_action_share_menu_title)
-                .setView(radioGroup)
+                .setView(dialogView)
                 .setCancelable(true)
                 .setNegativeButton(R.string.just_once, dialogButtonsClickListener)
                 .setPositiveButton(R.string.always, dialogButtonsClickListener)
                 .setOnDismissListener((dialog) -> {
-                    if (!selectionIsDownload) {
+                    if (!selectionIsDownload && !selectionIsAddToPlaylist) {
                         finish();
                     }
                 })
@@ -419,6 +432,65 @@ public class RouterActivity extends AppCompatActivity {
         }
     }
 
+    private void initAdvancedOptions(final View dialogView) {
+        final SharedPreferences preferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+
+        final LinearLayout layoutAdvancedOptionsContent =
+                dialogView.findViewById(R.id.advanced_options_content);
+        final SwitchCompat prioritizeEnqueue = dialogView.findViewById(R.id.prioritize_enqueue);
+
+        /* Initialize component states. */
+        setVisibilityOfAdvancedOptions(
+                dialogView,
+                false,
+                false
+        );
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // It's not possible to add secondary text / it would be to much for the small dialog
+            // -> Use a tooltip (only works on Android 8+/Oreo - API 26+)
+            prioritizeEnqueue.setTooltipText(getString(R.string.prioritize_enqueue_summary));
+        }
+        prioritizeEnqueue.setChecked(
+                preferences.getBoolean(
+                        getString(R.string.prioritize_enqueue),
+                        false
+                )
+        );
+
+        /* Listener for toggling advanced options view. */
+        dialogView.findViewById(R.id.layout_toggle_adv)
+                .setOnClickListener(v -> setVisibilityOfAdvancedOptions(
+                        dialogView,
+                        layoutAdvancedOptionsContent.getVisibility() != View.VISIBLE,
+                        true
+                    )
+            );
+
+        /* Save linked preference when changed. */
+        prioritizeEnqueue.setOnCheckedChangeListener((v, checked) ->
+                preferences.edit()
+                        .putBoolean(getString(R.string.prioritize_enqueue), checked)
+                        .apply()
+        );
+    }
+
+    private void setVisibilityOfAdvancedOptions(
+            final View dialogView,
+            final boolean visible,
+            final boolean doAnimation
+    ) {
+        dialogView.findViewById(R.id.advanced_options_content)
+                .setVisibility(visible ? View.VISIBLE : View.GONE);
+
+        animateRotation(
+                dialogView.findViewById(R.id.toggle_adv_icon),
+                doAnimation ? 300 : 0,
+                visible ? 0 : -90
+        );
+    }
+
     private List<AdapterChoiceItem> getChoicesForService(final StreamingService service,
                                                          final LinkType linkType) {
         final Context context = getThemeWrapperContext();
@@ -446,6 +518,10 @@ public class RouterActivity extends AppCompatActivity {
         final AdapterChoiceItem backgroundPlayer = new AdapterChoiceItem(
                 getString(R.string.background_player_key), getString(R.string.background_player),
                 R.drawable.ic_headset);
+        final AdapterChoiceItem addToPlaylist = new AdapterChoiceItem(
+                getString(R.string.add_to_playlist_key), getString(R.string.add_to_playlist),
+                R.drawable.ic_add);
+
 
         if (linkType == LinkType.STREAM) {
             if (isExtVideoEnabled) {
@@ -453,7 +529,7 @@ public class RouterActivity extends AppCompatActivity {
                 returnList.add(showInfo);
                 returnList.add(videoPlayer);
             } else {
-                final MainPlayer.PlayerType playerType = PlayerHolder.getType();
+                final MainPlayer.PlayerType playerType = PlayerHolder.getInstance().getType();
                 if (capabilities.contains(VIDEO)
                         && PlayerHelper.isAutoplayAllowedByUser(context)
                         && playerType == null || playerType == MainPlayer.PlayerType.VIDEO) {
@@ -481,6 +557,10 @@ public class RouterActivity extends AppCompatActivity {
             returnList.add(new AdapterChoiceItem(getString(R.string.download_key),
                     getString(R.string.download),
                     R.drawable.ic_file_download));
+
+            // Add to playlist is not necessary for CHANNEL and PLAYLIST linkType since those can
+            // not be added to a playlist
+            returnList.add(addToPlaylist);
 
         } else {
             returnList.add(showInfo);
@@ -547,6 +627,12 @@ public class RouterActivity extends AppCompatActivity {
             return;
         }
 
+        if (selectedChoiceKey.equals(getString(R.string.add_to_playlist_key))) {
+            selectionIsAddToPlaylist = true;
+            openAddToPlaylistDialog();
+            return;
+        }
+
         // stop and bypass FetcherService if InfoScreen was selected since
         // StreamDetailFragment can fetch data itself
         if (selectedChoiceKey.equals(getString(R.string.show_info_key))) {
@@ -570,6 +656,41 @@ public class RouterActivity extends AppCompatActivity {
         startService(intent);
 
         finish();
+    }
+
+    private void openAddToPlaylistDialog() {
+        // Getting the stream info usually takes a moment
+        // Notifying the user here to ensure that no confusion arises
+        Toast.makeText(
+                getApplicationContext(),
+                getString(R.string.processing_may_take_a_moment),
+                Toast.LENGTH_SHORT)
+                .show();
+
+        disposables.add(ExtractorHelper.getStreamInfo(currentServiceId, currentUrl, false)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        info -> PlaylistDialog.createCorrespondingDialog(
+                                getThemeWrapperContext(),
+                                Collections.singletonList(new StreamEntity(info)),
+                                playlistDialog -> {
+                                    playlistDialog.setOnDismissListener(dialog -> finish());
+
+                                    playlistDialog.show(
+                                            this.getSupportFragmentManager(),
+                                            "addToPlaylistDialog"
+                                    );
+                                }
+                        ),
+                        throwable -> handleError(this, new ErrorInfo(
+                                throwable,
+                                UserAction.REQUESTED_STREAM,
+                                "Tried to add " + currentUrl + " to a playlist",
+                                currentService.getServiceId())
+                        )
+                )
+        );
     }
 
     @SuppressLint("CheckResult")
@@ -743,12 +864,28 @@ public class RouterActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (choice.playerChoice.equals(videoPlayerKey)) {
-                    NavigationHelper.playOnMainPlayer(this, playQueue, false);
-                } else if (choice.playerChoice.equals(backgroundPlayerKey)) {
-                    NavigationHelper.playOnBackgroundPlayer(this, playQueue, true);
-                } else if (choice.playerChoice.equals(popupPlayerKey)) {
-                    NavigationHelper.playOnPopupPlayer(this, playQueue, true);
+                final boolean prioritizeEnqueue = preferences.getBoolean(
+                        getString(R.string.prioritize_enqueue),
+                        false);
+
+                // If prioritize_enqueue is enabled, then enqueue this stream.
+                // Otherwise, open preferred player instead
+                if (prioritizeEnqueue) {
+                    MainPlayer.PlayerType playerType = MainPlayer.PlayerType.AUDIO;
+                    if (choice.playerChoice.equals(videoPlayerKey)) {
+                        playerType = MainPlayer.PlayerType.VIDEO;
+                    } else if (choice.playerChoice.equals(popupPlayerKey)) {
+                        playerType = MainPlayer.PlayerType.POPUP;
+                    } // else background, init value of playerType
+                    NavigationHelper.enqueueOnPlayer(this, playQueue, playerType);
+                } else {
+                    if (choice.playerChoice.equals(videoPlayerKey)) {
+                        NavigationHelper.playOnMainPlayer(this, playQueue, false);
+                    } else if (choice.playerChoice.equals(backgroundPlayerKey)) {
+                        NavigationHelper.playOnBackgroundPlayer(this, playQueue, true);
+                    } else if (choice.playerChoice.equals(popupPlayerKey)) {
+                        NavigationHelper.playOnPopupPlayer(this, playQueue, true);
+                    }
                 }
             };
         }
