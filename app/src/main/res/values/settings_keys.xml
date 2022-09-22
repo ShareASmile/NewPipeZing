@@ -4,10 +4,6 @@
     <string name="last_used_preferences_version">last_used_preferences_version</string>
 
     <!-- Service -->
-    <string-array name="service_list">
-        <item>@string/youtube</item>
-        <item>@string/soundcloud</item>
-    </string-array>
     <string name="current_service_key">service</string>
     <string name="default_service_value">@string/youtube</string>
 
@@ -23,6 +19,7 @@
     <string name="volume_gesture_control_key">volume_gesture_control</string>
     <string name="brightness_gesture_control_key">brightness_gesture_control</string>
     <string name="resume_on_audio_focus_gain_key">resume_on_audio_focus_gain</string>
+    <string name="pause_on_audio_focus_loss_key">pause_on_audio_focus_loss</string>
     <string name="popup_remember_size_pos_key">popup_remember_size_pos_key</string>
     <string name="use_inexact_seek_key">use_inexact_seek_key</string>
     <string name="auto_queue_key">auto_queue_key</string>
@@ -56,20 +53,21 @@
     </string-array>
 
     <string name="progressive_load_interval_key">progressive_load_interval</string>
-    <string name="progressive_load_interval_default_value">default</string>
+    <string name="progressive_load_interval_default_value">64</string>
+    <string name="progressive_load_interval_exoplayer_default_value">exoplayer_default</string>
     <string-array name="progressive_load_interval_descriptions">
         <item>1 KiB</item>
         <item>16 KiB</item>
         <item>64 KiB</item>
         <item>256 KiB</item>
-        <item>@string/progressive_load_interval_default</item>
+        <item>@string/progressive_load_interval_exoplayer_default</item>
     </string-array>
     <string-array name="progressive_load_interval_values">
         <item>1</item>
         <item>16</item>
-        <item>64</item>
+        <item>@string/progressive_load_interval_default_value</item>
         <item>256</item>
-        <item>default</item>
+        <item>@string/progressive_load_interval_exoplayer_default_value</item>
     </string-array>
 
     <string name="minimize_on_exit_key">minimize_on_exit_key</string>
