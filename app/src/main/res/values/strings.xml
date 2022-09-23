@@ -163,6 +163,10 @@
     <string name="settings_category_sponsor_block_category_self_promo_summary">Similar to "sponsor" except for unpaid or self promotion. This includes sections about merchandise, donations, or information about who they collaborated with.</string>
     <string name="settings_category_sponsor_block_category_non_music_title">Music: Non-Music Section</string>
     <string name="settings_category_sponsor_block_category_non_music_summary">Only for use in music videos. This includes introductions or outros in music videos.</string>
+    <string name="settings_category_sponsor_block_category_preview_title">Preview/Recap</string>
+    <string name="settings_category_sponsor_block_category_preview_summary">Quick recap of previous episodes, or a preview of what\'s coming up later in the current video. Meant for edited together clips, not for spoken summaries.</string>
+    <string name="settings_category_sponsor_block_category_filler_title">Filler Tangent/Jokes</string>
+    <string name="settings_category_sponsor_block_category_filler_summary">This is for tangential scenes added only for filler or humor that are not required to understand the main content of the video.</string>
     <string name="background_player_playing_toast">Playing in background</string>
     <string name="popup_playing_toast">Playing in popup mode</string>
     <string name="content">Content</string>
@@ -519,10 +523,10 @@
     <string name="playback_pitch">Pitch</string>
     <string name="unhook_checkbox">Unhook (may cause distortion)</string>
     <string name="skip_silence_checkbox">Fast-forward during silence</string>
-    <string name="adjust_by_semitones_checkbox">Adjust pitch by musical semitones</string>
     <string name="playback_step">Step</string>
-    <string name="playback_tempo_step">Tempo step</string>
     <string name="playback_reset">Reset</string>
+    <string name="percent">Percent</string>
+    <string name="semitone">Semitone</string>
     <!-- GDPR dialog -->
     <string name="start_accept_privacy_policy">In order to comply with the European General Data Protection Regulation (GDPR), we hereby draw your attention to NewPipe\'s privacy policy. Please read it carefully.
 \nYou must accept it to send us the bug report.</string>
@@ -762,6 +766,13 @@
     <string name="you_successfully_subscribed">You now subscribed to this channel</string>
     <string name="enumeration_comma">,</string>
     <string name="toggle_all">Toggle all</string>
+    <string name="streams_not_yet_supported_removed">Streams which are not yet supported by the downloader are not shown</string>
+    <string name="selected_stream_external_player_not_supported">The selected stream is not supported by external players</string>
+    <string name="no_audio_streams_available_for_external_players">No audio streams are available for external players</string>
+    <string name="no_video_streams_available_for_external_players">No video streams are available for external players</string>
+    <string name="select_quality_external_players">Select quality for external players</string>
+    <string name="unknown_format">Unknown format</string>
+    <string name="unknown_quality">Unknown quality</string>
     <!-- SponsorBlock -->
     <string name="sponsor_block">SponsorBlock</string>
     <string name="sponsor_block_home_page_title">View Website</string>
@@ -785,6 +796,8 @@
     <string name="sponsor_block_skip_interaction_toast">Skipped interaction reminder</string>
     <string name="sponsor_block_skip_self_promo_toast">Skipped unpaid/self promo</string>
     <string name="sponsor_block_skip_non_music_toast">Skipped non-music</string>
+    <string name="sponsor_block_skip_preview_toast">Skipped preview/recap</string>
+    <string name="sponsor_block_skip_filler_toast">Skipped filler</string>
     <string name="sponsor_block_toggle_skipping">Toggle skipping sponsors</string>
     <string name="sponsor_block_clear_whitelist_title">Clear Whitelist</string>
     <string name="sponsor_block_clear_whitelist_summary">Clear the list of uploaders SponsorBlock will ignore.</string>
