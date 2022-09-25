@@ -2,8 +2,8 @@
 <resources>
     <string name="main_bg_subtitle">Alustamiseks toksa suurendusklaasi ikooni.</string>
     <string name="upload_date_text">Avaldatud %1$s</string>
-    <string name="no_player_found">Voogesituseks puudub pleier. Kas paigaldada VLC?</string>
-    <string name="no_player_found_toast">Voogesituseks puudub pleier (selleks võib paigaldada VLC).</string>
+    <string name="no_player_found">Voogesituseks puudub pleier. Kas paigaldame VLC\?</string>
+    <string name="no_player_found_toast">Voogesituseks puudub pleier (selleks võid paigaldada VLC).</string>
     <string name="install">Paigalda</string>
     <string name="cancel">Tühista</string>
     <string name="open_in_browser">Ava veebilehitsejas</string>
@@ -305,7 +305,7 @@
     <string name="title_activity_recaptcha">reCAPTCHA nõue</string>
     <string name="recaptcha_request_toast">reCAPTCHA nõude taotlus</string>
     <string name="copyright" formatted="true">© %1$s %2$s %3$s alla</string>
-    <string name="app_description">Vaba kergekaaluline Androidi voogesitus.</string>
+    <string name="app_description">Vaba ja lihtne voogesitus Androidis.</string>
     <string name="contribution_encouragement">Kui sul on ideid kujunduse muutmisest, koodi puhastamisest või suurtest koodi muudatustest - abi on alati teretulnud. Mida rohkem tehtud, seda paremaks läheb!</string>
     <string name="donation_encouragement">NewPipe arendajad on vabatahtlikud, kes kulutavad oma vaba aega, toomaks sulle parimat kasutamise kogemust. On aeg anda tagasi aidates arendajaid ja muuta NewPipe veel paremaks, nautides ise tassi kohvi.</string>
     <string name="give_back">Anneta</string>
@@ -426,8 +426,8 @@
     <string name="notification_action_2_title">Kolmas tegevusnupp</string>
     <string name="notification_action_1_title">Teine tegevusnupp</string>
     <string name="notification_action_0_title">Esimene tegevusnupp</string>
-    <string name="notification_scale_to_square_image_summary">Skaleeri teavituses kuvatav video pisipilt 16:9 külgede suhtest 1:1 suhtesse (võib põhjustada häireid)</string>
-    <string name="notification_scale_to_square_image_title">Skaleeri pisipilt 1:1 küljesuhtesse</string>
+    <string name="notification_scale_to_square_image_summary">Kadreeri teavituses kuvatav video pisipilt 16:9 külgede suhtest 1:1 suhtesse</string>
+    <string name="notification_scale_to_square_image_title">Kadreeri pisipilt 1:1 küljesuhtesse</string>
     <string name="msg_calculating_hash">Arvutan räsi</string>
     <string name="recent">Hiljutised</string>
     <string name="description_tab_description">Kirjeldus</string>
@@ -632,7 +632,6 @@
     <string name="settings_category_feed_title">Voog</string>
     <string name="choose_instance_prompt">Vali eksemplar</string>
     <string name="downloads_storage_use_saf_summary_api_29">Android 10st alates on toetatud ainult salvestusjuurdepääsu raamistik \'Storage Access Framework\'</string>
-    <string name="downloads_storage_use_saf_summary_api_19">Android KitKat ja vanemad versioonid ei toeta salvestusjuurdepääsu raamistikku \'Storage Access Framework\'</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Sinult küsitakse iga kord, kuhu alla laadimine salvestada</string>
     <string name="detail_heart_img_view_description">Südamlik autor</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Kas sinu meelest on voo laadimine aeglane\? Sel juhul proovi lubada kiire laadimine (seda saad muuta seadetes või vajutades allolevat nuppu).
@@ -674,7 +673,6 @@
     <string name="error_report_notification_title">NewPipe töös tekkis viga, sellest teavitamiseks klõpsi</string>
     <string name="crash_the_player">Jooksuta meediamängija kokku</string>
     <string name="show_error_snackbar">Näita veateate akent</string>
-    <string name="background_player_already_playing_toast">Meedia esitamine taustal toimib juba</string>
     <string name="error_report_channel_name">Teavitus vigadest</string>
     <string name="error_report_channel_description">Teavitused vigadest informeerimiseks</string>
     <string name="error_report_notification_toast">Tekkis viga, vaata vastavat teadet</string>
@@ -685,6 +683,39 @@
 \nPalun paigalda nutiseadmesse failihaldur, mis järgib Storage Access Framework reeglistikku.</string>
     <string name="detail_pinned_comment_view_description">Esiletõstetud kommentaar</string>
     <string name="leak_canary_not_available">LeakCanary pole saadaval</string>
-    <string name="progressive_load_interval_default">ExoPlayer\'i vaikimisi väärtused</string>
+    <string name="progressive_load_interval_exoplayer_default">ExoPlayer\'i vaikimisi väärtused</string>
     <string name="progressive_load_interval_summary">Muuda video laadimise välpa (hetkel %s). Väiksemast väärtusest võib abi olla, kui tahad et video esitamine algaks varem. Muudatuste jõustamine eeldab rakenduse uuesti käivitamist.</string>
+    <string name="settings_category_player_notification_title">Meediamängija teavitused</string>
+    <string name="notifications_disabled">Teavitused pole kasutusel</string>
+    <string name="streams_notifications_interval_title">Kontrollimise sagedus</string>
+    <string name="streams_notification_channel_description">Tellimuste-kohaste uute meedivoogude teavitused</string>
+    <string name="delete_downloaded_files_confirm">Kas kustutame kõik allalaaditud failid andmekandjalt\?</string>
+    <string name="notifications">Teavitused</string>
+    <string name="settings_category_player_notification_summary">Seadista hetkel esitatava meediavoo teavitusi</string>
+    <string name="streams_notification_channel_name">Uued meediavood</string>
+    <plurals name="new_streams">
+        <item quantity="one">%s uus meediavoog</item>
+        <item quantity="other">%s uut meediavoogu</item>
+    </plurals>
+    <string name="loading_stream_details">Laadin meediavoo teavet…</string>
+    <string name="check_new_streams">Käivita uute meediavoogude kontroll</string>
+    <string name="enable_streams_notifications_title">Uute meedivoogude teavitused</string>
+    <string name="enable_streams_notifications_summary">Tellimustega seotud uute meedivoogude teavitused</string>
+    <string name="streams_notifications_network_title">Võrguühendus on vajalik</string>
+    <string name="any_network">Mis tahes võrk</string>
+    <string name="get_notified">Saa teavitusi</string>
+    <string name="you_successfully_subscribed">Sa oled nüüd selle kanali tellija</string>
+    <string name="enumeration_comma">,</string>
+    <string name="toggle_all">Lülita kõik sisse</string>
+    <string name="no_audio_streams_available_for_external_players">Välise pleieri jaoks ei leidu sobilikke helivoogusid</string>
+    <string name="streams_not_yet_supported_removed">Need meediavood, mida allalaadija ei oska kasutada, on peidetud</string>
+    <string name="no_video_streams_available_for_external_players">Välise pleieri jaoks ei leidu sobilikke videovoogusid</string>
+    <string name="select_quality_external_players">Vali välis pleieri jaoks sobilik kvaliteet</string>
+    <string name="unknown_format">Tundmatu vorming</string>
+    <string name="unknown_quality">Teadmata kvaliteet</string>
+    <string name="selected_stream_external_player_not_supported">Valitud meediavood ei ole toetatud välises pleieris</string>
+    <string name="percent">Protsent</string>
+    <string name="semitone">Pooltoon</string>
+    <string name="progressive_load_interval_title">Taasesituseks vajalike andmete laadimise samm</string>
+    <string name="feed_toggle_show_future_items">Näita tulevasi videoid</string>
 </resources>

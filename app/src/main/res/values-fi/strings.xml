@@ -638,7 +638,6 @@
 \nHaluatko poistaa kanavan tilauksesta\?</string>
     <string name="feed_load_error_account_info">Ei voitu ladata syötettä hakusanalle \'%s\'.</string>
     <string name="feed_load_error">Virhe syötteen lataamisessa</string>
-    <string name="downloads_storage_use_saf_summary_api_19">\'Storage Access Framework\' ei ole tuettu Android KitKatissa tai vanhemmissa versioissa</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Sinulta kysytään joka kerta, minne tiedosto ladataan</string>
     <string name="dont_show">Älä näytä</string>
     <string name="low_quality_smaller">Matala laatu (pienempi)</string>
@@ -684,4 +683,5 @@
     <string name="show_crash_the_player_summary">Näytä soitinta käytettäessä soittimen kaatamisen vaihtoehto</string>
     <string name="show_error_snackbar">Näytä virheen ponnahdusilmoitus</string>
     <string name="feed_new_items">Uudet syötteet</string>
+    <string name="notifications">Ilmoitukset</string>
 </resources>

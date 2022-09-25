@@ -94,7 +94,7 @@
     <string name="controls_background_title">In sottofondo</string>
     <string name="controls_popup_title">Popup</string>
     <string name="default_popup_resolution_title">Risoluzione predefinita lettore popup</string>
-    <string name="show_higher_resolutions_title">Mostra altre risoluzioni</string>
+    <string name="show_higher_resolutions_title">Mostra risoluzioni più elevate</string>
     <string name="show_higher_resolutions_summary">Solo alcuni dispositivi possono riprodurre video 2K/4K</string>
     <string name="default_video_format_title">Formato video predefinito</string>
     <string name="popup_remember_size_pos_title">Ricorda proprietà lettore popup</string>
@@ -291,7 +291,7 @@
     <string name="metadata_cache_wipe_summary">Elimina i dati delle pagine web memorizzati nella cache</string>
     <string name="metadata_cache_wipe_complete_notice">Cache metadati svuotata</string>
     <string name="playback_speed_control">Controlli della velocità di riproduzione</string>
-    <string name="playback_tempo">Tempo</string>
+    <string name="playback_tempo">Velocità</string>
     <string name="playback_pitch">Tono</string>
     <string name="unhook_checkbox">Scollega (può causare distorsione)</string>
     <string name="no_streams_available_download">Nessun flusso disponibile per il download</string>
@@ -560,8 +560,8 @@
     <string name="notification_action_shuffle">Casuale</string>
     <string name="notification_action_nothing">Niente</string>
     <string name="notification_action_repeat">Ripeti</string>
-    <string name="notification_scale_to_square_image_title">Ridimensiona copertina alla proporzione 1:1</string>
-    <string name="notification_scale_to_square_image_summary">Modifica la proporzione della copertina del video mostrata nella notifica da 16:9 a 1:1 (può introdurre distorsioni)</string>
+    <string name="notification_scale_to_square_image_title">Ritaglia copertina con proporzione 1:1</string>
+    <string name="notification_scale_to_square_image_summary">Ritaglia la copertina del video mostrata nella notifica, cambiando la proporzione da 16:9 a 1:1</string>
     <string name="show_memory_leaks">Mostra memory leak</string>
     <string name="enqueued">Aggiunto alla coda</string>
     <string name="enqueue_stream">Accoda</string>
@@ -633,7 +633,6 @@
     <string name="feed_load_error_account_info">Impossibile caricare feed per \"%s\".</string>
     <string name="feed_load_error">Errore caricamento feed</string>
     <string name="downloads_storage_use_saf_summary_api_29">A partire da Android 10 è supportato solo il Framework di accesso all\'archiviazione</string>
-    <string name="downloads_storage_use_saf_summary_api_19">Il Framework di accesso all\'archiviazione non è supportato su Android KitKat e versioni precedenti</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">È necessario specificare la destinazione di ogni dowload</string>
     <string name="no_dir_yet">Non è impostata alcuna cartella per i file scaricati, scegliere quella predefinita</string>
     <string name="off">Disattivata</string>
@@ -664,7 +663,7 @@
     <string name="start_main_player_fullscreen_title">Avvia il lettore principale a schermo intero</string>
     <string name="enqueued_next">Aggiunto alla coda come prossimo</string>
     <string name="enqueue_next_stream">Accoda come prossimo</string>
-    <string name="processing_may_take_a_moment">Elaborazione... Potrebbe volerci un attimo</string>
+    <string name="processing_may_take_a_moment">Elaborazione… Potrebbe volerci un attimo</string>
     <string name="manual_update_title">Controlla aggiornamenti</string>
     <string name="manual_update_description">Verifica manualmente la presenza di nuove versioni</string>
     <string name="checking_updates_toast">Controllo aggiornamenti…</string>
@@ -675,18 +674,48 @@
     <string name="error_report_notification_title">NewPipe ha riscontrato un errore, tocca per segnalarlo</string>
     <string name="show_error_snackbar">Mostra un messaggio di errore</string>
     <string name="no_appropriate_file_manager_message">Non è stato trovato alcun gestore di file appropriato per questa azione.
-\nInstallane uno prova a disattivare \"%s\" nelle impostazioni di download.</string>
+\nInstallane uno prova a disattivare \"%s\" nelle impostazioni di download</string>
     <string name="error_report_channel_name">Notifica per segnalazione errori</string>
     <string name="error_report_channel_description">Notifiche per segnalare errori</string>
     <string name="error_report_notification_toast">Si è verificato un errore, vedi la notifica</string>
     <string name="create_error_notification">Crea una notifica di errore</string>
     <string name="no_appropriate_file_manager_message_android_10">Non è stato trovato alcun gestore di file appropriato per questa azione.
-\nInstallane uno compatibile con Storage Access Framework.</string>
+\nInstallane uno compatibile con Storage Access Framework</string>
     <string name="detail_pinned_comment_view_description">Commento in primo piano</string>
-    <string name="background_player_already_playing_toast">Già in riproduzione in sottofondo</string>
     <string name="leak_canary_not_available">LeakCanary non è disponibile</string>
-    <string name="adjust_by_semitones_checkbox">Regola il tono secondo i semitoni musicali</string>
-    <string name="progressive_load_interval_default">Predefinito ExoPlayer</string>
-    <string name="progressive_load_interval_summary">Cambia la dimensione dell\'intervallo da caricare (attualmente %s). Un valore basso può velocizzare il caricamento iniziale del video. La modifica richiede il riavvio del lettore.</string>
-    <string name="playback_tempo_step">Passo tempo</string>
+    <string name="progressive_load_interval_exoplayer_default">Predefinito ExoPlayer</string>
+    <string name="progressive_load_interval_summary">Cambia la dimensione dell\'intervallo da caricare (attualmente %s). Un valore basso può velocizzare il caricamento iniziale del video. La modifica richiede il riavvio del lettore</string>
+    <string name="streams_notification_channel_description">Notifiche di nuovi contenuti dalle iscrizioni</string>
+    <string name="streams_notifications_interval_title">Frequenza controllo</string>
+    <string name="streams_notifications_network_title">Connessione di rete richiesta</string>
+    <string name="get_notified">Ricevi le notifiche</string>
+    <string name="you_successfully_subscribed">Ti sei iscritto a questo canale</string>
+    <string name="enumeration_comma">,</string>
+    <string name="toggle_all">Attiva/disattiva tutti</string>
+    <string name="enable_streams_notifications_title">Notifiche per nuovi contenuti</string>
+    <string name="settings_category_player_notification_title">Notifica del lettore multimediale</string>
+    <string name="settings_category_player_notification_summary">Configura la notifica dell\'elemento attualmente in riproduzione</string>
+    <string name="notifications">Notifiche</string>
+    <string name="streams_notification_channel_name">Nuovi contenuti</string>
+    <plurals name="new_streams">
+        <item quantity="one">%s nuovo contenuto</item>
+        <item quantity="other">%s nuovi contenuti</item>
+    </plurals>
+    <string name="loading_stream_details">Caricamento dei dettagli dei contenuti…</string>
+    <string name="delete_downloaded_files_confirm">Cancellare dal dispositivo i file scaricati\?</string>
+    <string name="check_new_streams">Controlla la presenza di nuovi contenuti</string>
+    <string name="any_network">Qualsiasi rete</string>
+    <string name="notifications_disabled">Le notifiche sono disabilitate</string>
+    <string name="enable_streams_notifications_summary">Notifica la presenza di nuovi contenuti dalle iscrizioni</string>
+    <string name="semitone">Semitono</string>
+    <string name="percent">Percentuale</string>
+    <string name="selected_stream_external_player_not_supported">Il flusso selezionato non è supportato dai lettori esterni</string>
+    <string name="no_video_streams_available_for_external_players">Non sono disponibili flussi video per i lettori esterni</string>
+    <string name="streams_not_yet_supported_removed">I flussi che non sono ancora supportati dal downloader non vengono visualizzati</string>
+    <string name="no_audio_streams_available_for_external_players">Non sono disponibili flussi audio per i lettori esterni</string>
+    <string name="select_quality_external_players">Seleziona qualità per lettori esterni</string>
+    <string name="unknown_quality">Qualità sconosciuta</string>
+    <string name="unknown_format">Formato sconosciuto</string>
+    <string name="progressive_load_interval_title">Dimensione intervallo di caricamento della riproduzione</string>
+    <string name="feed_toggle_show_future_items">Mostra video futuri</string>
 </resources>

@@ -650,7 +650,6 @@
     <string name="start_main_player_fullscreen_title">Inicia el reproductor principal en pantalla completa</string>
     <string name="main_page_content_swipe_remove">Llisqueu els elements per eliminar-los</string>
     <string name="start_main_player_fullscreen_summary">Si la rotació automàtica està bloquejada, no inicieu vídeos al mini reproductor, sinó que aneu directament al mode de pantalla completa. Podeu accedir igualment al mini reproductor sortint de pantalla completa</string>
-    <string name="background_player_already_playing_toast">Ja s\'està reproduint en segon pla</string>
     <string name="error_report_channel_name">Notificació d\'informe d\'error</string>
     <string name="crash_the_player">Tancar abruptament el reproductor</string>
     <string name="manual_update_title">Comprovar si hi ha actualitzacions</string>
@@ -676,7 +675,6 @@
         <item quantity="one">S\'ha suprimit %1$s baixada</item>
         <item quantity="other">S\'han suprimit %1$s baixades</item>
     </plurals>
-    <string name="downloads_storage_use_saf_summary_api_19">El \"Sistema d\'Accés a l\'Emmagatzematge\" no està implementat a Android KitKat i a versions anteriors</string>
     <string name="downloads_storage_use_saf_summary_api_29">A partir de l\'Android 10 només s\'admet el \"Sistema d\'Accés a l\'Emmagatzematge\"</string>
     <string name="feed_new_items">Elements de feed nous</string>
     <string name="feed_load_error_fast_unknown">El mode d\'alimentació ràpida no proporciona més informació sobre això.</string>

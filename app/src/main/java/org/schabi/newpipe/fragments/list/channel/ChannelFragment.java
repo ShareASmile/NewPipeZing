@@ -43,7 +43,7 @@ import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.subscription.SubscriptionManager;
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper;
-import org.schabi.newpipe.player.MainPlayer.PlayerType;
+import org.schabi.newpipe.player.PlayerType;
 import org.schabi.newpipe.player.playqueue.ChannelPlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.util.ExtractorHelper;
@@ -76,6 +76,8 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
 
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Disposable subscribeButtonMonitor;
+
+    private boolean channelContentNotSupported = false;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Views
@@ -130,6 +132,7 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
     public void onViewCreated(@NonNull final View rootView, final Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
         channelBinding = FragmentChannelBinding.bind(rootView);
+        showContentNotSupportedIfNeeded();
     }
 
     @Override
@@ -524,9 +527,12 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
             playlistControlBinding.getRoot().setVisibility(View.GONE);
         }
 
+        channelContentNotSupported = false;
         for (final Throwable throwable : result.getErrors()) {
             if (throwable instanceof ContentNotSupportedException) {
-                showContentNotSupported();
+                channelContentNotSupported = true;
+                showContentNotSupportedIfNeeded();
+                break;
             }
         }
 
@@ -558,7 +564,13 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
         });
     }
 
-    private void showContentNotSupported() {
+    private void showContentNotSupportedIfNeeded() {
+        // channelBinding might not be initialized when handleResult() is called
+        // (e.g. after rotating the screen, #6696)
+        if (!channelContentNotSupported || channelBinding == null) {
+            return;
+        }
+
         channelBinding.errorContentNotSupported.setVisibility(View.VISIBLE);
         channelBinding.channelKaomoji.setText("(︶︹︺)");
         channelBinding.channelKaomoji.setTextSize(TypedValue.COMPLEX_UNIT_SP, 45f);
@@ -566,17 +578,13 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
     }
 
     private PlayQueue getPlayQueue() {
-        return getPlayQueue(0);
-    }
-
-    private PlayQueue getPlayQueue(final int index) {
         final List<StreamInfoItem> streamItems = infoListAdapter.getItemsList().stream()
                 .filter(StreamInfoItem.class::isInstance)
                 .map(StreamInfoItem.class::cast)
                 .collect(Collectors.toList());
 
         return new ChannelPlayQueue(currentInfo.getServiceId(), currentInfo.getUrl(),
-                currentInfo.getNextPage(), streamItems, index);
+                currentInfo.getNextPage(), streamItems, 0);
     }
 
     /*//////////////////////////////////////////////////////////////////////////

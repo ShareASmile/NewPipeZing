@@ -121,7 +121,7 @@
     <string name="settings_file_replacement_character_summary">Ongeldige tekens worden vervangen door deze waarde</string>
     <string name="settings_file_replacement_character_title">Vervangend teken</string>
     <string name="charset_letters_and_digits">Letters en cijfers</string>
-    <string name="charset_most_special_characters">Speciaalste tekens</string>
+    <string name="charset_most_special_characters">Speciale tekens</string>
     <string name="subscribe_button_title">Abonneren</string>
     <string name="subscribed_button_title">Geabonneerd</string>
     <string name="channel_unsubscribed">Abonnement opgezegd</string>
@@ -559,7 +559,7 @@
     <string name="notification_action_2_title">Derde actieknop</string>
     <string name="notification_action_1_title">Tweede actieknop</string>
     <string name="notification_action_0_title">Eerste actieknop</string>
-    <string name="notification_scale_to_square_image_summary">Schaal de miniatuurafbeelding van de video die getoond wordt in de notificatie van verhouding 16:9 naar 1:1 (dit kan vervorming creëren)</string>
+    <string name="notification_scale_to_square_image_summary">Schaal de miniatuurafbeelding van de video die getoond wordt in de notificatie van verhouding 16:9 naar 1:1</string>
     <string name="notification_scale_to_square_image_title">Schaal de miniatuurafbeelding tot verhouding 1:1</string>
     <string name="auto_queue_toggle">Automatisch in de wachtrij plaatsen</string>
     <string name="show_memory_leaks">Toon memory leaks</string>
@@ -637,7 +637,6 @@
     <string name="feed_load_error_account_info">Kan geen feed laden voor \'%s\'.</string>
     <string name="feed_load_error">Error bij het inladen van de feed</string>
     <string name="downloads_storage_use_saf_summary_api_29">Vanaf Android 10 is enkel \'Storage Access Framework\' ondersteund</string>
-    <string name="downloads_storage_use_saf_summary_api_19">Het \'Storage Access Framework\' is niet ondersteund op Android KitKat en lager</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">U wordt gevraagd waar elk bestand wordt opgeslagen</string>
     <string name="no_dir_yet">Nog geen downloadfolder gekozen, kies de standaard downloadfolder</string>
     <string name="detail_heart_img_view_description">Geliefd door de maker</string>
@@ -677,7 +676,6 @@
     <string name="error_report_notification_title">NewPipe meldt fout, tik voor bericht</string>
     <string name="error_report_notification_toast">Foutmelding</string>
     <string name="create_error_notification">Maak een foutmelding</string>
-    <string name="background_player_already_playing_toast">Speelt al op de achtergrond</string>
     <string name="show_error_snackbar">Korte foutmelding weergeven</string>
     <string name="no_appropriate_file_manager_message">Er is geen geschikte bestandsbeheerder gevonden voor deze actie.
 \nInstalleer een bestandsbeheerder of probeer \'%s\' uit te schakelen in de download instellingen.</string>
@@ -686,7 +684,38 @@
     <string name="detail_pinned_comment_view_description">Vastgemaakt commentaar</string>
     <string name="leak_canary_not_available">LeakCanary is niet beschikbaar</string>
     <string name="progressive_load_interval_summary">Verander de laad interval tijd (nu %s). Een lagere waarde kan het initiële laden van de video versnellen. De wijziging vereist een herstart van de speler.</string>
-    <string name="adjust_by_semitones_checkbox">Pas de toonhoogte aan met muzikale halve tonen</string>
-    <string name="playback_tempo_step">Tempo stap</string>
-    <string name="progressive_load_interval_default">ExoPlayer standaard</string>
+    <string name="progressive_load_interval_exoplayer_default">ExoPlayer standaard</string>
+    <string name="settings_category_player_notification_title">Speler melding</string>
+    <string name="settings_category_player_notification_summary">Configureer meldingen van de huidige spelende stream</string>
+    <string name="notifications">Meldingen</string>
+    <string name="streams_notification_channel_name">Nieuwe streams</string>
+    <string name="streams_notification_channel_description">Meldingen over nieuwe streams van abonnementen</string>
+    <string name="loading_stream_details">Bezig met laden van stream details…</string>
+    <string name="check_new_streams">Controleer op nieuwe streams</string>
+    <string name="enable_streams_notifications_title">Meldingen over nieuwe streams</string>
+    <string name="enable_streams_notifications_summary">Melding over nieuwe streams van abonnementen</string>
+    <string name="streams_notifications_interval_title">Frequentie van controleren</string>
+    <string name="streams_notifications_network_title">Vereiste netwerk connectie</string>
+    <string name="any_network">Elk netwerk</string>
+    <string name="notifications_disabled">Meldingen zijn uitgeschakeld</string>
+    <string name="get_notified">Ontvang een melding</string>
+    <string name="enumeration_comma">,</string>
+    <string name="toggle_all">Alles in-/uitschakelen</string>
+    <string name="percent">Percentage</string>
+    <string name="semitone">Halve toon</string>
+    <plurals name="new_streams">
+        <item quantity="one">%s nieuwe stream</item>
+        <item quantity="other">%s nieuwe streams</item>
+    </plurals>
+    <string name="you_successfully_subscribed">Je bent nu geabonneerd op dit kanaal</string>
+    <string name="delete_downloaded_files_confirm">Alle gedownloade bestanden van schijf wissen\?</string>
+    <string name="selected_stream_external_player_not_supported">De geselecteerde stream wordt niet ondersteund door externe spelers</string>
+    <string name="no_video_streams_available_for_external_players">Er zijn geen videostreams beschikbaar voor externe spelers</string>
+    <string name="unknown_quality">Onbekende kwaliteit</string>
+    <string name="streams_not_yet_supported_removed">Streams die niet ondersteund worden door de downloader, worden niet getoond</string>
+    <string name="no_audio_streams_available_for_external_players">Er zijn geen geluidsstreams beschikbaar voor externe spelers</string>
+    <string name="select_quality_external_players">Selecteer kwaliteit voor externe spelers</string>
+    <string name="unknown_format">Onbekend formaat</string>
+    <string name="progressive_load_interval_title">Intervalgrootte tijdens afspelen</string>
+    <string name="feed_toggle_show_future_items">Toon toekomstige video\'s</string>
 </resources>
