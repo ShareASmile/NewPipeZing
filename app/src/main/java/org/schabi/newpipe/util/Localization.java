@@ -20,7 +20,6 @@ import org.ocpsoft.prettytime.units.Decade;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
-import org.schabi.newpipe.ktx.OffsetDateTimeKt;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,7 +29,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,10 +59,6 @@ public final class Localization {
     private static PrettyTime prettyTime;
 
     private Localization() { }
-
-    public static void init(final Context context) {
-        initPrettyTime(context);
-    }
 
     @NonNull
     public static String concatenateStrings(final String... strings) {
@@ -232,6 +226,16 @@ public final class Localization {
                 shortCount(context, subscriberCount));
     }
 
+    public static String downloadCount(final Context context, final int downloadCount) {
+        return getQuantity(context, R.plurals.download_finished_notification, 0,
+                downloadCount, shortCount(context, downloadCount));
+    }
+
+    public static String deletedDownloadCount(final Context context, final int deletedCount) {
+        return getQuantity(context, R.plurals.deleted_downloads_toast, 0,
+                deletedCount, shortCount(context, deletedCount));
+    }
+
     private static String getQuantity(final Context context, @PluralsRes final int pluralId,
                                       @StringRes final int zeroCaseStringId, final long count,
                                       final String formattedCount) {
@@ -307,18 +311,18 @@ public final class Localization {
     // Pretty Time
     //////////////////////////////////////////////////////////////////////////*/
 
-    private static void initPrettyTime(final Context context) {
-        prettyTime = new PrettyTime(getAppLocale(context));
+    public static void initPrettyTime(final PrettyTime time) {
+        prettyTime = time;
         // Do not use decades as YouTube doesn't either.
         prettyTime.removeUnit(Decade.class);
     }
 
-    public static String relativeTime(final OffsetDateTime offsetDateTime) {
-        return relativeTime(OffsetDateTimeKt.toCalendar(offsetDateTime));
+    public static PrettyTime resolvePrettyTime(final Context context) {
+        return new PrettyTime(getAppLocale(context));
     }
 
-    public static String relativeTime(final Calendar calendarTime) {
-        return prettyTime.formatUnrounded(calendarTime);
+    public static String relativeTime(final OffsetDateTime offsetDateTime) {
+        return prettyTime.formatUnrounded(offsetDateTime);
     }
 
     private static void changeAppLanguage(final Locale loc, final Resources res) {
@@ -353,5 +357,20 @@ public final class Localization {
 
     private static double round(final double value, final int places) {
         return new BigDecimal(value).setScale(places, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    /**
+     * Workaround to match normalized captions like english to English or deutsch to Deutsch.
+     * @param list the list to search into
+     * @param toFind the string to look for
+     * @return whether the string was found or not
+     */
+    public static boolean containsCaseInsensitive(final List<String> list, final String toFind) {
+        for (final String i : list) {
+            if (i.equalsIgnoreCase(toFind)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

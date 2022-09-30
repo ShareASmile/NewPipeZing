@@ -20,20 +20,19 @@ public class LoadController implements LoadControl {
     //////////////////////////////////////////////////////////////////////////*/
 
     public LoadController() {
-        this(PlayerHelper.getPlaybackStartBufferMs(),
-                PlayerHelper.getPlaybackMinimumBufferMs(),
-                PlayerHelper.getPlaybackOptimalBufferMs());
+        this(PlayerHelper.getPlaybackStartBufferMs());
     }
 
-    private LoadController(final int initialPlaybackBufferMs,
-                           final int minimumPlaybackBufferMs,
-                           final int optimalPlaybackBufferMs) {
+    private LoadController(final int initialPlaybackBufferMs) {
         this.initialPlaybackBufferUs = initialPlaybackBufferMs * 1000;
 
         final DefaultLoadControl.Builder builder = new DefaultLoadControl.Builder();
-        builder.setBufferDurationsMs(minimumPlaybackBufferMs, optimalPlaybackBufferMs,
-                initialPlaybackBufferMs, initialPlaybackBufferMs);
-        internalLoadControl = builder.createDefaultLoadControl();
+        builder.setBufferDurationsMs(
+                DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
+                DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
+                initialPlaybackBufferMs,
+                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS);
+        internalLoadControl = builder.build();
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -47,9 +46,9 @@ public class LoadController implements LoadControl {
     }
 
     @Override
-    public void onTracksSelected(final Renderer[] renderers, final TrackGroupArray trackGroupArray,
-                                 final TrackSelectionArray trackSelectionArray) {
-        internalLoadControl.onTracksSelected(renderers, trackGroupArray, trackSelectionArray);
+    public void onTracksSelected(final Renderer[] renderers, final TrackGroupArray trackGroups,
+                                 final TrackSelectionArray trackSelections) {
+        internalLoadControl.onTracksSelected(renderers, trackGroups, trackSelections);
     }
 
     @Override
@@ -80,12 +79,14 @@ public class LoadController implements LoadControl {
     }
 
     @Override
-    public boolean shouldContinueLoading(final long bufferedDurationUs,
+    public boolean shouldContinueLoading(final long playbackPositionUs,
+                                         final long bufferedDurationUs,
                                          final float playbackSpeed) {
         if (!preloadingEnabled) {
             return false;
         }
-        return internalLoadControl.shouldContinueLoading(bufferedDurationUs, playbackSpeed);
+        return internalLoadControl.shouldContinueLoading(
+                playbackPositionUs, bufferedDurationUs, playbackSpeed);
     }
 
     @Override

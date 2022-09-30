@@ -1,6 +1,5 @@
 package org.schabi.newpipe.info_list.holder;
 
-import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -12,6 +11,8 @@ import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.info_list.InfoItemBuilder;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.Localization;
+
+import androidx.preference.PreferenceManager;
 
 import static org.schabi.newpipe.MainActivity.DEBUG;
 

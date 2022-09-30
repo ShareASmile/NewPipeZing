@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/playlist_control"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:visibility="invisible"
@@ -19,7 +17,7 @@
         android:focusable="true"
         android:gravity="center">
 
-        <TextView
+        <org.schabi.newpipe.views.NewPipeTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="4dp"
@@ -27,12 +25,11 @@
             android:text="@string/controls_background_title"
             android:textColor="?attr/colorAccent"
             android:textSize="@dimen/channel_rss_title_size"
-            app:drawableLeftCompat="?attr/ic_headset"
-            app:drawableStartCompat="?attr/ic_headset" />
+            app:drawableLeftCompat="@drawable/ic_headset"
+            app:drawableStartCompat="@drawable/ic_headset" />
     </LinearLayout>
 
     <View
-        android:id="@+id/anchorLeft"
         android:layout_width="1dp"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/playlist_ctrl_separator_margin"
@@ -50,7 +47,7 @@
         android:focusable="true"
         android:gravity="center">
 
-        <TextView
+        <org.schabi.newpipe.views.NewPipeTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -60,7 +57,6 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/anchorRight"
         android:layout_width="1dp"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/playlist_ctrl_separator_margin"
@@ -78,7 +74,7 @@
         android:focusable="true"
         android:gravity="center">
 
-        <TextView
+        <org.schabi.newpipe.views.NewPipeTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="4dp"
@@ -86,7 +82,7 @@
             android:text="@string/controls_popup_title"
             android:textColor="?attr/colorAccent"
             android:textSize="@dimen/channel_rss_title_size"
-            app:drawableLeftCompat="?attr/ic_popup"
-            app:drawableStartCompat="?attr/ic_popup" />
+            app:drawableLeftCompat="@drawable/ic_picture_in_picture"
+            app:drawableStartCompat="@drawable/ic_picture_in_picture" />
     </LinearLayout>
 </LinearLayout>

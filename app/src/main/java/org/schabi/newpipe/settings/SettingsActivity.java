@@ -1,6 +1,5 @@
 package org.schabi.newpipe.settings;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,11 +40,6 @@ import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 public class SettingsActivity extends AppCompatActivity
         implements BasePreferenceFragment.OnPreferenceStartFragmentCallback {
-
-    public static void initSettings(final Context context) {
-        NewPipeSettings.initSettings(context);
-    }
-
     @Override
     protected void onCreate(final Bundle savedInstanceBundle) {
         setTheme(ThemeHelper.getSettingsThemeStyle(this));
@@ -56,11 +50,11 @@ public class SettingsActivity extends AppCompatActivity
                 SettingsLayoutBinding.inflate(getLayoutInflater());
         setContentView(settingsLayoutBinding.getRoot());
 
-        setSupportActionBar(settingsLayoutBinding.toolbarLayout.toolbar);
+        setSupportActionBar(settingsLayoutBinding.settingsToolbarLayout.toolbar);
 
         if (savedInstanceBundle == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_holder, new MainSettingsFragment())
+                    .replace(R.id.settings_fragment_holder, new MainSettingsFragment())
                     .commit();
         }
 
@@ -102,7 +96,7 @@ public class SettingsActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.animator.custom_fade_in, R.animator.custom_fade_out,
                         R.animator.custom_fade_in, R.animator.custom_fade_out)
-                .replace(R.id.fragment_holder, fragment)
+                .replace(R.id.settings_fragment_holder, fragment)
                 .addToBackStack(null)
                 .commit();
         return true;

@@ -10,21 +10,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import icepick.Icepick;
 import icepick.State;
 import leakcanary.AppWatcher;
 
 public abstract class BaseFragment extends Fragment {
-    public static final ImageLoader IMAGE_LOADER = ImageLoader.getInstance();
     protected final String TAG = getClass().getSimpleName() + "@" + Integer.toHexString(hashCode());
-    protected final boolean DEBUG = MainActivity.DEBUG;
+    protected static final boolean DEBUG = MainActivity.DEBUG;
     protected AppCompatActivity activity;
     //These values are used for controlling fragments when they are part of the frontpage
     @State
     protected boolean useAsFrontPage = false;
-    private boolean mIsVisibleToUser = false;
 
     public void useAsFrontPage(final boolean value) {
         useAsFrontPage = value;
@@ -35,7 +31,7 @@ public abstract class BaseFragment extends Fragment {
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
-    public void onAttach(final Context context) {
+    public void onAttach(@NonNull final Context context) {
         super.onAttach(context);
         activity = (AppCompatActivity) context;
     }
@@ -61,7 +57,7 @@ public abstract class BaseFragment extends Fragment {
 
 
     @Override
-    public void onViewCreated(final View rootView, final Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View rootView, final Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
         if (DEBUG) {
             Log.d(TAG, "onViewCreated() called with: "
@@ -73,7 +69,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(final Bundle outState) {
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         Icepick.saveInstanceState(this, outState);
     }
@@ -86,12 +82,6 @@ public abstract class BaseFragment extends Fragment {
         super.onDestroy();
 
         AppWatcher.INSTANCE.getObjectWatcher().watch(this);
-    }
-
-    @Override
-    public void setUserVisibleHint(final boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        mIsVisibleToUser = isVisibleToUser;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -112,8 +102,7 @@ public abstract class BaseFragment extends Fragment {
         if (DEBUG) {
             Log.d(TAG, "setTitle() called with: title = [" + title + "]");
         }
-        if ((!useAsFrontPage || mIsVisibleToUser)
-                && (activity != null && activity.getSupportActionBar() != null)) {
+        if (!useAsFrontPage && activity != null && activity.getSupportActionBar() != null) {
             activity.getSupportActionBar().setDisplayShowTitleEnabled(true);
             activity.getSupportActionBar().setTitle(title);
         }

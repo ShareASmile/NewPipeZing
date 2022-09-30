@@ -1,6 +1,5 @@
 package org.schabi.newpipe.settings;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.DialogFragment;
@@ -16,11 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.error.ErrorActivity;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
-import org.schabi.newpipe.report.ErrorActivity;
-import org.schabi.newpipe.report.ErrorInfo;
-import org.schabi.newpipe.report.UserAction;
 import org.schabi.newpipe.util.KioskTranslator;
 import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.ThemeHelper;
@@ -83,7 +81,7 @@ public class SelectKioskFragment extends DialogFragment {
         try {
             selectKioskAdapter = new SelectKioskAdapter();
         } catch (final Exception e) {
-            onError(e);
+            ErrorActivity.reportUiErrorInSnackbar(this, "Selecting kiosk", e);
         }
         recyclerView.setAdapter(selectKioskAdapter);
 
@@ -95,7 +93,7 @@ public class SelectKioskFragment extends DialogFragment {
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
-    public void onCancel(final DialogInterface dialogInterface) {
+    public void onCancel(@NonNull final DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);
         if (onCancelListener != null) {
             onCancelListener.onCancel();
@@ -107,16 +105,6 @@ public class SelectKioskFragment extends DialogFragment {
             onSelectedListener.onKioskSelected(entry.serviceId, entry.kioskId, entry.kioskName);
         }
         dismiss();
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-    // Error
-    //////////////////////////////////////////////////////////////////////////*/
-
-    protected void onError(final Throwable e) {
-        final Activity activity = getActivity();
-        ErrorActivity.reportError(activity, e, activity.getClass(), null, ErrorInfo
-                .make(UserAction.UI_ERROR, "none", "", R.string.app_ui_crash));
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -151,6 +139,7 @@ public class SelectKioskFragment extends DialogFragment {
             return kioskList.size();
         }
 
+        @NonNull
         public SelectKioskItemHolder onCreateViewHolder(final ViewGroup parent, final int type) {
             final View item = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.select_kiosk_item, parent, false);

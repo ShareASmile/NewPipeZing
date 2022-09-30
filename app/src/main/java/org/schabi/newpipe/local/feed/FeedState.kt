@@ -1,8 +1,8 @@
 package org.schabi.newpipe.local.feed
 
 import androidx.annotation.StringRes
-import org.schabi.newpipe.extractor.stream.StreamInfoItem
-import java.util.Calendar
+import org.schabi.newpipe.local.feed.item.StreamItem
+import java.time.OffsetDateTime
 
 sealed class FeedState {
     data class ProgressState(
@@ -12,8 +12,8 @@ sealed class FeedState {
     ) : FeedState()
 
     data class LoadedState(
-        val items: List<StreamInfoItem>,
-        val oldestUpdate: Calendar? = null,
+        val items: List<StreamItem>,
+        val oldestUpdate: OffsetDateTime? = null,
         val notLoadedCount: Long,
         val itemsErrors: List<Throwable> = emptyList()
     ) : FeedState()

@@ -40,10 +40,12 @@ import com.google.android.material.snackbar.Snackbar;
 import org.schabi.newpipe.BuildConfig;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.report.ErrorActivity;
-import org.schabi.newpipe.report.ErrorInfo;
-import org.schabi.newpipe.report.UserAction;
+import org.schabi.newpipe.error.ErrorActivity;
+import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.io.File;
 import java.net.URI;
@@ -59,7 +61,7 @@ import us.shandian.giga.get.DownloadMission;
 import us.shandian.giga.get.FinishedMission;
 import us.shandian.giga.get.Mission;
 import us.shandian.giga.get.MissionRecoveryInfo;
-import us.shandian.giga.io.StoredFileHelper;
+import org.schabi.newpipe.streams.io.StoredFileHelper;
 import us.shandian.giga.service.DownloadManager;
 import us.shandian.giga.service.DownloadManagerService;
 import us.shandian.giga.ui.common.Deleter;
@@ -346,11 +348,8 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         if (BuildConfig.DEBUG)
             Log.v(TAG, "Mime: " + mimeType + " package: " + BuildConfig.APPLICATION_ID + ".provider");
 
-        Uri uri = resolveShareableUri(mission);
-
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(uri, mimeType);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(resolveShareableUri(mission), mimeType);
         intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -360,10 +359,8 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
         }
 
-        //mContext.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
         if (intent.resolveActivity(mContext.getPackageManager()) != null) {
-            mContext.startActivity(intent);
+            ShareUtils.openIntentInApp(mContext, intent, false);
         } else {
             Toast.makeText(mContext, R.string.toast_no_player, Toast.LENGTH_LONG).show();
         }
@@ -372,12 +369,22 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
     private void shareFile(Mission mission) {
         if (checkInvalidFile(mission)) return;
 
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType(resolveMimeType(mission));
-        intent.putExtra(Intent.EXTRA_STREAM, resolveShareableUri(mission));
+        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType(resolveMimeType(mission));
+        shareIntent.putExtra(Intent.EXTRA_STREAM, resolveShareableUri(mission));
+        shareIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
+
+        final Intent intent = new Intent(Intent.ACTION_CHOOSER);
+        intent.putExtra(Intent.EXTRA_INTENT, shareIntent);
+        // unneeded to set a title to the chooser on Android P and higher because the system
+        // ignores this title on these versions
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
+            intent.putExtra(Intent.EXTRA_TITLE, mContext.getString(R.string.share_dialog_title));
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
 
-        mContext.startActivity(Intent.createChooser(intent, null));
+        mContext.startActivity(intent);
     }
 
     /**
@@ -548,7 +555,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             );
         }
 
-        builder.setNegativeButton(R.string.finish, (dialog, which) -> dialog.cancel())
+        builder.setNegativeButton(R.string.ok, (dialog, which) -> dialog.cancel())
                 .setTitle(mission.storage.getName())
                 .create()
                 .show();
@@ -571,16 +578,12 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         try {
             service = NewPipe.getServiceByUrl(mission.source).getServiceInfo().getName();
         } catch (Exception e) {
-            service = "-";
+            service = ErrorInfo.SERVICE_NONE;
         }
 
-        ErrorActivity.reportError(
-                mContext,
-                mission.errObject,
-                null,
-                null,
-                ErrorInfo.make(action, service, request.toString(), reason)
-        );
+        ErrorActivity.reportError(mContext,
+                new ErrorInfo(ErrorInfo.Companion.throwableToStringList(mission.errObject), action,
+                        service, request.toString(), reason, null));
     }
 
     public void clearFinishedDownloads(boolean delete) {
@@ -594,7 +597,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             }
             applyChanges();
 
-            String msg = String.format(mContext.getString(R.string.deleted_downloads), mHidden.size());
+            String msg = Localization.deletedDownloadCount(mContext, mHidden.size());
             mSnackbar = Snackbar.make(mView, msg, Snackbar.LENGTH_INDEFINITE);
             mSnackbar.setAction(R.string.undo, s -> {
                 Iterator<Mission> i = mHidden.iterator();

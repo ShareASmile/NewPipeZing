@@ -1,17 +1,16 @@
 package org.schabi.newpipe.local.bookmark;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentManager;
 
 import org.reactivestreams.Subscriber;
@@ -23,19 +22,21 @@ import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.playlist.PlaylistLocalItem;
 import org.schabi.newpipe.database.playlist.PlaylistMetadataEntry;
 import org.schabi.newpipe.database.playlist.model.PlaylistRemoteEntity;
+import org.schabi.newpipe.databinding.DialogEditTextBinding;
+import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.local.BaseLocalListFragment;
 import org.schabi.newpipe.local.playlist.LocalPlaylistManager;
 import org.schabi.newpipe.local.playlist.RemotePlaylistManager;
-import org.schabi.newpipe.report.UserAction;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 
 import java.util.List;
 
 import icepick.State;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 
@@ -77,9 +78,9 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
     }
 
     @Override
-    public void setUserVisibleHint(final boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (activity != null && isVisibleToUser) {
+    public void onResume() {
+        super.onResume();
+        if (activity != null) {
             setTitle(activity.getString(R.string.tab_bookmarks));
         }
     }
@@ -206,7 +207,8 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
 
             @Override
             public void onError(final Throwable exception) {
-                BookmarkFragment.this.onError(exception);
+                showError(new ErrorInfo(exception,
+                        UserAction.REQUESTED_BOOKMARK, "Loading playlists"));
             }
 
             @Override
@@ -238,17 +240,6 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
-    protected boolean onError(final Throwable exception) {
-        if (super.onError(exception)) {
-            return true;
-        }
-
-        onUnrecoverableError(exception, UserAction.SOMETHING_ELSE,
-                "none", "Bookmark", R.string.general_error);
-        return true;
-    }
-
-    @Override
     protected void resetFragment() {
         super.resetFragment();
         if (disposables != null) {
@@ -265,14 +256,18 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
     }
 
     private void showLocalDialog(final PlaylistMetadataEntry selectedItem) {
-        final View dialogView = View.inflate(getContext(), R.layout.dialog_bookmark, null);
-        final EditText editText = dialogView.findViewById(R.id.playlist_name_edit_text);
-        editText.setText(selectedItem.name);
+        final DialogEditTextBinding dialogBinding
+                = DialogEditTextBinding.inflate(getLayoutInflater());
+        dialogBinding.dialogEditText.setHint(R.string.name);
+        dialogBinding.dialogEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+        dialogBinding.dialogEditText.setText(selectedItem.name);
 
-        final Builder builder = new AlertDialog.Builder(activity);
-        builder.setView(dialogView)
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setView(dialogBinding.getRoot())
                 .setPositiveButton(R.string.rename_playlist, (dialog, which) ->
-                        changeLocalPlaylistName(selectedItem.uid, editText.getText().toString()))
+                        changeLocalPlaylistName(
+                                selectedItem.uid,
+                                dialogBinding.dialogEditText.getText().toString()))
                 .setNegativeButton(R.string.cancel, null)
                 .setNeutralButton(R.string.delete, (dialog, which) -> {
                     showDeleteDialog(selectedItem.name,
@@ -295,8 +290,10 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
                 .setPositiveButton(R.string.delete, (dialog, i) ->
                         disposables.add(deleteReactor
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(ignored -> { /*Do nothing on success*/ }, this::onError))
-                )
+                                .subscribe(ignored -> { /*Do nothing on success*/ }, throwable ->
+                                        showError(new ErrorInfo(throwable,
+                                                UserAction.REQUESTED_BOOKMARK,
+                                                "Deleting playlist")))))
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
@@ -314,7 +311,10 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
         localPlaylistManager.renamePlaylist(id, name);
         final Disposable disposable = localPlaylistManager.renamePlaylist(id, name)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(longs -> { /*Do nothing on success*/ }, this::onError);
+                .subscribe(longs -> { /*Do nothing on success*/ }, throwable -> showError(
+                        new ErrorInfo(throwable,
+                                UserAction.REQUESTED_BOOKMARK,
+                                "Changing playlist name")));
         disposables.add(disposable);
     }
 }

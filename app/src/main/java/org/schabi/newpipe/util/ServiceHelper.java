@@ -2,10 +2,10 @@ package org.schabi.newpipe.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import androidx.preference.PreferenceManager;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
+import androidx.preference.PreferenceManager;
 
 import com.grack.nanojson.JsonObject;
 import com.grack.nanojson.JsonParser;
@@ -38,6 +38,8 @@ public final class ServiceHelper {
                 return R.drawable.place_holder_gadse;
             case 3:
                 return R.drawable.place_holder_peertube;
+            case 4:
+                return R.drawable.place_holder_bandcamp;
             default:
                 return R.drawable.place_holder_circle;
         }
@@ -48,6 +50,7 @@ public final class ServiceHelper {
             case "all":
                 return c.getString(R.string.all);
             case "videos":
+            case "sepia_videos":
             case "music_videos":
                 return c.getString(R.string.videos_string);
             case "channels":

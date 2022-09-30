@@ -24,10 +24,6 @@ import android.os.Handler.Callback;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Parcelable;
-
-import androidx.core.app.ServiceCompat;
-import androidx.core.content.ContextCompat;
-import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
@@ -37,6 +33,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Builder;
+import androidx.core.app.ServiceCompat;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.download.DownloadActivity;
@@ -48,8 +47,10 @@ import java.util.ArrayList;
 
 import us.shandian.giga.get.DownloadMission;
 import us.shandian.giga.get.MissionRecoveryInfo;
-import us.shandian.giga.io.StoredDirectoryHelper;
-import us.shandian.giga.io.StoredFileHelper;
+import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
+import org.schabi.newpipe.streams.io.StoredFileHelper;
+import org.schabi.newpipe.util.Localization;
+
 import us.shandian.giga.postprocessing.Postprocessing;
 import us.shandian.giga.service.DownloadManager.NetworkState;
 
@@ -468,7 +469,8 @@ public class DownloadManagerService extends Service {
                     .setContentIntent(makePendingIntent(ACTION_OPEN_DOWNLOADS_FINISHED));
         }
 
-        if (downloadDoneCount < 1) {
+        downloadDoneCount++;
+        if (downloadDoneCount == 1) {
             downloadDoneList.append(name);
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -477,9 +479,9 @@ public class DownloadManagerService extends Service {
                 downloadDoneNotification.setContentTitle(null);
             }
 
-            downloadDoneNotification.setContentText(getString(R.string.download_finished));
+            downloadDoneNotification.setContentText(Localization.downloadCount(this, downloadDoneCount));
             downloadDoneNotification.setStyle(new NotificationCompat.BigTextStyle()
-                    .setBigContentTitle(getString(R.string.download_finished))
+                    .setBigContentTitle(Localization.downloadCount(this, downloadDoneCount))
                     .bigText(name)
             );
         } else {
@@ -487,12 +489,11 @@ public class DownloadManagerService extends Service {
             downloadDoneList.append(name);
 
             downloadDoneNotification.setStyle(new NotificationCompat.BigTextStyle().bigText(downloadDoneList));
-            downloadDoneNotification.setContentTitle(getString(R.string.download_finished_more, String.valueOf(downloadDoneCount + 1)));
+            downloadDoneNotification.setContentTitle(Localization.downloadCount(this, downloadDoneCount));
             downloadDoneNotification.setContentText(downloadDoneList);
         }
 
         mNotificationManager.notify(DOWNLOADS_NOTIFICATION_ID, downloadDoneNotification.build());
-        downloadDoneCount++;
     }
 
     public void notifyFailedDownload(DownloadMission mission) {

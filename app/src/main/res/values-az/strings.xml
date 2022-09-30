@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="main_bg_subtitle">Başlamaq üçün \"Axtarış\" bölməsinə toxunun
-\n</string>
-    <string name="view_count_text">%1$s baxış</string>
+    <string name="main_bg_subtitle">Başlamaq üçün \"Axtarış\" bölməsinə toxunun</string>
     <string name="upload_date_text">%1$s tarixində yayımlanıb</string>
     <string name="no_player_found">Axın pleyeri tapılmadı. \"VLC\" yüklənilsin\?</string>
     <string name="no_player_found_toast">Axın pleyeri tapılmadı (baxmaq üçün \"VLC\"ni yükləyə bilərsiniz).</string>
@@ -16,7 +14,6 @@
     <string name="settings">Ayarlar</string>
     <string name="did_you_mean">Bunu demək istədiniz: \"%1$s\"\?</string>
     <string name="share_dialog_title">Paylaş</string>
-    <string name="choose_browser">Brauzeri seçin</string>
     <string name="use_external_video_player_title">Kənar video oynadıcı istifadə et</string>
     <string name="use_external_video_player_summary">Bəzi görüntü keyfiyyətlərində səs itir</string>
     <string name="use_external_audio_player_title">Kənar audio oynadıcı istifadə et</string>
@@ -24,7 +21,6 @@
     <string name="subscribed_button_title">Abunə olundu</string>
     <string name="channel_unsubscribed">Kanal abunəliyindən çıxıldı</string>
     <string name="show_info">Məlumat göstər</string>
-    <string name="tab_main">Əsas</string>
     <string name="tab_subscriptions">Abunəliklər</string>
     <string name="tab_bookmarks">Saxlanmış Oxutma Siyahıları</string>
     <string name="fragment_feed_title">Yeni nə var</string>
@@ -35,7 +31,6 @@
     <string name="download_path_audio_title">Audio yükləmə qovluğu</string>
     <string name="download_path_audio_summary">Yüklənmiş audio faylları burada saxlanılır</string>
     <string name="download_path_audio_dialog_title">Audio faylları üçün yükləmə qovluğunu seçin</string>
-    <string name="autoplay_by_calling_app_summary">\"NewPipe\" başqa bir proqramdan çağrıldığı zaman avtomatik olaraq videonu oynadır</string>
     <string name="default_resolution_title">Standard görüntü keyfiyyəti</string>
     <string name="show_higher_resolutions_title">Daha böyük ölçüləri göstər</string>
     <string name="play_with_kodi_title">\"Kodi\" ilə oxut</string>
@@ -50,8 +45,6 @@
     <string name="dark_theme_title">Qaranlıq</string>
     <string name="black_theme_title">Qara</string>
     <string name="unsubscribe">Abunəlikdən çıx</string>
-    <string name="popup_mode_share_menu_title">Üzən pəncərə</string>
-    <string name="screen_rotation">fırlanma</string>
     <string name="open_in_popup_mode">Ani pəncərə rejimində aç</string>
     <string name="autoplay_title">Avto-oxutma</string>
     <string name="download_dialog_title">Yüklə</string>
@@ -68,8 +61,6 @@
     <string name="enable_search_history_title">Axtarış tarixçəsi</string>
     <string name="show_search_suggestions_summary">Axtarış edərkən təklifləri göstər</string>
     <string name="show_search_suggestions_title">Axtarış təklifləri</string>
-    <string name="player_gesture_controls_summary">Pleyerin parlaqlığını və səsini idarə etmək üçün jestlərdən istifadə edin</string>
-    <string name="player_gesture_controls_title">Jestli pleyer idarəetmələri</string>
     <string name="brightness_gesture_control_summary">Pleyerin parlaqlığını idarə etmək üçün jestlərdən istifadə edin</string>
     <string name="brightness_gesture_control_title">Parlaqlığın jestlə idarə edilməsi</string>
     <string name="volume_gesture_control_summary">Pleyerin səsini idarə etmək üçün jestlərdən istifadə edin</string>
@@ -99,38 +90,29 @@
     <string name="notification_action_0_title">Birinci hərəkət düyməsi</string>
     <string name="show_higher_resolutions_summary">Yalnız bəzi cihazlar 2K/4K videoları oxuda bilir</string>
     <string name="default_popup_resolution_title">Ani pəncərədə standart görüntü keyfiyyəti</string>
-    <string name="autoplay_by_calling_app_title">Avto-oxutma</string>
-    <string name="download_choose_new_path">Effektiv olması üçün yükləmə qovluqlarını dəyişdirin</string>
     <string name="controls_add_to_playlist_title">Əlavə et</string>
     <string name="controls_popup_title">Ani pəncərə (popup)</string>
     <string name="tab_choose">Tab-vərəqəni Seçin</string>
-    <string name="tab_new">Yeni Tab-vərəqə</string>
     <string name="subscription_update_failed">Abunəlik yenilənmədi</string>
     <string name="subscription_change_failed">Abunəlik dəyişdirilmədi</string>
     <string name="search_showing_result_for">Nəticələr göstərilir: %s</string>
     <string name="channels">Kanallar</string>
-    <string name="channel">Kanal</string>
     <string name="video_detail_by">%s tərəfindən</string>
     <string name="youtube_restricted_mode_enabled_title">\"Youtube\"un \"Məhdudiyyətli Rejimi\"ni aktivləşdir</string>
     <string name="show_age_restricted_content_summary">Yaş limiti olduğuna görə (məs. 18+) böyük ehtimal uşaqlar üçün uyğun olmayan məzmunu göstər.</string>
     <string name="show_age_restricted_content_title">Yaş məhdudiyyətli məzmunu göstər</string>
     <string name="content">Məzmun</string>
-    <string name="popup_playing_append">Ani pəncərə növbəyə salındı</string>
-    <string name="background_player_append">Fon pleyeri növbəyə salındı</string>
     <string name="popup_playing_toast">Ani pəncərədə oxudulur</string>
     <string name="background_player_playing_toast">Fonda oxudulur</string>
     <string name="settings_category_notification_title">Bildiriş</string>
     <string name="settings_category_updates_title">Yeniləmələr</string>
     <string name="settings_category_debug_title">Sazlama</string>
-    <string name="settings_category_other_title">Digər</string>
     <string name="settings_category_appearance_title">Görünüş</string>
-    <string name="settings_category_popup_title">Ani pəncərə</string>
     <string name="settings_category_history_title">Tarix və keş</string>
     <string name="settings_category_video_audio_title">Video və səs</string>
     <string name="settings_category_player_behavior_title">Davranış</string>
     <string name="settings_category_player_title">Pleyer</string>
     <string name="content_language_title">İlkin məzmun dili</string>
-    <string name="service_title">Xidmət</string>
     <string name="default_content_country_title">Məzmun üçün ilkin ölkə</string>
     <string name="unsupported_url_dialog_message">URL tanınmadı. Başqa bir tətbiq ilə açılsın\?</string>
     <string name="unsupported_url">Dəstəklənməyən URL</string>
@@ -145,12 +127,10 @@
     <string name="switch_to_main">Əsas Görünüşə Keç</string>
     <string name="switch_to_popup">Ani Pəncərəyə Keç</string>
     <string name="switch_to_background">Fona Keç</string>
-    <string name="toggle_orientation">Yönləndirməni Dəyişdir</string>
     <string name="unknown_content">[Bilinməyən]</string>
     <string name="app_update_notification_channel_description">Yeni \"NewPipe\" versiyası üçün bildirişlər</string>
     <string name="app_update_notification_channel_name">Tətbiq Yeniləmə Bildirişi</string>
     <string name="notification_channel_description">Fon və ani pəncərə pleyerləri üçün \"NewPipe\" bildirişləri</string>
-    <string name="playlist">Oxutma Siyahısı</string>
     <string name="all">Hamısı</string>
     <string name="error_report_title">Xəta hesabatı</string>
     <string name="downloads_title">Yükləmələr</string>
@@ -187,12 +167,8 @@
     <string name="file_deleted">Fayl silindi</string>
     <string name="undo">Geri qaytar</string>
     <string name="best_resolution">Ən yaxşı görüntü keyfiyyəti</string>
-    <string name="popup_resizing_indicator_title">Yenidən ölçüləndirilir</string>
     <string name="clear">Təmizlə</string>
-    <string name="refresh">Təzələ</string>
-    <string name="filter">Süzgəcdən keçir</string>
     <string name="disabled">Deaktiv edilib</string>
-    <string name="later">Sonra</string>
     <string name="yes">Bəli</string>
     <string name="artists">İfaçılar</string>
     <string name="albums">Albomlar</string>
@@ -221,18 +197,13 @@
     <string name="resize_fill">Doldur</string>
     <string name="resize_fit">Dart</string>
     <string name="caption_none">Altyazı yoxdur</string>
-    <string name="delete_all">Hamısını Sil</string>
-    <string name="delete_one">Birini Sil</string>
     <string name="delete">Sil</string>
     <string name="no_channel_subscribed_yet">Hələ ki kanal abunəliyi yoxdur</string>
     <string name="select_a_channel">Kanal seçin</string>
     <string name="channel_page_summary">Kanal Səhifəsi</string>
-    <string name="feed_page_summary">Yayım Səhifəsi</string>
-    <string name="subscription_page_summary">Abunəlik Səhifəsi</string>
     <string name="default_kiosk_page_summary">İlkin Köşk</string>
     <string name="kiosk_page_summary">Köşk Səhifəsi</string>
     <string name="blank_page_summary">Boş Səhifə</string>
-    <string name="selection">Seçim</string>
     <string name="main_page_content_summary">Ana səhifədə hansı tab-vərəqələr göstərilir</string>
     <string name="main_page_content">Ana səhifənin məzmunu</string>
     <string name="updates_setting_description">Yeni versiya mövcud olanda tətbiqi yeniləməyi xatırlatmaq üçün bildiriş göstər</string>
@@ -242,4 +213,59 @@
     <string name="one_item_deleted">1 element silindi.</string>
     <string name="peertube_instance_add_title">Nümunə əlavə et</string>
     <string name="peertube_instance_url_summary">Sevimli \"PeerTube\" nümunələrinizi seçin</string>
+    <string name="delete_downloaded_files">Yüklənmiş faylları sil</string>
+    <string name="confirm_prompt">Yükləmə tarixçənizi təmizləmək və ya yüklənmiş bütün faylları silmək istəyirsiniz\?</string>
+    <string name="clear_download_history">Yükləmə tarixçəsini təmizlə</string>
+    <string name="start_downloads">Yükləmələrə başla</string>
+    <string name="pause_downloads">Yükləmələrə fasilə ver</string>
+    <string name="downloads_storage_ask_title">Haraya yüklənəcəyini soruş</string>
+    <string name="downloads_storage_ask_summary">Hər yükləmədə harada saxlanılacağı soruşulacaq</string>
+    <string name="downloads_storage_use_saf_summary">\'Saxlanca Müraciət Çərçivəsi\' xarici SD karta yükləməyə imkan verir.
+\nBəzi cihazlar uyğun deyil</string>
+    <string name="systems_language">Sistem öncülü</string>
+    <string name="app_language_title">Tətbiq dili</string>
+    <plurals name="days">
+        <item quantity="one">%d gün</item>
+        <item quantity="other">%d gün</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d saat</item>
+        <item quantity="other">%d saat</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">%d dəqiqə</item>
+        <item quantity="other">%d dəqiqə</item>
+    </plurals>
+    <plurals name="seconds">
+        <item quantity="one">%d saniyə</item>
+        <item quantity="other">%d saniyə</item>
+    </plurals>
+    <string name="feed_oldest_subscription_update">Axın sonuncu dəfə güncəlləndi: %s</string>
+    <string name="feed_update_threshold_title">Axın güncəlləmə astanası</string>
+    <string name="feed_use_dedicated_fetch_method_enable_button">Sürətli rejimi aktiv et</string>
+    <string name="feed_use_dedicated_fetch_method_disable_button">Sürətli rejimi deaktiv et</string>
+    <string name="feed_use_dedicated_fetch_method_help_text">Axının çox yavaş yükləndiyini düşünürsünüz\? Əgər elədirsə, sürətli yükləməni işə salmağı sınayın (ayarlardan dəyişə və ya aşağıdakı düyməni basa bilərsiniz).
+\n
+\nNewPipe axını yükləmək üçün 2 metod təklif edir:
+\n• Bütün abunəlik kanallarını gətirtmək, bu yavaş olsa da tamdır;
+\n• Ayrılmış xidmət uc nöqtəsi istifadə etmək, bu sürətlidir, amma tam deyil.
+\n
+\nBu ikisi arasında fərq odur ki, sürətlisində, adətən elementin müddəti və növü kimi bəzi məlumatlar çatışmır (canlı video ilə adisini ayırd edə bilmir) və daha az element gətirir.
+\n
+\nYouTube öz RSS axını ilə bu sürətli metodu təklif edən xidmətlərdən biridir. 
+\n
+\nBeləliklə, seçim sizin nəyə üstünlük verməyinizdən asılıdır: sürət yoxsa dəqiq məlumat.</string>
+    <string name="player_stream_failure">Bu axını oxutmaq olmadı</string>
+    <string name="app_ui_crash">Tətbiq/UI çökdü</string>
+    <string name="could_not_setup_download_menu">Yükləmə menyusu qurulmadı</string>
+    <string name="content_not_available">Məzmun əlçatmazdır</string>
+    <string name="could_not_load_thumbnails">Kiçik təsvirlərin hamısı yüklənmədi</string>
+    <string name="network_error">Şəbəkə xətası</string>
+    <string name="download_to_sdcard_error_message">Xarici SD karta yükləmək mümkün deyil. Yükləmə qovluğu üçün təyin edilmiş yer sıfırlansın\?</string>
+    <string name="download_to_sdcard_error_title">Xarici saxlanc əlçatmazdır</string>
+    <string name="clear_views_history_summary">Oxutma axının tarixçəsini və oxutma mövqelərini siləcək</string>
+    <string name="show_meta_info_title">Üst bilgini göstər</string>
+    <string name="show_description_summary">Video təsvirini və əlavə bilgiləri gizlətmək üçün söndürün</string>
+    <string name="show_description_title">Təsviri göstər</string>
+    <string name="notification_colorize_title">Bildirişləri rənglə</string>
 </resources>

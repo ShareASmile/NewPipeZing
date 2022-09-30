@@ -26,9 +26,9 @@
             android:paddingBottom="2dp"
             android:scaleType="fitCenter"
             tools:ignore="ContentDescription"
-            tools:src="?attr/ic_fastfood" />
+            tools:src="@drawable/ic_fastfood" />
 
-        <TextView
+        <org.schabi.newpipe.views.NewPipeTextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

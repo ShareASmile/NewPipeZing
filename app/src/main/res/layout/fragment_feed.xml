@@ -25,7 +25,7 @@
             android:gravity="center_vertical"
             android:orientation="vertical">
 
-            <TextView
+            <org.schabi.newpipe.views.NewPipeTextView
                 android:id="@+id/refresh_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
                 android:textSize="14sp"
                 tools:text="@tools:sample/lorem/random" />
 
-            <TextView
+            <org.schabi.newpipe.views.NewPipeTextView
                 android:id="@+id/refresh_subtitle_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginStart="6dp"
             android:layout_marginEnd="12dp"
-            app:srcCompat="?attr/ic_refresh"
+            app:srcCompat="@drawable/ic_refresh"
             tools:ignore="ContentDescription" />
 
         <View
@@ -71,7 +71,7 @@
     </RelativeLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swiperefresh"
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/refresh_root_view">
@@ -88,7 +88,6 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <LinearLayout
-        android:id="@+id/loading_panel_root"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -106,7 +105,7 @@
             android:visibility="gone"
             tools:visibility="visible" />
 
-        <TextView
+        <org.schabi.newpipe.views.NewPipeTextView
             android:id="@+id/loading_progress_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -122,7 +121,7 @@
     <!--ERROR PANEL-->
     <include
         android:id="@+id/error_panel"
-        layout="@layout/error_retry"
+        layout="@layout/error_panel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"

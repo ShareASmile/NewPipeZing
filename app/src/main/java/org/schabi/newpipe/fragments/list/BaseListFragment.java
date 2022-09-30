@@ -12,13 +12,16 @@ import android.view.MenuInflater;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewbinding.ViewBinding;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.databinding.PignateFooterBinding;
+import org.schabi.newpipe.error.ErrorActivity;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
@@ -30,7 +33,7 @@ import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
 import org.schabi.newpipe.info_list.InfoItemDialog;
 import org.schabi.newpipe.info_list.InfoListAdapter;
 import org.schabi.newpipe.player.helper.PlayerHolder;
-import org.schabi.newpipe.report.ErrorActivity;
+import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 import org.schabi.newpipe.util.StateSaver;
@@ -42,7 +45,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 
-import static org.schabi.newpipe.util.AnimationUtils.animateView;
+import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
+import static org.schabi.newpipe.ktx.ViewUtils.animate;
+import static org.schabi.newpipe.ktx.ViewUtils.animateHideRecyclerViewAllowingScrolling;
 
 public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         implements ListViewContract<I, N>, StateSaver.WriteRead,
@@ -66,7 +71,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
-    public void onAttach(final Context context) {
+    public void onAttach(@NonNull final Context context) {
         super.onAttach(context);
 
         if (infoListAdapter == null) {
@@ -120,8 +125,8 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     /**
      * If the default implementation of {@link StateSaver.WriteRead} should be used.
      *
-     * @see StateSaver
      * @param useDefaultStateSaving Whether the default implementation should be used
+     * @see StateSaver
      */
     public void setUseDefaultStateSaving(final boolean useDefaultStateSaving) {
         this.useDefaultStateSaving = useDefaultStateSaving;
@@ -138,7 +143,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
             final View focusedItem = itemsList.getFocusedChild();
             final RecyclerView.ViewHolder itemHolder =
                     itemsList.findContainingViewHolder(focusedItem);
-            return itemHolder.getAdapterPosition();
+            return itemHolder.getBindingAdapterPosition();
         } catch (final NullPointerException e) {
             return -1;
         }
@@ -182,7 +187,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     }
 
     @Override
-    public void onSaveInstanceState(final Bundle bundle) {
+    public void onSaveInstanceState(@NonNull final Bundle bundle) {
         super.onSaveInstanceState(bundle);
         if (useDefaultStateSaving) {
             savedState = StateSaver
@@ -214,12 +219,13 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     // Init
     //////////////////////////////////////////////////////////////////////////*/
 
-    protected View getListHeader() {
+    @Nullable
+    protected ViewBinding getListHeader() {
         return null;
     }
 
-    protected View getListFooter() {
-        return activity.getLayoutInflater().inflate(R.layout.pignate_footer, itemsList, false);
+    protected ViewBinding getListFooter() {
+        return PignateFooterBinding.inflate(activity.getLayoutInflater(), itemsList, false);
     }
 
     protected RecyclerView.LayoutManager getListLayoutManager() {
@@ -246,8 +252,12 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         itemsList.setLayoutManager(useGrid ? getGridLayoutManager() : getListLayoutManager());
 
         infoListAdapter.setUseGridVariant(useGrid);
-        infoListAdapter.setFooter(getListFooter());
-        infoListAdapter.setHeader(getListHeader());
+        infoListAdapter.setFooter(getListFooter().getRoot());
+
+        final ViewBinding listHeader = getListHeader();
+        if (listHeader != null) {
+            infoListAdapter.setHeader(listHeader.getRoot());
+        }
 
         itemsList.setAdapter(infoListAdapter);
     }
@@ -283,7 +293,8 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
                             selectedItem.getUrl(),
                             selectedItem.getName());
                 } catch (final Exception e) {
-                    ErrorActivity.reportUiError((AppCompatActivity) getActivity(), e);
+                    ErrorActivity.reportUiErrorInSnackbar(
+                            BaseListFragment.this, "Opening channel fragment", e);
                 }
             }
         });
@@ -298,7 +309,8 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
                             selectedItem.getUrl(),
                             selectedItem.getName());
                 } catch (final Exception e) {
-                    ErrorActivity.reportUiError((AppCompatActivity) getActivity(), e);
+                    ErrorActivity.reportUiErrorInSnackbar(BaseListFragment.this,
+                            "Opening playlist fragment", e);
                 }
             }
         });
@@ -332,26 +344,29 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         }
     }
 
-
     protected void showStreamDialog(final StreamInfoItem item) {
         final Context context = getContext();
         final Activity activity = getActivity();
         if (context == null || context.getResources() == null || activity == null) {
             return;
         }
+        final List<StreamDialogEntry> entries = new ArrayList<>();
 
-        final ArrayList<StreamDialogEntry> entries = new ArrayList<>();
-
-        if (PlayerHolder.getType() != null) {
+        if (PlayerHolder.getInstance().isPlayerOpen()) {
             entries.add(StreamDialogEntry.enqueue);
+
+            if (PlayerHolder.getInstance().getQueueSize() > 1) {
+                entries.add(StreamDialogEntry.enqueue_next);
+            }
         }
+
         if (item.getStreamType() == StreamType.AUDIO_STREAM) {
             entries.addAll(Arrays.asList(
                     StreamDialogEntry.start_here_on_background,
                     StreamDialogEntry.append_playlist,
                     StreamDialogEntry.share
             ));
-        } else  {
+        } else {
             entries.addAll(Arrays.asList(
                     StreamDialogEntry.start_here_on_background,
                     StreamDialogEntry.start_here_on_popup,
@@ -359,6 +374,14 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
                     StreamDialogEntry.share
             ));
         }
+        entries.add(StreamDialogEntry.open_in_browser);
+        if (KoreUtils.shouldShowPlayWithKodi(context, item.getServiceId())) {
+            entries.add(StreamDialogEntry.play_with_kodi);
+        }
+        if (!isNullOrEmpty(item.getUploaderUrl())) {
+            entries.add(StreamDialogEntry.show_channel_details);
+        }
+
         StreamDialogEntry.setEnabledEntries(entries);
 
         new InfoItemDialog(activity, item, StreamDialogEntry.getCommands(context),
@@ -370,7 +393,8 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
-    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull final Menu menu,
+                                    @NonNull final MenuInflater inflater) {
         if (DEBUG) {
             Log.d(TAG, "onCreateOptionsMenu() called with: "
                     + "menu = [" + menu + "], inflater = [" + inflater + "]");
@@ -398,26 +422,20 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     @Override
     public void showLoading() {
         super.showLoading();
-        // animateView(itemsList, false, 400);
+        animateHideRecyclerViewAllowingScrolling(itemsList);
     }
 
     @Override
     public void hideLoading() {
         super.hideLoading();
-        animateView(itemsList, true, 300);
-    }
-
-    @Override
-    public void showError(final String message, final boolean showRetryButton) {
-        super.showError(message, showRetryButton);
-        showListFooter(false);
-        animateView(itemsList, false, 200);
+        animate(itemsList, true, 300);
     }
 
     @Override
     public void showEmptyState() {
         super.showEmptyState();
         showListFooter(false);
+        animateHideRecyclerViewAllowingScrolling(itemsList);
     }
 
     @Override
@@ -432,6 +450,13 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     @Override
     public void handleNextItems(final N result) {
         isLoading.set(false);
+    }
+
+    @Override
+    public void handleError() {
+        super.handleError();
+        showListFooter(false);
+        animateHideRecyclerViewAllowingScrolling(itemsList);
     }
 
     @Override

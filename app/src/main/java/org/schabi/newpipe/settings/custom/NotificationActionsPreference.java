@@ -15,20 +15,24 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.widget.TextViewCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
-import java.util.List;
+
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.player.MainPlayer;
 import org.schabi.newpipe.player.NotificationConstants;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.views.FocusOverlayView;
+
+import java.util.List;
 
 public class NotificationActionsPreference extends Preference {
 
@@ -38,9 +42,8 @@ public class NotificationActionsPreference extends Preference {
     }
 
 
-    private NotificationSlot[] notificationSlots;
-
-    private List<Integer> compactSlots;
+    @Nullable private NotificationSlot[] notificationSlots = null;
+    @Nullable private List<Integer> compactSlots = null;
 
     ////////////////////////////////////////////////////////////////////////////
     // Lifecycle
@@ -82,19 +85,22 @@ public class NotificationActionsPreference extends Preference {
     ////////////////////////////////////////////////////////////////////////////
 
     private void saveChanges() {
-        final SharedPreferences.Editor editor = getSharedPreferences().edit();
+        if (compactSlots != null && notificationSlots != null) {
+            final SharedPreferences.Editor editor = getSharedPreferences().edit();
 
-        for (int i = 0; i < 3; i++) {
-            editor.putInt(getContext().getString(NotificationConstants.SLOT_COMPACT_PREF_KEYS[i]),
-                    (i < compactSlots.size() ? compactSlots.get(i) : -1));
+            for (int i = 0; i < 3; i++) {
+                editor.putInt(getContext().getString(
+                        NotificationConstants.SLOT_COMPACT_PREF_KEYS[i]),
+                        (i < compactSlots.size() ? compactSlots.get(i) : -1));
+            }
+
+            for (int i = 0; i < 5; i++) {
+                editor.putInt(getContext().getString(NotificationConstants.SLOT_PREF_KEYS[i]),
+                        notificationSlots[i].selectedAction);
+            }
+
+            editor.apply();
         }
-
-        for (int i = 0; i < 5; i++) {
-            editor.putInt(getContext().getString(NotificationConstants.SLOT_PREF_KEYS[i]),
-                    notificationSlots[i].selectedAction);
-        }
-
-        editor.apply();
     }
 
 

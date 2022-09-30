@@ -7,12 +7,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.util.Util;
 
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
+import org.schabi.newpipe.util.StreamTypeUtil;
 
 public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
 
@@ -20,7 +22,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
     default MediaSource maybeBuildLiveMediaSource(@NonNull final PlayerDataSource dataSource,
                                                   @NonNull final StreamInfo info) {
         final StreamType streamType = info.getStreamType();
-        if (!(streamType == StreamType.AUDIO_LIVE_STREAM || streamType == StreamType.LIVE_STREAM)) {
+        if (!StreamTypeUtil.isLiveStream(streamType)) {
             return null;
         }
 
@@ -43,13 +45,13 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         switch (type) {
             case C.TYPE_SS:
                 return dataSource.getLiveSsMediaSourceFactory().setTag(metadata)
-                        .createMediaSource(uri);
+                        .createMediaSource(MediaItem.fromUri(uri));
             case C.TYPE_DASH:
                 return dataSource.getLiveDashMediaSourceFactory().setTag(metadata)
-                        .createMediaSource(uri);
+                        .createMediaSource(MediaItem.fromUri(uri));
             case C.TYPE_HLS:
                 return dataSource.getLiveHlsMediaSourceFactory().setTag(metadata)
-                        .createMediaSource(uri);
+                        .createMediaSource(MediaItem.fromUri(uri));
             default:
                 throw new IllegalStateException("Unsupported type: " + type);
         }
@@ -68,16 +70,16 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         switch (type) {
             case C.TYPE_SS:
                 return dataSource.getLiveSsMediaSourceFactory().setTag(metadata)
-                        .createMediaSource(uri);
+                        .createMediaSource(MediaItem.fromUri(uri));
             case C.TYPE_DASH:
                 return dataSource.getDashMediaSourceFactory().setTag(metadata)
-                        .createMediaSource(uri);
+                        .createMediaSource(MediaItem.fromUri(uri));
             case C.TYPE_HLS:
                 return dataSource.getHlsMediaSourceFactory().setTag(metadata)
-                        .createMediaSource(uri);
+                        .createMediaSource(MediaItem.fromUri(uri));
             case C.TYPE_OTHER:
                 return dataSource.getExtractorMediaSourceFactory(cacheKey).setTag(metadata)
-                        .createMediaSource(uri);
+                        .createMediaSource(MediaItem.fromUri(uri));
             default:
                 throw new IllegalStateException("Unsupported type: " + type);
         }

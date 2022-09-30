@@ -7,14 +7,13 @@ import org.schabi.newpipe.database.playlist.model.PlaylistStreamEntity
 import org.schabi.newpipe.database.stream.model.StreamEntity
 import org.schabi.newpipe.database.stream.model.StreamStateEntity
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
-import kotlin.jvm.Throws
 
 data class PlaylistStreamEntry(
     @Embedded
     val streamEntity: StreamEntity,
 
-    @ColumnInfo(name = StreamStateEntity.STREAM_PROGRESS_TIME, defaultValue = "0")
-    val progressTime: Long,
+    @ColumnInfo(name = StreamStateEntity.STREAM_PROGRESS_MILLIS, defaultValue = "0")
+    val progressMillis: Long,
 
     @ColumnInfo(name = PlaylistStreamEntity.JOIN_STREAM_ID)
     val streamId: Long,
@@ -28,6 +27,7 @@ data class PlaylistStreamEntry(
         val item = StreamInfoItem(streamEntity.serviceId, streamEntity.url, streamEntity.title, streamEntity.streamType)
         item.duration = streamEntity.duration
         item.uploaderName = streamEntity.uploader
+        item.uploaderUrl = streamEntity.uploaderUrl
         item.thumbnailUrl = streamEntity.thumbnailUrl
 
         return item

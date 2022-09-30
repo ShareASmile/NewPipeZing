@@ -22,10 +22,10 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
-            app:srcCompat="?attr/ic_filter_list"
+            app:srcCompat="@drawable/ic_filter_list"
             tools:ignore="ContentDescription,RtlHardcoded" />
 
-        <TextView
+        <org.schabi.newpipe.views.NewPipeTextView
             android:id="@+id/sortButtonText"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -38,6 +38,8 @@
             tools:ignore="RtlHardcoded" />
     </RelativeLayout>
 
-    <include layout="@layout/playlist_control" />
+    <include
+        android:id="@+id/playlist_control"
+        layout="@layout/playlist_control" />
 
 </LinearLayout>

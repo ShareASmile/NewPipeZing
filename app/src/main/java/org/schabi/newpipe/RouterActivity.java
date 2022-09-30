@@ -1,5 +1,8 @@
 package org.schabi.newpipe;
 
+import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.AUDIO;
+import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.VIDEO;
+
 import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Context;
@@ -30,18 +33,34 @@ import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
+import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.ListRadioIconItemBinding;
 import org.schabi.newpipe.databinding.SingleChoiceDialogViewBinding;
 import org.schabi.newpipe.download.DownloadDialog;
+import org.schabi.newpipe.error.ErrorActivity;
+import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.ReCaptchaActivity;
+import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.Info;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.StreamingService.LinkType;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
+import org.schabi.newpipe.extractor.exceptions.AgeRestrictedContentException;
+import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException;
+import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException;
+import org.schabi.newpipe.extractor.exceptions.PaidContentException;
+import org.schabi.newpipe.extractor.exceptions.PrivateContentException;
+import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
+import org.schabi.newpipe.extractor.exceptions.SoundCloudGoPlusContentException;
+import org.schabi.newpipe.extractor.exceptions.YoutubeMusicPremiumContentException;
 import org.schabi.newpipe.extractor.playlist.PlaylistInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.VideoStream;
+import org.schabi.newpipe.ktx.ExceptionUtils;
+import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.player.MainPlayer;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.helper.PlayerHolder;
@@ -49,21 +68,21 @@ import org.schabi.newpipe.player.playqueue.ChannelPlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlaylistPlayQueue;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
-import org.schabi.newpipe.report.UserAction;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PermissionHelper;
-import org.schabi.newpipe.util.ShareUtils;
 import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.urlfinder.UrlFinder;
 import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import icepick.Icepick;
@@ -76,21 +95,10 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.AUDIO;
-import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.VIDEO;
-import static org.schabi.newpipe.util.ThemeHelper.resolveResourceIdFromAttr;
-
 /**
  * Get the url from the intent and open it in the chosen preferred player.
  */
 public class RouterActivity extends AppCompatActivity {
-    public static final String INTERNAL_ROUTE_KEY = "internalRoute";
-    /**
-     * Removes invisible separators (\p{Z}) and punctuation characters including
-     * brackets (\p{P}). See http://www.regular-expressions.info/unicode.html for
-     * more details.
-     */
-    private static final String REGEX_REMOVE_FROM_URL = "[\\p{Z}\\p{P}]";
     protected final CompositeDisposable disposables = new CompositeDisposable();
     @State
     protected int currentServiceId = -1;
@@ -100,9 +108,10 @@ public class RouterActivity extends AppCompatActivity {
     protected int selectedRadioPosition = -1;
     protected int selectedPreviously = -1;
     protected String currentUrl;
-    protected boolean internalRoute = false;
     private StreamingService currentService;
     private boolean selectionIsDownload = false;
+    private boolean selectionIsAddToPlaylist = false;
+    private AlertDialog alertDialogChoice = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -123,7 +132,16 @@ public class RouterActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(final Bundle outState) {
+    protected void onStop() {
+        super.onStop();
+        // we need to dismiss the dialog before leaving the activity or we get leaks
+        if (alertDialogChoice != null) {
+            alertDialogChoice.dismiss();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         Icepick.saveInstanceState(this, outState);
     }
@@ -145,37 +163,79 @@ public class RouterActivity extends AppCompatActivity {
     private void handleUrl(final String url) {
         disposables.add(Observable
                 .fromCallable(() -> {
-                    if (currentServiceId == -1) {
-                        currentService = NewPipe.getServiceByUrl(url);
-                        currentServiceId = currentService.getServiceId();
-                        currentLinkType = currentService.getLinkTypeByUrl(url);
-                        currentUrl = url;
-                    } else {
-                        currentService = NewPipe.getService(currentServiceId);
-                    }
+                    try {
+                        if (currentServiceId == -1) {
+                            currentService = NewPipe.getServiceByUrl(url);
+                            currentServiceId = currentService.getServiceId();
+                            currentLinkType = currentService.getLinkTypeByUrl(url);
+                            currentUrl = url;
+                        } else {
+                            currentService = NewPipe.getService(currentServiceId);
+                        }
 
-                    return currentLinkType != LinkType.NONE;
+                        // return whether the url was found to be supported or not
+                        return currentLinkType != LinkType.NONE;
+                    } catch (final ExtractionException e) {
+                        // this can be reached only when the url is completely unsupported
+                        return false;
+                    }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
-                    if (result) {
+                .subscribe(isUrlSupported -> {
+                    if (isUrlSupported) {
                         onSuccess();
                     } else {
                         showUnsupportedUrlDialog(url);
                     }
-                }, throwable -> handleError(throwable, url)));
+                }, throwable -> handleError(this, new ErrorInfo(throwable,
+                        UserAction.SHARE_TO_NEWPIPE, "Getting service from url: " + url))));
     }
 
-    private void handleError(final Throwable throwable, final String url) {
-        throwable.printStackTrace();
+    /**
+     * @param context the context. It will be {@code finish()}ed at the end of the handling if it is
+     *                an instance of {@link RouterActivity}.
+     * @param errorInfo the error information
+     */
+    private static void handleError(final Context context, final ErrorInfo errorInfo) {
+        if (errorInfo.getThrowable() != null) {
+            errorInfo.getThrowable().printStackTrace();
+        }
 
-        if (throwable instanceof ExtractionException) {
-            showUnsupportedUrlDialog(url);
+        if (errorInfo.getThrowable() instanceof ReCaptchaException) {
+            Toast.makeText(context, R.string.recaptcha_request_toast, Toast.LENGTH_LONG).show();
+            // Starting ReCaptcha Challenge Activity
+            final Intent intent = new Intent(context, ReCaptchaActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } else if (errorInfo.getThrowable() != null
+                && ExceptionUtils.isNetworkRelated(errorInfo.getThrowable())) {
+            Toast.makeText(context, R.string.network_error, Toast.LENGTH_LONG).show();
+        } else if (errorInfo.getThrowable() instanceof AgeRestrictedContentException) {
+            Toast.makeText(context, R.string.restricted_video_no_stream,
+                    Toast.LENGTH_LONG).show();
+        } else if (errorInfo.getThrowable() instanceof GeographicRestrictionException) {
+            Toast.makeText(context, R.string.georestricted_content, Toast.LENGTH_LONG).show();
+        } else if (errorInfo.getThrowable() instanceof PaidContentException) {
+            Toast.makeText(context, R.string.paid_content, Toast.LENGTH_LONG).show();
+        } else if (errorInfo.getThrowable() instanceof PrivateContentException) {
+            Toast.makeText(context, R.string.private_content, Toast.LENGTH_LONG).show();
+        } else if (errorInfo.getThrowable() instanceof SoundCloudGoPlusContentException) {
+            Toast.makeText(context, R.string.soundcloud_go_plus_content,
+                    Toast.LENGTH_LONG).show();
+        } else if (errorInfo.getThrowable() instanceof YoutubeMusicPremiumContentException) {
+            Toast.makeText(context, R.string.youtube_music_premium_content,
+                    Toast.LENGTH_LONG).show();
+        } else if (errorInfo.getThrowable() instanceof ContentNotAvailableException) {
+            Toast.makeText(context, R.string.content_not_available, Toast.LENGTH_LONG).show();
+        } else if (errorInfo.getThrowable() instanceof ContentNotSupportedException) {
+            Toast.makeText(context, R.string.content_not_supported, Toast.LENGTH_LONG).show();
         } else {
-            ExtractorHelper.handleGeneralException(this, -1, url, throwable,
-                    UserAction.SOMETHING_ELSE, null);
-            finish();
+            ErrorActivity.reportError(context, errorInfo);
+        }
+
+        if (context instanceof RouterActivity) {
+            ((RouterActivity) context).finish();
         }
     }
 
@@ -184,11 +244,11 @@ public class RouterActivity extends AppCompatActivity {
         new AlertDialog.Builder(context)
                 .setTitle(R.string.unsupported_url)
                 .setMessage(R.string.unsupported_url_dialog_message)
-                .setIcon(ThemeHelper.resolveResourceIdFromAttr(context, R.attr.ic_share))
+                .setIcon(R.drawable.ic_share)
                 .setPositiveButton(R.string.open_in_browser,
                         (dialog, which) -> ShareUtils.openUrlInBrowser(this, url))
                 .setNegativeButton(R.string.share,
-                        (dialog, which) -> ShareUtils.shareUrl(this, "", url)) // no subject
+                        (dialog, which) -> ShareUtils.shareText(this, "", url)) // no subject
                 .setNeutralButton(R.string.cancel, null)
                 .setOnDismissListener(dialog -> finish())
                 .show();
@@ -287,26 +347,26 @@ public class RouterActivity extends AppCompatActivity {
             }
         };
 
-        final AlertDialog alertDialog = new AlertDialog.Builder(themeWrapperContext)
+        alertDialogChoice = new AlertDialog.Builder(themeWrapperContext)
                 .setTitle(R.string.preferred_open_action_share_menu_title)
                 .setView(radioGroup)
                 .setCancelable(true)
                 .setNegativeButton(R.string.just_once, dialogButtonsClickListener)
                 .setPositiveButton(R.string.always, dialogButtonsClickListener)
                 .setOnDismissListener((dialog) -> {
-                    if (!selectionIsDownload) {
+                    if (!selectionIsDownload && !selectionIsAddToPlaylist) {
                         finish();
                     }
                 })
                 .create();
 
         //noinspection CodeBlock2Expr
-        alertDialog.setOnShowListener(dialog -> {
-            setDialogButtonsState(alertDialog, radioGroup.getCheckedRadioButtonId() != -1);
+        alertDialogChoice.setOnShowListener(dialog -> {
+            setDialogButtonsState(alertDialogChoice, radioGroup.getCheckedRadioButtonId() != -1);
         });
 
         radioGroup.setOnCheckedChangeListener((group, checkedId) ->
-                setDialogButtonsState(alertDialog, true));
+                setDialogButtonsState(alertDialogChoice, true));
         final View.OnClickListener radioButtonsClickListener = v -> {
             final int indexOfChild = radioGroup.indexOfChild(v);
             if (indexOfChild == -1) {
@@ -326,7 +386,7 @@ public class RouterActivity extends AppCompatActivity {
             final RadioButton radioButton = ListRadioIconItemBinding.inflate(inflater).getRoot();
             radioButton.setText(item.description);
             TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(radioButton,
-                    AppCompatResources.getDrawable(getApplicationContext(), item.icon),
+                    AppCompatResources.getDrawable(themeWrapperContext, item.icon),
                     null, null, null);
             radioButton.setChecked(false);
             radioButton.setId(id++);
@@ -356,10 +416,10 @@ public class RouterActivity extends AppCompatActivity {
         }
         selectedPreviously = selectedRadioPosition;
 
-        alertDialog.show();
+        alertDialogChoice.show();
 
         if (DeviceUtils.isTv(this)) {
-            FocusOverlayView.setupFocusObserver(alertDialog);
+            FocusOverlayView.setupFocusObserver(alertDialogChoice);
         }
     }
 
@@ -380,16 +440,20 @@ public class RouterActivity extends AppCompatActivity {
 
         final AdapterChoiceItem videoPlayer = new AdapterChoiceItem(
                 getString(R.string.video_player_key), getString(R.string.video_player),
-                resolveResourceIdFromAttr(context, R.attr.ic_play_arrow));
+                R.drawable.ic_play_arrow);
         final AdapterChoiceItem showInfo = new AdapterChoiceItem(
                 getString(R.string.show_info_key), getString(R.string.show_info),
-                resolveResourceIdFromAttr(context, R.attr.ic_info_outline));
+                R.drawable.ic_info_outline);
         final AdapterChoiceItem popupPlayer = new AdapterChoiceItem(
                 getString(R.string.popup_player_key), getString(R.string.popup_player),
-                resolveResourceIdFromAttr(context, R.attr.ic_popup));
+                R.drawable.ic_picture_in_picture);
         final AdapterChoiceItem backgroundPlayer = new AdapterChoiceItem(
                 getString(R.string.background_player_key), getString(R.string.background_player),
-                resolveResourceIdFromAttr(context, R.attr.ic_headset));
+                R.drawable.ic_headset);
+        final AdapterChoiceItem addToPlaylist = new AdapterChoiceItem(
+                getString(R.string.add_to_playlist_key), getString(R.string.add_to_playlist),
+                R.drawable.ic_add);
+
 
         if (linkType == LinkType.STREAM) {
             if (isExtVideoEnabled) {
@@ -397,7 +461,7 @@ public class RouterActivity extends AppCompatActivity {
                 returnList.add(showInfo);
                 returnList.add(videoPlayer);
             } else {
-                final MainPlayer.PlayerType playerType = PlayerHolder.getType();
+                final MainPlayer.PlayerType playerType = PlayerHolder.getInstance().getType();
                 if (capabilities.contains(VIDEO)
                         && PlayerHelper.isAutoplayAllowedByUser(context)
                         && playerType == null || playerType == MainPlayer.PlayerType.VIDEO) {
@@ -420,6 +484,15 @@ public class RouterActivity extends AppCompatActivity {
             if (capabilities.contains(AUDIO)) {
                 returnList.add(backgroundPlayer);
             }
+            // download is redundant for linkType CHANNEL AND PLAYLIST (till playlist downloading is
+            // not supported )
+            returnList.add(new AdapterChoiceItem(getString(R.string.download_key),
+                    getString(R.string.download),
+                    R.drawable.ic_file_download));
+
+            // Add to playlist is not necessary for CHANNEL and PLAYLIST linkType since those can
+            // not be added to a playlist
+            returnList.add(addToPlaylist);
 
         } else {
             returnList.add(showInfo);
@@ -431,10 +504,6 @@ public class RouterActivity extends AppCompatActivity {
                 returnList.add(backgroundPlayer);
             }
         }
-
-        returnList.add(new AdapterChoiceItem(getString(R.string.download_key),
-                getString(R.string.download),
-                resolveResourceIdFromAttr(context, R.attr.ic_file_download)));
 
         return returnList;
     }
@@ -490,6 +559,12 @@ public class RouterActivity extends AppCompatActivity {
             return;
         }
 
+        if (selectedChoiceKey.equals(getString(R.string.add_to_playlist_key))) {
+            selectionIsAddToPlaylist = true;
+            openAddToPlaylistDialog();
+            return;
+        }
+
         // stop and bypass FetcherService if InfoScreen was selected since
         // StreamDetailFragment can fetch data itself
         if (selectedChoiceKey.equals(getString(R.string.show_info_key))) {
@@ -500,7 +575,8 @@ public class RouterActivity extends AppCompatActivity {
                     .subscribe(intent -> {
                         startActivity(intent);
                         finish();
-                    }, throwable -> handleError(throwable, currentUrl))
+                    }, throwable -> handleError(this, new ErrorInfo(throwable,
+                            UserAction.SHARE_TO_NEWPIPE, "Starting info activity: " + currentUrl)))
             );
             return;
         }
@@ -512,6 +588,41 @@ public class RouterActivity extends AppCompatActivity {
         startService(intent);
 
         finish();
+    }
+
+    private void openAddToPlaylistDialog() {
+        // Getting the stream info usually takes a moment
+        // Notifying the user here to ensure that no confusion arises
+        Toast.makeText(
+                getApplicationContext(),
+                getString(R.string.processing_may_take_a_moment),
+                Toast.LENGTH_SHORT)
+                .show();
+
+        disposables.add(ExtractorHelper.getStreamInfo(currentServiceId, currentUrl, false)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        info -> PlaylistDialog.createCorrespondingDialog(
+                                getThemeWrapperContext(),
+                                Collections.singletonList(new StreamEntity(info)),
+                                playlistDialog -> {
+                                    playlistDialog.setOnDismissListener(dialog -> finish());
+
+                                    playlistDialog.show(
+                                            this.getSupportFragmentManager(),
+                                            "addToPlaylistDialog"
+                                    );
+                                }
+                        ),
+                        throwable -> handleError(this, new ErrorInfo(
+                                throwable,
+                                UserAction.REQUESTED_STREAM,
+                                "Tried to add " + currentUrl + " to a playlist",
+                                currentService.getServiceId())
+                        )
+                )
+        );
     }
 
     @SuppressLint("CheckResult")
@@ -531,9 +642,9 @@ public class RouterActivity extends AppCompatActivity {
                     downloadDialog.setVideoStreams(sortedVideoStreams);
                     downloadDialog.setAudioStreams(result.getAudioStreams());
                     downloadDialog.setSelectedVideoStream(selectedVideoStreamIndex);
+                    downloadDialog.setOnDismissListener(dialog -> finish());
                     downloadDialog.show(fm, "downloadDialog");
                     fm.executePendingTransactions();
-                    downloadDialog.requireDialog().setOnDismissListener(dialog -> finish());
                 }, throwable ->
                         showUnsupportedUrlDialog(currentUrl)));
     }
@@ -542,6 +653,7 @@ public class RouterActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(final int requestCode,
                                            @NonNull final String[] permissions,
                                            @NonNull final int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         for (final int i : grantResults) {
             if (i == PackageManager.PERMISSION_DENIED) {
                 finish();
@@ -580,6 +692,7 @@ public class RouterActivity extends AppCompatActivity {
             this.playerChoice = playerChoice;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return serviceId + ":" + url + " > " + linkType + " ::: " + playerChoice;
@@ -646,9 +759,9 @@ public class RouterActivity extends AppCompatActivity {
                             if (fetcher != null) {
                                 fetcher.dispose();
                             }
-                        }, throwable -> ExtractorHelper.handleGeneralException(this,
-                                choice.serviceId, choice.url, throwable, finalUserAction,
-                                ", opened with " + choice.playerChoice));
+                        }, throwable -> handleError(this, new ErrorInfo(throwable, finalUserAction,
+                                choice.url + " opened with " + choice.playerChoice,
+                                choice.serviceId)));
             }
         }
 

@@ -6,14 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="org.schabi.newpipe.player.BackgroundPlayerActivity">
+    tools:context="org.schabi.newpipe.player.PlayQueueActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar">
+        android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -21,6 +21,7 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_weight="1"
             android:background="?attr/colorPrimary"
+            android:theme="@style/ToolbarTheme"
             app:layout_scrollFlags="scroll|enterAlways"
             app:title="@string/app_name" />
 
@@ -30,87 +31,80 @@
         android:id="@+id/play_queue"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/center"
+        android:layout_above="@id/metadata"
         android:layout_below="@id/appbar"
         android:scrollbars="vertical"
         app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/play_queue_item" />
 
-    <RelativeLayout
-        android:id="@+id/center"
+    <org.schabi.newpipe.views.NewPipeTextView
+        android:id="@+id/seek_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_above="@id/metadata"
+        android:background="#c0000000"
+        android:paddingLeft="30dp"
+        android:paddingTop="5dp"
+        android:paddingRight="30dp"
+        android:paddingBottom="5dp"
+        android:textColor="@android:color/white"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:ignore="RtlHardcoded"
+        tools:text="1:06:29"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/metadata"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/playback_controls">
+        android:layout_above="@id/progress_bar"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:padding="8dp"
+        tools:ignore="RtlHardcoded,RtlSymmetry">
 
-        <LinearLayout
-            android:id="@+id/metadata"
+        <org.schabi.newpipe.views.NewPipeTextView
+            android:id="@+id/song_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:orientation="vertical"
-            android:padding="8dp"
-            tools:ignore="RtlHardcoded,RtlSymmetry">
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="14sp"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nec aliquam augue, eget cursus est. Ut id tristique enim, ut scelerisque tellus. Sed ultricies ipsum non mauris ultricies, commodo malesuada velit porta." />
 
-            <TextView
-                android:id="@+id/song_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:fadingEdge="horizontal"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="14sp"
-                tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nec aliquam augue, eget cursus est. Ut id tristique enim, ut scelerisque tellus. Sed ultricies ipsum non mauris ultricies, commodo malesuada velit porta." />
-
-            <TextView
-                android:id="@+id/artist_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:fadingEdge="horizontal"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="12sp"
-                tools:text="Duis posuere arcu condimentum lobortis mattis." />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/seek_display"
-            android:layout_width="wrap_content"
+        <org.schabi.newpipe.views.NewPipeTextView
+            android:id="@+id/artist_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="#c0000000"
-            android:paddingLeft="30dp"
-            android:paddingTop="5dp"
-            android:paddingRight="30dp"
-            android:paddingBottom="5dp"
-            android:textColor="@android:color/white"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            tools:ignore="RtlHardcoded"
-            tools:text="1:06:29"
-            tools:visibility="visible" />
-    </RelativeLayout>
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="12sp"
+            tools:text="Duis posuere arcu condimentum lobortis mattis." />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/player_controls_background"
-        android:gravity="center"
         android:orientation="horizontal"
         android:paddingLeft="12dp"
-        android:paddingRight="12dp">
+        android:paddingRight="12dp"
+        android:layout_above="@+id/playback_controls">
 
-        <TextView
+        <org.schabi.newpipe.views.NewPipeTextView
             android:id="@+id/current_time"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -135,7 +129,7 @@
             tools:progress="25"
             tools:secondaryProgress="50" />
 
-        <TextView
+        <org.schabi.newpipe.views.NewPipeTextView
             android:id="@+id/end_time"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -145,7 +139,7 @@
             tools:ignore="HardcodedText"
             tools:text="1:23:49" />
 
-        <TextView
+        <org.schabi.newpipe.views.NewPipeTextView
             android:id="@+id/live_sync"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -163,8 +157,9 @@
         android:id="@+id/playback_controls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/progress_bar"
         android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="12dp"
         tools:ignore="RtlHardcoded">
 
         <ImageButton
@@ -180,7 +175,7 @@
             android:focusable="true"
             android:scaleType="fitXY"
             android:tint="?attr/colorAccent"
-            app:srcCompat="@drawable/ic_repeat_white_24dp"
+            app:srcCompat="@drawable/ic_repeat"
             tools:ignore="ContentDescription" />
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -195,7 +190,7 @@
             android:focusable="true"
             android:scaleType="fitCenter"
             android:tint="?attr/colorAccent"
-            app:srcCompat="@drawable/ic_previous_white_24dp"
+            app:srcCompat="@drawable/ic_previous"
             tools:ignore="ContentDescription" />
 
         <ImageButton
@@ -225,7 +220,7 @@
             android:focusable="true"
             android:scaleType="fitCenter"
             android:tint="?attr/colorAccent"
-            app:srcCompat="@drawable/ic_pause_white_24dp"
+            app:srcCompat="@drawable/ic_pause"
             tools:ignore="ContentDescription" />
 
         <ProgressBar
@@ -274,7 +269,7 @@
             android:focusable="true"
             android:scaleType="fitCenter"
             android:tint="?attr/colorAccent"
-            app:srcCompat="@drawable/ic_next_white_24dp"
+            app:srcCompat="@drawable/ic_next"
             tools:ignore="ContentDescription" />
 
         <ImageButton
@@ -290,9 +285,8 @@
             android:focusable="true"
             android:scaleType="fitXY"
             android:tint="?attr/colorAccent"
-            app:srcCompat="@drawable/ic_shuffle_white_24dp"
+            app:srcCompat="@drawable/ic_shuffle"
             tools:ignore="ContentDescription" />
 
     </RelativeLayout>
-
 </RelativeLayout>

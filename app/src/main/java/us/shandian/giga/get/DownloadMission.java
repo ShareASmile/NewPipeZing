@@ -22,10 +22,11 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.channels.ClosedByInterruptException;
+import java.util.Objects;
 
 import javax.net.ssl.SSLException;
 
-import us.shandian.giga.io.StoredFileHelper;
+import org.schabi.newpipe.streams.io.StoredFileHelper;
 import us.shandian.giga.postprocessing.Postprocessing;
 import us.shandian.giga.service.DownloadManagerService;
 import us.shandian.giga.util.Utility;
@@ -154,8 +155,8 @@ public class DownloadMission extends Mission {
     public transient Thread init = null;
 
     public DownloadMission(String[] urls, StoredFileHelper storage, char kind, Postprocessing psInstance) {
-        if (urls == null) throw new NullPointerException("urls is null");
-        if (urls.length < 1) throw new IllegalArgumentException("urls is empty");
+        if (Objects.requireNonNull(urls).length < 1)
+            throw new IllegalArgumentException("urls array is empty");
         this.urls = urls;
         this.kind = kind;
         this.offsets = new long[urls.length];
@@ -663,7 +664,7 @@ public class DownloadMission extends Mission {
      * @return {@code true}, if storage is invalid and cannot be used
      */
     public boolean hasInvalidStorage() {
-        return errCode == ERROR_PROGRESS_LOST || storage == null || storage.isInvalid() || !storage.existsAsFile();
+        return errCode == ERROR_PROGRESS_LOST || storage == null || !storage.existsAsFile();
     }
 
     /**

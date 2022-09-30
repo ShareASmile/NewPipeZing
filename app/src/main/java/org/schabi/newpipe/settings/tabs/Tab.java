@@ -12,6 +12,9 @@ import com.grack.nanojson.JsonSink;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.LocalItem.LocalItemType;
+import org.schabi.newpipe.error.ErrorActivity;
+import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
@@ -25,12 +28,8 @@ import org.schabi.newpipe.local.feed.FeedFragment;
 import org.schabi.newpipe.local.history.StatisticsPlaylistFragment;
 import org.schabi.newpipe.local.playlist.LocalPlaylistFragment;
 import org.schabi.newpipe.local.subscription.SubscriptionFragment;
-import org.schabi.newpipe.report.ErrorActivity;
-import org.schabi.newpipe.report.ErrorInfo;
-import org.schabi.newpipe.report.UserAction;
 import org.schabi.newpipe.util.KioskTranslator;
 import org.schabi.newpipe.util.ServiceHelper;
-import org.schabi.newpipe.util.ThemeHelper;
 
 import java.util.Objects;
 
@@ -113,12 +112,16 @@ public abstract class Tab {
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == this) {
-            return true;
+        if (!(obj instanceof Tab)) {
+            return false;
         }
+        final Tab other = (Tab) obj;
+        return getTabId() == other.getTabId();
+    }
 
-        return obj instanceof Tab && obj.getClass() == this.getClass()
-                && ((Tab) obj).getTabId() == this.getTabId();
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getTabId());
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -188,7 +191,7 @@ public abstract class Tab {
         @DrawableRes
         @Override
         public int getTabIconRes(final Context context) {
-            return ThemeHelper.resolveResourceIdFromAttr(context, R.attr.ic_blank_page);
+            return R.drawable.ic_crop_portrait;
         }
 
         @Override
@@ -213,7 +216,7 @@ public abstract class Tab {
         @DrawableRes
         @Override
         public int getTabIconRes(final Context context) {
-            return ThemeHelper.resolveResourceIdFromAttr(context, R.attr.ic_channel);
+            return R.drawable.ic_tv;
         }
 
         @Override
@@ -239,7 +242,7 @@ public abstract class Tab {
         @DrawableRes
         @Override
         public int getTabIconRes(final Context context) {
-            return ThemeHelper.resolveResourceIdFromAttr(context, R.attr.ic_rss);
+            return R.drawable.ic_rss_feed;
         }
 
         @Override
@@ -264,7 +267,7 @@ public abstract class Tab {
         @DrawableRes
         @Override
         public int getTabIconRes(final Context context) {
-            return ThemeHelper.resolveResourceIdFromAttr(context, R.attr.ic_bookmark);
+            return R.drawable.ic_bookmark;
         }
 
         @Override
@@ -289,7 +292,7 @@ public abstract class Tab {
         @DrawableRes
         @Override
         public int getTabIconRes(final Context context) {
-            return ThemeHelper.resolveResourceIdFromAttr(context, R.attr.ic_history);
+            return R.drawable.ic_history;
         }
 
         @Override
@@ -359,8 +362,18 @@ public abstract class Tab {
 
         @Override
         public boolean equals(final Object obj) {
-            return super.equals(obj) && kioskServiceId == ((KioskTab) obj).kioskServiceId
-                    && Objects.equals(kioskId, ((KioskTab) obj).kioskId);
+            if (!(obj instanceof KioskTab)) {
+                return false;
+            }
+            final KioskTab other = (KioskTab) obj;
+            return super.equals(obj)
+                    && kioskServiceId == other.kioskServiceId
+                    && kioskId.equals(other.kioskId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getTabId(), kioskServiceId, kioskId);
         }
 
         public int getKioskServiceId() {
@@ -409,7 +422,7 @@ public abstract class Tab {
         @DrawableRes
         @Override
         public int getTabIconRes(final Context context) {
-            return ThemeHelper.resolveResourceIdFromAttr(context, R.attr.ic_channel);
+            return R.drawable.ic_tv;
         }
 
         @Override
@@ -433,9 +446,19 @@ public abstract class Tab {
 
         @Override
         public boolean equals(final Object obj) {
-            return super.equals(obj) && channelServiceId == ((ChannelTab) obj).channelServiceId
-                    && Objects.equals(channelUrl, ((ChannelTab) obj).channelUrl)
-                    && Objects.equals(channelName, ((ChannelTab) obj).channelName);
+            if (!(obj instanceof ChannelTab)) {
+                return false;
+            }
+            final ChannelTab other = (ChannelTab) obj;
+            return super.equals(obj)
+                    && channelServiceId == other.channelServiceId
+                    && channelUrl.equals(other.channelName)
+                    && channelName.equals(other.channelName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getTabId(), channelServiceId, channelUrl, channelName);
         }
 
         public int getChannelServiceId() {
@@ -483,9 +506,8 @@ public abstract class Tab {
                 final StreamingService service = NewPipe.getService(kioskServiceId);
                 kioskId = service.getKioskList().getDefaultKioskId();
             } catch (final ExtractionException e) {
-                ErrorActivity.reportError(context, e, null, null,
-                        ErrorInfo.make(UserAction.REQUESTED_KIOSK, "none",
-                                "Loading default kiosk from selected service", 0));
+                ErrorActivity.reportErrorInSnackbar(context, new ErrorInfo(e,
+                        UserAction.REQUESTED_KIOSK, "Loading default kiosk for selected service"));
             }
             return kioskId;
         }
@@ -542,7 +564,7 @@ public abstract class Tab {
         @DrawableRes
         @Override
         public int getTabIconRes(final Context context) {
-            return ThemeHelper.resolveResourceIdFromAttr(context, R.attr.ic_bookmark);
+            return R.drawable.ic_bookmark;
         }
 
         @Override
@@ -578,15 +600,30 @@ public abstract class Tab {
 
         @Override
         public boolean equals(final Object obj) {
-            if (!(super.equals(obj)
-                    && Objects.equals(playlistType, ((PlaylistTab) obj).playlistType)
-                    && Objects.equals(playlistName, ((PlaylistTab) obj).playlistName))) {
-                return false; // base objects are different
+            if (!(obj instanceof PlaylistTab)) {
+                return false;
             }
 
-            return (playlistId == ((PlaylistTab) obj).playlistId)                     // local
-                    || (playlistServiceId == ((PlaylistTab) obj).playlistServiceId    // remote
-                    && Objects.equals(playlistUrl, ((PlaylistTab) obj).playlistUrl));
+            final PlaylistTab other = (PlaylistTab) obj;
+
+            return super.equals(obj)
+                    && playlistServiceId == other.playlistServiceId // Remote
+                    && playlistId == other.playlistId // Local
+                    && playlistUrl.equals(other.playlistUrl)
+                    && playlistName.equals(other.playlistName)
+                    && playlistType == other.playlistType;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(
+                    getTabId(),
+                    playlistServiceId,
+                    playlistId,
+                    playlistUrl,
+                    playlistName,
+                    playlistType
+            );
         }
 
         public int getPlaylistServiceId() {

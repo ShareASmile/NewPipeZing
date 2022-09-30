@@ -14,9 +14,9 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="?dialogPreferredPadding"
         tools:ignore="ContentDescription,RtlHardcoded"
-        tools:src="?attr/ic_kiosk_hot" />
+        tools:src="@drawable/ic_kiosk_hot" />
 
-    <TextView
+    <org.schabi.newpipe.views.NewPipeTextView
         android:id="@+id/tabName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
