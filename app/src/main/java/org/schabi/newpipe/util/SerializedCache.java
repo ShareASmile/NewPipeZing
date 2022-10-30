@@ -8,10 +8,7 @@ import androidx.collection.LruCache;
 
 import org.schabi.newpipe.MainActivity;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -97,15 +94,9 @@ public final class SerializedCache {
 
     @NonNull
     private <T extends Serializable> T clone(@NonNull final T item,
-                                             @NonNull final Class<T> type) throws Exception {
-        final ByteArrayOutputStream bytesOutput = new ByteArrayOutputStream();
-        try (ObjectOutputStream objectOutput = new ObjectOutputStream(bytesOutput)) {
-            objectOutput.writeObject(item);
-            objectOutput.flush();
-        }
-        final Object clone = new ObjectInputStream(
-                new ByteArrayInputStream(bytesOutput.toByteArray())).readObject();
-        return type.cast(clone);
+                                             @NonNull final Class<T> type
+    ) throws IOException, SecurityException, NullPointerException, ClassNotFoundException {
+        return SerializedUtils.clone(item, type);
     }
 
     private static final class CacheData<T> {
