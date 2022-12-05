@@ -15,6 +15,10 @@ buildscript {
     }
 }
 
+ext {
+    cronetVersion = "108.5359.79"
+}
+
 allprojects {
     repositories {
         google()

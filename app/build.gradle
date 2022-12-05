@@ -233,7 +233,13 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:4.10.0"
 
     // HTTP client for playback
-    implementation "org.chromium.net:cronet-embedded:108.5359.79"
+    implementation ("org.chromium.net:cronet-embedded:$rootProject.ext.cronetVersion") {
+        // Exclude Cronet common module to replace it by our own implementation which allows
+        // configuration of the QUIC User-Agent ID value, sending by default the application name
+        // in it
+        exclude module: "cronet-common"
+    }
+    implementation project(path: ':cronet-common')
 
     // Media player
     implementation "com.google.android.exoplayer:exoplayer-core:${exoPlayerVersion}"
