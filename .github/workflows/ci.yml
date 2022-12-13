@@ -6,6 +6,7 @@ on:
     branches:
       - dev
       - master
+      - download-option-in-queue-items
       - release**
     paths-ignore:
       - 'README.md'
@@ -19,6 +20,7 @@ on:
     branches:
       - dev
       - master
+      - download-option-in-queue-items
     paths-ignore:
       - 'README.md'
       - 'doc/**'
