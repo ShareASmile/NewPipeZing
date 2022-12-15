@@ -1,0 +1,34 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'org.chromium.net'
+    compileSdk 32
+
+    defaultConfig {
+        // Use the same versions as the one in the Android manifest shipped with the original
+        // dependency
+        minSdk 16
+        //noinspection ExpiredTargetSdkVersion
+        targetSdk 24
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+        // Disable lint errors and warnings which are emitted by the module, as these classes are
+        // not from us, and so should not generate errors on our project from this module
+        disable 'NewApi', 'GradleDependency', 'VisibleForTests'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    api "org.chromium.net:cronet-api:$rootProject.ext.cronetVersion"
+    compileOnly 'androidx.annotation:annotation:1.3.0'
+}

@@ -232,6 +232,15 @@ dependencies {
     // HTTP client
     implementation "com.squareup.okhttp3:okhttp:4.10.0"
 
+    // HTTP client for playback
+    implementation ("org.chromium.net:cronet-embedded:$rootProject.ext.cronetVersion") {
+        // Exclude Cronet common module to replace it by our own implementation which allows
+        // configuration of the QUIC User-Agent ID value, sending by default the application name
+        // in it
+        exclude module: "cronet-common"
+    }
+    implementation project(path: ':cronet-common')
+
     // Media player
     implementation "com.google.android.exoplayer:exoplayer-core:${exoPlayerVersion}"
     implementation "com.google.android.exoplayer:exoplayer-dash:${exoPlayerVersion}"
@@ -241,6 +250,10 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:${exoPlayerVersion}"
     implementation "com.google.android.exoplayer:exoplayer-ui:${exoPlayerVersion}"
     implementation "com.google.android.exoplayer:extension-mediasession:${exoPlayerVersion}"
+    implementation ("com.google.android.exoplayer:extension-cronet:${exoPlayerVersion}") {
+        // Exclude Google Play Services Cronet implementation used by default by the extension
+        exclude group: "com.google.android.gms"
+    }
 
     // Metadata generator for service descriptors
     compileOnly "com.google.auto.service:auto-service-annotations:${googleAutoServiceVersion}"

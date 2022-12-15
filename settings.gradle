@@ -1,3 +1,4 @@
+include ":cronet-common"
 include ':app'
 
 // Use a local copy of NewPipe Extractor by uncommenting the lines below.
