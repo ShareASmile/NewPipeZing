@@ -80,11 +80,9 @@
         android:minHeight="0dp"
         android:paddingHorizontal="4dp"
         android:paddingVertical="6dp"
-        android:textAllCaps="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/show_replies_button_text_color"
         android:textSize="@dimen/file_picker_items_text_size"
-        tools:text="0 Reply" />
-
+        tools:text="3 replies" />
 
 </RelativeLayout>
