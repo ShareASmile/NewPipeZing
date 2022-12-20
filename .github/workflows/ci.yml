@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
+      - comments-replies 
       - dev
       - master
       - release**
@@ -17,6 +18,7 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
   push:
     branches:
+      - comments-replies
       - dev
       - master
     paths-ignore:
