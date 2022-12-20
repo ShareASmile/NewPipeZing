@@ -43,6 +43,7 @@ import static org.schabi.newpipe.player.notification.NotificationConstants.ACTIO
 import static org.schabi.newpipe.player.notification.NotificationConstants.ACTION_RECREATE_NOTIFICATION;
 import static org.schabi.newpipe.player.notification.NotificationConstants.ACTION_REPEAT;
 import static org.schabi.newpipe.player.notification.NotificationConstants.ACTION_SHUFFLE;
+import static org.schabi.newpipe.util.ListHelper.computeDefaultResolution;
 import static org.schabi.newpipe.util.ListHelper.getPopupResolutionIndex;
 import static org.schabi.newpipe.util.ListHelper.getResolutionIndex;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
@@ -67,12 +68,15 @@ import androidx.preference.PreferenceManager;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player.PositionInfo;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.Tracks;
+import com.google.android.exoplayer2.analytics.AnalyticsListener;
+import com.google.android.exoplayer2.decoder.DecoderReuseEvaluation;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.text.CueGroup;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -108,8 +112,8 @@ import org.schabi.newpipe.player.playback.PlaybackListener;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.resolver.AudioPlaybackResolver;
+import org.schabi.newpipe.player.resolver.SourceType;
 import org.schabi.newpipe.player.resolver.VideoPlaybackResolver;
-import org.schabi.newpipe.player.resolver.VideoPlaybackResolver.SourceType;
 import org.schabi.newpipe.player.ui.MainPlayerUi;
 import org.schabi.newpipe.player.ui.PlayerUi;
 import org.schabi.newpipe.player.ui.PlayerUiList;
@@ -132,7 +136,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.disposables.SerialDisposable;
 
-public final class Player implements PlaybackListener, Listener {
+public final class Player implements PlaybackListener, Listener, AnalyticsListener {
     public static final boolean DEBUG = MainActivity.DEBUG;
     public static final String TAG = Player.class.getSimpleName();
 
@@ -174,6 +178,7 @@ public final class Player implements PlaybackListener, Listener {
     //////////////////////////////////////////////////////////////////////////*/
 
     public static final int RENDERER_UNAVAILABLE = -1;
+    public static final int MAX_HEIGHT_ALLOWED_WITHOUT_HIGH_RESOLUTIONS = 1080;
     private static final String PICASSO_PLAYER_THUMBNAIL_TAG = "PICASSO_PLAYER_THUMBNAIL_TAG";
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -217,6 +222,8 @@ public final class Player implements PlaybackListener, Listener {
     private boolean isAudioOnly = false;
     private boolean isPrepared = false;
     private boolean wasPlaying = false;
+
+    private boolean defaultResolutionSetForManifestsSources = false;
 
     /*//////////////////////////////////////////////////////////////////////////
     // UIs, listeners and disposables
@@ -509,6 +516,7 @@ public final class Player implements PlaybackListener, Listener {
                 .setUsePlatformDiagnostics(false)
                 .build();
         simpleExoPlayer.addListener(this);
+        simpleExoPlayer.addAnalyticsListener(this);
         simpleExoPlayer.setPlayWhenReady(playOnReady);
         simpleExoPlayer.setSeekParameters(PlayerHelper.getSeekParameters(context));
         simpleExoPlayer.setWakeMode(C.WAKE_MODE_NETWORK);
@@ -1281,7 +1289,8 @@ public final class Player implements PlaybackListener, Listener {
             Log.d(TAG, "ExoPlayer - onTracksChanged(), "
                     + "track group size = " + tracks.getGroups().size());
         }
-        UIs.call(playerUi -> playerUi.onTextTracksChanged(tracks));
+        setDefaultResolutionForManifestSourcesIfNeeded();
+        UIs.call(playerUi -> playerUi.onTracksChanged(tracks));
     }
 
     @Override
@@ -1348,6 +1357,14 @@ public final class Player implements PlaybackListener, Listener {
     @Override
     public void onCues(@NonNull final CueGroup cueGroup) {
         UIs.call(playerUi -> playerUi.onCues(cueGroup.cues));
+    }
+
+    @Override
+    public void onVideoInputFormatChanged(
+            @NonNull final EventTime eventTime,
+            @NonNull final Format format,
+            @Nullable final DecoderReuseEvaluation decoderReuseEvaluation) {
+        UIs.call(playerUi -> playerUi.onVideoInputFormatChanged(format));
     }
     //endregion
 
@@ -1647,14 +1664,16 @@ public final class Player implements PlaybackListener, Listener {
         }
 
         /* If current playback has run for PLAY_PREV_ACTIVATION_LIMIT_MILLIS milliseconds,
-         * restart current track. Also restart the track if the current track
-         * is the first in a queue.*/
-        if (simpleExoPlayer.getCurrentPosition() > PLAY_PREV_ACTIVATION_LIMIT_MILLIS
+        restart current track (not applicable for livestreams, otherwise the play queue offset
+        would never be called on livestreams with a long DVR time).
+        Also restart the track if the current track is the first in a queue. */
+        if ((!isLive() && simpleExoPlayer.getCurrentPosition() > PLAY_PREV_ACTIVATION_LIMIT_MILLIS)
                 || playQueue.getIndex() == 0) {
             seekToDefault();
             playQueue.offsetIndex(0);
         } else {
             saveStreamProgressState();
+            defaultResolutionSetForManifestsSources = false;
             playQueue.offsetIndex(-1);
         }
         triggerProgressUpdate();
@@ -1669,6 +1688,7 @@ public final class Player implements PlaybackListener, Listener {
         }
 
         saveStreamProgressState();
+        defaultResolutionSetForManifestsSources = false;
         playQueue.offsetIndex(+1);
         triggerProgressUpdate();
     }
@@ -1809,6 +1829,89 @@ public final class Player implements PlaybackListener, Listener {
     }
     //endregion
 
+    /*//////////////////////////////////////////////////////////////////////////
+    // Manifest sources
+    //////////////////////////////////////////////////////////////////////////*/
+    //region Manifest sources
+
+    /**
+     * Set the default resolution for manifest sources according to user choice in Video and Audio
+     * settings.
+     *
+     * <p>
+     * The video format which has the highest bitrate in the formats supported by the device is
+     * always set, using
+     * {@link DefaultTrackSelector.Parameters.Builder#setForceHighestSupportedBitrate(boolean)}.
+     * </p>
+     *
+     * <p>
+     * If the resolution selected by the user is the best resolution, nothing else is set.
+     * </p>
+     *
+     * <p>
+     * If a resolution without an explicit frame rate (such as 480p) is the default one, the maximum
+     * frame rate allowed will be set to 30; otherwise the frame rate specified in the resolution
+     * will be set (such as 60 for 720p60).
+     * </p>
+     *
+     * <p>
+     * Note that if no stream matches the criteria specified, the track selection is managed by
+     * ExoPlayer in this specific case.
+     * </p>
+     */
+    private void setDefaultResolutionForManifestSourcesIfNeeded() {
+        if (defaultResolutionSetForManifestsSources || !isCurrentSourceTypeManifest()) {
+            return;
+        }
+
+        final String defaultResolution;
+        if (popupPlayerSelected()) {
+            defaultResolution = computeDefaultResolution(context,
+                    R.string.default_popup_resolution_key,
+                    R.string.default_popup_resolution_value);
+        } else {
+            defaultResolution = computeDefaultResolution(context,
+                    R.string.default_resolution_key, R.string.default_resolution_value);
+        }
+
+        final String[] defaultResolutionArray = defaultResolution.split("p");
+        final int defaultHeight = defaultResolution.equals(
+                context.getString(R.string.best_resolution_key)) ? -1
+                : Integer.parseInt(defaultResolutionArray[0]);
+        final int defaultFrameRate = defaultResolutionArray.length == 2
+                ? Integer.parseInt(defaultResolutionArray[1]) : 30;
+
+        final DefaultTrackSelector.Parameters.Builder builder = trackSelector.getParameters()
+                .buildUpon()
+                // Force playback of the highest quality
+                // Playback of qualities which don't meet constraints if there is no stream which
+                // matches them is allow by default
+                .setForceHighestSupportedBitrate(true);
+
+        if (defaultHeight != -1) {
+            // Setting minimum video size and maximum video size with the same values + forcing
+            // the highest bitrate supported should force playback of the selected resolution, if
+            // it is available
+            builder.setMinVideoSize(0, defaultHeight)
+                    .setMaxVideoSize(0, defaultHeight)
+                    .setMaxVideoFrameRate(defaultFrameRate);
+        } else if (areHigherResolutionsHidden()) {
+            builder.setMinVideoSize(0, MAX_HEIGHT_ALLOWED_WITHOUT_HIGH_RESOLUTIONS)
+                    .setMaxVideoSize(0, MAX_HEIGHT_ALLOWED_WITHOUT_HIGH_RESOLUTIONS);
+        }
+
+        trackSelector.setParameters(builder);
+        defaultResolutionSetForManifestsSources = true;
+    }
+
+    /**
+     * @return whether the {@link SourceType} of the current metadata is {@link SourceType#MANIFEST}
+     */
+    public boolean isCurrentSourceTypeManifest() {
+        return currentMetadata != null && currentMetadata.getSourceType() == SourceType.MANIFEST;
+    }
+    //endregion
+
 
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -1858,25 +1961,37 @@ public final class Player implements PlaybackListener, Listener {
     @Nullable
     public MediaSource sourceOf(final PlayQueueItem item, final StreamInfo info) {
         if (audioPlayerSelected()) {
+            if (info.getAudioStreams().isEmpty()) {
+                /* No audio stream to play in background, instead of preventing playback, use the
+                video resolver which will fetch unfortunately the video in background (and
+                subtitles if they are enabled too) by using the default video resolution */
+                return videoResolver.resolve(info);
+            }
+
+            // Use the audio resolver if there is an audio stream available for background playback
             return audioResolver.resolve(info);
         }
 
-        if (isAudioOnly && videoResolver.getStreamSourceType().orElse(
-                SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY)
-                == SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY) {
-            // If the current info has only video streams with audio and if the stream is played as
-            // audio, we need to use the audio resolver, otherwise the video stream will be played
-            // in background.
+        if (isAudioOnly && info.getVideoOnlyStreams().isEmpty()
+                && !info.getAudioStreams().isEmpty()) {
+            /* If the info we need to resolve has no video-only streams, has an audio stream and if
+            the current stream is played as audio, we need to use the audio resolver, otherwise
+            the video stream would be played in background. In this case, the play queue manager
+            might be reloaded if the info has video streams with audio when switching to a video
+            player. */
             return audioResolver.resolve(info);
         }
 
-        // Even if the stream is played in background, we need to use the video resolver if the
-        // info played is separated video-only and audio-only streams; otherwise, if the audio
-        // resolver was called when the app was in background, the app will only stream audio when
-        // the user come back to the app and will never fetch the video stream.
-        // Note that the video is not fetched when the app is in background because the video
-        // renderer is fully disabled (see useVideoSource method), except for HLS streams
-        // (see https://github.com/google/ExoPlayer/issues/9282).
+        /* Even if the stream is played in background, we need to use the video resolver if the
+        info played has video-only and audio-only streams or only video with audio
+        streams; otherwise, respectively, if the audio resolver was called when the app was in
+        background, the app would only stream audio when the user come back to the app and would
+        never fetch the video stream, or throw an exception because no audio-only source is
+        available.
+
+        Note that the video is not fetched when the app is in background because the video track
+        type is fully disabled (see useVideoSource method), except for HLS streams
+        (see https://github.com/google/ExoPlayer/issues/9282). */
         return videoResolver.resolve(info);
     }
 
@@ -2045,37 +2160,28 @@ public final class Player implements PlaybackListener, Listener {
         // Reload the play queue manager in this case, which is the behavior when we don't know the
         // index of the video renderer or playQueueManagerReloadingNeeded returns true.
         final Optional<StreamInfo> optCurrentStreamInfo = getCurrentStreamInfo();
-        if (!optCurrentStreamInfo.isPresent()) {
+        if (!optCurrentStreamInfo.isPresent() || currentMetadata == null) {
             reloadPlayQueueManager();
             setRecovery();
             return;
         }
 
-        final StreamInfo info = optCurrentStreamInfo.get();
-
-        // In the case we don't know the source type, fallback to the one with video with audio or
-        // audio-only source.
-        final SourceType sourceType = videoResolver.getStreamSourceType().orElse(
-                SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY);
-
-        if (playQueueManagerReloadingNeeded(sourceType, info, getVideoRendererIndex())) {
+        if (playQueueManagerReloadingNeeded(currentMetadata.getSourceType(),
+                optCurrentStreamInfo.get(), getVideoRendererIndex())) {
             reloadPlayQueueManager();
-        } else {
-            if (StreamTypeUtil.isAudio(info.getStreamType())) {
-                // Nothing to do more than setting the recovery position
-                setRecovery();
-                return;
-            }
-
-            final DefaultTrackSelector.Parameters.Builder parametersBuilder =
-                    trackSelector.buildUponParameters();
-
-            // Enable/disable the video track and the ability to select subtitles
-            parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, !videoEnabled);
-            parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, !videoEnabled);
-
-            trackSelector.setParameters(parametersBuilder);
         }
+
+        // Always disable and enable video and subtitles track types to fix video and subtitles
+        // track disabling issues in very rare cases, such as playing a content in audio mode
+        // (not in the real background player) and then playing a content which has audio-only
+        // streams and no video-only streams, but video with embedded audio streams
+        simpleExoPlayer.setTrackSelectionParameters(
+                simpleExoPlayer.getTrackSelectionParameters()
+                        .buildUpon()
+                        // Enable/disable the video track and the ability to select subtitles
+                        .setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, !videoEnabled)
+                        .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, !videoEnabled)
+                        .build());
 
         setRecovery();
     }
@@ -2092,7 +2198,7 @@ public final class Player implements PlaybackListener, Listener {
      *     {@link StreamType#AUDIO_LIVE_STREAM audio live stream}, or a
      *     {@link StreamType#POST_LIVE_AUDIO_STREAM ended audio live stream};</li>
      *     <li>the content is a {@link StreamType#LIVE_STREAM live stream} and the source type is a
-     *     {@link SourceType#LIVE_STREAM live source};</li>
+     *     {@link SourceType#MANIFEST manifest source};</li>
      *     <li>the content's source is {@link SourceType#VIDEO_WITH_SEPARATED_AUDIO a video stream
      *     with a separated audio source} or has no audio-only streams available <b>and</b> is a
      *     {@link StreamType#VIDEO_STREAM video stream}, an
@@ -2118,11 +2224,11 @@ public final class Player implements PlaybackListener, Listener {
             return true;
         }
 
-        // The content is an audio stream, an audio live stream, or a live stream with a live
+        // The content is an audio stream, an audio live stream, or a live stream with a manifest
         // source: it's not needed to reload the play queue manager because the stream source will
         // be the same
         if (isStreamTypeAudio || (streamType == StreamType.LIVE_STREAM
-                && sourceType == SourceType.LIVE_STREAM)) {
+                && sourceType == SourceType.MANIFEST)) {
             return false;
         }
 
@@ -2132,7 +2238,7 @@ public final class Player implements PlaybackListener, Listener {
         // audio stream available: it's probably not needed to reload the play queue manager
         // because the stream source will be probably the same as the current played
         if (sourceType == SourceType.VIDEO_WITH_SEPARATED_AUDIO
-                || (sourceType == SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY
+                || (sourceType == SourceType.VIDEO_WITH_AUDIO
                     && isNullOrEmpty(streamInfo.getAudioStreams()))) {
             // It's not needed to reload the play queue manager only if the content's stream type
             // is a video stream, a live stream or an ended live stream
@@ -2184,11 +2290,11 @@ public final class Player implements PlaybackListener, Listener {
 
     private boolean isLive() {
         try {
-            return !exoPlayerIsNull() && simpleExoPlayer.isCurrentMediaItemDynamic();
+            return !exoPlayerIsNull() && simpleExoPlayer.isCurrentMediaItemLive();
         } catch (final IndexOutOfBoundsException e) {
             // Why would this even happen =(... but lets log it anyway, better safe than sorry
             if (DEBUG) {
-                Log.d(TAG, "player.isCurrentWindowDynamic() failed: ", e);
+                Log.d(TAG, "player.isCurrentMediaItemLive() failed: ", e);
             }
             return false;
         }
@@ -2297,6 +2403,13 @@ public final class Player implements PlaybackListener, Listener {
                 .findFirst()
                 // No video renderer index with at least one track found: return unavailable index
                 .orElse(RENDERER_UNAVAILABLE);
+    }
+
+    /**
+     * @return whether higher resolutions are disabled from {@code Video and audio} settings
+     */
+    public boolean areHigherResolutionsHidden() {
+        return prefs.getBoolean(context.getString(R.string.show_higher_resolutions_key), false);
     }
     //endregion
 }
