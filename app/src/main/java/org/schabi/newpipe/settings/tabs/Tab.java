@@ -19,7 +19,7 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.fragments.BlankFragment;
-import org.schabi.newpipe.fragments.list.channel.ChannelFragment;
+import org.schabi.newpipe.fragments.list.channel.ChannelVideosFragment;
 import org.schabi.newpipe.fragments.list.kiosk.DefaultKioskFragment;
 import org.schabi.newpipe.fragments.list.kiosk.KioskFragment;
 import org.schabi.newpipe.fragments.list.playlist.PlaylistFragment;
@@ -340,7 +340,7 @@ public abstract class Tab {
         @DrawableRes
         @Override
         public int getTabIconRes(final Context context) {
-            final int kioskIcon = KioskTranslator.getKioskIcon(kioskId, context);
+            final int kioskIcon = KioskTranslator.getKioskIcon(kioskId);
 
             if (kioskIcon <= 0) {
                 throw new IllegalStateException("Kiosk ID is not valid: \"" + kioskId + "\"");
@@ -432,8 +432,8 @@ public abstract class Tab {
         }
 
         @Override
-        public ChannelFragment getFragment(final Context context) {
-            return ChannelFragment.getInstance(channelServiceId, channelUrl, channelName);
+        public ChannelVideosFragment getFragment(final Context context) {
+            return ChannelVideosFragment.getInstance(channelServiceId, channelUrl, channelName);
         }
 
         @Override
@@ -496,7 +496,7 @@ public abstract class Tab {
         @DrawableRes
         @Override
         public int getTabIconRes(final Context context) {
-            return KioskTranslator.getKioskIcon(getDefaultKioskId(context), context);
+            return KioskTranslator.getKioskIcon(getDefaultKioskId(context));
         }
 
         @Override

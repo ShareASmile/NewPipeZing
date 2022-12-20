@@ -8,30 +8,30 @@
         android:entries="@array/app_language_name"
         android:entryValues="@array/app_language_code"
         android:key="@string/app_language_key"
-        android:summary="%s"
         android:title="@string/app_language_title"
         app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
 
     <ListPreference
         android:defaultValue="@string/default_localization_key"
         android:entries="@array/language_names"
         android:entryValues="@array/language_codes"
         android:key="@string/content_language_key"
-        android:summary="%s"
         android:title="@string/content_language_title"
         app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
 
     <ListPreference
         android:defaultValue="@string/default_localization_key"
         android:entries="@array/country_names"
         android:entryValues="@array/country_codes"
         android:key="@string/content_country_key"
-        android:summary="%s"
         android:title="@string/default_content_country_title"
         app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
 
     <PreferenceScreen
         android:fragment="org.schabi.newpipe.settings.tabs.ChooseTabsFragment"
@@ -40,6 +40,16 @@
         android:title="@string/main_page_content"
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
+
+    <MultiSelectListPreference
+        android:key="@string/show_channel_tabs_key"
+        android:summary="@string/show_channel_tabs_summary"
+        android:title="@string/show_channel_tabs"
+        android:entries="@array/show_channel_tabs_description_list"
+        android:entryValues="@array/show_channel_tabs_value_list"
+        android:defaultValue="@array/show_channel_tabs_value_list"
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="false" />
 
     <PreferenceScreen
         android:fragment="org.schabi.newpipe.settings.PeertubeInstanceListFragment"

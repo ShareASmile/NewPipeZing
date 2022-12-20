@@ -24,6 +24,7 @@ import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.player.helper.PlayerHolder;
+import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 
 import java.util.ArrayList;
@@ -269,15 +270,14 @@ public final class InfoItemDialog {
          */
         public Builder addStartHereEntries() {
             addEntry(StreamDialogDefaultEntry.START_HERE_ON_BACKGROUND);
-            if (infoItem.getStreamType() != StreamType.AUDIO_STREAM
-                    && infoItem.getStreamType() != StreamType.AUDIO_LIVE_STREAM) {
+            if (!StreamTypeUtil.isAudio(infoItem.getStreamType())) {
                 addEntry(StreamDialogDefaultEntry.START_HERE_ON_POPUP);
             }
             return this;
         }
 
         /**
-         * Adds {@link StreamDialogDefaultEntry.MARK_AS_WATCHED} if the watch history is enabled
+         * Adds {@link StreamDialogDefaultEntry#MARK_AS_WATCHED} if the watch history is enabled
          * and the stream is not a livestream.
          * @return the current {@link Builder} instance
          */
@@ -285,16 +285,14 @@ public final class InfoItemDialog {
             final boolean isWatchHistoryEnabled = PreferenceManager
                     .getDefaultSharedPreferences(context)
                     .getBoolean(context.getString(R.string.enable_watch_history_key), false);
-            if (isWatchHistoryEnabled
-                    && infoItem.getStreamType() != StreamType.LIVE_STREAM
-                    && infoItem.getStreamType() != StreamType.AUDIO_LIVE_STREAM) {
+            if (isWatchHistoryEnabled && !StreamTypeUtil.isLiveStream(infoItem.getStreamType())) {
                 addEntry(StreamDialogDefaultEntry.MARK_AS_WATCHED);
             }
             return this;
         }
 
         /**
-         * Adds the {@link StreamDialogDefaultEntry.PLAY_WITH_KODI} entry if it is needed.
+         * Adds the {@link StreamDialogDefaultEntry#PLAY_WITH_KODI} entry if it is needed.
          * @return the current {@link Builder} instance
          */
         public Builder addPlayWithKodiEntryIfNeeded() {
@@ -323,6 +321,7 @@ public final class InfoItemDialog {
          */
         public Builder addDefaultEndEntries() {
             addAllEntries(
+                    StreamDialogDefaultEntry.DOWNLOAD,
                     StreamDialogDefaultEntry.APPEND_PLAYLIST,
                     StreamDialogDefaultEntry.SHARE,
                     StreamDialogDefaultEntry.OPEN_IN_BROWSER

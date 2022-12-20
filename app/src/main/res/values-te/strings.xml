@@ -229,7 +229,6 @@
     <string name="peertube_instance_add_help">ఉదాహరణ URLని నమోదు చేయండి</string>
     <string name="peertube_instance_add_fail">ఉదాహరణను ధృవీకరించడం సాధ్యపడలేదు</string>
     <string name="peertube_instance_add_exists">ఉదాహరణ ఇప్పటికే ఉంది</string>
-    <string name="settings_category_notification_title">నోటిఫికేషన్</string>
     <string name="users">వినియోగదారులు</string>
     <string name="events">ఈవెంట్స్</string>
     <string name="app_update_notification_channel_description">కొత్త NewPipe వెర్షన్ కోసం నోటిఫికేషన్‌లు</string>
@@ -372,7 +371,6 @@
     <string name="title_activity_recaptcha">reCAPTCHA సవాలు</string>
     <string name="recaptcha_request_toast">reCAPTCHA సవాలు అభ్యర్థించబడింది</string>
     <string name="select_a_playlist">ప్లేజాబితాను ఎంచుకోండి</string>
-    <string name="background_player_already_playing_toast">ఇప్పటికే వెనుకగా ప్లే అవుతోంది</string>
     <string name="export_data_title">డాటాబేసుని ఎగుమతిచేయుము</string>
     <string name="localization_changes_requires_app_restart">యాప్ పునఃప్రారంభించబడిన తర్వాత భాష మారుతుంది</string>
     <string name="show_channel_details">ఛానెల్ వివరాలను చూపు</string>
@@ -420,4 +418,36 @@
     <string name="resize_fill">పూరించండి</string>
     <string name="resize_zoom">పరివీక్షణ</string>
     <string name="switch_to_popup">తేలియాడే విధంగా మార్చు</string>
+    <string name="auto_queue_title">తదుపరి స్ట్రీమ్‌ను స్వీయ-ఎన్క్యూ</string>
+    <string name="progressive_load_interval_summary">లోడ్ విరామం పరిమాణాన్ని మార్చండి (ప్రస్తుతం %s). తక్కువ విలువ ప్రారంభ వీడియో లోడింగ్‌ని వేగవంతం చేయవచ్చు. మార్పులకు ప్లేయర్ రీస్టార్ట్ అవసరం.</string>
+    <string name="leak_canary_not_available">LeakCanary అందుబాటులో లేదు</string>
+    <string name="caption_setting_description">ప్లేయర్ శీర్షిక వచన స్థాయి మరియు నేపథ్య శైలులను సవరించండి. అమలులోకి రావడానికి యాప్ రీస్టార్ట్ అవసరం</string>
+    <string name="playlist_no_uploader">స్వయంచాలకంగా రూపొందించబడింది (ఎక్కించినవారు కనబడుటలేదు)</string>
+    <string name="caption_auto_generated">స్వయంచాలకంగా రూపొందించబడింది</string>
+    <string name="caption_setting_title">శీర్షికలు</string>
+    <string name="streams_notification_channel_description">సభ్యత్వాల కోసం కొత్త స్ట్రీమ్‌ల గురించి నోటిఫికేషన్‌లు</string>
+    <string name="playback_reset">స్థితి పునరుద్ధరణ</string>
+    <string name="playback_tempo">లయ</string>
+    <string name="streams_notification_channel_name">కొత్త స్ట్రీమ్స్</string>
+    <plurals name="new_streams">
+        <item quantity="one">%s కొత్త స్ట్రీమ్</item>
+        <item quantity="other">%s కొత్త స్ట్రీమ్స్</item>
+    </plurals>
+    <string name="loading_stream_details">స్ట్రీమ్ వివరాలను లోడ్ చేస్తోంది…</string>
+    <string name="show_memory_leaks">మెమరీ లీక్‌లను చూపించు</string>
+    <string name="enable_disposed_exceptions_title">జీవితచక్రం లేని లోపాలను నివేదించండి</string>
+    <string name="import_network_expensive_warning">ఈ చర్య నెట్‌వర్క్ ఖరీదైనదని గుర్తుంచుకోండి.
+\n
+\nమీరు కొనసాగించాలనుకుంటున్నారా\?</string>
+    <string name="percent">శాతం</string>
+    <string name="semitone">అర్ధరాగం</string>
+    <string name="progressive_load_interval_title">ప్లేబ్యాక్ లోడ్ విరామం పరిమాణం</string>
+    <string name="show_original_time_ago_title">వస్తువులపై అసలు క్రిత సమయాన్ని చూపుము</string>
+    <string name="enable_disposed_exceptions_summary">పారవేయడం తర్వాత ఫ్రాగ్మెంట్ లేదా యాక్టివిటీ లైఫ్‌సైకిల్ వెలుపల బట్వాడా చేయలేని Rx మినహాయింపులను బలవంతంగా నివేదించడం</string>
+    <string name="enable_leak_canary_summary">మెమరీ లీక్ మానిటరింగ్ హీప్ డంపింగ్ చేసినప్పుడు యాప్ స్పందించక పోవడానికి కారణం కావచ్చు</string>
+    <string name="playback_pitch">శృతి</string>
+    <string name="unhook_checkbox">అన్‌హుక్ (వక్రీకరణకు కారణం కావచ్చు)</string>
+    <string name="playback_step">అడుగు</string>
+    <string name="skip_silence_checkbox">నిశ్శబ్ద సమయంలో వేగంగా ముందుకు వెళ్లుము</string>
+    <string name="playback_speed_control">ప్లేబ్యాక్ స్పీడ్ నియంత్రణలు</string>
 </resources>

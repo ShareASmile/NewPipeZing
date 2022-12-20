@@ -15,7 +15,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import org.schabi.newpipe.MainActivity
 import org.schabi.newpipe.R
-import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.exceptions.AccountTerminatedException
 import org.schabi.newpipe.extractor.exceptions.AgeRestrictedContentException
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
@@ -31,6 +30,7 @@ import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.ktx.isInterruptedCaused
 import org.schabi.newpipe.ktx.isNetworkRelated
 import org.schabi.newpipe.util.ServiceHelper
+import org.schabi.newpipe.util.external_communication.ShareUtils
 import java.util.concurrent.TimeUnit
 
 class ErrorPanelHelper(
@@ -53,6 +53,8 @@ class ErrorPanelHelper(
         errorPanelRoot.findViewById(R.id.error_action_button)
     private val errorRetryButton: Button =
         errorPanelRoot.findViewById(R.id.error_retry_button)
+    private val errorOpenInBrowserButton: Button =
+        errorPanelRoot.findViewById(R.id.error_open_in_browser)
 
     private var errorDisposable: Disposable? = null
 
@@ -70,6 +72,7 @@ class ErrorPanelHelper(
         errorServiceExplanationTextView.isVisible = false
         errorActionButton.isVisible = false
         errorRetryButton.isVisible = false
+        errorOpenInBrowserButton.isVisible = false
     }
 
     fun showError(errorInfo: ErrorInfo) {
@@ -100,13 +103,14 @@ class ErrorPanelHelper(
             }
 
             errorRetryButton.isVisible = true
+            showAndSetOpenInBrowserButtonAction(errorInfo)
         } else if (errorInfo.throwable is AccountTerminatedException) {
             errorTextView.setText(R.string.account_terminated)
 
             if (!isNullOrEmpty((errorInfo.throwable as AccountTerminatedException).message)) {
                 errorServiceInfoTextView.text = context.resources.getString(
                     R.string.service_provides_reason,
-                    NewPipe.getNameOfService(ServiceHelper.getSelectedServiceId(context))
+                    ServiceHelper.getSelectedService(context)?.serviceInfo?.name ?: "<unknown>"
                 )
                 errorServiceInfoTextView.isVisible = true
 
@@ -129,6 +133,7 @@ class ErrorPanelHelper(
                 // show retry button only for content which is not unavailable or unsupported
                 errorRetryButton.isVisible = true
             }
+            showAndSetOpenInBrowserButtonAction(errorInfo)
         }
 
         setRootVisible()
@@ -144,6 +149,15 @@ class ErrorPanelHelper(
         errorActionButton.isVisible = true
         errorActionButton.setText(resid)
         errorActionButton.setOnClickListener(listener)
+    }
+
+    fun showAndSetOpenInBrowserButtonAction(
+        errorInfo: ErrorInfo
+    ) {
+        errorOpenInBrowserButton.isVisible = true
+        errorOpenInBrowserButton.setOnClickListener {
+            ShareUtils.openUrlInBrowser(context, errorInfo.request, true)
+        }
     }
 
     fun showTextError(errorString: String) {

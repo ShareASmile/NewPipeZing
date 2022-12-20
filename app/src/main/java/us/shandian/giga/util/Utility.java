@@ -13,8 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.exoplayer2.util.Util;
+
 import org.schabi.newpipe.R;
-import org.schabi.newpipe.streams.io.SharpStream;
+import org.schabi.newpipe.streams.io.SharpInputStream;
+import org.schabi.newpipe.streams.io.StoredFileHelper;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -25,11 +28,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 
-import org.schabi.newpipe.streams.io.StoredFileHelper;
+import okio.ByteString;
 
 public class Utility {
 
@@ -191,56 +192,18 @@ public class Utility {
         }
     }
 
-    public static void copyToClipboard(Context context, String str) {
-        ClipboardManager cm = ContextCompat.getSystemService(context, ClipboardManager.class);
-
-        if (cm == null) {
-            Toast.makeText(context, R.string.permission_denied, Toast.LENGTH_LONG).show();
-            return;
+    public static String checksum(final StoredFileHelper source, final int algorithmId)
+            throws IOException {
+        ByteString byteString;
+        try (var inputStream = new SharpInputStream(source.getStream())) {
+            byteString = ByteString.of(Util.toByteArray(inputStream));
         }
-
-        cm.setPrimaryClip(ClipData.newPlainText("text", str));
-        Toast.makeText(context, R.string.msg_copied, Toast.LENGTH_SHORT).show();
-    }
-
-    public static String checksum(StoredFileHelper source, String algorithm) {
-        MessageDigest md;
-
-        try {
-            md = MessageDigest.getInstance(algorithm);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+        if (algorithmId == R.id.md5) {
+            byteString = byteString.md5();
+        } else if (algorithmId == R.id.sha1) {
+            byteString = byteString.sha1();
         }
-
-        SharpStream i;
-
-        try {
-            i = source.getStream();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        byte[] buf = new byte[1024];
-        int len;
-
-        try {
-            while ((len = i.read(buf)) != -1) {
-                md.update(buf, 0, len);
-            }
-        } catch (IOException e) {
-            // nothing to do
-        }
-
-        byte[] digest = md.digest();
-
-        // HEX
-        StringBuilder sb = new StringBuilder();
-        for (byte b : digest) {
-            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-        }
-
-        return sb.toString();
-
+        return byteString.hex();
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

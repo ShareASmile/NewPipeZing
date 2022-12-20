@@ -111,7 +111,7 @@
     <string name="tab_licenses">Lizenzen</string>
     <string name="read_full_license">Lizenz lesen</string>
     <string name="copyright" formatted="true">© %1$s von %2$s unter %3$s</string>
-    <string name="tab_about">Über</string>
+    <string name="tab_about">Über &amp; FAQ</string>
     <string name="app_description">Freies und schlankes Streaming für Android.</string>
     <string name="app_license_title">NewPipes Lizenz</string>
     <string name="contribution_encouragement">Ob Ideen, Übersetzungen, Design-Änderungen, Code-Aufräumung oder richtig große Code-Änderungen — Hilfe ist immer willkommen. Je mehr geholfen wird, desto besser wird NewPipe!</string>
@@ -126,7 +126,7 @@
     <string name="subscribe_button_title">Abonnieren</string>
     <string name="subscribed_button_title">Abonniert</string>
     <string name="channel_unsubscribed">Kanal deabonniert</string>
-    <string name="tab_subscriptions">Abos</string>
+    <string name="tab_subscriptions">Abonnements</string>
     <string name="fragment_feed_title">Neuigkeiten</string>
     <string name="enable_search_history_title">Suchverlauf</string>
     <string name="enable_search_history_summary">Suchanfragen lokal speichern</string>
@@ -161,7 +161,7 @@
     <string name="charset_most_special_characters">Die meisten Sonderzeichen</string>
     <string name="resume_on_audio_focus_gain_title">Wiedergabe fortsetzen</string>
     <string name="settings_category_player_title">Player</string>
-    <string name="empty_subscription_feed_subtitle">Nichts hier außer dem Zirpen der Grillen</string>
+    <string name="empty_subscription_feed_subtitle">Nichts hier, außer dem Zirpen der Grillen</string>
     <string name="delete_item_search_history">Möchtest du dieses Element aus dem Suchverlauf löschen\?</string>
     <string name="blank_page_summary">Leere Seite</string>
     <string name="select_a_channel">Einen Kanal auswählen</string>
@@ -323,13 +323,13 @@
 \nDu musst den Datenschutzrichtlinien zustimmen, um den Fehlerbericht an uns zu senden.</string>
     <string name="limit_data_usage_none_description">Unbegrenzt</string>
     <string name="limit_mobile_data_usage_title">Auflösung bei Verwendung mobiler Daten begrenzen</string>
-    <string name="minimize_on_exit_title">Beim Appwechsel minimieren</string>
+    <string name="minimize_on_exit_title">Beim App-wechsel minimieren</string>
     <string name="minimize_on_exit_summary">Aktion beim Umschalten auf eine andere App vom Haupt-Videoplayer — %s</string>
     <string name="minimize_on_exit_none_description">Keine</string>
     <string name="minimize_on_exit_background_description">Für die Wiedergabe im Hintergrund minimieren</string>
     <string name="minimize_on_exit_popup_description">Für die Wiedergabe im Pop-up minimieren</string>
     <string name="skip_silence_checkbox">Vorspulen bei Stille</string>
-    <string name="playback_step">Schritt</string>
+    <string name="playback_step">Stufe</string>
     <string name="playback_reset">Zurücksetzen</string>
     <string name="channels">Kanäle</string>
     <string name="playlists">Wiedergabelisten</string>
@@ -342,6 +342,8 @@
     <string name="brightness_gesture_control_title">Gestensteuerung für Helligkeit</string>
     <string name="brightness_gesture_control_summary">Gesten verwenden, um die Helligkeit einzustellen</string>
     <string name="settings_category_updates_title">Aktualisierungen</string>
+    <string name="settings_category_player_notification_title">Wiedergabebenachrichtigung</string>
+    <string name="settings_category_player_notification_summary">Konfiguriert die Benachrichtigung zum aktuell abgespielten Stream</string>
     <string name="file_deleted">Datei gelöscht</string>
     <string name="app_update_notification_channel_name">Benachrichtigung über App-Update</string>
     <string name="app_update_notification_channel_description">Benachrichtigungen über neue NewPipe-Versionen</string>
@@ -371,7 +373,7 @@
     <string name="post_processing">Nachbearbeitung</string>
     <string name="enqueue">In Wiedergabe einreihen</string>
     <string name="permission_denied">System verweigert den Zugriff</string>
-    <string name="download_failed">Herunterladen fehlgeschlagen</string>
+    <string name="download_failed">Download fehlgeschlagen</string>
     <string name="generate_unique_name">Eindeutigen Namen erzeugen</string>
     <string name="overwrite">Überschreiben</string>
     <string name="overwrite_unrelated_warning">Eine Datei mit diesem Namen existiert bereits</string>
@@ -494,8 +496,8 @@
     <string name="feed_update_threshold_option_always_update">Immer aktualisieren</string>
     <string name="feed_groups_header_title">Kanalgruppen</string>
     <string name="feed_subscription_not_loaded_count">Nicht geladen: %d</string>
-    <string name="feed_notification_loading">Feed wird geladen …</string>
-    <string name="feed_processing_message">Feed wird verarbeitet …</string>
+    <string name="feed_notification_loading">Lade Feed …</string>
+    <string name="feed_processing_message">Verarbeite Feed …</string>
     <string name="settings_category_feed_title">Feed</string>
     <string name="feed_group_dialog_select_subscriptions">Abonnements auswählen</string>
     <string name="feed_group_dialog_empty_selection">Kein Abonnement ausgewählt</string>
@@ -550,15 +552,14 @@
     <string name="never">Nie</string>
     <string name="notification_actions_at_most_three">Du kannst maximal drei Aktionen auswählen, die in der Kompaktbenachrichtigung angezeigt werden sollen!</string>
     <string name="notification_actions_summary">Bearbeite jede Benachrichtigungsaktion unten, indem du darauf tippst. Wähle mithilfe der Kontrollkästchen rechts bis zu drei aus, die in der Kompaktbenachrichtigung angezeigt werden sollen</string>
-    <string name="settings_category_notification_title">Benachrichtigung</string>
     <string name="unsupported_url_dialog_message">Konnte die angegebene URL nicht erkennen. Mit einer anderen Anwendung öffnen\?</string>
     <string name="notification_action_4_title">Fünfte Aktionstaste</string>
     <string name="notification_action_3_title">Vierte Aktionstaste</string>
     <string name="notification_action_2_title">Dritte Aktionstaste</string>
     <string name="notification_action_1_title">Zweite Aktionstaste</string>
     <string name="notification_action_0_title">Erste Aktionstaste</string>
-    <string name="notification_scale_to_square_image_summary">Skaliert das in der Benachrichtigung angezeigte Vorschaubild von 16:9 auf ein 1:1 Seitenverhältnis (kann zu Verzerrungen führen)</string>
-    <string name="notification_scale_to_square_image_title">Vorschaubild auf 1:1 Seitenverhältnis skalieren</string>
+    <string name="notification_scale_to_square_image_summary">Beschneidet das in der Benachrichtigung angezeigte Video-Vorschaubild von 16:9 auf ein 1:1 Seitenverhältnis</string>
+    <string name="notification_scale_to_square_image_title">Vorschaubild auf 1:1 Seitenverhältnis zuschneiden</string>
     <string name="notification_action_shuffle">Zufällig</string>
     <string name="notification_action_buffering">Puffern</string>
     <string name="notification_action_repeat">Wiederholen</string>
@@ -588,7 +589,7 @@
     <string name="show_meta_info_summary">Deaktiviere diese Option, um Meta-Infofelder mit zusätzlichen Informationen zum Stream-Ersteller, zum Stream-Inhalt oder zu einer Suchanforderung auszublenden</string>
     <string name="chapters">Kapitel</string>
     <string name="description_tab_description">Beschreibung</string>
-    <string name="related_items_tab_description">Verwandte Streams</string>
+    <string name="related_items_tab_description">Verwandte Elemente</string>
     <string name="comments_tab_description">Kommentare</string>
     <string name="show_description_summary">Ausschalten, um Videobeschreibung und Zusatzinformationen auszublenden</string>
     <string name="show_description_title">Beschreibung anzeigen</string>
@@ -626,6 +627,7 @@
     <string name="metadata_thumbnail_url">Vorschaubild-URL</string>
     <string name="metadata_host">Server</string>
     <string name="metadata_support">Unterstützung</string>
+    <string name="metadata_subscribers">Abonnenten</string>
     <string name="description_select_disable">Auswählen von Text in der Beschreibung deaktivieren</string>
     <string name="description_select_enable">Auswählen von Text in der Beschreibung aktivieren</string>
     <string name="description_select_note">Du kannst nun Text innerhalb der Beschreibung auswählen. Beachte, dass die Seite flackern kann und Links im Auswahlmodus möglicherweise nicht anklickbar sind.</string>
@@ -637,7 +639,6 @@
     <string name="no_dir_yet">Noch kein Downloadordner festgelegt, wähle jetzt den Standard-Downloadordner</string>
     <string name="open_website_license">Webseite öffnen</string>
     <string name="downloads_storage_use_saf_summary_api_29">Ab Android 10 wird nur noch „Storage Access Framework“ unterstützt</string>
-    <string name="downloads_storage_use_saf_summary_api_19">Das „Storage Access Framework“ wird auf Android KitKat und niedriger nicht unterstützt</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Du wirst jedes Mal gefragt werden, wohin der Download gespeichert werden soll</string>
     <string name="feed_load_error">Fehler beim Laden des Feeds</string>
     <string name="feed_load_error_account_info">Konnte Feed für \'%s\' nicht laden.</string>
@@ -665,9 +666,9 @@
     <string name="start_main_player_fullscreen_title">Hauptplayer im Vollbildmodus starten</string>
     <string name="enqueued_next">Als Nächstes eingereiht</string>
     <string name="enqueue_next_stream">Als Nächstes in Wiedergabe einreihen</string>
-    <string name="processing_may_take_a_moment">Verarbeitung… Kann einen Moment dauern</string>
+    <string name="processing_may_take_a_moment">Verarbeite … Kann einen Moment dauern</string>
     <string name="manual_update_title">Nach Aktualisierungen suchen</string>
-    <string name="checking_updates_toast">Suche nach Aktualisierungen…</string>
+    <string name="checking_updates_toast">Suche nach Aktualisierungen …</string>
     <string name="manual_update_description">Manuelle Prüfung auf neue Versionen</string>
     <string name="feed_new_items">Neue Feed-Elemente</string>
     <string name="show_crash_the_player_title">\"Player abstürzen lassen\" anzeigen</string>
@@ -680,10 +681,57 @@
     <string name="create_error_notification">Eine Fehlermeldung erstellen</string>
     <string name="show_error_snackbar">Fehler-Kurzmeldung anzeigen</string>
     <string name="no_appropriate_file_manager_message">Es wurde kein geeigneter Dateimanager für diese Aktion gefunden.
-\nBitte installiere einen Dateimanager oder versuche, \'%s\' in den Downloadeinstellungen zu deaktivieren.</string>
+\nBitte installiere einen Dateimanager oder versuche, \'%s\' in den Downloadeinstellungen zu deaktivieren</string>
     <string name="no_appropriate_file_manager_message_android_10">Es wurde kein geeigneter Dateimanager für diese Aktion gefunden.
-\nBitte installiere einen Storage Access Framework kompatiblen Dateimanager.</string>
-    <string name="background_player_already_playing_toast">Wird bereits im Hintergrund abgespielt</string>
+\nBitte installiere einen Storage Access Framework kompatiblen Dateimanager</string>
     <string name="detail_pinned_comment_view_description">Angehefteter Kommentar</string>
     <string name="leak_canary_not_available">LeakCanary ist nicht verfügbar</string>
+    <string name="progressive_load_interval_summary">Ändern der Größe des Ladeintervalls (derzeit %s). Ein niedrigerer Wert kann das anfängliche Laden des Videos beschleunigen. Änderungen erfordern einen Neustart des Players</string>
+    <string name="progressive_load_interval_exoplayer_default">ExoPlayer Standard</string>
+    <string name="notifications">Benachrichtigungen</string>
+    <string name="streams_notification_channel_description">Benachrichtigen über neue abonnierbare Streams</string>
+    <string name="streams_notification_channel_name">Neue Streams</string>
+    <plurals name="new_streams">
+        <item quantity="one">%s neuer Stream</item>
+        <item quantity="other">%s neue Streams</item>
+    </plurals>
+    <string name="loading_stream_details">Stream-Details laden …</string>
+    <string name="enable_streams_notifications_summary">Über neue Streams aus Abonnements benachrichtigen</string>
+    <string name="enumeration_comma">,</string>
+    <string name="any_network">Jedes Netzwerk</string>
+    <string name="enable_streams_notifications_title">Benachrichtigungen über neue Streams</string>
+    <string name="check_new_streams">Suche nach neuen Streams ausführen</string>
+    <string name="streams_notifications_network_title">Erforderliche Netzwerkverbindung</string>
+    <string name="notifications_disabled">Benachrichtigungen sind deaktiviert</string>
+    <string name="get_notified">Benachrichtigung erhalten</string>
+    <string name="delete_downloaded_files_confirm">Alle heruntergeladenen Dateien von der Festplatte löschen\?</string>
+    <string name="you_successfully_subscribed">Du hast jetzt diesen Kanal abonniert</string>
+    <string name="toggle_all">Alle umschalten</string>
+    <string name="streams_notifications_interval_title">Prüfintervall</string>
+    <string name="percent">Prozent</string>
+    <string name="semitone">Halbton</string>
+    <string name="no_video_streams_available_for_external_players">Keine Videostreams für externe Player verfügbar</string>
+    <string name="select_quality_external_players">Qualität für externe Player auswählen</string>
+    <string name="unknown_format">Unbekanntes Format</string>
+    <string name="no_audio_streams_available_for_external_players">Keine Audiostreams für externe Player verfügbar</string>
+    <string name="unknown_quality">Unbekannte Qualität</string>
+    <string name="streams_not_yet_supported_removed">Streams, die der Downloader noch nicht unterstützt, werden nicht angezeigt</string>
+    <string name="selected_stream_external_player_not_supported">Der ausgewählte Stream wird von externen Playern nicht unterstützt</string>
+    <string name="progressive_load_interval_title">Größe des Ladeintervalls für die Wiedergabe</string>
+    <string name="feed_toggle_show_future_items">Zukünftige Elemente anzeigen</string>
+    <string name="feed_toggle_hide_played_items">Angesehene Elemente ausblenden</string>
+    <string name="feed_toggle_hide_future_items">Zukünftige Elemente ausblenden</string>
+    <string name="faq">Auf der Webseite ansehen</string>
+    <string name="faq_title">Häufig gestellte Fragen</string>
+    <string name="faq_description">Wenn du Probleme bei der Verwendung der App hast, lies bitte die Antworten auf häufig gestellte Fragen!</string>
+    <string name="sort">Sortieren</string>
+    <string name="channel_tab_videos">Videos</string>
+    <string name="channel_tab_livestreams">Live</string>
+    <string name="channel_tab_shorts">Shorts</string>
+    <string name="channel_tab_playlists">Wiedergabelisten</string>
+    <string name="channel_tab_channels">Kanäle</string>
+    <string name="channel_tab_albums">Alben</string>
+    <string name="channel_tab_info">Info</string>
+    <string name="show_channel_tabs">Tabs auf den Kanalseiten</string>
+    <string name="show_channel_tabs_summary">Welche Tabs auf den Kanalseiten angezeigt werden</string>
 </resources>
