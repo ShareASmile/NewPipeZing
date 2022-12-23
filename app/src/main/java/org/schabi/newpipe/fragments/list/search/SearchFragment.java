@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.CharacterStyle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -43,13 +44,17 @@ import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.search.SearchExtractor;
 import org.schabi.newpipe.extractor.search.SearchInfo;
+import org.schabi.newpipe.extractor.services.peertube.linkHandler.PeertubeSearchQueryHandlerFactory;
+import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeSearchQueryHandlerFactory;
 import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.list.BaseListFragment;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.report.ErrorActivity;
+import org.schabi.newpipe.report.ErrorInfo;
 import org.schabi.newpipe.report.UserAction;
 import org.schabi.newpipe.util.AndroidTvUtils;
 import org.schabi.newpipe.util.AnimationUtils;
+import org.schabi.newpipe.util.CompatibilityUtil;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.NavigationHelper;
@@ -249,9 +254,9 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         } catch (Exception e) {
             ErrorActivity.reportError(getActivity(), e, getActivity().getClass(),
                     getActivity().findViewById(android.R.id.content),
-                    ErrorActivity.ErrorInfo.make(UserAction.UI_ERROR,
-                            "",
-                            "", R.string.general_error));
+                ErrorInfo.make(UserAction.UI_ERROR,
+                    "",
+                    "", R.string.general_error));
         }
 
         if (!TextUtils.isEmpty(searchString)) {
@@ -425,12 +430,18 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         boolean isFirstItem = true;
         final Context c = getContext();
         for (String filter : service.getSearchQHFactory().getAvailableContentFilter()) {
-            if (filter.equals("music_songs")) {
+            if (filter.equals(YoutubeSearchQueryHandlerFactory.MUSIC_SONGS)) {
                 MenuItem musicItem = menu.add(2,
                         itemId++,
                         0,
                         "YouTube Music");
                 musicItem.setEnabled(false);
+            } else if (filter.equals(PeertubeSearchQueryHandlerFactory.SEPIA_VIDEOS)) {
+                MenuItem sepiaItem = menu.add(2,
+                        itemId++,
+                        0,
+                        "Sepia Search");
+                sepiaItem.setEnabled(false);
             }
             menuItemToFilterName.put(itemId, filter);
             MenuItem item = menu.add(1,
@@ -505,7 +516,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                 Log.d(TAG, "onClick() called with: v = [" + v + "]");
             }
             if (TextUtils.isEmpty(searchEditText.getText())) {
-                NavigationHelper.gotoMainFragment(getFragmentManager());
+                NavigationHelper.gotoMainFragment(getFM());
                 return;
             }
 
@@ -578,7 +589,12 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
             @Override
             public void afterTextChanged(final Editable s) {
-                String newText = searchEditText.getText().toString();
+                // Remove rich text formatting
+                for (final CharacterStyle span : s.getSpans(0, s.length(), CharacterStyle.class)) {
+                    s.removeSpan(span);
+                }
+
+                final String newText = searchEditText.getText().toString();
                 suggestionPublisher.onNext(newText);
             }
         };
@@ -807,7 +823,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(intent -> {
-                            getFragmentManager().popBackStackImmediate();
+                            getFM().popBackStackImmediate();
                             activity.startActivity(intent);
                         }, throwable ->
                                 showError(getString(R.string.url_not_supported_toast), false)));
@@ -829,7 +845,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                         ignored -> {
                         },
                         error -> showSnackBarError(error, UserAction.SEARCHED,
-                                NewPipe.getNameOfService(serviceId), ss, 0)
+                                CompatibilityUtil.getNameOfService(serviceId), ss, 0)
                 );
         suggestionPublisher.onNext(ss);
         startLoading(false);
@@ -939,7 +955,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                 ? R.string.parsing_error
                 : R.string.general_error;
         onUnrecoverableError(exception, UserAction.GET_SUGGESTIONS,
-                NewPipe.getNameOfService(serviceId), searchString, errorId);
+                CompatibilityUtil.getNameOfService(serviceId), searchString, errorId);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -970,7 +986,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                 && !(exceptions.size() == 1
                 && exceptions.get(0) instanceof SearchExtractor.NothingFoundException)) {
             showSnackBarError(result.getErrors(), UserAction.SEARCHED,
-                    NewPipe.getNameOfService(serviceId), searchString, 0);
+                    CompatibilityUtil.getNameOfService(serviceId), searchString, 0);
         }
 
         searchSuggestion = result.getSearchSuggestion();
@@ -1033,7 +1049,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
         if (!result.getErrors().isEmpty()) {
             showSnackBarError(result.getErrors(), UserAction.SEARCHED,
-                    NewPipe.getNameOfService(serviceId),
+                    CompatibilityUtil.getNameOfService(serviceId),
                     "\"" + searchString + "\" → pageUrl: " + nextPage.getUrl() + ", "
                             + "pageIds: " + nextPage.getIds() + ", "
                             + "pageCookies: " + nextPage.getCookies(), 0);
@@ -1055,7 +1071,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                     ? R.string.parsing_error
                     : R.string.general_error;
             onUnrecoverableError(exception, UserAction.SEARCHED,
-                    NewPipe.getNameOfService(serviceId), searchString, errorId);
+                    CompatibilityUtil.getNameOfService(serviceId), searchString, errorId);
         }
 
         return true;

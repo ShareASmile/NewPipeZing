@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +19,7 @@ import org.schabi.newpipe.extractor.comments.CommentsInfo;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.report.UserAction;
 import org.schabi.newpipe.util.AnimationUtils;
+import org.schabi.newpipe.util.CompatibilityUtil;
 import org.schabi.newpipe.util.ExtractorHelper;
 
 import io.reactivex.Single;
@@ -28,11 +30,20 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfo> {
 
     private boolean mIsVisibleToUser = false;
 
+    private TextView emptyStateDesc;
+
     public static CommentsFragment getInstance(final int serviceId, final  String url,
                                                final String name) {
         CommentsFragment instance = new CommentsFragment();
         instance.setInitialData(serviceId, url, name);
         return instance;
+    }
+
+    @Override
+    protected void initViews(final View rootView, final Bundle savedInstanceState) {
+        super.initViews(rootView, savedInstanceState);
+
+        emptyStateDesc = rootView.findViewById(R.id.empty_state_desc);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -92,11 +103,16 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfo> {
     public void handleResult(@NonNull final CommentsInfo result) {
         super.handleResult(result);
 
+        emptyStateDesc.setText(
+                result.isCommentsDisabled()
+                        ? R.string.comments_are_disabled
+                        : R.string.no_comments);
+
         AnimationUtils.slideUp(getView(), 120, 150, 0.06f);
 
         if (!result.getErrors().isEmpty()) {
             showSnackBarError(result.getErrors(), UserAction.REQUESTED_COMMENTS,
-                    NewPipe.getNameOfService(result.getServiceId()), result.getUrl(), 0);
+                    CompatibilityUtil.getNameOfService(result.getServiceId()), result.getUrl(), 0);
         }
 
         if (disposables != null) {
@@ -110,7 +126,7 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfo> {
 
         if (!result.getErrors().isEmpty()) {
             showSnackBarError(result.getErrors(), UserAction.REQUESTED_COMMENTS,
-                    NewPipe.getNameOfService(serviceId), "Get next page of: " + url,
+                    CompatibilityUtil.getNameOfService(serviceId), "Get next page of: " + url,
                     R.string.general_error);
         }
     }
@@ -127,7 +143,7 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfo> {
 
         hideLoading();
         showSnackBarError(exception, UserAction.REQUESTED_COMMENTS,
-                NewPipe.getNameOfService(serviceId), url, R.string.error_unable_to_load_comments);
+                CompatibilityUtil.getNameOfService(serviceId), url, R.string.error_unable_to_load_comments);
         return true;
     }
 

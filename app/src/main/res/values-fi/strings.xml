@@ -102,10 +102,10 @@
     <string name="notification_channel_description">Ilmoitukset NewPipen tausta- ja ponnahdusikkunasoittimille</string>
     <string name="general_error">Virhe</string>
     <string name="network_error">Verkkovirhe</string>
-    <string name="could_not_load_thumbnails">Ei pystytty lataamaan kaikkia esikatselukuvia</string>
-    <string name="youtube_signature_decryption_error">Ei pystytty purkamaan salausta videon URL allekirjoitukselle</string>
-    <string name="parsing_error">Ei pystytty jäsentämään websivua</string>
-    <string name="light_parsing_error">Ei pystytty jäsentämään websivua kokonaan</string>
+    <string name="could_not_load_thumbnails">Kaikkia esikatselukuvia ei voitu ladata</string>
+    <string name="youtube_signature_deobfuscation_error">Videon URL-allekirjoituksen salausta ei voitu purkaa</string>
+    <string name="parsing_error">Verkkosivua ei voitu jäsentää</string>
+    <string name="light_parsing_error">Verkkosivua ei voitu täysin jäsentää</string>
     <string name="content_not_available">Sisältö ei ole saatavilla</string>
     <string name="could_not_setup_download_menu">Ei pystytty asettamaan latausvalikkoa</string>
     <string name="live_streams_not_supported">Live-suoratoistoa ei vielä tueta</string>

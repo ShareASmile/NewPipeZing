@@ -8,10 +8,11 @@ import org.schabi.newpipe.database.playlist.model.PlaylistRemoteEntity;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.local.LocalItemBuilder;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
+import org.schabi.newpipe.util.CompatibilityUtil;
 import org.schabi.newpipe.util.ImageDisplayConstants;
 import org.schabi.newpipe.util.Localization;
 
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
 
 public class RemotePlaylistItemHolder extends PlaylistItemHolder {
     public RemotePlaylistItemHolder(final LocalItemBuilder infoItemBuilder,
@@ -27,7 +28,7 @@ public class RemotePlaylistItemHolder extends PlaylistItemHolder {
     @Override
     public void updateFromItem(final LocalItem localItem,
                                final HistoryRecordManager historyRecordManager,
-                               final DateFormat dateFormat) {
+                               final DateTimeFormatter dateTimeFormatter) {
         if (!(localItem instanceof PlaylistRemoteEntity)) {
             return;
         }
@@ -39,15 +40,15 @@ public class RemotePlaylistItemHolder extends PlaylistItemHolder {
         // Here is where the uploader name is set in the bookmarked playlists library
         if (!TextUtils.isEmpty(item.getUploader())) {
             itemUploaderView.setText(Localization.concatenateStrings(item.getUploader(),
-                    NewPipe.getNameOfService(item.getServiceId())));
+                    CompatibilityUtil.getNameOfService(item.getServiceId())));
         } else {
-            itemUploaderView.setText(NewPipe.getNameOfService(item.getServiceId()));
+            itemUploaderView.setText(CompatibilityUtil.getNameOfService(item.getServiceId()));
         }
 
 
         itemBuilder.displayImage(item.getThumbnailUrl(), itemThumbnailView,
                 ImageDisplayConstants.DISPLAY_PLAYLIST_OPTIONS);
 
-        super.updateFromItem(localItem, historyRecordManager, dateFormat);
+        super.updateFromItem(localItem, historyRecordManager, dateTimeFormatter);
     }
 }

@@ -46,6 +46,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                     + "savedInstanceState = [" + savedInstanceState + "]");
         }
 
-        // enable TLS1.1/1.2 for kitkat devices, to fix download and play for mediaCCC sources
+        // enable TLS1.1/1.2 for kitkat devices, to fix download and play for media.ccc.de sources
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             TLSSocketFactoryCompat.setAsDefault();
         }
@@ -204,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                     toggleServices();
                 }
                 if (lastService != ServiceHelper.getSelectedServiceId(MainActivity.this)) {
-                    new Handler(Looper.getMainLooper()).post(MainActivity.this::recreate);
+                    ActivityCompat.recreate(MainActivity.this);
                 }
             }
         });
@@ -479,10 +480,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Theme has changed, recreating activity...");
             }
             sharedPreferences.edit().putBoolean(Constants.KEY_THEME_CHANGE, false).apply();
-            // https://stackoverflow.com/questions/10844112/
-            // Briefly, let the activity resume
-            // properly posting the recreate call to end of the message queue
-            new Handler(Looper.getMainLooper()).post(MainActivity.this::recreate);
+            ActivityCompat.recreate(this);
         }
 
         if (sharedPreferences.getBoolean(Constants.KEY_MAIN_PAGE_CHANGE, false)) {

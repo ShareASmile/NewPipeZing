@@ -54,7 +54,7 @@
     <string name="info_dir_created">Downloadverzeichnis „%1$s“ erstellt</string>
     <string name="general_error">Fehler</string>
     <string name="could_not_load_thumbnails">Konnte nicht alle Vorschaubilder laden</string>
-    <string name="youtube_signature_decryption_error">Konnte Video-URL-Signatur nicht entschlüsseln</string>
+    <string name="youtube_signature_deobfuscation_error">Konnte Video-URL-Signatur nicht entschlüsseln</string>
     <string name="parsing_error">Konnte Webseite nicht analysieren</string>
     <string name="content_not_available">Inhalt nicht verfügbar</string>
     <string name="content">Inhalt</string>
@@ -468,6 +468,7 @@
     <string name="show_comments_summary">Ausschalten, um Kommentare auszublenden</string>
     <string name="autoplay_title">Automatische Wiedergabe</string>
     <string name="no_comments">Keine Kommentare</string>
+    <string name="comments_are_disabled">Kommentare sind deaktiviert</string>
     <string name="error_unable_to_load_comments">Kommentare konnten nicht geladen werden</string>
     <string name="close">Schließen</string>
     <string name="enable_playback_resume_title">Wiedergabe fortsetzen</string>

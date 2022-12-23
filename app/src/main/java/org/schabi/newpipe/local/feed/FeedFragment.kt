@@ -32,6 +32,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import icepick.State
 import java.util.Calendar
 import kotlinx.android.synthetic.main.error_retry.error_button_retry
@@ -51,16 +52,18 @@ import org.schabi.newpipe.local.feed.service.FeedLoadService
 import org.schabi.newpipe.report.UserAction
 import org.schabi.newpipe.util.AnimationUtils.animateView
 import org.schabi.newpipe.util.Localization
+import java.time.OffsetDateTime
 
 class FeedFragment : BaseListFragment<FeedState, Unit>() {
     private lateinit var viewModel: FeedViewModel
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @State
     @JvmField
     var listState: Parcelable? = null
 
     private var groupId = FeedGroupEntity.GROUP_ALL_ID
     private var groupName = ""
-    private var oldestSubscriptionUpdate: Calendar? = null
+    private var oldestSubscriptionUpdate: OffsetDateTime? = null
 
     init {
         setHasOptionsMenu(true)
@@ -81,7 +84,8 @@ class FeedFragment : BaseListFragment<FeedState, Unit>() {
 
     override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(rootView, savedInstanceState)
-
+        swipeRefreshLayout = requireView().findViewById(R.id.swiperefresh)
+        swipeRefreshLayout.setOnRefreshListener { reloadContent() }
         viewModel = ViewModelProviders.of(this, FeedViewModel.Factory(requireContext(), groupId)).get(FeedViewModel::class.java)
         viewModel.stateLiveData.observe(viewLifecycleOwner, Observer { it?.let(::handleResult) })
     }
@@ -187,6 +191,7 @@ class FeedFragment : BaseListFragment<FeedState, Unit>() {
 
         empty_state_view?.let { animateView(it, false, 0) }
         animateView(error_panel, false, 0)
+        swipeRefreshLayout.isRefreshing = false
     }
 
     override fun showEmptyState() {
@@ -287,12 +292,10 @@ class FeedFragment : BaseListFragment<FeedState, Unit>() {
     }
 
     private fun updateRefreshViewState() {
-        val oldestSubscriptionUpdateText = when {
-            oldestSubscriptionUpdate != null -> Localization.relativeTime(oldestSubscriptionUpdate!!)
-            else -> "—"
-        }
-
-        refresh_text?.text = getString(R.string.feed_oldest_subscription_update, oldestSubscriptionUpdateText)
+        refresh_text?.text = getString(
+            R.string.feed_oldest_subscription_update,
+            oldestSubscriptionUpdate?.let { Localization.relativeTime(it) } ?: "—"
+        )
     }
 
     // /////////////////////////////////////////////////////////////////////////

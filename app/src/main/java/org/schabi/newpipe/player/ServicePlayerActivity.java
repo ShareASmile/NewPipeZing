@@ -18,8 +18,10 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,6 +42,7 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItemHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemTouchCallback;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.ThemeHelper;
 
 import java.util.Collections;
@@ -138,7 +141,7 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         if (redraw) {
-            recreate();
+            ActivityCompat.recreate(this);
             redraw = false;
         }
     }
@@ -149,6 +152,10 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu_play_queue, m);
         getMenuInflater().inflate(getPlayerOptionMenuResource(), m);
         onMaybeMuteChanged();
+        // to avoid null reference
+        if (player != null) {
+            onPlaybackParameterChanged(player.getPlaybackParameters());
+        }
         return true;
     }
 
@@ -485,7 +492,8 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
         } else if (view.getId() == shuffleButton.getId()) {
             player.onShuffleClicked();
         } else if (view.getId() == metadata.getId()) {
-            scrollToSelected();
+            onOpenDetail(ServiceHelper.getSelectedServiceId(getApplicationContext()),
+                    player.getVideoUrl(), player.getVideoTitle());
         } else if (view.getId() == progressLiveSync.getId()) {
             player.seekToDefault();
         }
@@ -508,6 +516,7 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
                                            final boolean playbackSkipSilence) {
         if (player != null) {
             player.setPlaybackParameters(playbackTempo, playbackPitch, playbackSkipSilence);
+            onPlaybackParameterChanged(player.getPlaybackParameters());
         }
     }
 
@@ -689,7 +698,7 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
         shuffleButton.setImageAlpha(shuffleAlpha);
     }
 
-    private void onPlaybackParameterChanged(final PlaybackParameters parameters) {
+    private void onPlaybackParameterChanged(@Nullable final PlaybackParameters parameters) {
         if (parameters != null) {
             if (menu != null && player != null) {
                 final MenuItem item = menu.findItem(R.id.action_playback_speed);
