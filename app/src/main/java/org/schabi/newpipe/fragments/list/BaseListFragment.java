@@ -245,6 +245,12 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         }
     }
 
+    protected void onItemCallback(final InfoItem selectedItem) throws Exception {
+        if (DEBUG) {
+            Log.d(TAG, "onItemCallback() called with: selectedItem = [" + selectedItem + "]");
+        }
+    }
+
     @Override
     protected void initListeners() {
         super.initListeners();
@@ -281,6 +287,14 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         });
 
         infoListAdapter.setOnCommentsSelectedListener(this::onItemSelected);
+
+        infoListAdapter.setOnCommentsReplyListener(selectedItem -> {
+            try {
+                onItemCallback(selectedItem);
+            } catch (final Exception e) {
+                ErrorUtil.showUiErrorSnackbar(this, "Opening comment reply fragment", e);
+            }
+        });
 
         // Ensure that there is always a scroll listener (e.g. when rotating the device)
         useNormalItemListScrollListener();
