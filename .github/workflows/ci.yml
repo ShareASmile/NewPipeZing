@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
+      - content-sort-filter-framework
       - dev
       - master
       - download-option-in-queue-items
@@ -19,6 +20,7 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
   push:
     branches:
+      - content-sort-filter-framework
       - dev
       - master
       - download-option-in-queue-items
