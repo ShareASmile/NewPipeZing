@@ -24,8 +24,6 @@ jobs:
   build-and-test-jvm:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
 
     steps:
       - uses: actions/checkout@v3
@@ -60,9 +58,6 @@ jobs:
       matrix:
         # api-level 19 is min sdk, but throws errors related to desugaring
         api-level: [ 21, 29 ]
-
-    permissions:
-      contents: read
 
     steps:
       - uses: actions/checkout@v3
