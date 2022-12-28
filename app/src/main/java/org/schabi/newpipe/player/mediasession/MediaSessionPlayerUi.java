@@ -40,6 +40,7 @@ public class MediaSessionPlayerUi extends PlayerUi {
 
         mediaSession = new MediaSessionCompat(context, TAG);
         mediaSession.setActive(true);
+        player.getService().setSessionToken(mediaSession.getSessionToken());
 
         sessionConnector = new MediaSessionConnector(mediaSession);
         sessionConnector.setQueueNavigator(new PlayQueueNavigator(mediaSession, player));
