@@ -132,7 +132,7 @@ public final class ServiceHelper {
         } catch (final ExtractionException e) {
             return null;
         }
-
+    }
     @NonNull
     public static String getNameOfServiceById(final int serviceId) {
         return ServiceList.all().stream()
