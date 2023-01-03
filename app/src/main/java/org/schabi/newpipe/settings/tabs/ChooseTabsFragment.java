@@ -396,7 +396,6 @@ public class ChooseTabsFragment extends Fragment {
                                 ? getString(R.string.local)
                                 : getNameOfServiceById(serviceId);
                         return serviceName + "/" + tab.getTabName(requireContext());
-                        break;
                     default:
                         return tab.getTabName(requireContext());
                 }
