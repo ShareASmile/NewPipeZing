@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int ITEM_ID_BOOKMARKS = -3;
     private static final int ITEM_ID_DOWNLOADS = -4;
     private static final int ITEM_ID_HISTORY = -5;
+    private static final int ITEM_ID_BG_PLAYER = -6;
     private static final int ITEM_ID_SETTINGS = 0;
     private static final int ITEM_ID_ABOUT = 1;
 
@@ -115,10 +116,11 @@ public class MainActivity extends AppCompatActivity {
                     + "savedInstanceState = [" + savedInstanceState + "]");
         }
 
-        // enable TLS1.1/1.2 for kitkat devices, to fix download and play for mediaCCC sources
+        // enable TLS1.1/1.2 for kitkat devices, to fix download and play for media.ccc.de sources
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             TLSSocketFactoryCompat.setAsDefault();
         }
+
         ThemeHelper.setTheme(this, ServiceHelper.getSelectedServiceId(this));
 
         assureCorrectAppLanguage(this);
@@ -163,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
         drawerItems.getMenu()
                 .add(R.id.menu_tabs_group, ITEM_ID_SUBSCRIPTIONS, ORDER,
-                        R.string.tab_subscriptions)
+				        R.string.tab_subscriptions)
                 .setIcon(ThemeHelper.resolveResourceIdFromAttr(this, R.attr.ic_channel));
         drawerItems.getMenu()
                 .add(R.id.menu_tabs_group, ITEM_ID_FEED, ORDER, R.string.fragment_feed_title)
@@ -177,6 +179,9 @@ public class MainActivity extends AppCompatActivity {
         drawerItems.getMenu()
                 .add(R.id.menu_tabs_group, ITEM_ID_HISTORY, ORDER, R.string.action_history)
                 .setIcon(ThemeHelper.resolveResourceIdFromAttr(this, R.attr.ic_history));
+        drawerItems.getMenu()
+                .add(R.id.menu_tabs_group, ITEM_ID_BG_PLAYER, ORDER, R.string.background_player)
+                .setIcon(ThemeHelper.resolveResourceIdFromAttr(this, R.attr.ic_play_arrow));
 
         //Settings and About
         drawerItems.getMenu()
@@ -260,6 +265,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case ITEM_ID_HISTORY:
                 NavigationHelper.openStatisticFragment(getSupportFragmentManager());
+                break;
+            case ITEM_ID_BG_PLAYER:
+                NavigationHelper.openBackgroundPlayer(this);
                 break;
             default:
                 int currentServiceId = ServiceHelper.getSelectedServiceId(this);

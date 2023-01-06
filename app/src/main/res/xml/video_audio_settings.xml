@@ -162,5 +162,16 @@
           android:key="@string/seek_duration_key"
           android:summary="%s"
           android:title="@string/seek_duration_title"/>
+
+        <ListPreference
+            android:defaultValue="@string/progressive_load_interval_bytes_default_value"
+            android:entries="@array/progressive_load_interval_descriptions"
+            android:entryValues="@array/progressive_load_interval_bytes_values"
+            android:key="@string/progressive_load_interval_key"
+            android:summary="@string/progressive_load_interval_summary"
+            android:title="@string/progressive_load_interval_title"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
 </PreferenceScreen>

@@ -21,9 +21,9 @@ class FeedGroupReorderDialogViewModel(application: Application) : AndroidViewMod
     private var actionProcessingDisposable: Disposable? = null
 
     private var groupsDisposable = feedDatabaseManager.groups()
-            .limit(1)
-            .subscribeOn(Schedulers.io())
-            .subscribe(mutableGroupsLiveData::postValue)
+        .limit(1)
+        .subscribeOn(Schedulers.io())
+        .subscribe(mutableGroupsLiveData::postValue)
 
     override fun onCleared() {
         super.onCleared()
@@ -40,8 +40,8 @@ class FeedGroupReorderDialogViewModel(application: Application) : AndroidViewMod
             mutableDialogEventLiveData.value = DialogEvent.ProcessingEvent
 
             actionProcessingDisposable = completable
-                    .subscribeOn(Schedulers.io())
-                    .subscribe { mutableDialogEventLiveData.postValue(DialogEvent.SuccessEvent) }
+                .subscribeOn(Schedulers.io())
+                .subscribe { mutableDialogEventLiveData.postValue(DialogEvent.SuccessEvent) }
         }
     }
 

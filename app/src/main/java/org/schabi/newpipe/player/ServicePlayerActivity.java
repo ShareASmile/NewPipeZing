@@ -1,5 +1,6 @@
 package org.schabi.newpipe.player;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -17,7 +18,9 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -40,10 +43,14 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItemHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemTouchCallback;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.ThemeHelper;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static org.schabi.newpipe.player.helper.PlayerHelper.formatSpeed;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
@@ -116,6 +123,11 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
+    public void openOptionsMenu() {
+        super.openOptionsMenu();
+    }
+
+    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         assureCorrectAppLanguage(this);
         super.onCreate(savedInstanceState);
@@ -149,6 +161,10 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu_play_queue, m);
         getMenuInflater().inflate(getPlayerOptionMenuResource(), m);
         onMaybeMuteChanged();
+        // to avoid null reference
+        if (player != null) {
+            onPlaybackParameterChanged(player.getPlaybackParameters());
+        }
         return true;
     }
 
@@ -181,8 +197,55 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
                                 .putExtra(BasePlayer.START_PAUSED, !this.player.isPlaying())
                 );
                 return true;
+            case R.id.action_set_timer:
+                setTimer(this);
+                return true;
         }
         return onPlayerOptionSelected(item) || super.onOptionsItemSelected(item);
+    }
+
+    private void setTimer(ServicePlayerActivity servicePlayerActivity) {
+        String[] listItems = {"5 Minutes", "10 Minutes", "20 Minutes", "30 Minutes", "45 Minutes", "1 Hour"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(servicePlayerActivity);
+        builder.setTitle("Choose item");
+
+        builder.setItems(listItems, (dialog, which) -> {
+            long time = getTimerTime(which);
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(() -> player.onPause());
+                }
+            }, time);
+            Date d = new Date();
+            d.setTime(System.currentTimeMillis() + time);
+            Toast.makeText(servicePlayerActivity, "Player will pause after : " + listItems[which] + " at : " + d, Toast.LENGTH_LONG).show();
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    protected long getTimerTime(int index) {
+        switch (index) {
+            case 0:
+                return 5 * 60 * 1000;
+            case 1:
+                return 10 * 60 * 1000;
+            case 2:
+                return 20 * 60 * 1000;
+            case 3:
+                return 30 * 60 * 1000;
+            case 4:
+                return 45 * 60 * 1000;
+            case 5:
+                return 60 * 60 * 1000;
+            default:
+                return 1000;
+        }
     }
 
     @Override
@@ -485,7 +548,8 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
         } else if (view.getId() == shuffleButton.getId()) {
             player.onShuffleClicked();
         } else if (view.getId() == metadata.getId()) {
-            scrollToSelected();
+            onOpenDetail(ServiceHelper.getSelectedServiceId(getApplicationContext()),
+                    player.getVideoUrl(), player.getVideoTitle());
         } else if (view.getId() == progressLiveSync.getId()) {
             player.seekToDefault();
         }
@@ -508,6 +572,7 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
                                            final boolean playbackSkipSilence) {
         if (player != null) {
             player.setPlaybackParameters(playbackTempo, playbackPitch, playbackSkipSilence);
+			onPlaybackParameterChanged(player.getPlaybackParameters());
         }
     }
 
@@ -689,7 +754,7 @@ public abstract class ServicePlayerActivity extends AppCompatActivity
         shuffleButton.setImageAlpha(shuffleAlpha);
     }
 
-    private void onPlaybackParameterChanged(final PlaybackParameters parameters) {
+    private void onPlaybackParameterChanged(@Nullable final PlaybackParameters parameters) {
         if (parameters != null) {
             if (menu != null && player != null) {
                 final MenuItem item = menu.findItem(R.id.action_playback_speed);

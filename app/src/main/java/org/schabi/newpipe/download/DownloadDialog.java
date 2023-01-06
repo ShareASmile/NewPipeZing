@@ -49,6 +49,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.report.ErrorActivity;
+import org.schabi.newpipe.report.ErrorInfo;
 import org.schabi.newpipe.report.UserAction;
 import org.schabi.newpipe.settings.NewPipeSettings;
 import org.schabi.newpipe.util.FilePickerActivityHelper;
@@ -296,7 +297,7 @@ public class DownloadDialog extends DialogFragment
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-        int threads = prefs.getInt(getString(R.string.default_download_threads), 3);
+        int threads = prefs.getInt(getString(R.string.default_download_threads), 5);
         threadsCountTextView.setText(String.valueOf(threads));
         threadsSeekBar.setProgress(threads - 1);
         threadsSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -515,7 +516,23 @@ public class DownloadDialog extends DialogFragment
         videoButton.setVisibility(isVideoStreamsAvailable ? View.VISIBLE : View.GONE);
         subtitleButton.setVisibility(isSubtitleStreamsAvailable ? View.VISIBLE : View.GONE);
 
-        if (isVideoStreamsAvailable) {
+        prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        final String defaultMedia = prefs.getString(getString(R.string.last_used_download_type),
+                    getString(R.string.last_download_type_video_key));
+
+        if (isVideoStreamsAvailable
+                && (defaultMedia.equals(getString(R.string.last_download_type_video_key)))) {
+            videoButton.setChecked(true);
+            setupVideoSpinner();
+        } else if (isAudioStreamsAvailable
+                && (defaultMedia.equals(getString(R.string.last_download_type_audio_key)))) {
+            audioButton.setChecked(true);
+            setupAudioSpinner();
+        } else if (isSubtitleStreamsAvailable
+                && (defaultMedia.equals(getString(R.string.last_download_type_subtitle_key)))) {
+            subtitleButton.setChecked(true);
+            setupSubtitleSpinner();
+        } else if (isVideoStreamsAvailable) {
             videoButton.setChecked(true);
             setupVideoSpinner();
         } else if (isAudioStreamsAvailable) {
@@ -585,15 +602,16 @@ public class DownloadDialog extends DialogFragment
                 Collections.singletonList(e),
                 null,
                 null,
-                ErrorActivity.ErrorInfo
+            ErrorInfo
                         .make(UserAction.SOMETHING_ELSE, "-", "-", R.string.general_error)
         );
     }
 
     private void prepareSelectedDownload() {
-        StoredDirectoryHelper mainStorage;
-        MediaFormat format;
-        String mime;
+        final StoredDirectoryHelper mainStorage;
+        final MediaFormat format;
+        final String mime;
+        final String selectedMediaType;
 
         // first, build the filename and get the output folder (if possible)
         // later, run a very very very large file checking logic
@@ -602,6 +620,7 @@ public class DownloadDialog extends DialogFragment
 
         switch (radioStreamsGroup.getCheckedRadioButtonId()) {
             case R.id.audio_button:
+                selectedMediaType = getString(R.string.last_download_type_audio_key);
                 mainStorage = mainStorageAudio;
                 format = audioStreamsAdapter.getItem(selectedAudioIndex).getFormat();
                 switch (format) {
@@ -616,12 +635,14 @@ public class DownloadDialog extends DialogFragment
                 }
                 break;
             case R.id.video_button:
+			    selectedMediaType = getString(R.string.last_download_type_video_key);
                 mainStorage = mainStorageVideo;
                 format = videoStreamsAdapter.getItem(selectedVideoIndex).getFormat();
                 mime = format.mimeType;
                 filename += format.suffix;
                 break;
             case R.id.subtitle_button:
+			    selectedMediaType = getString(R.string.last_download_type_subtitle_key);
                 mainStorage = mainStorageVideo; // subtitle & video files go together
                 format = subtitleStreamsAdapter.getItem(selectedSubtitleIndex).getFormat();
                 mime = format.mimeType;
@@ -663,6 +684,11 @@ public class DownloadDialog extends DialogFragment
 
         // check for existing file with the same name
         checkSelectedDownload(mainStorage, mainStorage.findFile(filename), filename, mime);
+
+        // remember the last media type downloaded by the user
+        prefs.edit()
+                .putString(getString(R.string.last_used_download_type), selectedMediaType)
+                .apply();
     }
 
     private void checkSelectedDownload(final StoredDirectoryHelper mainStorage,
@@ -748,7 +774,7 @@ public class DownloadDialog extends DialogFragment
         AlertDialog.Builder askDialog = new AlertDialog.Builder(context)
                 .setTitle(R.string.download_dialog_title)
                 .setMessage(msgBody)
-                .setNegativeButton(android.R.string.cancel, null);
+                .setNegativeButton(R.string.cancel, null);
         final StoredFileHelper finalStorage = storage;
 
 

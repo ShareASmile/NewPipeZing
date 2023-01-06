@@ -53,6 +53,16 @@ public class ReCaptchaActivity extends AppCompatActivity {
     public static final String YT_URL = "https://www.youtube.com";
     public static final String RECAPTCHA_COOKIES_KEY = "recaptcha_cookies";
 
+    public static String sanitizeRecaptchaUrl(@Nullable final String url) {
+        if (url == null || url.trim().isEmpty()) {
+            return YT_URL; // YouTube is the most likely service to have thrown a recaptcha
+        } else {
+            // remove "pbj=1" parameter from YouYube urls, as it makes the page JSON and not HTML
+            return url.replace("&pbj=1", "").replace("pbj=1&", "").replace("?pbj=1", "");
+        }
+    }
+
+
     private WebView webView;
     private String foundCookies = "";
 
@@ -64,11 +74,7 @@ public class ReCaptchaActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        String url = getIntent().getStringExtra(RECAPTCHA_URL_EXTRA);
-        if (url == null || url.isEmpty()) {
-            url = YT_URL;
-        }
-
+        final String url = sanitizeRecaptchaUrl(getIntent().getStringExtra(RECAPTCHA_URL_EXTRA));
         // set return to Cancel by default
         setResult(RESULT_CANCELED);
 
@@ -78,6 +84,7 @@ public class ReCaptchaActivity extends AppCompatActivity {
         // enable Javascript
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        webSettings.setUserAgentString(DownloaderImpl.USER_AGENT);
 
         webView.setWebViewClient(new WebViewClient() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -115,8 +122,7 @@ public class ReCaptchaActivity extends AppCompatActivity {
         webView.clearHistory();
         android.webkit.CookieManager cookieManager = CookieManager.getInstance();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cookieManager.removeAllCookies(aBoolean -> {
-            });
+            cookieManager.removeAllCookies(value -> { });
         } else {
             cookieManager.removeAllCookie();
         }

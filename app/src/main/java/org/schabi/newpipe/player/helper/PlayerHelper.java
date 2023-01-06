@@ -38,6 +38,7 @@ import java.util.Formatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -229,7 +230,7 @@ public final class PlayerHelper {
     }
 
     public static long getPreferredFileSize() {
-        return 512 * 1024L;
+        return 2 * 1024 * 1024L; // ExoPlayer CacheDataSink.MIN_RECOMMENDED_FRAGMENT_SIZE
     }
 
     /**
@@ -322,6 +323,13 @@ public final class PlayerHelper {
     public static void setScreenBrightness(@NonNull final Context context,
                                            final float setScreenBrightness) {
         setScreenBrightness(context, setScreenBrightness, System.currentTimeMillis());
+    }
+
+    @NonNull
+    public static Integer getProgressiveLoadIntervalBytes(@NonNull final Context context) {
+        return Integer.parseInt(Objects.requireNonNull(getPreferences(context).getString(
+                context.getString(R.string.progressive_load_interval_key),
+                context.getString(R.string.progressive_load_interval_bytes_default_value))));
     }
 
     ////////////////////////////////////////////////////////////////////////////

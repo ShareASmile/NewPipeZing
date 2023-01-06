@@ -52,6 +52,7 @@ import org.schabi.newpipe.player.BasePlayer;
 import org.schabi.newpipe.player.MainVideoPlayer;
 import org.schabi.newpipe.player.PopupVideoPlayer;
 import org.schabi.newpipe.player.PopupVideoPlayerActivity;
+import org.schabi.newpipe.player.ServicePlayerActivity;
 import org.schabi.newpipe.player.VideoPlayer;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.settings.SettingsActivity;
@@ -124,7 +125,8 @@ public final class NavigationHelper {
                 .putExtra(BasePlayer.IS_MUTED, isMuted);
     }
 
-    public static void playOnMainPlayer(final Context context, final PlayQueue queue,
+    public static void playOnMainPlayer(final Context context,
+	                                    final PlayQueue queue,
                                         final boolean resumePlayback) {
         final Intent playerIntent
                 = getPlayerIntent(context, MainVideoPlayer.class, queue, resumePlayback);
@@ -132,7 +134,8 @@ public final class NavigationHelper {
         context.startActivity(playerIntent);
     }
 
-    public static void playOnPopupPlayer(final Context context, final PlayQueue queue,
+    public static void playOnPopupPlayer(final Context context,
+	                                     final PlayQueue queue,
                                          final boolean resumePlayback) {
         if (!PermissionHelper.isPopupEnabled(context)) {
             PermissionHelper.showPopupEnablementToast(context);
@@ -144,7 +147,8 @@ public final class NavigationHelper {
                 getPlayerIntent(context, PopupVideoPlayer.class, queue, resumePlayback));
     }
 
-    public static void playOnBackgroundPlayer(final Context context, final PlayQueue queue,
+    public static void playOnBackgroundPlayer(final Context context,
+	                                          final PlayQueue queue,
                                               final boolean resumePlayback) {
         Toast.makeText(context, R.string.background_player_playing_toast, Toast.LENGTH_SHORT)
                 .show();
@@ -479,6 +483,11 @@ public final class NavigationHelper {
         mIntent.setData(Uri.parse(url));
         mIntent.putExtra(RouterActivity.INTERNAL_ROUTE_KEY, true);
         context.startActivity(mIntent);
+    }
+
+    public static void openBackgroundPlayer(final Context context) {
+        final Intent intent = new Intent(context, BackgroundPlayerActivity.class);
+        context.startActivity(intent);
     }
 
     public static void openAbout(final Context context) {

@@ -32,7 +32,8 @@ class SubscriptionManager(context: Context) {
             filterQuery.isNotEmpty() -> {
                 return if (showOnlyUngrouped) {
                     subscriptionTable.getSubscriptionsOnlyUngroupedFiltered(
-                        currentGroupId, filterQuery)
+                        currentGroupId, filterQuery
+                    )
                 } else {
                     subscriptionTable.getSubscriptionsFiltered(filterQuery)
                 }
@@ -44,7 +45,8 @@ class SubscriptionManager(context: Context) {
 
     fun upsertAll(infoList: List<ChannelInfo>): List<SubscriptionEntity> {
         val listEntities = subscriptionTable.upsertAll(
-            infoList.map { SubscriptionEntity.from(it) })
+            infoList.map { SubscriptionEntity.from(it) }
+        )
 
         database.runInTransaction {
             infoList.forEachIndexed { index, info ->

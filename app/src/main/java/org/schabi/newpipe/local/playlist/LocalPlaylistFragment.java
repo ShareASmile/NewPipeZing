@@ -96,7 +96,6 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     private AtomicBoolean isModified;
     /* Is the playlist currently being processed to remove watched videos */
     private boolean isRemovingWatched = false;
-
     public static LocalPlaylistFragment getInstance(final long playlistId, final String name) {
         LocalPlaylistFragment instance = new LocalPlaylistFragment();
         instance.setInitialData(playlistId, name);
@@ -177,7 +176,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             public void selected(final LocalItem selectedItem) {
                 if (selectedItem instanceof PlaylistStreamEntry) {
                     final PlaylistStreamEntry item = (PlaylistStreamEntry) selectedItem;
-                    NavigationHelper.openVideoDetailFragment(getFragmentManager(),
+                    NavigationHelper.openVideoDetailFragment(getFM(),
                             item.getStreamEntity().getServiceId(), item.getStreamEntity().getUrl(),
                             item.getStreamEntity().getTitle());
                 }
@@ -356,25 +355,25 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_remove_watched:
-                if (!isRemovingWatched) {
-                    new AlertDialog.Builder(requireContext())
-                            .setMessage(R.string.remove_watched_popup_warning)
-                            .setTitle(R.string.remove_watched_popup_title)
-                            .setPositiveButton(R.string.yes,
-                                    (DialogInterface d, int id) -> removeWatchedStreams(false))
-                            .setNeutralButton(
-                                    R.string.remove_watched_popup_yes_and_partially_watched_videos,
-                                    (DialogInterface d, int id) -> removeWatchedStreams(true))
-                            .setNegativeButton(R.string.cancel,
-                                    (DialogInterface d, int id) -> d.cancel())
-                            .create()
-                            .show();
-                }
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.menu_item_remove_watched) {
+            if (!isRemovingWatched) {
+                new AlertDialog.Builder(requireContext())
+                        .setMessage(R.string.remove_watched_popup_warning)
+                        .setTitle(R.string.remove_watched_popup_title)
+                        .setPositiveButton(R.string.yes,
+                                (DialogInterface d, int id) -> removeWatchedStreams(false))
+                        .setNeutralButton(
+                                R.string.remove_watched_popup_yes_and_partially_watched_videos,
+                                (DialogInterface d, int id) -> removeWatchedStreams(true))
+                        .setNegativeButton(R.string.cancel,
+                                (DialogInterface d, int id) -> d.cancel())
+                        .create()
+                        .show();
+            }
+        } else if (item.getItemId() == R.id.menu_item_rename_playlist) {
+            createRenameDialog();
+        } else {
+            return super.onOptionsItemSelected(item);
         }
         return true;
     }

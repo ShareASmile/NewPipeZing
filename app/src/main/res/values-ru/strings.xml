@@ -26,7 +26,7 @@
     <string name="default_audio_format_title">Формат аудио по умолчанию</string>
     <string name="download_dialog_title">Скачать</string>
     <string name="next_video_title">Следующее</string>
-    <string name="url_not_supported_toast">URL не поддерживается</string>
+    <string name="unsupported_url">URL не поддерживается</string>
     <string name="show_next_and_similar_title">\"Следующее\" и похожие видео</string>
     <string name="content_language_title">Язык контента по умолчанию</string>
     <string name="settings_category_video_audio_title">Видео и аудио</string>
@@ -475,6 +475,7 @@
     <string name="show_comments_summary">Отключите, чтобы скрыть комментарии</string>
     <string name="autoplay_title">Автовоспроизведение</string>
     <string name="no_comments">Нет комментариев</string>
+	<string name="comments_are_disabled">Комментарии отключены</string>
     <string name="error_unable_to_load_comments">Не удалось загрузить комментарии</string>
     <string name="watch_history_states_deleted">Позиции воспроизведения удалены</string>
     <string name="missing_file">Файл перемещён или удалён</string>

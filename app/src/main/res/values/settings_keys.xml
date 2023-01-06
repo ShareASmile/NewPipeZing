@@ -50,6 +50,25 @@
         <item>30000</item>
     </string-array>
 
+    <string name="progressive_load_interval_key">progressive_load_interval</string>
+    <string name="progressive_load_interval_bytes_default_value">16384</string>
+    <string-array name="progressive_load_interval_descriptions">
+        <item>1 KiB</item>
+        <item>4 KiB</item>
+        <item>16 KiB</item>
+        <item>64 KiB</item>
+        <item>256 KiB</item>
+        <item>1 MiB - ExoPlayer Default</item>
+    </string-array>
+    <string-array name="progressive_load_interval_bytes_values">
+        <item>1024</item>
+        <item>4096</item>
+        <item>16384</item>
+        <item>65536</item>
+        <item>262144</item>
+        <item>1048576</item>
+    </string-array>
+
     <string name="minimize_on_exit_key" translatable="false">minimize_on_exit_key</string>
     <string name="minimize_on_exit_value" translatable="false">@string/minimize_on_exit_none_key</string>
     <string name="minimize_on_exit_none_key" translatable="false">minimize_on_exit_none_key</string>
@@ -75,6 +94,10 @@
 
     <string-array name="resolution_list_values" translatable="false">
         <item>@string/best_resolution_key</item>
+		<item>2160p60</item>
+		<item>2160p</item>
+		<item>1440p60</item>
+		<item>1440p</item>
         <item>1080p60</item>
         <item>1080p</item>
         <item>720p60</item>
@@ -86,6 +109,10 @@
     </string-array>
     <string-array name="resolution_list_description" translatable="false">
         <item>@string/best_resolution</item>
+		<item>2160p60</item>
+		<item>2160p</item>
+		<item>1440p60</item>
+		<item>1440p</item>
         <item>1080p60</item>
         <item>1080p</item>
         <item>720p60</item>
@@ -213,12 +240,19 @@
     <string name="import_data" translatable="false">import_data</string>
     <string name="export_data" translatable="false">export_data</string>
 
+    <string name="clear_cookie_key" translatable="false">clear_cookie</string>
+
     <string name="download_thumbnail_key" translatable="false">download_thumbnail_key</string>
 
     <string name="metadata_cache_wipe_key" translatable="false">cache_wipe_key</string>
     <string name="clear_views_history_key" translatable="false">clear_play_history</string>
     <string name="clear_playback_states_key" translatable="false">clear_playback_states</string>
     <string name="clear_search_history_key" translatable="false">clear_search_history</string>
+
+    <string name="last_used_download_type" translatable="false">@string/last_download_type_video_key</string>
+    <string name="last_download_type_video_key" translatable="false">last_dl_type_video</string>
+    <string name="last_download_type_audio_key" translatable="false">last_dl_type_audio</string>
+    <string name="last_download_type_subtitle_key" translatable="false">last_dl_type_subtitle</string>
 
     <string name="downloads_storage_ask" translatable="false">downloads_storage_ask</string>
     <string name="storage_use_saf" translatable="false">storage_use_saf</string>
@@ -1109,6 +1143,10 @@
 
     <string-array name="limit_data_usage_values_list">
         <item>@string/limit_data_usage_none_key</item>
+		<item>2160p60</item>
+		<item>2160p</item>
+		<item>1440p60</item>
+		<item>1440p</item>
         <item>1080p60</item>
         <item>1080p</item>
         <item>720p60</item>
@@ -1137,6 +1175,6 @@
         <item>@string/list</item>
         <item>@string/grid</item>
     </string-array>
-
+    <string name="always_expand_description_key" translatable="false">always_expand_description</string>
     <string name="recaptcha_cookies_key" translatable="false">recaptcha_cookies_key</string>
 </resources>

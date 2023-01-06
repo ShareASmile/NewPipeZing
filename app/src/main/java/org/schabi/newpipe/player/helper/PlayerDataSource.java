@@ -21,11 +21,13 @@ public class PlayerDataSource {
     private static final int EXTRACTOR_MINIMUM_RETRY = Integer.MAX_VALUE;
     private static final int LIVE_STREAM_EDGE_GAP_MILLIS = 10000;
 
+    private final Integer continueLoadingCheckIntervalBytes;
     private final DataSource.Factory cacheDataSourceFactory;
     private final DataSource.Factory cachelessDataSourceFactory;
 
     public PlayerDataSource(@NonNull final Context context, @NonNull final String userAgent,
                             @NonNull final TransferListener transferListener) {
+        continueLoadingCheckIntervalBytes = PlayerHelper.getProgressiveLoadIntervalBytes(context);
         cacheDataSourceFactory = new CacheFactory(context, userAgent, transferListener);
         cachelessDataSourceFactory
                 = new DefaultDataSourceFactory(context, userAgent, transferListener);
@@ -70,6 +72,7 @@ public class PlayerDataSource {
 
     public ProgressiveMediaSource.Factory getExtractorMediaSourceFactory() {
         return new ProgressiveMediaSource.Factory(cacheDataSourceFactory)
+                .setContinueLoadingCheckIntervalBytes(continueLoadingCheckIntervalBytes)
                 .setLoadErrorHandlingPolicy(
                         new DefaultLoadErrorHandlingPolicy(EXTRACTOR_MINIMUM_RETRY));
     }

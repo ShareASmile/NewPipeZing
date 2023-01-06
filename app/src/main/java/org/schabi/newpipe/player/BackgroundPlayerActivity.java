@@ -1,6 +1,7 @@
 package org.schabi.newpipe.player;
 
 import android.content.Intent;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import org.schabi.newpipe.R;
@@ -70,4 +71,9 @@ public final class BackgroundPlayerActivity extends ServicePlayerActivity {
     public Intent getPlayerShutdownIntent() {
         return new Intent(ACTION_CLOSE);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+	}
 }

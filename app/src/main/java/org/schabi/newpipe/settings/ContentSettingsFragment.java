@@ -7,13 +7,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 
 import com.nononsenseapps.filepicker.Utils;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -21,10 +23,12 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.ReCaptchaActivity;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.report.ErrorActivity;
+import org.schabi.newpipe.report.ErrorInfo;
 import org.schabi.newpipe.report.UserAction;
 import org.schabi.newpipe.util.FilePickerActivityHelper;
 import org.schabi.newpipe.util.ZipHelper;
@@ -76,6 +80,22 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
                 .getPreferredContentCountry(requireContext());
         initialLanguage = PreferenceManager
                 .getDefaultSharedPreferences(getContext()).getString("app_language_key", "en");
+
+        final Preference clearCookiePref = findPreference(getString(R.string.clear_cookie_key));
+
+        clearCookiePref.setOnPreferenceClickListener(preference -> {
+            defaultPreferences.edit()
+                    .putString(getString(R.string.recaptcha_cookies_key), "").apply();
+            DownloaderImpl.getInstance().setCookie(ReCaptchaActivity.RECAPTCHA_COOKIES_KEY, "");
+            Toast.makeText(getActivity(), R.string.recaptcha_cookies_cleared,
+                    Toast.LENGTH_SHORT).show();
+            clearCookiePref.setVisible(false);
+            return true;
+        });
+
+        if (defaultPreferences.getString(getString(R.string.recaptcha_cookies_key), "").isEmpty()) {
+            clearCookiePref.setVisible(false);
+        }
     }
 
     @Override
@@ -177,8 +197,7 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
                 && resultCode == Activity.RESULT_OK && data.getData() != null) {
             String path = Utils.getFileForUri(data.getData()).getAbsolutePath();
             if (requestCode == REQUEST_EXPORT_PATH) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
-                exportDatabase(path + "/NewPipeData-" + sdf.format(new Date()) + ".zip");
+                showExportDialog(requireActivity(), path);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage(R.string.override_current_data)
@@ -189,6 +208,33 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
                 builder.create().show();
             }
         }
+    }
+
+    private void showExportDialog(final Context c, final String path) {
+        final EditText fileNameET = new EditText(c);
+
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
+        fileNameET.setText("NewPipeData-" + sdf.format(new Date()) + ".zip");
+
+        fileNameET.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        fileNameET.setHint(R.string.export_data_file_name_hint);
+
+        final AlertDialog dialog = new AlertDialog.Builder(c)
+                .setTitle(R.string.export_data_file_name)
+                .setIcon(R.drawable.ic_import_export_white_24dp)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.export_button, (dialog1, which) -> {
+                    final String fileName = fileNameET.getText().toString();
+                    if (fileName.matches("[-_. A-Za-z0-9]+\\.zip")) {
+                        exportDatabase(path + "/" + fileName);
+                    } else {
+                        Toast.makeText(getContext(), R.string.no_valid_zip_file_name,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .create();
+        dialog.setView(fileNameET, 50, 0, 50, 0);
+        dialog.show();
     }
 
     private void exportDatabase(final String path) {
@@ -347,7 +393,7 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
         ErrorActivity.reportError(activity, e,
                 activity.getClass(),
                 null,
-                ErrorActivity.ErrorInfo.make(UserAction.UI_ERROR,
-                        "none", "", R.string.app_ui_crash));
+            ErrorInfo.make(UserAction.UI_ERROR,
+                "none", "", R.string.app_ui_crash));
     }
 }

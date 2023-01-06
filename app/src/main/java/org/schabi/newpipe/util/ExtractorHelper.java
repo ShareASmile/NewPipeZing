@@ -1,6 +1,6 @@
 /*
  * Copyright 2017 Mauricio Colli <mauriciocolli@outlook.com>
- * Extractors.java is part of NewPipe
+ * ExtractorHelper.java is part of NewPipe
  *
  * License: GPL-3.0+
  * This program is free software: you can redistribute it and/or modify
@@ -37,10 +37,16 @@ import org.schabi.newpipe.extractor.Page;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.comments.CommentsInfo;
+import org.schabi.newpipe.extractor.exceptions.AgeRestrictedContentException;
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
+import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException;
+import org.schabi.newpipe.extractor.exceptions.PaidContentException;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
+import org.schabi.newpipe.extractor.exceptions.PrivateContentException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
+import org.schabi.newpipe.extractor.exceptions.SoundCloudGoPlusContentException;
+import org.schabi.newpipe.extractor.exceptions.YoutubeMusicPremiumContentException;
 import org.schabi.newpipe.extractor.feed.FeedExtractor;
 import org.schabi.newpipe.extractor.feed.FeedInfo;
 import org.schabi.newpipe.extractor.kiosk.KioskInfo;
@@ -51,6 +57,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.suggestion.SuggestionExtractor;
 import org.schabi.newpipe.report.ErrorActivity;
+import org.schabi.newpipe.report.ErrorInfo;
 import org.schabi.newpipe.report.UserAction;
 
 import java.util.Collections;
@@ -288,20 +295,35 @@ public final class ExtractorHelper {
                 context.startActivity(intent);
             } else if (ExceptionUtils.isNetworkRelated(exception)) {
                 Toast.makeText(context, R.string.network_error, Toast.LENGTH_LONG).show();
+            } else if (exception instanceof AgeRestrictedContentException) {
+                Toast.makeText(context, R.string.restricted_video_no_stream,
+                        Toast.LENGTH_LONG).show();
+            } else if (exception instanceof GeographicRestrictionException) {
+                Toast.makeText(context, R.string.georestricted_content, Toast.LENGTH_LONG).show();
+            } else if (exception instanceof PaidContentException) {
+                Toast.makeText(context, R.string.paid_content, Toast.LENGTH_LONG).show();
+            } else if (exception instanceof PrivateContentException) {
+                Toast.makeText(context, R.string.private_content, Toast.LENGTH_LONG).show();
+            } else if (exception instanceof SoundCloudGoPlusContentException) {
+                Toast.makeText(context, R.string.soundcloud_go_plus_content,
+                        Toast.LENGTH_LONG).show();
+            } else if (exception instanceof YoutubeMusicPremiumContentException) {
+                Toast.makeText(context, R.string.youtube_music_premium_content,
+                        Toast.LENGTH_LONG).show();
             } else if (exception instanceof ContentNotAvailableException) {
                 Toast.makeText(context, R.string.content_not_available, Toast.LENGTH_LONG).show();
             } else if (exception instanceof ContentNotSupportedException) {
                 Toast.makeText(context, R.string.content_not_supported, Toast.LENGTH_LONG).show();
             } else {
-                int errorId = exception instanceof YoutubeStreamExtractor.DecryptException
+                int errorId = exception instanceof YoutubeStreamExtractor.DeobfuscateException
                         ? R.string.youtube_signature_decryption_error
                         : exception instanceof ParsingException
                         ? R.string.parsing_error : R.string.general_error;
                 ErrorActivity.reportError(handler, context, exception, MainActivity.class, null,
-                        ErrorActivity.ErrorInfo.make(userAction, serviceId == -1 ? "none"
-                                : NewPipe.getNameOfService(serviceId),
-                                url + (optionalErrorMessage == null ? ""
-                                        : optionalErrorMessage), errorId));
+                    ErrorInfo.make(userAction, serviceId == -1 ? "none"
+                            : CompatibilityUtil.getNameOfService(serviceId),
+                        url + (optionalErrorMessage == null ? ""
+                            : optionalErrorMessage), errorId));
             }
         });
     }

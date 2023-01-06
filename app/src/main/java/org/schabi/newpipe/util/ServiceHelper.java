@@ -38,6 +38,8 @@ public final class ServiceHelper {
                 return R.drawable.place_holder_gadse;
             case 3:
                 return R.drawable.place_holder_peertube;
+            case 4:
+                return R.drawable.place_holder_bandcamp;
             default:
                 return R.drawable.place_holder_circle;
         }
@@ -48,6 +50,7 @@ public final class ServiceHelper {
             case "all":
                 return c.getString(R.string.all);
             case "videos":
+			case "sepia_videos":
             case "music_videos":
                 return c.getString(R.string.videos_string);
             case "channels":
@@ -133,16 +136,6 @@ public final class ServiceHelper {
         }
 
         setSelectedServicePreferences(context, serviceName);
-    }
-
-    public static void setSelectedServiceId(final Context context, final String serviceName) {
-        int serviceId = NewPipe.getIdOfService(serviceName);
-        if (serviceId == -1) {
-            setSelectedServicePreferences(context,
-                    DEFAULT_FALLBACK_SERVICE.getServiceInfo().getName());
-        } else {
-            setSelectedServicePreferences(context, serviceName);
-        }
     }
 
     private static void setSelectedServicePreferences(final Context context,

@@ -16,11 +16,14 @@ import com.google.android.material.snackbar.Snackbar;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.PermissionHelper;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.LinkedList;
 
 public class VideoAudioSettingsFragment extends BasePreferenceFragment {
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
+	private ListPreference defaultRes,defaultPopupRes,limitMobDataUsage;
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -29,6 +32,9 @@ public class VideoAudioSettingsFragment extends BasePreferenceFragment {
         updateSeekOptions();
 
         listener = (sharedPreferences, s) -> {
+            defaultRes = (ListPreference) findPreference(getString(R.string.default_resolution_key));
+            defaultPopupRes = (ListPreference) findPreference(getString(R.string.default_popup_resolution_key));
+            limitMobDataUsage = (ListPreference) findPreference(getString(R.string.limit_mobile_data_usage_key));
 
             // on M and above, if user chooses to minimise to popup player on exit
             // and the app doesn't have display over other apps permission,
@@ -50,7 +56,72 @@ public class VideoAudioSettingsFragment extends BasePreferenceFragment {
             } else if (s.equals(getString(R.string.use_inexact_seek_key))) {
                 updateSeekOptions();
             }
+
+            //check if "show higher resolutions" was changed
+            if(s.equals(getString(R.string.show_higher_resolutions_key))){
+
+                if(checkIfShowHighRes()){
+                    showHigherResolutions(true);
+                }
+                else {
+
+                    //if the setting was turned off and any of the defaults is set to 1440p or 2160p, change them to 1080p60
+                    //(the next highest value)
+                    if(defaultRes.getValue().equals("1440p") || defaultRes.getValue().equals("1440p60") || 
+					defaultRes.getValue().equals("2160p") || defaultRes.getValue().equals("2160p60")){
+                        defaultRes.setValueIndex(3);
+                    }
+                    if(defaultPopupRes.getValue().equals("1440p") || defaultPopupRes.getValue().equals("1440p60") || 
+					defaultPopupRes.getValue().equals("2160p") || defaultPopupRes.getValue().equals("2160p60")){
+                        defaultPopupRes.setValueIndex(3);
+                    }
+                    if(limitMobDataUsage.getValue().equals("1440p") || limitMobDataUsage.getValue().equals("1440p60") || 
+					limitMobDataUsage.getValue().equals("2160p") || limitMobDataUsage.getValue().equals("2160p60")){
+                        limitMobDataUsage.setValueIndex(3);
+                    }
+
+                    showHigherResolutions(false);
+
+                }
+            }
+
         };
+        if(!checkIfShowHighRes()){
+            showHigherResolutions(false);
+        }
+    }
+
+    private boolean checkIfShowHighRes(){
+        return getPreferenceManager().getSharedPreferences().getBoolean(getString(R.string.show_higher_resolutions_key),false);
+    }
+
+    private void showHigherResolutions(boolean show){
+
+        Resources res = getResources();
+        ArrayList<String> resolutions = new ArrayList<String>(Arrays.asList(res.getStringArray(R.array.resolution_list_description)));
+        ArrayList<String> resolutionValues = new ArrayList<String>(Arrays.asList(res.getStringArray(R.array.resolution_list_values)));
+
+        ArrayList<String> mobileDataResolutions = new ArrayList<String>(Arrays.asList(res.getStringArray(R.array.limit_data_usage_description_list)));
+        ArrayList<String> mobileDataResolutionValues = new ArrayList<String>(Arrays.asList(res.getStringArray(R.array.limit_data_usage_values_list)));
+
+        if(!show) {
+            List<String> higherResolutions = Arrays.asList("1440p", "1440p60", "2160p", "2160p60");
+
+            resolutions.removeAll(higherResolutions);
+            resolutionValues.removeAll(higherResolutions);
+
+            mobileDataResolutions.removeAll(higherResolutions);
+            mobileDataResolutionValues.removeAll(higherResolutions);
+        }
+
+        defaultRes.setEntries(resolutions.toArray(new String[resolutions.size()]));
+        defaultRes.setEntryValues(resolutionValues.toArray(new String[resolutionValues.size()]));
+
+        defaultPopupRes.setEntries(resolutions.toArray(new String[resolutions.size()]));
+        defaultPopupRes.setEntryValues(resolutionValues.toArray(new String[resolutionValues.size()]));
+
+        limitMobDataUsage.setEntries(mobileDataResolutions.toArray(new String[mobileDataResolutions.size()]));
+        limitMobDataUsage.setEntryValues(mobileDataResolutionValues.toArray(new String[mobileDataResolutionValues.size()]));
     }
 
     /**
@@ -91,6 +162,11 @@ public class VideoAudioSettingsFragment extends BasePreferenceFragment {
                 getString(R.string.seek_duration_key));
         durations.setEntryValues(displayedDurationValues.toArray(new CharSequence[0]));
         durations.setEntries(displayedDescriptionValues.toArray(new CharSequence[0]));
+        defaultRes = (ListPreference) findPreference(getString(R.string.default_resolution_key));
+        defaultPopupRes = (ListPreference) findPreference(
+		        getString(R.string.default_popup_resolution_key));
+        limitMobDataUsage = (ListPreference) findPreference(
+		        getString(R.string.limit_mobile_data_usage_key));
         final int selectedDuration = Integer.parseInt(durations.getValue());
         if (inexactSeek && selectedDuration / (int) DateUtils.SECOND_IN_MILLIS % 10 == 5) {
             final int newDuration = selectedDuration / (int) DateUtils.SECOND_IN_MILLIS + 5;

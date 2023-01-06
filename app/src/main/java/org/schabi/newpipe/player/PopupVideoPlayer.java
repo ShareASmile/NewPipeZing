@@ -65,6 +65,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 
 import org.schabi.newpipe.BuildConfig;
+import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.player.event.PlayerEventListener;
@@ -89,10 +90,10 @@ import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
  * @author mauriciocolli
  */
 public final class PopupVideoPlayer extends Service {
-    public static final String ACTION_CLOSE = "org.schabi.newpipe.player.PopupVideoPlayer.CLOSE";
+    public static final String ACTION_CLOSE = App.PACKAGE_NAME + ".player.PopupVideoPlayer.CLOSE";
     public static final String ACTION_PLAY_PAUSE
-            = "org.schabi.newpipe.player.PopupVideoPlayer.PLAY_PAUSE";
-    public static final String ACTION_REPEAT = "org.schabi.newpipe.player.PopupVideoPlayer.REPEAT";
+            = App.PACKAGE_NAME + ".player.PopupVideoPlayer.PLAY_PAUSE";
+    public static final String ACTION_REPEAT = App.PACKAGE_NAME + ".player.PopupVideoPlayer.REPEAT";
     private static final String TAG = ".PopupVideoPlayer";
     private static final boolean DEBUG = BasePlayer.DEBUG;
     private static final int NOTIFICATION_ID = 40028922;
@@ -132,6 +133,8 @@ public final class PopupVideoPlayer extends Service {
 
     private VideoPlayerImpl playerImpl;
     private boolean isPopupClosing = false;
+
+    private static final float MAXIMUM_OPACITY_ALLOWED_FOR_R_AND_HIGHER = 0.8f;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Service-Activity Binder
@@ -274,6 +277,13 @@ public final class PopupVideoPlayer extends Service {
                 layoutParamType,
                 flags,
                 PixelFormat.TRANSLUCENT);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Setting maximum opacity allowed for touch events to other apps for Android 12 and
+            // higher to prevent non interaction when using other apps with the popup player
+            closeOverlayLayoutParams.alpha = MAXIMUM_OPACITY_ALLOWED_FOR_R_AND_HIGHER;
+        }
+
         closeOverlayLayoutParams.gravity = Gravity.LEFT | Gravity.TOP;
         closeOverlayLayoutParams.softInputMode = WindowManager
                 .LayoutParams.SOFT_INPUT_ADJUST_RESIZE;

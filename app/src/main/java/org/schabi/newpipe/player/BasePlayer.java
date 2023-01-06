@@ -56,8 +56,10 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import org.schabi.newpipe.BuildConfig;
 import org.schabi.newpipe.DownloaderImpl;
+import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.helper.AudioReactor;
 import org.schabi.newpipe.player.helper.LoadController;
@@ -157,7 +159,7 @@ public abstract class BasePlayer implements
     //////////////////////////////////////////////////////////////////////////*/
 
     protected static final int PLAY_PREV_ACTIVATION_LIMIT_MILLIS = 5000; // 5 seconds
-    protected static final int PROGRESS_LOOP_INTERVAL_MILLIS = 500;
+    protected static final int PROGRESS_LOOP_INTERVAL_MILLIS = 2000; // 2 seconds
 
     protected SimpleExoPlayer simpleExoPlayer;
     protected AudioReactor audioReactor;
@@ -447,10 +449,19 @@ public abstract class BasePlayer implements
     @Override
     public void onLoadingComplete(final String imageUri, final View view,
                                   final Bitmap loadedImage) {
+        final float width = Math.min(
+                context.getResources().getDimension(R.dimen.player_notification_thumbnail_width),
+                loadedImage.getWidth());
+        currentThumbnail = Bitmap.createScaledBitmap(loadedImage,
+                (int) width,
+                (int) (loadedImage.getHeight() / (loadedImage.getWidth() / width)), true);
+
         if (DEBUG) {
             Log.d(TAG, "Thumbnail - onLoadingComplete() called with: "
                     + "imageUri = [" + imageUri + "], view = [" + view + "], "
-                    + "loadedImage = [" + loadedImage + "]");
+                    + "loadedImage = [" + loadedImage + "], "
+                    + loadedImage.getWidth() + "x" + loadedImage.getHeight()
+            + ", scaled width = " + width);
         }
         currentThumbnail = loadedImage;
     }
@@ -648,9 +659,22 @@ public abstract class BasePlayer implements
         if (simpleExoPlayer == null) {
             return;
         }
+        // Use duration of currentItem for non-live streams,
+        // because HLS streams are fragmented
+        // and thus the whole duration is not available to the player
+        // TODO: revert #6307 when introducing proper HLS support
+        final int duration;
+        if (currentItem != null
+                && currentItem.getStreamType() != StreamType.AUDIO_LIVE_STREAM
+                && currentItem.getStreamType() != StreamType.LIVE_STREAM) {
+            // convert seconds to milliseconds
+            duration =  (int) (currentItem.getDuration() * 1000);
+        } else {
+            duration = (int) simpleExoPlayer.getDuration();
+        }
         onUpdateProgress(
                 Math.max((int) simpleExoPlayer.getCurrentPosition(), 0),
-                (int) simpleExoPlayer.getDuration(),
+                duration,
                 simpleExoPlayer.getBufferedPercentage()
         );
     }
