@@ -31,7 +31,6 @@ import android.util.Log;
 import org.schabi.newpipe.player.mediasession.MediaSessionPlayerUi;
 import org.schabi.newpipe.util.ThemeHelper;
 
-
 /**
  * One service for all players.
  */

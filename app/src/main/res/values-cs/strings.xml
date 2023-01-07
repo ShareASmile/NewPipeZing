@@ -124,7 +124,7 @@
     <string name="notification_channel_name">Oznámení NewPipe</string>
     <string name="notification_channel_description">Oznámení pro NewPipe přehrávač</string>
     <string name="search_no_results">Žádné výsledky</string>
-    <string name="empty_subscription_feed_subtitle">Je tu sranda jak v márnici</string>
+    <string name="empty_list_subtitle">Je tu sranda jak v márnici</string>
     <string name="short_billion">mld.</string>
     <string name="no_subscribers">Žádní odběratelé</string>
     <plurals name="subscribers">
@@ -360,8 +360,7 @@
     <string name="list">Seznam</string>
     <string name="grid">Mřížka</string>
     <string name="auto">Automaticky</string>
-    <string name="app_update_notification_content_title">Aktualizace NewPipe je k dispozici!</string>
-    <string name="app_update_notification_content_text">Klepněte pro stažení</string>
+    <string name="app_update_available_notification_title">Aktualizace NewPipe je k dispozici!</string>
     <string name="missions_header_finished">Hotovo</string>
     <string name="missions_header_pending">Vyčkávání</string>
     <string name="paused">Pozastaveno</string>
@@ -470,7 +469,6 @@
     <string name="new_seek_duration_toast">Kvůli omezením ExoPlayer bylo prohledávání nastaveno na %d vteřin</string>
     <string name="mute">Ztišit</string>
     <string name="unmute">Obnovit hlasitost</string>
-    <string name="help">Nápověda</string>
     <plurals name="minutes">
         <item quantity="one">%d minuta</item>
         <item quantity="few">%d minuty</item>
@@ -737,4 +735,8 @@
     <string name="faq_description">Pokud máte potíže s používáním aplikace, přečtěte si tyto odpovědi na časté otázky!</string>
     <string name="faq">Zobrazit na webu</string>
     <string name="sort">Řazení</string>
+    <string name="app_update_available_notification_text">Klepnutím stáhnete %s</string>
+    <string name="fast_mode">Rychlý režim</string>
+    <string name="app_update_unavailable_toast">Používáte nejnovější verzi NewPipe</string>
+    <string name="import_subscriptions_hint">Import nebo export odběrů z 3-tečkové nabídky</string>
 </resources>

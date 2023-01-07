@@ -6,6 +6,8 @@ on:
     branches:
       - dev
       - master
+      - download-option-in-queue-items
+      - preunify
       - release**
     paths-ignore:
       - 'README.md'
@@ -19,6 +21,8 @@ on:
     branches:
       - dev
       - master
+      - download-option-in-queue-items
+      - preunify
     paths-ignore:
       - 'README.md'
       - 'doc/**'
@@ -31,9 +35,6 @@ on:
 jobs:
   build-and-test-jvm:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
 
     steps:
       - uses: actions/checkout@v3
@@ -66,11 +67,8 @@ jobs:
     timeout-minutes: 20
     strategy:
       matrix:
-        # api-level 19 is min sdk, but throws errors related to desugaring
-        api-level: [ 21, 29 ]
-
-    permissions:
-      contents: read
+        # api-level 21 is min sdk, but throws errors related to desugaring
+        api-level: [ 29 ]
 
     steps:
       - uses: actions/checkout@v3
@@ -100,9 +98,6 @@ jobs:
   sonar:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-
     steps:
       - uses: actions/checkout@v3
         with:
@@ -126,4 +121,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonarqube --info
+        run: ./gradlew build sonar --info

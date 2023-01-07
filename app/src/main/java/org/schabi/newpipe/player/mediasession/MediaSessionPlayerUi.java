@@ -40,7 +40,6 @@ public class MediaSessionPlayerUi extends PlayerUi {
 
         mediaSession = new MediaSessionCompat(context, TAG);
         mediaSession.setActive(true);
-
         sessionConnector = new MediaSessionConnector(mediaSession);
         sessionConnector.setQueueNavigator(new PlayQueueNavigator(mediaSession, player));
         sessionConnector.setPlayer(getForwardingPlayer());
