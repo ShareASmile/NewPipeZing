@@ -760,7 +760,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
                     if (showLocalSuggestions && shallShowRemoteSuggestionsNow) {
                         return Observable.zip(
-                                getLocalSuggestionsObservable(query, 30),
+                                getLocalSuggestionsObservable(query, 60),
                                 getRemoteSuggestionsObservable(query),
                                 (local, remote) -> {
                                     remote.removeIf(remoteItem -> local.stream().anyMatch(
@@ -770,7 +770,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                                 })
                                 .materialize();
                     } else if (showLocalSuggestions) {
-                        return getLocalSuggestionsObservable(query, 30)
+                        return getLocalSuggestionsObservable(query, 60)
                                 .materialize();
                     } else if (shallShowRemoteSuggestionsNow) {
                         return getRemoteSuggestionsObservable(query)
