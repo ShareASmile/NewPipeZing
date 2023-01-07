@@ -32,23 +32,15 @@ jobs:
       - name: Build release apk
         run: ./gradlew assembleRelease --stacktrace
 
-      - name: Sign Android release 2
-        uses: ilharp/sign-android-release@v1.0.4
-        name: Sign app APK
+      - name: Sign release
+        uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
-          releaseDir: app/build/outputs/apk/release
-          signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
-          keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          buildToolsVersion: 33.0.0
-
-  # Upload your signed file if you want
-  - uses: actions/upload-artifact@v3
-    with:
-      name: Signed app bundle
-      path: ${{steps.sign_app.outputs.signedFile}}
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Rename apk
         run: mv ${{ steps.sign_app.outputs.signedReleaseFile }} NewPipe-${{ steps.bump_version.outputs.generated_version_name }}_Extractor-${{ steps.get_version.outputs.version-without-v }}.apk
