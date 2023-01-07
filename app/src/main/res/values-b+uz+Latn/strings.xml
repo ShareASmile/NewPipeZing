@@ -554,6 +554,7 @@
     <string name="play_queue_stream_detail">Detallar</string>
     <string name="play_queue_remove">Olib tashlash</string>
     <string name="title_activity_play_queue">Play navbat</string>
+	<string name="settings_category_notification_title">Avisu permanente</string>
     <string name="conferences">Konferentsiyalar</string>
     <string name="most_liked">Eng yoqqanlari</string>
     <string name="recently_added">Yaqinda qo\'shilgan</string>

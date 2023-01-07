@@ -31,24 +31,41 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
+import androidx.preference.PreferenceManager
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.core.Notification
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.functions.Consumer
 import io.reactivex.rxjava3.functions.Function
+import io.reactivex.rxjava3.processors.PublishProcessor
+import io.reactivex.rxjava3.schedulers.Schedulers
+import org.reactivestreams.Subscriber
+import org.reactivestreams.Subscription
 import org.schabi.newpipe.App
 import org.schabi.newpipe.MainActivity.DEBUG
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.extractor.ListInfo
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
+import org.schabi.newpipe.local.feed.FeedDatabaseManager
 import org.schabi.newpipe.local.feed.service.FeedEventManager.Event.ErrorResultEvent
+import org.schabi.newpipe.local.feed.service.FeedEventManager.Event.ProgressEvent
+import org.schabi.newpipe.local.feed.service.FeedEventManager.Event.SuccessResultEvent
 import org.schabi.newpipe.local.feed.service.FeedEventManager.postEvent
+import org.schabi.newpipe.local.subscription.SubscriptionManager
+import org.schabi.newpipe.util.ExtractorHelper
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 class FeedLoadService : Service() {
     companion object {
         private val TAG = FeedLoadService::class.java.simpleName
-        const val NOTIFICATION_ID = 7293450
+        private const val NOTIFICATION_ID = 7293450
         private const val ACTION_CANCEL = App.PACKAGE_NAME + ".local.feed.service.FeedLoadService.CANCEL"
 
         /**
@@ -56,13 +73,27 @@ class FeedLoadService : Service() {
          */
         private const val NOTIFICATION_SAMPLING_PERIOD = 1500
 
+        /**
+         * How many extractions will be running in parallel.
+         */
+        private const val PARALLEL_EXTRACTIONS = 6
+
+        /**
+         * Number of items to buffer to mass-insert in the database.
+         */
+        private const val BUFFER_COUNT_BEFORE_INSERT = 20
+
         const val EXTRA_GROUP_ID: String = "FeedLoadService.EXTRA_GROUP_ID"
     }
 
-    private var loadingDisposable: Disposable? = null
-    private var notificationDisposable: Disposable? = null
+    private var loadingSubscription: Subscription? = null
+    private lateinit var subscriptionManager: SubscriptionManager
 
-    private lateinit var feedLoadManager: FeedLoadManager
+    private lateinit var feedDatabaseManager: FeedDatabaseManager
+    private lateinit var feedResultsHolder: ResultsHolder
+
+    private var disposables = CompositeDisposable()
+    private var notificationUpdater = PublishProcessor.create<String>()
 
     // /////////////////////////////////////////////////////////////////////////
     // Lifecycle
@@ -70,7 +101,8 @@ class FeedLoadService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        feedLoadManager = FeedLoadManager(this)
+        subscriptionManager = SubscriptionManager(this)
+        feedDatabaseManager = FeedDatabaseManager(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -82,45 +114,40 @@ class FeedLoadService : Service() {
             )
         }
 
-        if (intent == null || loadingDisposable != null) {
+        if (intent == null || loadingSubscription != null) {
             return START_NOT_STICKY
         }
 
         setupNotification()
         setupBroadcastReceiver()
+        val defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         val groupId = intent.getLongExtra(EXTRA_GROUP_ID, FeedGroupEntity.GROUP_ALL_ID)
-        loadingDisposable = feedLoadManager.startLoading(groupId)
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe {
-                startForeground(NOTIFICATION_ID, notificationBuilder.build())
-            }
-            .subscribe { _, error ->
-                // There seems to be a bug in the kotlin plugin as it tells you when
-                // building that this can't be null:
-                // "Condition 'error != null' is always 'true'"
-                // However it can indeed be null
-                // The suppression may be removed in further versions
-                @Suppress("SENSELESS_COMPARISON")
-                if (error != null) {
-                    Log.e(TAG, "Error while storing result", error)
-                    handleError(error)
-                    return@subscribe
-                }
-                stopService()
-            }
+        val useFeedExtractor = defaultSharedPreferences
+            .getBoolean(getString(R.string.feed_use_dedicated_fetch_method_key), false)
+
+        val thresholdOutdatedSecondsString = defaultSharedPreferences
+            .getString(getString(R.string.feed_update_threshold_key), getString(R.string.feed_update_threshold_default_value))
+        val thresholdOutdatedSeconds = thresholdOutdatedSecondsString!!.toInt()
+
+        startLoading(groupId, useFeedExtractor, thresholdOutdatedSeconds)
+
         return START_NOT_STICKY
     }
 
     private fun disposeAll() {
         unregisterReceiver(broadcastReceiver)
-        loadingDisposable?.dispose()
-        notificationDisposable?.dispose()
+
+        loadingSubscription?.cancel()
+        loadingSubscription = null
+
+        disposables.dispose()
     }
 
     private fun stopService() {
         disposeAll()
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+        notificationManager.cancel(NOTIFICATION_ID)
         stopSelf()
     }
 
@@ -144,6 +171,181 @@ class FeedLoadService : Service() {
         }
     }
 
+    private fun startLoading(groupId: Long = FeedGroupEntity.GROUP_ALL_ID, useFeedExtractor: Boolean, thresholdOutdatedSeconds: Int) {
+        feedResultsHolder = ResultsHolder()
+
+        val outdatedThreshold = OffsetDateTime.now(ZoneOffset.UTC).minusSeconds(thresholdOutdatedSeconds.toLong())
+
+        val subscriptions = when (groupId) {
+            FeedGroupEntity.GROUP_ALL_ID -> feedDatabaseManager.outdatedSubscriptions(outdatedThreshold)
+            else -> feedDatabaseManager.outdatedSubscriptionsForGroup(groupId, outdatedThreshold)
+        }
+
+        subscriptions
+            .take(1)
+            .doOnNext {
+                currentProgress.set(0)
+                maxProgress.set(it.size)
+            }
+            .filter { it.isNotEmpty() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                startForeground(NOTIFICATION_ID, notificationBuilder.build())
+                updateNotificationProgress(null)
+                broadcastProgress()
+            }
+            .observeOn(Schedulers.io())
+            .flatMap { Flowable.fromIterable(it) }
+            .takeWhile { !cancelSignal.get() }
+            .parallel(PARALLEL_EXTRACTIONS, PARALLEL_EXTRACTIONS * 2)
+            .runOn(Schedulers.io(), PARALLEL_EXTRACTIONS * 2)
+            .filter { !cancelSignal.get() }
+            .map { subscriptionEntity ->
+                var error: Throwable? = null
+                try {
+                    val listInfo = if (useFeedExtractor) {
+                        ExtractorHelper
+                            .getFeedInfoFallbackToChannelInfo(subscriptionEntity.serviceId, subscriptionEntity.url)
+                            .onErrorReturn {
+                                error = it // store error, otherwise wrapped into RuntimeException
+                                throw it
+                            }
+                            .blockingGet()
+                    } else {
+                        ExtractorHelper
+                            .getChannelInfo(subscriptionEntity.serviceId, subscriptionEntity.url, true)
+                            .onErrorReturn {
+                                error = it // store error, otherwise wrapped into RuntimeException
+                                throw it
+                            }
+                            .blockingGet()
+                    } as ListInfo<StreamInfoItem>
+                    return@map Notification.createOnNext(Pair(subscriptionEntity.uid, listInfo))
+                } catch (e: Throwable) {
+                    if (error == null) {
+                        // do this to prevent blockingGet() from wrapping into RuntimeException
+                        error = e
+                    }
+
+                    val request = "${subscriptionEntity.serviceId}:${subscriptionEntity.url}"
+                    val wrapper = RequestException(subscriptionEntity.uid, request, error!!)
+                    return@map Notification.createOnError<Pair<Long, ListInfo<StreamInfoItem>>>(wrapper)
+                }
+            }
+            .sequential()
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext(notificationsConsumer)
+            .observeOn(Schedulers.io())
+            .buffer(BUFFER_COUNT_BEFORE_INSERT)
+            .doOnNext(databaseConsumer)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(resultSubscriber)
+    }
+
+    private fun broadcastProgress() {
+        postEvent(ProgressEvent(currentProgress.get(), maxProgress.get()))
+    }
+
+    private val resultSubscriber
+        get() = object : Subscriber<List<Notification<Pair<Long, ListInfo<StreamInfoItem>>>>> {
+
+            override fun onSubscribe(s: Subscription) {
+                loadingSubscription = s
+                s.request(java.lang.Long.MAX_VALUE)
+            }
+
+            override fun onNext(notification: List<Notification<Pair<Long, ListInfo<StreamInfoItem>>>>) {
+                if (DEBUG) Log.v(TAG, "onNext() → $notification")
+            }
+
+            override fun onError(error: Throwable) {
+                handleError(error)
+            }
+
+            override fun onComplete() {
+                if (maxProgress.get() == 0) {
+                    postEvent(FeedEventManager.Event.IdleEvent)
+                    stopService()
+
+                    return
+                }
+
+                currentProgress.set(-1)
+                maxProgress.set(-1)
+
+                notificationUpdater.onNext(getString(R.string.feed_processing_message))
+                postEvent(ProgressEvent(R.string.feed_processing_message))
+
+                disposables.add(
+                    Single
+                        .fromCallable {
+                            feedResultsHolder.ready()
+
+                            postEvent(ProgressEvent(R.string.feed_processing_message))
+                            feedDatabaseManager.removeOrphansOrOlderStreams()
+
+                            postEvent(SuccessResultEvent(feedResultsHolder.itemsErrors))
+                            true
+                        }
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { _, throwable ->
+                            // There seems to be a bug in the kotlin plugin as it tells you when
+                            // building that this can't be null:
+                            // "Condition 'throwable != null' is always 'true'"
+                            // However it can indeed be null
+                            // The suppression may be removed in further versions
+                            @Suppress("SENSELESS_COMPARISON")
+                            if (throwable != null) {
+                                Log.e(TAG, "Error while storing result", throwable)
+                                handleError(throwable)
+                                return@subscribe
+                            }
+                            stopService()
+                        }
+                )
+            }
+        }
+
+    private val databaseConsumer: Consumer<List<Notification<Pair<Long, ListInfo<StreamInfoItem>>>>>
+        get() = Consumer {
+            feedDatabaseManager.database().runInTransaction {
+                for (notification in it) {
+
+                    if (notification.isOnNext) {
+                        val subscriptionId = notification.value!!.first
+                        val info = notification.value!!.second
+
+                        feedDatabaseManager.upsertAll(subscriptionId, info.relatedItems)
+                        subscriptionManager.updateFromInfo(subscriptionId, info)
+
+                        if (info.errors.isNotEmpty()) {
+                            feedResultsHolder.addErrors(RequestException.wrapList(subscriptionId, info))
+                            feedDatabaseManager.markAsOutdated(subscriptionId)
+                        }
+                    } else if (notification.isOnError) {
+                        val error = notification.error!!
+                        feedResultsHolder.addError(error)
+
+                        if (error is RequestException) {
+                            feedDatabaseManager.markAsOutdated(error.subscriptionId)
+                        }
+                    }
+                }
+            }
+        }
+
+    private val notificationsConsumer: Consumer<Notification<Pair<Long, ListInfo<StreamInfoItem>>>>
+        get() = Consumer { onItemCompleted(it.value?.second?.name) }
+
+    private fun onItemCompleted(updateDescription: String?) {
+        currentProgress.incrementAndGet()
+        notificationUpdater.onNext(updateDescription ?: "")
+
+        broadcastProgress()
+    }
+
     // /////////////////////////////////////////////////////////////////////////
     // Notification
     // /////////////////////////////////////////////////////////////////////////
@@ -151,12 +353,13 @@ class FeedLoadService : Service() {
     private lateinit var notificationManager: NotificationManagerCompat
     private lateinit var notificationBuilder: NotificationCompat.Builder
 
+    private var currentProgress = AtomicInteger(-1)
+    private var maxProgress = AtomicInteger(-1)
+
     private fun createNotification(): NotificationCompat.Builder {
         val cancelActionIntent = PendingIntent.getBroadcast(
             this,
-            NOTIFICATION_ID,
-            Intent(ACTION_CANCEL),
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+            NOTIFICATION_ID, Intent(ACTION_CANCEL), 0
         )
 
         return NotificationCompat.Builder(this, getString(R.string.notification_channel_id))
@@ -172,36 +375,33 @@ class FeedLoadService : Service() {
         notificationManager = NotificationManagerCompat.from(this)
         notificationBuilder = createNotification()
 
-        val throttleAfterFirstEmission = Function { flow: Flowable<FeedLoadState> ->
+        val throttleAfterFirstEmission = Function { flow: Flowable<String> ->
             flow.take(1).concatWith(flow.skip(1).throttleLatest(NOTIFICATION_SAMPLING_PERIOD.toLong(), TimeUnit.MILLISECONDS))
         }
 
-        notificationDisposable = feedLoadManager.notification
-            .publish(throttleAfterFirstEmission)
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnTerminate { notificationManager.cancel(NOTIFICATION_ID) }
-            .subscribe(this::updateNotificationProgress)
+        disposables.add(
+            notificationUpdater
+                .publish(throttleAfterFirstEmission)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::updateNotificationProgress)
+        )
     }
 
-    private fun updateNotificationProgress(state: FeedLoadState) {
-        notificationBuilder.setProgress(state.maxProgress, state.currentProgress, state.maxProgress == -1)
+    private fun updateNotificationProgress(updateDescription: String?) {
+        notificationBuilder.setProgress(maxProgress.get(), currentProgress.get(), maxProgress.get() == -1)
 
-        if (state.maxProgress == -1) {
+        if (maxProgress.get() == -1) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) notificationBuilder.setContentInfo(null)
-            if (state.updateDescription.isNotEmpty()) notificationBuilder.setContentText(state.updateDescription)
-            notificationBuilder.setContentText(state.updateDescription)
+            if (!updateDescription.isNullOrEmpty()) notificationBuilder.setContentText(updateDescription)
+            notificationBuilder.setContentText(updateDescription)
         } else {
-            val progressText = state.currentProgress.toString() + "/" + state.maxProgress
+            val progressText = this.currentProgress.toString() + "/" + maxProgress
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                if (state.updateDescription.isNotEmpty()) {
-                    notificationBuilder.setContentText("${state.updateDescription}  ($progressText)")
-                }
+                if (!updateDescription.isNullOrEmpty()) notificationBuilder.setContentText("$updateDescription  ($progressText)")
             } else {
                 notificationBuilder.setContentInfo(progressText)
-                if (state.updateDescription.isNotEmpty()) {
-                    notificationBuilder.setContentText(state.updateDescription)
-                }
+                if (!updateDescription.isNullOrEmpty()) notificationBuilder.setContentText(updateDescription)
             }
         }
 
@@ -213,12 +413,13 @@ class FeedLoadService : Service() {
     // /////////////////////////////////////////////////////////////////////////
 
     private lateinit var broadcastReceiver: BroadcastReceiver
+    private val cancelSignal = AtomicBoolean()
 
     private fun setupBroadcastReceiver() {
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == ACTION_CANCEL) {
-                    feedLoadManager.cancel()
+                    cancelSignal.set(true)
                 }
             }
         }
@@ -232,5 +433,30 @@ class FeedLoadService : Service() {
     private fun handleError(error: Throwable) {
         postEvent(ErrorResultEvent(error))
         stopService()
+    }
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Results Holder
+    // /////////////////////////////////////////////////////////////////////////
+
+    class ResultsHolder {
+        /**
+         * List of errors that may have happen during loading.
+         */
+        internal lateinit var itemsErrors: List<Throwable>
+
+        private val itemsErrorsHolder: MutableList<Throwable> = ArrayList()
+
+        fun addError(error: Throwable) {
+            itemsErrorsHolder.add(error)
+        }
+
+        fun addErrors(errors: List<Throwable>) {
+            itemsErrorsHolder.addAll(errors)
+        }
+
+        fun ready() {
+            itemsErrors = itemsErrorsHolder.toList()
+        }
     }
 }

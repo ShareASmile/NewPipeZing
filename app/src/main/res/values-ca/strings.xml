@@ -540,6 +540,7 @@
     <string name="enqueued">Ja a la cua</string>
     <string name="enqueue_stream">Afegeix a la cua</string>
     <string name="title_activity_play_queue">Cua de reproducció</string>
+	<string name="settings_category_notification_title">Notificació</string>
     <string name="most_liked">Més m\'agrada</string>
     <string name="recently_added">Afegits recentment</string>
     <string name="local">Local</string>
@@ -650,7 +651,6 @@
     <string name="start_main_player_fullscreen_title">Inicia el reproductor principal en pantalla completa</string>
     <string name="main_page_content_swipe_remove">Llisqueu els elements per eliminar-los</string>
     <string name="start_main_player_fullscreen_summary">Si la rotació automàtica està bloquejada, no inicieu vídeos al mini reproductor, sinó que aneu directament al mode de pantalla completa. Podeu accedir igualment al mini reproductor sortint de pantalla completa</string>
-    <string name="background_player_already_playing_toast">Ja s\'està reproduint en segon pla</string>
     <string name="error_report_channel_name">Notificació d\'informe d\'error</string>
     <string name="crash_the_player">Tancar abruptament el reproductor</string>
     <string name="manual_update_title">Comprovar si hi ha actualitzacions</string>

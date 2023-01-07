@@ -1,0 +1,60 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+
+      - name: Get release version number
+        id: get_version
+        uses: battila7/get-version-action@v2
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '8'
+
+      - name: Bump version in build.gradle
+        id: bump_version
+        uses: Swisyn/android-version-generator-actions@v1.2
+        with:
+          gradlePath: app/build.gradle
+          versionCode: 986
+          versionName: 0.23.1
+
+      - name: Build release apk
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Sign Android release 2
+        uses: ilharp/sign-android-release@v1.0.4
+        name: Sign app APK
+        id: sign_app
+        with:
+          releaseDir: app/build/outputs/apk/release
+          signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
+          keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          buildToolsVersion: 33.0.0
+
+  # Upload your signed file if you want
+  - uses: actions/upload-artifact@v3
+    with:
+      name: Signed app bundle
+      path: ${{steps.sign_app.outputs.signedFile}}
+
+      - name: Rename apk
+        run: mv ${{ steps.sign_app.outputs.signedReleaseFile }} NewPipe-${{ steps.bump_version.outputs.generated_version_name }}_Extractor-${{ steps.get_version.outputs.version-without-v }}.apk
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: '*.apk'
+          fail_on_unmatched_files: true

@@ -4,10 +4,6 @@
     <string name="last_used_preferences_version">last_used_preferences_version</string>
 
     <!-- Service -->
-    <string-array name="service_list">
-        <item>@string/youtube</item>
-        <item>@string/soundcloud</item>
-    </string-array>
     <string name="current_service_key">service</string>
     <string name="default_service_value">@string/youtube</string>
 
@@ -56,20 +52,21 @@
     </string-array>
 
     <string name="progressive_load_interval_key">progressive_load_interval</string>
-    <string name="progressive_load_interval_default_value">default</string>
+    <string name="progressive_load_interval_default_value">64</string>
+    <string name="progressive_load_interval_exoplayer_default_value">exoplayer_default</string>
     <string-array name="progressive_load_interval_descriptions">
         <item>1 KiB</item>
         <item>16 KiB</item>
         <item>64 KiB</item>
         <item>256 KiB</item>
-        <item>@string/progressive_load_interval_default</item>
+        <item>@string/progressive_load_interval_exoplayer_default</item>
     </string-array>
     <string-array name="progressive_load_interval_values">
         <item>1</item>
         <item>16</item>
-        <item>64</item>
+        <item>@string/progressive_load_interval_default_value</item>
         <item>256</item>
-        <item>default</item>
+        <item>@string/progressive_load_interval_exoplayer_default_value</item>
     </string-array>
 
     <string name="minimize_on_exit_key">minimize_on_exit_key</string>
@@ -130,6 +127,10 @@
 
     <string-array name="resolution_list_values">
         <item>@string/best_resolution_key</item>
+        <item>2160p60</item>
+        <item>2160p</item>
+        <item>1440p60</item>
+        <item>1440p</item>
         <item>1080p60</item>
         <item>1080p</item>
         <item>720p60</item>
@@ -141,6 +142,10 @@
     </string-array>
     <string-array name="resolution_list_description">
         <item>@string/best_resolution</item>
+        <item>2160p60</item>
+        <item>2160p</item>
+        <item>1440p60</item>
+        <item>1440p</item>
         <item>1080p60</item>
         <item>1080p</item>
         <item>720p60</item>
@@ -205,7 +210,6 @@
     <string name="disable_media_tunneling_key">disable_media_tunneling_key</string>
     <string name="show_image_indicators_key">show_image_indicators_key</string>
     <string name="show_crash_the_player_key">show_crash_the_player_key</string>
-    <string name="check_new_streams_key">check_new_streams</string>
     <string name="crash_the_app_key">crash_the_app_key</string>
     <string name="show_error_snackbar_key">show_error_snackbar_key</string>
     <string name="create_error_notification_key">create_error_notification_key</string>
@@ -1242,6 +1246,10 @@
     <string name="limit_mobile_data_usage_value">@string/limit_data_usage_none_key</string>
     <string-array name="limit_data_usage_values_list">
         <item>@string/limit_data_usage_none_key</item>
+        <item>2160p60</item>
+        <item>2160p</item>
+        <item>1440p60</item>
+        <item>1440p</item>
         <item>1080p60</item>
         <item>1080p</item>
         <item>720p60</item>
@@ -1288,42 +1296,4 @@
     </string-array>
 
     <string name="recaptcha_cookies_key">recaptcha_cookies_key</string>
-
-    <string name="enable_streams_notifications">enable_streams_notifications</string>
-    <string name="streams_notifications_interval_key">streams_notifications_interval</string>
-    <string name="streams_notifications_interval_default">14400</string>
-    <!-- Values will be localized in runtime -->
-    <string-array name="streams_notifications_interval_description">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>2 hours</item>
-        <item>4 hours</item>
-        <item>12 hours</item>
-        <item>1 day</item>
-    </string-array>
-    <!-- Notifications check frequency in seconds -->
-    <string-array name="streams_notifications_interval_values">
-        <item>900</item>
-        <item>1800</item>
-        <item>3600</item>
-        <item>7200</item>
-        <item>14400</item>
-        <item>43200</item>
-        <item>86400</item>
-    </string-array>
-    <string name="streams_notifications_network_key">streams_notifications_network</string>
-    <string name="streams_notifications_network_any">any</string>
-    <string name="streams_notifications_network_wifi">wifi</string>
-    <string name="streams_notifications_network_default">@string/streams_notifications_network_wifi</string>
-    <string-array name="streams_notifications_network_values">
-        <item>@string/streams_notifications_network_any</item>
-        <item>@string/streams_notifications_network_wifi</item>
-    </string-array>
-    <string-array name="streams_notifications_network_description">
-        <item>@string/any_network</item>
-        <item>@string/wifi_only</item>
-    </string-array>
-    <string name="streams_notifications_channels_key">streams_notifications_channels</string>
-    <string name="player_notification_screen_key">player_notification_screen</string>
 </resources>

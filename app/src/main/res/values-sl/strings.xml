@@ -14,6 +14,7 @@
     <string name="use_external_video_player_title">Uporabi zunanji predvajalnik videa</string>
     <string name="use_external_audio_player_title">Uporabi zunanji predvajalnik zvoka</string>
     <string name="download_path_title">Mapa z prenesenimi videi</string>
+	<string name="settings_category_notification_title">Obvestilo</string>
     <string name="download_path_summary">Preneseni video so shranjeni tukaj</string>
     <string name="download_path_dialog_title">Izberite mapo za prenos video datotek</string>
     <string name="default_resolution_title">Privzeta ločljivost</string>

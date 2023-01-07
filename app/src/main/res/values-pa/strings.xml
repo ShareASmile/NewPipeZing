@@ -488,6 +488,7 @@
     <string name="feed_load_error">ਫ਼ੀਡ ਲੋਡ ਕਰਨ ਵਿੱਚ ਤਰੁੱਟੀ ਰਹੀ</string>
     <string name="feed_update_threshold_option_always_update">ਹਮੇਸ਼ਾ ਅਪਡੇਟ ਕਰੋ</string>
     <string name="feed_update_threshold_title">ਫ਼ੀਡ ਅਪਡੇਟ ਦੀ ਹੱਦ</string>
+	<string name="settings_category_notification_title">ਨੋਟੀਫਿਕੇਸ਼ਨ</string>
     <string name="settings_category_feed_title">ਫ਼ੀਡ</string>
     <string name="feed_group_show_only_ungrouped_subscriptions">ਸਿਰਫ਼ ਉਹ ਸਬਸਕ੍ਰਿਪਸ਼ਨਾਂ ਵਿਖਾਓ ਜੋ ਕਿਸੇ ਗਰੁੱਪ ਵਿੱਚ ਨਹੀਂ ਪਾਈਆਂ ਹੋਈਆਂ</string>
     <string name="feed_create_new_group_button_title">ਨਵਾਂ</string>

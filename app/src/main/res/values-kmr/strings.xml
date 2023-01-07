@@ -518,6 +518,7 @@
     <string name="play_queue_stream_detail">Hûrgulî</string>
     <string name="play_queue_remove">Rakirin</string>
     <string name="title_activity_play_queue">Dûvê lîstin</string>
+	<string name="settings_category_notification_title">Agahdayin</string>
     <string name="conferences">Konferans</string>
     <string name="most_liked">Pir hez kirin</string>
     <string name="recently_added">Demên dawî zêde kirin</string>

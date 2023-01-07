@@ -466,6 +466,7 @@
     <string name="feed_group_dialog_select_subscriptions">Επιλέξτε συνδρομές</string>
     <string name="mute">Σίγαση</string>
     <string name="title_activity_play_queue">Αναπαραγωγή ουράς</string>
+	<string name="settings_category_notification_title">Ειδοποίηση</string>
     <string name="no_playlist_bookmarked_yet">Δεν υπάρχουν σελιδοδείκτες λίστας αναπαραγωγής ακόμα</string>
     <string name="select_a_playlist">Επιλέξτε μια λίστα αναπαραγωγής</string>
     <string name="recaptcha_done_button">Τέλος</string>
@@ -682,11 +683,18 @@
 \nΕγκαταστήστε έναν συμβατό με το Πλαίσιο Πρόσβασης Αποθήκευσης.</string>
     <string name="error_report_notification_title">Το NewPipe παρουσίασε ένα σφάλμα. Πατήστε για αναφορά</string>
     <string name="show_error_snackbar">Εμφάνιση μιας snackbar σφάλματος</string>
-    <string name="background_player_already_playing_toast">Αναπαράγεται ήδη στο παρασκήνιο</string>
     <string name="detail_pinned_comment_view_description">Καρφιτσωμένο σχόλιο</string>
     <string name="leak_canary_not_available">Το LeakCanary δεν είναι διαθέσιμο</string>
-    <string name="adjust_by_semitones_checkbox">Προσαρμόστε τον τόνο με βάση τα μουσικά ημιτόνια</string>
-    <string name="playback_tempo_step">Βήμα τέμπο</string>
-    <string name="progressive_load_interval_default">Εξ\' ορισμού ExoPlayer</string>
+    <string name="progressive_load_interval_exoplayer_default">Εξ\' ορισμού ExoPlayer</string>
     <string name="progressive_load_interval_summary">Αλλάξτε το μέγεθος του διαστήματος φόρτωσης (επί του παρόντος είναι %s). Μια χαμηλότερη τιμή μπορεί να επιταχύνει την αρχική φόρτωση βίντεο. Οι αλλαγές απαιτούν επανεκκίνηση της εφαρμογής.</string>
+    <string name="notifications">Ειδοποιήσεις</string>
+    <string name="streams_notifications_network_title">Απαιτούμενη σύνδεση δικτύου</string>
+    <string name="any_network">Οποιοδήποτε δίκτυο</string>
+    <string name="streams_notification_channel_name">Νέες ροές</string>
+    <string name="streams_notifications_interval_title">Συχνότητα ελέγχου</string>
+    <string name="streams_notification_channel_description">Ειδοποιήσεις σχετικά με νέες ροές για συνδρομές</string>
+    <string name="loading_stream_details">Φόρτωση λεπτομερειών ροής…</string>
+    <string name="delete_downloaded_files_confirm">Διαγραφή όλων των ληφθέντων αρχείων από το δίσκο;</string>
+    <string name="percent">Τοις εκατό</string>
+    <string name="semitone">Ημιτόνιο</string>
 </resources>

@@ -12,7 +12,6 @@ import org.schabi.newpipe.database.feed.model.FeedEntity
 import org.schabi.newpipe.database.feed.model.FeedLastUpdatedEntity
 import org.schabi.newpipe.database.stream.StreamWithState
 import org.schabi.newpipe.database.stream.model.StreamStateEntity
-import org.schabi.newpipe.database.subscription.NotificationMode
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
 import java.time.OffsetDateTime
 
@@ -253,21 +252,4 @@ abstract class FeedDAO {
         """
     )
     abstract fun getAllOutdatedForGroup(groupId: Long, outdatedThreshold: OffsetDateTime): Flowable<List<SubscriptionEntity>>
-
-    @Query(
-        """
-        SELECT s.* FROM subscriptions s
-
-        LEFT JOIN feed_last_updated lu
-        ON s.uid = lu.subscription_id
-
-        WHERE 
-            (lu.last_updated IS NULL OR lu.last_updated < :outdatedThreshold)
-            AND s.notification_mode = :notificationMode
-        """
-    )
-    abstract fun getOutdatedWithNotificationMode(
-        outdatedThreshold: OffsetDateTime,
-        @NotificationMode notificationMode: Int
-    ): Flowable<List<SubscriptionEntity>>
 }
