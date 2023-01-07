@@ -21,28 +21,20 @@ package org.schabi.newpipe.player;
 
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.media.MediaBrowserCompat.MediaItem;
 import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.media.MediaBrowserServiceCompat;
 
 import org.schabi.newpipe.player.mediasession.MediaSessionPlayerUi;
 import org.schabi.newpipe.util.ThemeHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * One service for all players.
  */
-public final class PlayerService extends MediaBrowserServiceCompat {
+public final class PlayerService extends Service {
     private static final String TAG = PlayerService.class.getSimpleName();
     private static final boolean DEBUG = Player.DEBUG;
 
@@ -57,8 +49,6 @@ public final class PlayerService extends MediaBrowserServiceCompat {
 
     @Override
     public void onCreate() {
-        super.onCreate();
-
         if (DEBUG) {
             Log.d(TAG, "onCreate() called");
         }
@@ -142,9 +132,6 @@ public final class PlayerService extends MediaBrowserServiceCompat {
 
     @Override
     public IBinder onBind(final Intent intent) {
-        if (SERVICE_INTERFACE.equals(intent.getAction())) {
-            return super.onBind(intent);
-        }
         return mBinder;
     }
 
@@ -157,30 +144,5 @@ public final class PlayerService extends MediaBrowserServiceCompat {
         public Player getPlayer() {
             return PlayerService.this.player;
         }
-    }
-
-    // MediaBrowserServiceCompat methods
-
-    @NonNull
-    private static final String MY_MEDIA_ROOT_ID = "media_root_id";
-
-    @Nullable
-    @Override
-    public BrowserRoot onGetRoot(@NonNull final String clientPackageName, final int clientUid,
-                                 @Nullable final Bundle rootHints) {
-        Log.d(TAG, String.format("MediaBrowserService.onGetRoot(%s, %s, %s)",
-                                 clientPackageName, clientUid, rootHints));
-
-        return new MediaBrowserServiceCompat.BrowserRoot(MY_MEDIA_ROOT_ID, null);
-    }
-
-    @Override
-    public void onLoadChildren(@NonNull final String parentId,
-                               @NonNull final Result<List<MediaItem>> result) {
-        Log.d(TAG, String.format("MediaBrowserService.onLoadChildren(%s)", parentId));
-
-        final List<MediaItem> mediaItems = new ArrayList<>();
-
-        result.sendResult(mediaItems);
     }
 }
