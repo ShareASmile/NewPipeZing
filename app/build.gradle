@@ -9,7 +9,7 @@ plugins {
 
 android {
     compileSdk 31
-    buildToolsVersion '31.0.0'
+    buildToolsVersion '30.0.3'
 
     defaultConfig {
         applicationId "org.schabi.newpipe"
@@ -17,7 +17,7 @@ android {
         minSdk 19
         targetSdk 29
         versionCode 986
-        versionName "0.23.0"
+        versionName "0.23.0.1"
 
         multiDexEnabled true
 
@@ -62,6 +62,8 @@ android {
             shrinkResources false // disabled to fix F-Droid's reproducible build
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             archivesBaseName = 'app'
+            applicationIdSuffix ".Kitkat"
+            resValue "string", "app_name", "NewPipe " + "Kitkat"
         }
     }
 
@@ -169,7 +171,7 @@ afterEvaluate {
     if (!System.properties.containsKey('skipFormatKtlint')) {
         preDebugBuild.dependsOn formatKtlint
     }
-    preDebugBuild.dependsOn runCheckstyle, runKtlint
+    preDebugBuild.dependsOn runKtlint
 }
 
 sonarqube {
