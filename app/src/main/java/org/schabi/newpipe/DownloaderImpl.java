@@ -6,8 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
-import org.chromium.net.CronetEngine;
-import org.chromium.net.impl.NativeCronetProvider;
 import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.downloader.Request;
@@ -36,21 +34,18 @@ public final class DownloaderImpl extends Downloader {
             "youtube_restricted_mode_key";
     public static final String YOUTUBE_RESTRICTED_MODE_COOKIE = "PREF=f2=8000000";
     public static final String YOUTUBE_DOMAIN = "youtube.com";
-    public static final int DEFAULT_CONNECT_TIMEOUT_MILLIS = 30000;
-    public static final int DEFAULT_READ_TIMEOUT_MILLIS = 30000;
-    public static final int DEFAULT_WRITE_TIMEOUT_MILLIS = 30000;
 
     private static DownloaderImpl instance;
     private final Map<String, String> mCookies;
     private final OkHttpClient client;
-    private CronetEngine cronetEngine;
 
-    private DownloaderImpl(@NonNull final OkHttpClient.Builder builder) {
-        client = builder.connectTimeout(DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                .readTimeout(DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                .writeTimeout(DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+    private DownloaderImpl(final OkHttpClient.Builder builder) {
+        this.client = builder
+                .readTimeout(30, TimeUnit.SECONDS)
+//                .cache(new Cache(new File(context.getExternalCacheDir(), "okhttp"),
+//                        16 * 1024 * 1024))
                 .build();
-        mCookies = new HashMap<>();
+        this.mCookies = new HashMap<>();
     }
 
     /**
@@ -183,23 +178,5 @@ public final class DownloaderImpl extends Downloader {
         final String latestUrl = response.request().url().toString();
         return new Response(response.code(), response.message(), response.headers().toMultimap(),
                 responseBodyToReturn, latestUrl);
-    }
-
-    public void initCronetEngineIfNeeded() {
-        if (cronetEngine == null) {
-            cronetEngine = new NativeCronetProvider(App.getApp().getApplicationContext())
-                    .createBuilder()
-                    .setUserAgent(USER_AGENT)
-                    .enableBrotli(true)
-                    // Be sure that QUIC and HTTP/2 are enabled, even it should be already the case
-                    // by default
-                    .enableQuic(true)
-                    .enableHttp2(true)
-                    .build();
-        }
-    }
-
-    public CronetEngine getCronetEngine() {
-        return cronetEngine;
     }
 }
