@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -34,6 +33,7 @@ import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
+import androidx.preference.PreferenceManager;
 
 import com.nononsenseapps.filepicker.Utils;
 
@@ -295,7 +295,7 @@ public class DownloadDialog extends DialogFragment
         initToolbar(view.findViewById(R.id.toolbar));
         setupDownloadOptions();
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
         int threads = prefs.getInt(getString(R.string.default_download_threads), 5);
         threadsCountTextView.setText(String.valueOf(threads));
@@ -516,7 +516,7 @@ public class DownloadDialog extends DialogFragment
         videoButton.setVisibility(isVideoStreamsAvailable ? View.VISIBLE : View.GONE);
         subtitleButton.setVisibility(isSubtitleStreamsAvailable ? View.VISIBLE : View.GONE);
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         final String defaultMedia = prefs.getString(getString(R.string.last_used_download_type),
                     getString(R.string.last_download_type_video_key));
 

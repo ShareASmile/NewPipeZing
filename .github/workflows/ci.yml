@@ -6,8 +6,7 @@ on:
     branches:
       - dev
       - master
-      - tv
-      - tv-dev
+      - NewpipeZing
       - release**
     paths-ignore:
       - 'README.md'
@@ -20,8 +19,7 @@ on:
     branches:
       - dev
       - master
-      - tv
-      - tv-dev
+      - NewpipeZing
     paths-ignore:
       - 'README.md'
       - 'fastlane/**'

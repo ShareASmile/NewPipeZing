@@ -3,7 +3,6 @@ package org.schabi.newpipe.fragments;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapterMenuWorkaround;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
@@ -75,7 +75,7 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
 
         youtubeRestrictedModeEnabledKey = getString(R.string.youtube_restricted_mode_enabled);
         previousYoutubeRestrictedModeEnabled =
-                PreferenceManager.getDefaultSharedPreferences(getContext())
+                PreferenceManager.getDefaultSharedPreferences(requireContext())
                         .getBoolean(youtubeRestrictedModeEnabledKey, false);
     }
 
@@ -106,7 +106,7 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
         super.onResume();
 
         boolean youtubeRestrictedModeEnabled =
-                PreferenceManager.getDefaultSharedPreferences(getContext())
+                PreferenceManager.getDefaultSharedPreferences(requireContext())
                         .getBoolean(youtubeRestrictedModeEnabledKey, false);
         if (previousYoutubeRestrictedModeEnabled != youtubeRestrictedModeEnabled) {
             previousYoutubeRestrictedModeEnabled = youtubeRestrictedModeEnabled;

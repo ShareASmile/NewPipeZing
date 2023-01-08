@@ -32,7 +32,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Handler;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -252,7 +252,7 @@ public abstract class VideoPlayer extends BasePlayer
         simpleExoPlayer.addTextOutput(cues -> subtitleView.onCues(cues));
 
         // Setup audio session with onboard equalizer
-        if (Build.VERSION.SDK_INT >= 21) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             trackSelector.setParameters(trackSelector.buildUponParameters()
                     .setTunnelingAudioSessionId(C.generateAudioSessionIdV21(context)));
         }

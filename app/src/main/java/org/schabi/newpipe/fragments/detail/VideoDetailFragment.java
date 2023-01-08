@@ -8,8 +8,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.Html;
+import androidx.preference.PreferenceManager;
+import androidx.core.text.HtmlCompat;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.util.Linkify;
@@ -192,7 +192,7 @@ public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
 
     private AppBarLayout appBarLayout;
     private ViewPager viewPager;
-    private TabAdaptor pageAdapter;
+    private TabAdapter pageAdapter;
     private TabLayout tabLayout;
     private FrameLayout relatedStreamsLayout;
 
@@ -253,7 +253,7 @@ public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
         if (currentWorker != null) {
             currentWorker.dispose();
         }
-        PreferenceManager.getDefaultSharedPreferences(getContext())
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .edit()
                 .putString(getString(R.string.stream_info_selected_tab_key),
                         pageAdapter.getItemTitle(viewPager.getCurrentItem()))
@@ -487,7 +487,7 @@ public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
                 }
                 break;
             case R.id.detail_title_root_layout:
-                ShareUtils.copyToClipboard(getContext(), videoTitleTextView.getText().toString());
+                ShareUtils.copyToClipboard(requireContext(), videoTitleTextView.getText().toString());
                 break;
         }
 
@@ -558,7 +558,7 @@ public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
 
         appBarLayout = rootView.findViewById(R.id.appbarlayout);
         viewPager = rootView.findViewById(R.id.viewpager);
-        pageAdapter = new TabAdaptor(getChildFragmentManager());
+        pageAdapter = new TabAdapter(getChildFragmentManager());
         viewPager.setAdapter(pageAdapter);
         tabLayout = rootView.findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
@@ -569,7 +569,7 @@ public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
 
         thumbnailBackgroundButton.requestFocus();
 
-        if (AndroidTvUtils.isTv(getContext())) {
+        if (AndroidTvUtils.isTv(requireContext())) {
             // remove ripple effects from detail controls
             final int transparent = getResources().getColor(R.color.transparent_background_color);
             detailControlsAddToPlaylist.setBackgroundColor(transparent);
@@ -1025,24 +1025,17 @@ public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
 
         if (description.getType() == Description.HTML) {
             disposables.add(Single.just(description.getContent())
-                    .map((@NonNull String descriptionText) -> {
-                        Spanned parsedDescription;
-                        if (Build.VERSION.SDK_INT >= 24) {
-                            parsedDescription = Html.fromHtml(descriptionText, 0);
-                        } else {
-                            //noinspection deprecation
-                            parsedDescription = Html.fromHtml(descriptionText);
-                        }
-                        return parsedDescription;
-                    })
+                    .map((@NonNull final String descriptionText) ->
+                            HtmlCompat.fromHtml(descriptionText,
+                                    HtmlCompat.FROM_HTML_MODE_LEGACY))
                     .subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe((@NonNull Spanned spanned) -> {
+                    .subscribe((@NonNull final Spanned spanned) -> {
                         videoDescriptionView.setText(spanned);
                         videoDescriptionView.setVisibility(View.VISIBLE);
                     }));
         } else if (description.getType() == Description.MARKDOWN) {
-            final Markwon markwon = Markwon.builder(getContext())
+            final Markwon markwon = Markwon.builder(requireContext())
                     .usePlugin(LinkifyPlugin.create())
                     .build();
             markwon.setMarkdown(videoDescriptionView, description.getContent());

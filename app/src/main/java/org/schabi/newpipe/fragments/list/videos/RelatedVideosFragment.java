@@ -3,7 +3,6 @@ package org.schabi.newpipe.fragments.list.videos;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,6 +12,7 @@ import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.ListExtractor;
@@ -79,11 +79,11 @@ public class RelatedVideosFragment extends BaseListInfoFragment<RelatedStreamInf
             autoplaySwitch = headerRootLayout.findViewById(R.id.autoplay_switch);
 
             final SharedPreferences pref = PreferenceManager
-                    .getDefaultSharedPreferences(getContext());
+                    .getDefaultSharedPreferences(requireContext());
             final boolean autoplay = pref.getBoolean(getString(R.string.auto_queue_key), false);
             autoplaySwitch.setChecked(autoplay);
             autoplaySwitch.setOnCheckedChangeListener((compoundButton, b) ->
-                    PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
+                    PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
                             .putBoolean(getString(R.string.auto_queue_key), b).apply());
             return headerRootLayout;
         } else {
@@ -202,7 +202,7 @@ public class RelatedVideosFragment extends BaseListInfoFragment<RelatedStreamInf
     @Override
     public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences,
                                           final String s) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(requireContext());
         boolean autoplay = pref.getBoolean(getString(R.string.auto_queue_key), false);
         if (autoplaySwitch != null) {
             autoplaySwitch.setChecked(autoplay);

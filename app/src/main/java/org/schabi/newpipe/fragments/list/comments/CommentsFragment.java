@@ -108,7 +108,7 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfo> {
                         ? R.string.comments_are_disabled
                         : R.string.no_comments);
 
-        AnimationUtils.slideUp(getView(), 120, 150, 0.06f);
+        AnimationUtils.slideUp(requireView(), 120, 150, 0.06f);
 
         if (!result.getErrors().isEmpty()) {
             showSnackBarError(result.getErrors(), UserAction.REQUESTED_COMMENTS,

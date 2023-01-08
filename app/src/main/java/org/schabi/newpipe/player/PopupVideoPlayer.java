@@ -34,7 +34,7 @@ import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -227,7 +227,7 @@ public final class PopupVideoPlayer extends Service {
         popupWidth = popupRememberSizeAndPos
                 ? sharedPreferences.getFloat(POPUP_SAVED_WIDTH, defaultSize) : defaultSize;
 
-        final int layoutParamType = Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O
+        final int layoutParamType = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
                 ? WindowManager.LayoutParams.TYPE_PHONE
                 : WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
 

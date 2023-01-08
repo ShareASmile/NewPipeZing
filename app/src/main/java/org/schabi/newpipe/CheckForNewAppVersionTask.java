@@ -11,11 +11,11 @@ import android.content.pm.Signature;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.preference.PreferenceManager;
 
 import com.grack.nanojson.JsonObject;
 import com.grack.nanojson.JsonParser;

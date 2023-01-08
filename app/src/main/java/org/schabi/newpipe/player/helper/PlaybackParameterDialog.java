@@ -5,7 +5,7 @@ import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -119,7 +119,7 @@ public class PlaybackParameterDialog extends DialogFragment {
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
-        assureCorrectAppLanguage(getContext());
+        assureCorrectAppLanguage(requireContext());
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             initialTempo = savedInstanceState.getDouble(INITIAL_TEMPO_KEY, DEFAULT_TEMPO);
@@ -149,8 +149,8 @@ public class PlaybackParameterDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable final Bundle savedInstanceState) {
-        assureCorrectAppLanguage(getContext());
-        final View view = View.inflate(getContext(), R.layout.dialog_playback_parameter, null);
+        assureCorrectAppLanguage(requireContext());
+        final View view = View.inflate(requireContext(), R.layout.dialog_playback_parameter, null);
         setupControlViews(view);
 
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(requireActivity())
@@ -235,12 +235,12 @@ public class PlaybackParameterDialog extends DialogFragment {
         unhookingCheckbox = rootView.findViewById(R.id.unhookCheckbox);
         if (unhookingCheckbox != null) {
             // restore whether pitch and tempo are unhooked or not
-            unhookingCheckbox.setChecked(PreferenceManager.getDefaultSharedPreferences(getContext())
+            unhookingCheckbox.setChecked(PreferenceManager.getDefaultSharedPreferences(requireContext())
                     .getBoolean(getString(R.string.playback_unhook_key), true));
 
             unhookingCheckbox.setOnCheckedChangeListener((compoundButton, isChecked) -> {
                 // save whether pitch and tempo are unhooked or not
-                PreferenceManager.getDefaultSharedPreferences(getContext())
+                PreferenceManager.getDefaultSharedPreferences(requireContext())
                         .edit()
                         .putBoolean(getString(R.string.playback_unhook_key), isChecked)
                         .apply();

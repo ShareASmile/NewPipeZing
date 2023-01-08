@@ -79,7 +79,7 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
         initialSelectedContentCountry = org.schabi.newpipe.util.Localization
                 .getPreferredContentCountry(requireContext());
         initialLanguage = PreferenceManager
-                .getDefaultSharedPreferences(getContext()).getString("app_language_key", "en");
+                .getDefaultSharedPreferences(requireContext()).getString("app_language_key", "en");
 
         final Preference clearCookiePref = findPreference(getString(R.string.clear_cookie_key));
 
@@ -169,7 +169,7 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
         final ContentCountry selectedContentCountry = org.schabi.newpipe.util.Localization
                 .getPreferredContentCountry(requireContext());
         final String selectedLanguage = PreferenceManager
-                .getDefaultSharedPreferences(getContext()).getString("app_language_key", "en");
+                .getDefaultSharedPreferences(requireContext()).getString("app_language_key", "en");
 
         if (!selectedLocalization.equals(initialSelectedLocalization)
                 || !selectedContentCountry.equals(initialSelectedContentCountry)
@@ -263,7 +263,7 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
         ObjectOutputStream output = null;
         try {
             output = new ObjectOutputStream(new FileOutputStream(dst));
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(requireContext());
             output.writeObject(pref.getAll());
 
         } catch (FileNotFoundException e) {
@@ -347,7 +347,7 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
         try {
             input = new ObjectInputStream(new FileInputStream(src));
             SharedPreferences.Editor prefEdit = PreferenceManager
-                    .getDefaultSharedPreferences(getContext()).edit();
+                    .getDefaultSharedPreferences(requireContext()).edit();
             prefEdit.clear();
             Map<String, ?> entries = (Map<String, ?>) input.readObject();
             for (Map.Entry<String, ?> entry : entries.entrySet()) {
