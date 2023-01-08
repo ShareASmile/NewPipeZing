@@ -13,7 +13,7 @@
         android:summary="%s"
         android:title="@string/theme_title"/>
 
-    <SwitchPreference
+    <SwitchPreferenceCompat
         app:iconSpaceReserved="false"
         android:defaultValue="true"
         android:key="@string/show_hold_to_append_key"
@@ -35,7 +35,7 @@
         android:title="@string/caption_setting_title"
         android:summary="@string/caption_setting_description"/>
 
-    <SwitchPreference
+    <SwitchPreferenceCompat
         app:iconSpaceReserved="false"
         android:defaultValue="false"
         android:key="@string/always_expand_description_key"
