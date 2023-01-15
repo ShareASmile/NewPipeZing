@@ -1,3 +1,16 @@
+Modified variant of Newpipe with a rough implementation of Feed Group Tabs
+
+https://github.com/TeamNewPipe/NewPipe/issues/3319
+
+![03](.github/images/feed_group_tabs.gif)
+
+I've only tried this against Youtube. YMMV
+
+Build on the `feed_groups-tab` branch
+
+Original Readme below
+-------
+
 # NewPipe x SponsorBlock x Return YouTube Dislike
 A fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) with [SponsorBlock](https://sponsor.ajay.app/) and [Return YouTube Dislike](https://returnyoutubedislike.com/) functionality.
 
