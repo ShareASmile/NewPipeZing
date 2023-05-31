@@ -8,6 +8,7 @@ on:
       - master
       - download-option-in-queue-items
       - preunify
+       - Thump
       - release**
     paths-ignore:
       - 'README.md'
@@ -23,6 +24,7 @@ on:
       - master
       - download-option-in-queue-items
       - preunify
+      - Thump
     paths-ignore:
       - 'README.md'
       - 'doc/**'
