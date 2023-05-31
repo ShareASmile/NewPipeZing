@@ -3,9 +3,9 @@ name: Android CI
 on:
   workflow_dispatch:
   push:
-    branches: [ rename-package ]
+    branches: [ sb ]
   pull_request:
-    branches: [ rename-package ]
+    branches: [ sb ]
 
 jobs:
   build:
