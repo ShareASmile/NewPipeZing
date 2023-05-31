@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_item_feed_toggle_played_items"
+        android:orderInCategory="2"
+        android:checkable="true"
+        android:checked="true"
+        android:icon="@drawable/ic_visibility_on"
+        android:title="@string/feed_toggle_show_played_items"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_item_feed_help"
+        android:icon="@drawable/ic_help"
+        android:title="@string/help"
+        android:orderInCategory="3"
+        app:showAsAction="ifRoom" />
+</menu>

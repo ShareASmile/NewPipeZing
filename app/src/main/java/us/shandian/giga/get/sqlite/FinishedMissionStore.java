@@ -6,16 +6,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import androidx.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import us.shandian.giga.get.DownloadMission;
 import us.shandian.giga.get.FinishedMission;
 import us.shandian.giga.get.Mission;
-import us.shandian.giga.io.StoredFileHelper;
+import org.schabi.newpipe.streams.io.StoredFileHelper;
 
 /**
  * SQLite helper to store finished {@link us.shandian.giga.get.FinishedMission}'s
@@ -25,7 +27,7 @@ public class FinishedMissionStore extends SQLiteOpenHelper {
     // TODO: use NewPipeSQLiteHelper ('s constants) when playlist branch is merged (?)
     private static final String DATABASE_NAME = "downloads.db";
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     /**
      * The table name of download missions (old)
@@ -54,6 +56,8 @@ public class FinishedMissionStore extends SQLiteOpenHelper {
 
     private static final String KEY_PATH = "path";
 
+    private static final String KEY_SEGMENTS = "segments";
+
     /**
      * The statement to create the table
      */
@@ -64,10 +68,11 @@ public class FinishedMissionStore extends SQLiteOpenHelper {
                     KEY_DONE + " INTEGER NOT NULL, " +
                     KEY_TIMESTAMP + " INTEGER NOT NULL, " +
                     KEY_KIND + " TEXT NOT NULL, " +
+                    KEY_SEGMENTS + " TEXT, " +
                     " UNIQUE(" + KEY_TIMESTAMP + ", " + KEY_PATH + "));";
 
 
-    private Context context;
+    private final Context context;
 
     public FinishedMissionStore(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -119,6 +124,11 @@ public class FinishedMissionStore extends SQLiteOpenHelper {
 
             cursor.close();
             db.execSQL("DROP TABLE " + MISSIONS_TABLE_NAME_v2);
+            oldVersion++;
+        }
+
+        if (oldVersion == 4) {
+            db.execSQL("ALTER TABLE " + FINISHED_TABLE_NAME + " ADD COLUMN " + KEY_SEGMENTS + " TEXT;");
         }
     }
 
@@ -135,13 +145,12 @@ public class FinishedMissionStore extends SQLiteOpenHelper {
         values.put(KEY_DONE, downloadMission.length);
         values.put(KEY_TIMESTAMP, downloadMission.timestamp);
         values.put(KEY_KIND, String.valueOf(downloadMission.kind));
+        values.put(KEY_SEGMENTS, downloadMission.segmentsJson);
         return values;
     }
 
     private FinishedMission getMissionFromCursor(Cursor cursor) {
-        if (cursor == null) throw new NullPointerException("cursor is null");
-
-        String kind = cursor.getString(cursor.getColumnIndex(KEY_KIND));
+        String kind = Objects.requireNonNull(cursor).getString(cursor.getColumnIndex(KEY_KIND));
         if (kind == null || kind.isEmpty()) kind = "?";
 
         String path = cursor.getString(cursor.getColumnIndexOrThrow(KEY_PATH));
@@ -152,6 +161,7 @@ public class FinishedMissionStore extends SQLiteOpenHelper {
         mission.length = cursor.getLong(cursor.getColumnIndexOrThrow(KEY_DONE));
         mission.timestamp = cursor.getLong(cursor.getColumnIndexOrThrow(KEY_TIMESTAMP));
         mission.kind = kind.charAt(0);
+        mission.segmentsJson = cursor.getString(cursor.getColumnIndexOrThrow(KEY_SEGMENTS));
 
         try {
             mission.storage = new StoredFileHelper(context,null, Uri.parse(path), "");
@@ -185,15 +195,13 @@ public class FinishedMissionStore extends SQLiteOpenHelper {
     }
 
     public void addFinishedMission(DownloadMission downloadMission) {
-        if (downloadMission == null) throw new NullPointerException("downloadMission is null");
+        ContentValues values = getValuesOfMission(Objects.requireNonNull(downloadMission));
         SQLiteDatabase database = getWritableDatabase();
-        ContentValues values = getValuesOfMission(downloadMission);
         database.insert(FINISHED_TABLE_NAME, null, values);
     }
 
     public void deleteMission(Mission mission) {
-        if (mission == null) throw new NullPointerException("mission is null");
-        String ts = String.valueOf(mission.timestamp);
+        String ts = String.valueOf(Objects.requireNonNull(mission).timestamp);
 
         SQLiteDatabase database = getWritableDatabase();
 
@@ -211,9 +219,8 @@ public class FinishedMissionStore extends SQLiteOpenHelper {
     }
 
     public void updateMission(Mission mission) {
-        if (mission == null) throw new NullPointerException("mission is null");
+        ContentValues values = getValuesOfMission(Objects.requireNonNull(mission));
         SQLiteDatabase database = getWritableDatabase();
-        ContentValues values = getValuesOfMission(mission);
         String ts = String.valueOf(mission.timestamp);
 
         int rowsAffected;

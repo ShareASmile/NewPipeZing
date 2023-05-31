@@ -1,5 +1,6 @@
 package org.schabi.newpipe.fragments;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -9,23 +10,26 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  * if the view is scrolled below the last item.
  */
 public abstract class OnScrollBelowItemsListener extends RecyclerView.OnScrollListener {
-
     @Override
-    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+    public void onScrolled(@NonNull final RecyclerView recyclerView, final int dx, final int dy) {
         super.onScrolled(recyclerView, dx, dy);
         if (dy > 0) {
-            int pastVisibleItems = 0, visibleItemCount, totalItemCount;
-            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+            int pastVisibleItems = 0;
+            final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
 
-            visibleItemCount = layoutManager.getChildCount();
-            totalItemCount = layoutManager.getItemCount();
+            final int visibleItemCount = layoutManager.getChildCount();
+            final int totalItemCount = layoutManager.getItemCount();
 
             // Already covers the GridLayoutManager case
             if (layoutManager instanceof LinearLayoutManager) {
-                pastVisibleItems = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+                pastVisibleItems = ((LinearLayoutManager) layoutManager)
+                        .findFirstVisibleItemPosition();
             } else if (layoutManager instanceof StaggeredGridLayoutManager) {
-                int[] positions = ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(null);
-                if (positions != null && positions.length > 0) pastVisibleItems = positions[0];
+                final int[] positions = ((StaggeredGridLayoutManager) layoutManager)
+                        .findFirstVisibleItemPositions(null);
+                if (positions != null && positions.length > 0) {
+                    pastVisibleItems = positions[0];
+                }
             }
 
             if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {

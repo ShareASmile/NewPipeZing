@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,7 +12,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -22,12 +20,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +33,7 @@ import com.grack.nanojson.JsonStringWriter;
 import com.grack.nanojson.JsonWriter;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.databinding.DialogEditTextBinding;
 import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.PeertubeHelper;
@@ -46,18 +43,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class PeertubeInstanceListFragment extends Fragment {
-
-    private List<PeertubeInstance> instanceList = new ArrayList<>();
+    private final List<PeertubeInstance> instanceList = new ArrayList<>();
     private PeertubeInstance selectedInstance;
     private String savedInstanceListKey;
-    public InstanceListAdapter instanceListAdapter;
+    private InstanceListAdapter instanceListAdapter;
 
     private ProgressBar progressBar;
     private SharedPreferences sharedPreferences;
@@ -69,7 +65,7 @@ public class PeertubeInstanceListFragment extends Fragment {
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
@@ -81,27 +77,30 @@ public class PeertubeInstanceListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container,
+                             final Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_instance_list, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View rootView, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View rootView,
+                              @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
 
         initViews(rootView);
     }
 
-    private void initViews(@NonNull View rootView) {
-        TextView instanceHelpTV = rootView.findViewById(R.id.instanceHelpTV);
-        instanceHelpTV.setText(getString(R.string.peertube_instance_url_help, getString(R.string.peertube_instance_list_url)));
+    private void initViews(@NonNull final View rootView) {
+        final TextView instanceHelpTV = rootView.findViewById(R.id.instanceHelpTV);
+        instanceHelpTV.setText(getString(R.string.peertube_instance_url_help,
+                getString(R.string.peertube_instance_list_url)));
 
         initButton(rootView);
 
-        RecyclerView listInstances = rootView.findViewById(R.id.instances);
+        final RecyclerView listInstances = rootView.findViewById(R.id.instances);
         listInstances.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(getItemTouchCallback());
+        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(getItemTouchCallback());
         itemTouchHelper.attachToRecyclerView(listInstances);
 
         instanceListAdapter = new InstanceListAdapter(requireContext(), itemTouchHelper);
@@ -113,7 +112,8 @@ public class PeertubeInstanceListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateTitle();
+        ThemeHelper.setTitleToAppCompatActivity(getActivity(),
+                getString(R.string.peertube_instance_url_title));
     }
 
     @Override
@@ -125,29 +125,26 @@ public class PeertubeInstanceListFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (disposables != null) disposables.clear();
+        if (disposables != null) {
+            disposables.clear();
+        }
         disposables = null;
     }
+
     /*//////////////////////////////////////////////////////////////////////////
     // Menu
     //////////////////////////////////////////////////////////////////////////*/
 
-    private final int MENU_ITEM_RESTORE_ID = 123456;
-
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull final Menu menu,
+                                    @NonNull final MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-
-        final MenuItem restoreItem = menu.add(Menu.NONE, MENU_ITEM_RESTORE_ID, Menu.NONE, R.string.restore_defaults);
-        restoreItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        final int restoreIcon = ThemeHelper.resolveResourceIdFromAttr(requireContext(), R.attr.ic_restore_defaults);
-        restoreItem.setIcon(AppCompatResources.getDrawable(requireContext(), restoreIcon));
+        inflater.inflate(R.menu.menu_chooser_fragment, menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == MENU_ITEM_RESTORE_ID) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        if (item.getItemId() == R.id.menu_item_restore_default) {
             restoreDefaults();
             return true;
         }
@@ -164,108 +161,108 @@ public class PeertubeInstanceListFragment extends Fragment {
         instanceList.addAll(PeertubeHelper.getInstanceList(requireContext()));
     }
 
-    private void selectInstance(PeertubeInstance instance) {
+    private void selectInstance(final PeertubeInstance instance) {
         selectedInstance = PeertubeHelper.selectInstance(instance, requireContext());
         sharedPreferences.edit().putBoolean(Constants.KEY_MAIN_PAGE_CHANGE, true).apply();
     }
 
-    private void updateTitle() {
-        if (getActivity() instanceof AppCompatActivity) {
-            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-            if (actionBar != null) actionBar.setTitle(R.string.peertube_instance_url_title);
-        }
-    }
-
     private void saveChanges() {
-        JsonStringWriter jsonWriter = JsonWriter.string().object().array("instances");
-        for (PeertubeInstance instance : instanceList) {
+        final JsonStringWriter jsonWriter = JsonWriter.string().object().array("instances");
+        for (final PeertubeInstance instance : instanceList) {
             jsonWriter.object();
             jsonWriter.value("name", instance.getName());
             jsonWriter.value("url", instance.getUrl());
             jsonWriter.end();
         }
-        String jsonToSave = jsonWriter.end().end().done();
+        final String jsonToSave = jsonWriter.end().end().done();
         sharedPreferences.edit().putString(savedInstanceListKey, jsonToSave).apply();
     }
 
     private void restoreDefaults() {
-        new AlertDialog.Builder(requireContext(), ThemeHelper.getDialogTheme(requireContext()))
+        new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.restore_defaults)
                 .setMessage(R.string.restore_defaults_confirmation)
                 .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
                     sharedPreferences.edit().remove(savedInstanceListKey).apply();
-                    selectInstance(PeertubeInstance.defaultInstance);
+                    selectInstance(PeertubeInstance.DEFAULT_INSTANCE);
                     updateInstanceList();
                     instanceListAdapter.notifyDataSetChanged();
                 })
                 .show();
     }
 
-    private void initButton(View rootView) {
+    private void initButton(final View rootView) {
         final FloatingActionButton fab = rootView.findViewById(R.id.addInstanceButton);
-        fab.setOnClickListener(v -> {
-            showAddItemDialog(requireContext());
-        });
+        fab.setOnClickListener(v ->
+                showAddItemDialog(requireContext()));
     }
 
-    private void showAddItemDialog(Context c) {
-        final EditText urlET = new EditText(c);
-        urlET.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-        urlET.setHint(R.string.peertube_instance_add_help);
-        AlertDialog dialog = new AlertDialog.Builder(c)
+    private void showAddItemDialog(final Context c) {
+        final DialogEditTextBinding dialogBinding
+                = DialogEditTextBinding.inflate(getLayoutInflater());
+        dialogBinding.dialogEditText.setInputType(
+                InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        dialogBinding.dialogEditText.setHint(R.string.peertube_instance_add_help);
+
+        new AlertDialog.Builder(c)
                 .setTitle(R.string.peertube_instance_add_title)
-                .setIcon(R.drawable.place_holder_peertube)
+                .setIcon(R.drawable.ic_placeholder_peertube)
+                .setView(dialogBinding.getRoot())
                 .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.finish, (dialog1, which) -> {
-                    String url = urlET.getText().toString();
+                .setPositiveButton(R.string.ok, (dialog1, which) -> {
+                    final String url = dialogBinding.dialogEditText.getText().toString();
                     addInstance(url);
                 })
-                .create();
-        dialog.setView(urlET, 50, 0, 50, 0);
-        dialog.show();
+                .show();
     }
 
-    private void addInstance(String url) {
-        String cleanUrl = cleanUrl(url);
-        if(null == cleanUrl) return;
+    private void addInstance(final String url) {
+        final String cleanUrl = cleanUrl(url);
+        if (cleanUrl == null) {
+            return;
+        }
         progressBar.setVisibility(View.VISIBLE);
-        Disposable disposable = Single.fromCallable(() -> {
-            PeertubeInstance instance = new PeertubeInstance(cleanUrl);
+        final Disposable disposable = Single.fromCallable(() -> {
+            final PeertubeInstance instance = new PeertubeInstance(cleanUrl);
             instance.fetchInstanceMetaData();
             return instance;
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe((instance) -> {
-            progressBar.setVisibility(View.GONE);
-            add(instance);
-        }, e -> {
-            progressBar.setVisibility(View.GONE);
-            Toast.makeText(getActivity(), R.string.peertube_instance_add_fail, Toast.LENGTH_SHORT).show();
-        });
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe((instance) -> {
+                    progressBar.setVisibility(View.GONE);
+                    add(instance);
+                }, e -> {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), R.string.peertube_instance_add_fail,
+                            Toast.LENGTH_SHORT).show();
+                });
         disposables.add(disposable);
     }
 
     @Nullable
-    private String cleanUrl(String url){
-        url = url.trim();
+    private String cleanUrl(final String url) {
+        String cleanUrl = url.trim();
         // if protocol not present, add https
-        if(!url.startsWith("http")){
-            url = "https://" + url;
+        if (!cleanUrl.startsWith("http")) {
+            cleanUrl = "https://" + cleanUrl;
         }
         // remove trailing slash
-        url = url.replaceAll("/$", "");
+        cleanUrl = cleanUrl.replaceAll("/$", "");
         // only allow https
-        if (!url.startsWith("https://")) {
-            Toast.makeText(getActivity(), R.string.peertube_instance_add_https_only, Toast.LENGTH_SHORT).show();
+        if (!cleanUrl.startsWith("https://")) {
+            Toast.makeText(getActivity(), R.string.peertube_instance_add_https_only,
+                    Toast.LENGTH_SHORT).show();
             return null;
         }
         // only allow if not already exists
-        for (PeertubeInstance instance : instanceList) {
-            if (instance.getUrl().equals(url)) {
-                Toast.makeText(getActivity(), R.string.peertube_instance_add_exists, Toast.LENGTH_SHORT).show();
+        for (final PeertubeInstance instance : instanceList) {
+            if (instance.getUrl().equals(cleanUrl)) {
+                Toast.makeText(getActivity(), R.string.peertube_instance_add_exists,
+                        Toast.LENGTH_SHORT).show();
                 return null;
             }
         }
-        return url;
+        return cleanUrl;
     }
 
     private void add(final PeertubeInstance instance) {
@@ -273,34 +270,98 @@ public class PeertubeInstanceListFragment extends Fragment {
         instanceListAdapter.notifyDataSetChanged();
     }
 
+    private ItemTouchHelper.SimpleCallback getItemTouchCallback() {
+        return new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                ItemTouchHelper.START | ItemTouchHelper.END) {
+            @Override
+            public int interpolateOutOfBoundsScroll(@NonNull final RecyclerView recyclerView,
+                                                    final int viewSize,
+                                                    final int viewSizeOutOfBounds,
+                                                    final int totalSize,
+                                                    final long msSinceStartScroll) {
+                final int standardSpeed = super.interpolateOutOfBoundsScroll(recyclerView, viewSize,
+                        viewSizeOutOfBounds, totalSize, msSinceStartScroll);
+                final int minimumAbsVelocity = Math.max(12,
+                        Math.abs(standardSpeed));
+                return minimumAbsVelocity * (int) Math.signum(viewSizeOutOfBounds);
+            }
+
+            @Override
+            public boolean onMove(@NonNull final RecyclerView recyclerView,
+                                  @NonNull final RecyclerView.ViewHolder source,
+                                  @NonNull final RecyclerView.ViewHolder target) {
+                if (source.getItemViewType() != target.getItemViewType()
+                        || instanceListAdapter == null) {
+                    return false;
+                }
+
+                final int sourceIndex = source.getBindingAdapterPosition();
+                final int targetIndex = target.getBindingAdapterPosition();
+                instanceListAdapter.swapItems(sourceIndex, targetIndex);
+                return true;
+            }
+
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return false;
+            }
+
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return true;
+            }
+
+            @Override
+            public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder,
+                                 final int swipeDir) {
+                final int position = viewHolder.getBindingAdapterPosition();
+                // do not allow swiping the selected instance
+                if (instanceList.get(position).getUrl().equals(selectedInstance.getUrl())) {
+                    instanceListAdapter.notifyItemChanged(position);
+                    return;
+                }
+                instanceList.remove(position);
+                instanceListAdapter.notifyItemRemoved(position);
+
+                if (instanceList.isEmpty()) {
+                    instanceList.add(selectedInstance);
+                    instanceListAdapter.notifyItemInserted(0);
+                }
+            }
+        };
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
     // List Handling
     //////////////////////////////////////////////////////////////////////////*/
 
-    private class InstanceListAdapter extends RecyclerView.Adapter<InstanceListAdapter.TabViewHolder> {
-        private ItemTouchHelper itemTouchHelper;
+    private class InstanceListAdapter
+            extends RecyclerView.Adapter<InstanceListAdapter.TabViewHolder> {
         private final LayoutInflater inflater;
+        private final ItemTouchHelper itemTouchHelper;
         private RadioButton lastChecked;
 
-        InstanceListAdapter(Context context, ItemTouchHelper itemTouchHelper) {
+        InstanceListAdapter(final Context context, final ItemTouchHelper itemTouchHelper) {
             this.itemTouchHelper = itemTouchHelper;
             this.inflater = LayoutInflater.from(context);
         }
 
-        public void swapItems(int fromPosition, int toPosition) {
+        public void swapItems(final int fromPosition, final int toPosition) {
             Collections.swap(instanceList, fromPosition, toPosition);
             notifyItemMoved(fromPosition, toPosition);
         }
 
         @NonNull
         @Override
-        public InstanceListAdapter.TabViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflater.inflate(R.layout.item_instance, parent, false);
+        public InstanceListAdapter.TabViewHolder onCreateViewHolder(@NonNull final ViewGroup parent,
+                                                                    final int viewType) {
+            final View view = inflater.inflate(R.layout.item_instance, parent, false);
             return new InstanceListAdapter.TabViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull InstanceListAdapter.TabViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final InstanceListAdapter.TabViewHolder holder,
+                                     final int position) {
             holder.bind(position, holder);
         }
 
@@ -310,13 +371,13 @@ public class PeertubeInstanceListFragment extends Fragment {
         }
 
         class TabViewHolder extends RecyclerView.ViewHolder {
-            private AppCompatImageView instanceIconView;
-            private TextView instanceNameView;
-            private TextView instanceUrlView;
-            private RadioButton instanceRB;
-            private ImageView handle;
+            private final AppCompatImageView instanceIconView;
+            private final TextView instanceNameView;
+            private final TextView instanceUrlView;
+            private final RadioButton instanceRB;
+            private final ImageView handle;
 
-            TabViewHolder(View itemView) {
+            TabViewHolder(final View itemView) {
                 super(itemView);
 
                 instanceIconView = itemView.findViewById(R.id.instanceIcon);
@@ -327,7 +388,7 @@ public class PeertubeInstanceListFragment extends Fragment {
             }
 
             @SuppressLint("ClickableViewAccessibility")
-            void bind(int position, TabViewHolder holder) {
+            void bind(final int position, final TabViewHolder holder) {
                 handle.setOnTouchListener(getOnTouchListener(holder));
 
                 final PeertubeInstance instance = instanceList.get(position);
@@ -350,7 +411,7 @@ public class PeertubeInstanceListFragment extends Fragment {
                         lastChecked = instanceRB;
                     }
                 });
-                instanceIconView.setImageResource(R.drawable.place_holder_peertube);
+                instanceIconView.setImageResource(R.drawable.ic_placeholder_peertube);
             }
 
             @SuppressLint("ClickableViewAccessibility")
@@ -366,62 +427,5 @@ public class PeertubeInstanceListFragment extends Fragment {
                 };
             }
         }
-    }
-
-    private ItemTouchHelper.SimpleCallback getItemTouchCallback() {
-        return new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
-                ItemTouchHelper.START | ItemTouchHelper.END) {
-            @Override
-            public int interpolateOutOfBoundsScroll(RecyclerView recyclerView, int viewSize,
-                                                    int viewSizeOutOfBounds, int totalSize,
-                                                    long msSinceStartScroll) {
-                final int standardSpeed = super.interpolateOutOfBoundsScroll(recyclerView, viewSize,
-                        viewSizeOutOfBounds, totalSize, msSinceStartScroll);
-                final int minimumAbsVelocity = Math.max(12,
-                        Math.abs(standardSpeed));
-                return minimumAbsVelocity * (int) Math.signum(viewSizeOutOfBounds);
-            }
-
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder source,
-                                  RecyclerView.ViewHolder target) {
-                if (source.getItemViewType() != target.getItemViewType() ||
-                        instanceListAdapter == null) {
-                    return false;
-                }
-
-                final int sourceIndex = source.getAdapterPosition();
-                final int targetIndex = target.getAdapterPosition();
-                instanceListAdapter.swapItems(sourceIndex, targetIndex);
-                return true;
-            }
-
-            @Override
-            public boolean isLongPressDragEnabled() {
-                return false;
-            }
-
-            @Override
-            public boolean isItemViewSwipeEnabled() {
-                return true;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                int position = viewHolder.getAdapterPosition();
-                // do not allow swiping the selected instance
-                if(instanceList.get(position).getUrl().equals(selectedInstance.getUrl())) {
-                    instanceListAdapter.notifyItemChanged(position);
-                    return;
-                }
-                instanceList.remove(position);
-                instanceListAdapter.notifyItemRemoved(position);
-
-                if (instanceList.isEmpty()) {
-                    instanceList.add(selectedInstance);
-                    instanceListAdapter.notifyItemInserted(0);
-                }
-            }
-        };
     }
 }

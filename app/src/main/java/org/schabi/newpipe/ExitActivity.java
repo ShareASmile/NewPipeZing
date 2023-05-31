@@ -1,4 +1,3 @@
-
 package org.schabi.newpipe;
 
 import android.annotation.SuppressLint;
@@ -6,6 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+
+import org.schabi.newpipe.util.NavigationHelper;
 
 /*
  * Copyright (C) Hans-Christoph Steiner 2016 <hans@eds.org>
@@ -27,22 +28,8 @@ import android.os.Bundle;
 
 public class ExitActivity extends Activity {
 
-    @SuppressLint("NewApi")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            finishAndRemoveTask();
-        } else {
-            finish();
-        }
-
-        System.exit(0);
-    }
-
-    public static void exitAndRemoveFromRecentApps(Activity activity) {
-        Intent intent = new Intent(activity, ExitActivity.class);
+    public static void exitAndRemoveFromRecentApps(final Activity activity) {
+        final Intent intent = new Intent(activity, ExitActivity.class);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
@@ -50,5 +37,19 @@ public class ExitActivity extends Activity {
                 | Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
         activity.startActivity(intent);
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            finishAndRemoveTask();
+        } else {
+            finish();
+        }
+
+        NavigationHelper.restartApp(this);
     }
 }

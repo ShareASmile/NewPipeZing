@@ -1,94 +1,42 @@
 package org.schabi.newpipe.player.helper;
 
-import android.content.Context;
-
 import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.Renderer;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.upstream.Allocator;
 
-public class LoadController implements LoadControl {
+public class LoadController extends DefaultLoadControl {
 
     public static final String TAG = "LoadController";
-
-    private final long initialPlaybackBufferUs;
-    private final LoadControl internalLoadControl;
-
-    /*//////////////////////////////////////////////////////////////////////////
-    // Default Load Control
-    //////////////////////////////////////////////////////////////////////////*/
-
-    public LoadController(final Context context) {
-        this(PlayerHelper.getPlaybackStartBufferMs(context),
-                PlayerHelper.getPlaybackMinimumBufferMs(context),
-                PlayerHelper.getPlaybackOptimalBufferMs(context));
-    }
-
-    private LoadController(final int initialPlaybackBufferMs,
-                           final int minimumPlaybackbufferMs,
-                           final int optimalPlaybackBufferMs) {
-        this.initialPlaybackBufferUs = initialPlaybackBufferMs * 1000;
-
-        DefaultLoadControl.Builder builder = new DefaultLoadControl.Builder();
-        builder.setBufferDurationsMs(minimumPlaybackbufferMs, optimalPlaybackBufferMs,
-                initialPlaybackBufferMs, initialPlaybackBufferMs);
-        internalLoadControl = builder.createDefaultLoadControl();
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-    // Custom behaviours
-    //////////////////////////////////////////////////////////////////////////*/
+    private boolean preloadingEnabled = true;
 
     @Override
     public void onPrepared() {
-        internalLoadControl.onPrepared();
-    }
-
-    @Override
-    public void onTracksSelected(Renderer[] renderers, TrackGroupArray trackGroupArray,
-                                 TrackSelectionArray trackSelectionArray) {
-        internalLoadControl.onTracksSelected(renderers, trackGroupArray, trackSelectionArray);
+        preloadingEnabled = true;
+        super.onPrepared();
     }
 
     @Override
     public void onStopped() {
-        internalLoadControl.onStopped();
+        preloadingEnabled = true;
+        super.onStopped();
     }
 
     @Override
     public void onReleased() {
-        internalLoadControl.onReleased();
+        preloadingEnabled = true;
+        super.onReleased();
     }
 
     @Override
-    public Allocator getAllocator() {
-        return internalLoadControl.getAllocator();
+    public boolean shouldContinueLoading(final long playbackPositionUs,
+                                         final long bufferedDurationUs,
+                                         final float playbackSpeed) {
+        if (!preloadingEnabled) {
+            return false;
+        }
+        return super.shouldContinueLoading(
+                playbackPositionUs, bufferedDurationUs, playbackSpeed);
     }
 
-    @Override
-    public long getBackBufferDurationUs() {
-        return internalLoadControl.getBackBufferDurationUs();
-    }
-
-    @Override
-    public boolean retainBackBufferFromKeyframe() {
-        return internalLoadControl.retainBackBufferFromKeyframe();
-    }
-
-    @Override
-    public boolean shouldContinueLoading(long bufferedDurationUs, float playbackSpeed) {
-        return internalLoadControl.shouldContinueLoading(bufferedDurationUs, playbackSpeed);
-    }
-
-    @Override
-    public boolean shouldStartPlayback(long bufferedDurationUs, float playbackSpeed,
-                                       boolean rebuffering) {
-        final boolean isInitialPlaybackBufferFilled = bufferedDurationUs >=
-                this.initialPlaybackBufferUs * playbackSpeed;
-        final boolean isInternalStartingPlayback = internalLoadControl.shouldStartPlayback(
-                bufferedDurationUs, playbackSpeed, rebuffering);
-        return isInitialPlaybackBufferFilled || isInternalStartingPlayback;
+    public void disablePreloadingOfCurrentTrack() {
+        preloadingEnabled = false;
     }
 }

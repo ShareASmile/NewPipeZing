@@ -1,6 +1,8 @@
 package org.schabi.newpipe.info_list.holder;
 
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.schabi.newpipe.R;
@@ -30,23 +32,32 @@ import org.schabi.newpipe.local.history.HistoryRecordManager;
  */
 
 public class CommentsInfoItemHolder extends CommentsMiniInfoItemHolder {
-
     public final TextView itemTitleView;
+    private final ImageView itemHeartView;
+    private final ImageView itemPinnedView;
 
-    public CommentsInfoItemHolder(InfoItemBuilder infoItemBuilder, ViewGroup parent) {
+    public CommentsInfoItemHolder(final InfoItemBuilder infoItemBuilder, final ViewGroup parent) {
         super(infoItemBuilder, R.layout.list_comments_item, parent);
 
         itemTitleView = itemView.findViewById(R.id.itemTitleView);
+        itemHeartView = itemView.findViewById(R.id.detail_heart_image_view);
+        itemPinnedView = itemView.findViewById(R.id.detail_pinned_view);
     }
 
     @Override
-    public void updateFromItem(final InfoItem infoItem, final HistoryRecordManager historyRecordManager) {
+    public void updateFromItem(final InfoItem infoItem,
+                               final HistoryRecordManager historyRecordManager) {
         super.updateFromItem(infoItem, historyRecordManager);
 
-        if (!(infoItem instanceof CommentsInfoItem)) return;
+        if (!(infoItem instanceof CommentsInfoItem)) {
+            return;
+        }
         final CommentsInfoItem item = (CommentsInfoItem) infoItem;
 
-        itemTitleView.setText(item.getAuthorName());
-    }
+        itemTitleView.setText(item.getUploaderName());
 
+        itemHeartView.setVisibility(item.isHeartedByUploader() ? View.VISIBLE : View.GONE);
+
+        itemPinnedView.setVisibility(item.isPinned() ? View.VISIBLE : View.GONE);
+    }
 }

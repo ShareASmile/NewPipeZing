@@ -1,6 +1,7 @@
 package org.schabi.newpipe.info_list.holder;
 
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.schabi.newpipe.R;
@@ -8,17 +9,16 @@ import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
 import org.schabi.newpipe.info_list.InfoItemBuilder;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
-import org.schabi.newpipe.util.ImageDisplayConstants;
+import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.util.Localization;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class ChannelMiniInfoItemHolder extends InfoItemHolder {
-    public final CircleImageView itemThumbnailView;
+    public final ImageView itemThumbnailView;
     public final TextView itemTitleView;
-    public final TextView itemAdditionalDetailView;
+    private final TextView itemAdditionalDetailView;
 
-    ChannelMiniInfoItemHolder(InfoItemBuilder infoItemBuilder, int layoutId, ViewGroup parent) {
+    ChannelMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder, final int layoutId,
+                              final ViewGroup parent) {
         super(infoItemBuilder, layoutId, parent);
 
         itemThumbnailView = itemView.findViewById(R.id.itemThumbnailView);
@@ -26,22 +26,23 @@ public class ChannelMiniInfoItemHolder extends InfoItemHolder {
         itemAdditionalDetailView = itemView.findViewById(R.id.itemAdditionalDetails);
     }
 
-    public ChannelMiniInfoItemHolder(InfoItemBuilder infoItemBuilder, ViewGroup parent) {
+    public ChannelMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder,
+                                     final ViewGroup parent) {
         this(infoItemBuilder, R.layout.list_channel_mini_item, parent);
     }
 
     @Override
-    public void updateFromItem(final InfoItem infoItem, final HistoryRecordManager historyRecordManager) {
-        if (!(infoItem instanceof ChannelInfoItem)) return;
+    public void updateFromItem(final InfoItem infoItem,
+                               final HistoryRecordManager historyRecordManager) {
+        if (!(infoItem instanceof ChannelInfoItem)) {
+            return;
+        }
         final ChannelInfoItem item = (ChannelInfoItem) infoItem;
 
         itemTitleView.setText(item.getName());
         itemAdditionalDetailView.setText(getDetailLine(item));
 
-        itemBuilder.getImageLoader()
-                .displayImage(item.getThumbnailUrl(),
-                        itemThumbnailView,
-                        ImageDisplayConstants.DISPLAY_THUMBNAIL_OPTIONS);
+        PicassoHelper.loadThumbnail(item.getThumbnailUrl()).into(itemThumbnailView);
 
         itemView.setOnClickListener(view -> {
             if (itemBuilder.getOnChannelSelectedListener() != null) {

@@ -1,14 +1,17 @@
 package org.schabi.newpipe.local.bookmark;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentManager;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -19,26 +22,25 @@ import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.playlist.PlaylistLocalItem;
 import org.schabi.newpipe.database.playlist.PlaylistMetadataEntry;
 import org.schabi.newpipe.database.playlist.model.PlaylistRemoteEntity;
+import org.schabi.newpipe.databinding.DialogEditTextBinding;
+import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.local.BaseLocalListFragment;
 import org.schabi.newpipe.local.playlist.LocalPlaylistManager;
 import org.schabi.newpipe.local.playlist.RemotePlaylistManager;
-import org.schabi.newpipe.report.UserAction;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import icepick.State;
-import io.reactivex.Flowable;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
 
-public final class BookmarkFragment
-        extends BaseLocalListFragment<List<PlaylistLocalItem>, Void> {
-
+public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistLocalItem>, Void> {
     @State
     protected Parcelable itemsListState;
 
@@ -52,9 +54,11 @@ public final class BookmarkFragment
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (activity == null) return;
+        if (activity == null) {
+            return;
+        }
         final AppDatabase database = NewPipeDatabase.getInstance(activity);
         localPlaylistManager = new LocalPlaylistManager(database);
         remotePlaylistManager = new RemotePlaylistManager(database);
@@ -63,21 +67,20 @@ public final class BookmarkFragment
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater,
+                             @Nullable final ViewGroup container,
+                             final Bundle savedInstanceState) {
 
-        if(!useAsFrontPage) {
+        if (!useAsFrontPage) {
             setTitle(activity.getString(R.string.tab_bookmarks));
         }
         return inflater.inflate(R.layout.fragment_bookmarks, container, false);
     }
 
-
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (activity != null && isVisibleToUser) {
+    public void onResume() {
+        super.onResume();
+        if (activity != null) {
             setTitle(activity.getString(R.string.tab_bookmarks));
         }
     }
@@ -87,7 +90,7 @@ public final class BookmarkFragment
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
-    protected void initViews(View rootView, Bundle savedInstanceState) {
+    protected void initViews(final View rootView, final Bundle savedInstanceState) {
         super.initViews(rootView, savedInstanceState);
     }
 
@@ -97,7 +100,7 @@ public final class BookmarkFragment
 
         itemListAdapter.setSelectedListener(new OnClickGesture<LocalItem>() {
             @Override
-            public void selected(LocalItem selectedItem) {
+            public void selected(final LocalItem selectedItem) {
                 final FragmentManager fragmentManager = getFM();
 
                 if (selectedItem instanceof PlaylistMetadataEntry) {
@@ -116,10 +119,9 @@ public final class BookmarkFragment
             }
 
             @Override
-            public void held(LocalItem selectedItem) {
+            public void held(final LocalItem selectedItem) {
                 if (selectedItem instanceof PlaylistMetadataEntry) {
-                    showLocalDeleteDialog((PlaylistMetadataEntry) selectedItem);
-
+                    showLocalDialog((PlaylistMetadataEntry) selectedItem);
                 } else if (selectedItem instanceof PlaylistRemoteEntity) {
                     showRemoteDeleteDialog((PlaylistRemoteEntity) selectedItem);
                 }
@@ -132,16 +134,14 @@ public final class BookmarkFragment
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void startLoading(boolean forceLoad) {
+    public void startLoading(final boolean forceLoad) {
         super.startLoading(forceLoad);
 
-        Flowable.combineLatest(
-                localPlaylistManager.getPlaylists(),
-                remotePlaylistManager.getPlaylists(),
-                BookmarkFragment::merge
-        ).onBackpressureLatest()
-         .observeOn(AndroidSchedulers.mainThread())
-         .subscribe(getPlaylistsSubscriber());
+        Flowable.combineLatest(localPlaylistManager.getPlaylists(),
+                remotePlaylistManager.getPlaylists(), PlaylistLocalItem::merge)
+                .onBackpressureLatest()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getPlaylistsSubscriber());
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -158,8 +158,12 @@ public final class BookmarkFragment
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (disposables != null) disposables.clear();
-        if (databaseSubscription != null) databaseSubscription.cancel();
+        if (disposables != null) {
+            disposables.clear();
+        }
+        if (databaseSubscription != null) {
+            databaseSubscription.cancel();
+        }
 
         databaseSubscription = null;
     }
@@ -167,7 +171,9 @@ public final class BookmarkFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (disposables != null) disposables.dispose();
+        if (disposables != null) {
+            disposables.dispose();
+        }
 
         disposables = null;
         localPlaylistManager = null;
@@ -182,32 +188,36 @@ public final class BookmarkFragment
     private Subscriber<List<PlaylistLocalItem>> getPlaylistsSubscriber() {
         return new Subscriber<List<PlaylistLocalItem>>() {
             @Override
-            public void onSubscribe(Subscription s) {
+            public void onSubscribe(final Subscription s) {
                 showLoading();
-                if (databaseSubscription != null) databaseSubscription.cancel();
+                if (databaseSubscription != null) {
+                    databaseSubscription.cancel();
+                }
                 databaseSubscription = s;
                 databaseSubscription.request(1);
             }
 
             @Override
-            public void onNext(List<PlaylistLocalItem> subscriptions) {
+            public void onNext(final List<PlaylistLocalItem> subscriptions) {
                 handleResult(subscriptions);
-                if (databaseSubscription != null) databaseSubscription.request(1);
+                if (databaseSubscription != null) {
+                    databaseSubscription.request(1);
+                }
             }
 
             @Override
-            public void onError(Throwable exception) {
-                BookmarkFragment.this.onError(exception);
+            public void onError(final Throwable exception) {
+                showError(new ErrorInfo(exception,
+                        UserAction.REQUESTED_BOOKMARK, "Loading playlists"));
             }
 
             @Override
-            public void onComplete() {
-            }
+            public void onComplete() { }
         };
     }
 
     @Override
-    public void handleResult(@NonNull List<PlaylistLocalItem> result) {
+    public void handleResult(@NonNull final List<PlaylistLocalItem> result) {
         super.handleResult(result);
 
         itemListAdapter.clearStreamItemList();
@@ -224,39 +234,54 @@ public final class BookmarkFragment
         }
         hideLoading();
     }
+
     ///////////////////////////////////////////////////////////////////////////
     // Fragment Error Handling
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
-    protected boolean onError(Throwable exception) {
-        if (super.onError(exception)) return true;
-
-        onUnrecoverableError(exception, UserAction.SOMETHING_ELSE,
-                "none", "Bookmark", R.string.general_error);
-        return true;
-    }
-
-    @Override
     protected void resetFragment() {
         super.resetFragment();
-        if (disposables != null) disposables.clear();
+        if (disposables != null) {
+            disposables.clear();
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Utils
     ///////////////////////////////////////////////////////////////////////////
 
-    private void showLocalDeleteDialog(final PlaylistMetadataEntry item) {
-        showDeleteDialog(item.name, localPlaylistManager.deletePlaylist(item.uid));
-    }
-
     private void showRemoteDeleteDialog(final PlaylistRemoteEntity item) {
         showDeleteDialog(item.getName(), remotePlaylistManager.deletePlaylist(item.getUid()));
     }
 
+    private void showLocalDialog(final PlaylistMetadataEntry selectedItem) {
+        final DialogEditTextBinding dialogBinding
+                = DialogEditTextBinding.inflate(getLayoutInflater());
+        dialogBinding.dialogEditText.setHint(R.string.name);
+        dialogBinding.dialogEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+        dialogBinding.dialogEditText.setText(selectedItem.name);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setView(dialogBinding.getRoot())
+                .setPositiveButton(R.string.rename_playlist, (dialog, which) ->
+                        changeLocalPlaylistName(
+                                selectedItem.uid,
+                                dialogBinding.dialogEditText.getText().toString()))
+                .setNegativeButton(R.string.cancel, null)
+                .setNeutralButton(R.string.delete, (dialog, which) -> {
+                    showDeleteDialog(selectedItem.name,
+                            localPlaylistManager.deletePlaylist(selectedItem.uid));
+                    dialog.dismiss();
+                })
+                .create()
+                .show();
+    }
+
     private void showDeleteDialog(final String name, final Single<Integer> deleteReactor) {
-        if (activity == null || disposables == null) return;
+        if (activity == null || disposables == null) {
+            return;
+        }
 
         new AlertDialog.Builder(activity)
                 .setTitle(name)
@@ -265,23 +290,32 @@ public final class BookmarkFragment
                 .setPositiveButton(R.string.delete, (dialog, i) ->
                         disposables.add(deleteReactor
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(ignored -> {/*Do nothing on success*/}, this::onError))
-                )
+                                .subscribe(ignored -> { /*Do nothing on success*/ }, throwable ->
+                                        showError(new ErrorInfo(throwable,
+                                                UserAction.REQUESTED_BOOKMARK,
+                                                "Deleting playlist")))))
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
-    private static List<PlaylistLocalItem> merge(final List<PlaylistMetadataEntry> localPlaylists,
-                                                 final List<PlaylistRemoteEntity> remotePlaylists) {
-        List<PlaylistLocalItem> items = new ArrayList<>(
-                localPlaylists.size() + remotePlaylists.size());
-        items.addAll(localPlaylists);
-        items.addAll(remotePlaylists);
+    private void changeLocalPlaylistName(final long id, final String name) {
+        if (localPlaylistManager == null) {
+            return;
+        }
 
-        Collections.sort(items, (left, right) ->
-                left.getOrderingName().compareToIgnoreCase(right.getOrderingName()));
+        if (DEBUG) {
+            Log.d(TAG, "Updating playlist id=[" + id + "] "
+                    + "with new name=[" + name + "] items");
+        }
 
-        return items;
+        localPlaylistManager.renamePlaylist(id, name);
+        final Disposable disposable = localPlaylistManager.renamePlaylist(id, name)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(longs -> { /*Do nothing on success*/ }, throwable -> showError(
+                        new ErrorInfo(throwable,
+                                UserAction.REQUESTED_BOOKMARK,
+                                "Changing playlist name")));
+        disposables.add(disposable);
     }
 }
 

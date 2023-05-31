@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.nio.channels.ClosedByInterruptException;
+import java.util.Objects;
 
 import us.shandian.giga.get.DownloadMission.Block;
 import us.shandian.giga.get.DownloadMission.HttpError;
@@ -29,8 +30,7 @@ public class DownloadRunnable extends Thread {
     private HttpURLConnection mConn;
 
     DownloadRunnable(DownloadMission mission, int id) {
-        if (mission == null) throw new NullPointerException("mission is null");
-        mMission = mission;
+        mMission = Objects.requireNonNull(mission);
         mId = id;
     }
 
@@ -70,7 +70,7 @@ public class DownloadRunnable extends Thread {
                     Log.d(TAG, mId + ":acquired block at position=" + block.position + " done=" + block.done);
             }
 
-            long start = block.position * DownloadMission.BLOCK_SIZE;
+            long start = (long)block.position * DownloadMission.BLOCK_SIZE;
             long end = start + DownloadMission.BLOCK_SIZE - 1;
 
             start += block.done;

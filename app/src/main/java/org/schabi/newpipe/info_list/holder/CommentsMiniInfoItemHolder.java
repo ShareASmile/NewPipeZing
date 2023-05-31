@@ -1,97 +1,119 @@
 package org.schabi.newpipe.info_list.holder;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.URLSpan;
 import android.text.util.Linkify;
+import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.jsoup.helper.StringUtil;
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.info_list.InfoItemBuilder;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
-import org.schabi.newpipe.report.ErrorActivity;
 import org.schabi.newpipe.util.CommentTextOnTouchListener;
-import org.schabi.newpipe.util.ImageDisplayConstants;
+import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.external_communication.TimestampExtractor;
+import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.util.PicassoHelper;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CommentsMiniInfoItemHolder extends InfoItemHolder {
-    public final CircleImageView itemThumbnailView;
+    private static final String TAG = "CommentsMiniIIHolder";
+
+    private static final int COMMENT_DEFAULT_LINES = 2;
+    private static final int COMMENT_EXPANDED_LINES = 1000;
+
+    private final int commentHorizontalPadding;
+    private final int commentVerticalPadding;
+
+    private final RelativeLayout itemRoot;
+    public final ImageView itemThumbnailView;
     private final TextView itemContentView;
     private final TextView itemLikesCountView;
-    private final TextView itemDislikesCountView;
     private final TextView itemPublishedTime;
-
-    private static final int commentDefaultLines = 2;
-    private static final int commentExpandedLines = 1000;
 
     private String commentText;
     private String streamUrl;
 
-    private static final Pattern pattern = Pattern.compile("(\\d+:)?(\\d+)?:(\\d+)");
-
     private final Linkify.TransformFilter timestampLink = new Linkify.TransformFilter() {
         @Override
-        public String transformUrl(Matcher match, String url) {
-            int timestamp = 0;
-            String hours = match.group(1);
-            String minutes = match.group(2);
-            String seconds = match.group(3);
-            if(hours != null) timestamp += (Integer.parseInt(hours.replace(":", ""))*3600);
-            if(minutes != null) timestamp += (Integer.parseInt(minutes.replace(":", ""))*60);
-            if(seconds != null) timestamp += (Integer.parseInt(seconds));
-            return streamUrl + url.replace(match.group(0), "#timestamp=" + timestamp);
+        public String transformUrl(final Matcher match, final String url) {
+            try {
+                final TimestampExtractor.TimestampMatchDTO timestampMatchDTO =
+                        TimestampExtractor.getTimestampFromMatcher(match, commentText);
+
+                if (timestampMatchDTO == null) {
+                    return url;
+                }
+
+                return streamUrl + url.replace(
+                        match.group(0),
+                        "#timestamp=" + timestampMatchDTO.seconds());
+            } catch (final Exception ex) {
+                Log.e(TAG, "Unable to process url='" + url + "' as timestampLink", ex);
+                return url;
+            }
         }
     };
 
-    CommentsMiniInfoItemHolder(InfoItemBuilder infoItemBuilder, int layoutId, ViewGroup parent) {
+    CommentsMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder, final int layoutId,
+                               final ViewGroup parent) {
         super(infoItemBuilder, layoutId, parent);
 
+        itemRoot = itemView.findViewById(R.id.itemRoot);
         itemThumbnailView = itemView.findViewById(R.id.itemThumbnailView);
         itemLikesCountView = itemView.findViewById(R.id.detail_thumbs_up_count_view);
-        itemDislikesCountView = itemView.findViewById(R.id.detail_thumbs_down_count_view);
         itemPublishedTime = itemView.findViewById(R.id.itemPublishedTime);
         itemContentView = itemView.findViewById(R.id.itemCommentContentView);
+
+        commentHorizontalPadding = (int) infoItemBuilder.getContext()
+                .getResources().getDimension(R.dimen.comments_horizontal_padding);
+        commentVerticalPadding = (int) infoItemBuilder.getContext()
+                .getResources().getDimension(R.dimen.comments_vertical_padding);
     }
 
-    public CommentsMiniInfoItemHolder(InfoItemBuilder infoItemBuilder, ViewGroup parent) {
+    public CommentsMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder,
+                                      final ViewGroup parent) {
         this(infoItemBuilder, R.layout.list_comments_mini_item, parent);
     }
 
     @Override
-    public void updateFromItem(final InfoItem infoItem, final HistoryRecordManager historyRecordManager) {
-        if (!(infoItem instanceof CommentsInfoItem)) return;
+    public void updateFromItem(final InfoItem infoItem,
+                               final HistoryRecordManager historyRecordManager) {
+        if (!(infoItem instanceof CommentsInfoItem)) {
+            return;
+        }
         final CommentsInfoItem item = (CommentsInfoItem) infoItem;
 
-        itemBuilder.getImageLoader()
-                .displayImage(item.getAuthorThumbnail(),
-                        itemThumbnailView,
-                        ImageDisplayConstants.DISPLAY_THUMBNAIL_OPTIONS);
+        PicassoHelper.loadAvatar(item.getUploaderAvatarUrl()).into(itemThumbnailView);
+        if (PicassoHelper.getShouldLoadImages()) {
+            itemThumbnailView.setVisibility(View.VISIBLE);
+            itemRoot.setPadding(commentVerticalPadding, commentVerticalPadding,
+                    commentVerticalPadding, commentVerticalPadding);
+        } else {
+            itemThumbnailView.setVisibility(View.GONE);
+            itemRoot.setPadding(commentHorizontalPadding, commentVerticalPadding,
+                    commentHorizontalPadding, commentVerticalPadding);
+        }
 
-        itemThumbnailView.setOnClickListener(view -> {
-            if(StringUtil.isBlank(item.getAuthorEndpoint())) return;
-            try {
-                final AppCompatActivity activity = (AppCompatActivity) itemBuilder.getContext();
-                NavigationHelper.openChannelFragment(
-                        activity.getSupportFragmentManager(),
-                        item.getServiceId(),
-                        item.getAuthorEndpoint(),
-                        item.getAuthorName());
-            } catch (Exception e) {
-                ErrorActivity.reportUiError((AppCompatActivity) itemBuilder.getContext(), e);
-            }
-        });
+
+        itemThumbnailView.setOnClickListener(view -> openCommentAuthor(item));
 
         streamUrl = item.getUrl();
 
-        itemContentView.setLines(commentDefaultLines);
+        itemContentView.setLines(COMMENT_DEFAULT_LINES);
         commentText = item.getCommentText();
         itemContentView.setText(commentText);
         itemContentView.setOnTouchListener(CommentTextOnTouchListener.INSTANCE);
@@ -103,15 +125,19 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
         }
 
         if (item.getLikeCount() >= 0) {
-            itemLikesCountView.setText(String.valueOf(item.getLikeCount()));
+            itemLikesCountView.setText(
+                    Localization.shortCount(
+                            itemBuilder.getContext(),
+                            item.getLikeCount()));
         } else {
             itemLikesCountView.setText("-");
         }
 
-        if (item.getPublishedTime() != null) {
-            itemPublishedTime.setText(Localization.relativeTime(item.getPublishedTime().date()));
+        if (item.getUploadDate() != null) {
+            itemPublishedTime.setText(Localization.relativeTime(item.getUploadDate()
+                    .offsetDateTime()));
         } else {
-            itemPublishedTime.setText(item.getTextualPublishedTime());
+            itemPublishedTime.setText(item.getTextualUploadDate());
         }
 
         itemView.setOnClickListener(view -> {
@@ -120,36 +146,110 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
                 itemBuilder.getOnCommentsSelectedListener().selected(item);
             }
         });
+
+
+        itemView.setOnLongClickListener(view -> {
+            if (DeviceUtils.isTv(itemBuilder.getContext())) {
+                openCommentAuthor(item);
+            } else {
+                ShareUtils.copyToClipboard(itemBuilder.getContext(), commentText);
+            }
+            return true;
+        });
+    }
+
+    private void openCommentAuthor(final CommentsInfoItem item) {
+        if (TextUtils.isEmpty(item.getUploaderUrl())) {
+            return;
+        }
+        final AppCompatActivity activity = (AppCompatActivity) itemBuilder.getContext();
+        try {
+            NavigationHelper.openChannelFragment(
+                    activity.getSupportFragmentManager(),
+                    item.getServiceId(),
+                    item.getUploaderUrl(),
+                    item.getUploaderName());
+        } catch (final Exception e) {
+            ErrorUtil.showUiErrorSnackbar(activity, "Opening channel fragment", e);
+        }
+    }
+
+    private void allowLinkFocus() {
+        itemContentView.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void denyLinkFocus() {
+        itemContentView.setMovementMethod(null);
+    }
+
+    private boolean shouldFocusLinks() {
+        if (itemView.isInTouchMode()) {
+            return false;
+        }
+
+        final URLSpan[] urls = itemContentView.getUrls();
+
+        return urls != null && urls.length != 0;
+    }
+
+    private void determineLinkFocus() {
+        if (shouldFocusLinks()) {
+            allowLinkFocus();
+        } else {
+            denyLinkFocus();
+        }
     }
 
     private void ellipsize() {
-        if (itemContentView.getLineCount() > commentDefaultLines){
-            int endOfLastLine = itemContentView.getLayout().getLineEnd(commentDefaultLines - 1);
-            int end = itemContentView.getText().toString().lastIndexOf(' ', endOfLastLine -2);
-            if(end == -1) end = Math.max(endOfLastLine -2, 0);
-            String newVal = itemContentView.getText().subSequence(0, end) + " …";
+        boolean hasEllipsis = false;
+
+        if (itemContentView.getLineCount() > COMMENT_DEFAULT_LINES) {
+            final int endOfLastLine
+                    = itemContentView.getLayout().getLineEnd(COMMENT_DEFAULT_LINES - 1);
+            int end = itemContentView.getText().toString().lastIndexOf(' ', endOfLastLine - 2);
+            if (end == -1) {
+                end = Math.max(endOfLastLine - 2, 0);
+            }
+            final String newVal = itemContentView.getText().subSequence(0, end) + " …";
             itemContentView.setText(newVal);
+            hasEllipsis = true;
         }
+
         linkify();
+
+        if (hasEllipsis) {
+            denyLinkFocus();
+        } else {
+            determineLinkFocus();
+        }
     }
 
     private void toggleEllipsize() {
         if (itemContentView.getText().toString().equals(commentText)) {
-            if (itemContentView.getLineCount() > commentDefaultLines) ellipsize();
+            if (itemContentView.getLineCount() > COMMENT_DEFAULT_LINES) {
+                ellipsize();
+            }
         } else {
             expand();
         }
     }
 
     private void expand() {
-        itemContentView.setMaxLines(commentExpandedLines);
+        itemContentView.setMaxLines(COMMENT_EXPANDED_LINES);
         itemContentView.setText(commentText);
         linkify();
+        determineLinkFocus();
     }
 
-    private void linkify(){
-        Linkify.addLinks(itemContentView, Linkify.WEB_URLS);
-        Linkify.addLinks(itemContentView, pattern, null, null, timestampLink);
-        itemContentView.setMovementMethod(null);
+    private void linkify() {
+        Linkify.addLinks(
+                itemContentView,
+                Linkify.WEB_URLS);
+        Linkify.addLinks(
+                itemContentView,
+                TimestampExtractor.TIMESTAMPS_PATTERN,
+                null,
+                null,
+                timestampLink);
     }
 }

@@ -1,31 +1,53 @@
 package org.schabi.newpipe.player.mediasource;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.android.exoplayer2.source.BaseMediaSource;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.source.CompositeMediaSource;
 import com.google.android.exoplayer2.source.MediaPeriod;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.Allocator;
-import com.google.android.exoplayer2.upstream.TransferListener;
 
+import org.schabi.newpipe.player.mediaitem.PlaceholderTag;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 
-public class PlaceholderMediaSource extends BaseMediaSource implements ManagedMediaSource {
-    // Do nothing, so this will stall the playback
-    @Override public void maybeThrowSourceInfoRefreshError() {}
-    @Override public MediaPeriod createPeriod(MediaPeriodId id, Allocator allocator, long startPositionUs) { return null; }
-    @Override public void releasePeriod(MediaPeriod mediaPeriod) {}
-    @Override protected void prepareSourceInternal(@Nullable TransferListener mediaTransferListener) {}
-    @Override protected void releaseSourceInternal() {}
+import androidx.annotation.NonNull;
+
+final class PlaceholderMediaSource
+        extends CompositeMediaSource<Void> implements ManagedMediaSource {
+    public static final PlaceholderMediaSource COPY = new PlaceholderMediaSource();
+    private static final MediaItem MEDIA_ITEM = PlaceholderTag.EMPTY.withExtras(COPY).asMediaItem();
+
+    private PlaceholderMediaSource() { }
 
     @Override
-    public boolean shouldBeReplacedWith(@NonNull PlayQueueItem newIdentity,
+    public MediaItem getMediaItem() {
+        return MEDIA_ITEM;
+    }
+
+    @Override
+    protected void onChildSourceInfoRefreshed(final Void id,
+                                              final MediaSource mediaSource,
+                                              final Timeline timeline) {
+        /* Do nothing, no timeline updates or error will stall playback */
+    }
+
+    @Override
+    public MediaPeriod createPeriod(final MediaPeriodId id, final Allocator allocator,
+                                    final long startPositionUs) {
+        return null;
+    }
+
+    @Override
+    public void releasePeriod(final MediaPeriod mediaPeriod) { }
+
+    @Override
+    public boolean shouldBeReplacedWith(@NonNull final PlayQueueItem newIdentity,
                                         final boolean isInterruptable) {
         return true;
     }
 
     @Override
-    public boolean isStreamEqual(@NonNull PlayQueueItem stream) {
+    public boolean isStreamEqual(@NonNull final PlayQueueItem stream) {
         return false;
     }
 }

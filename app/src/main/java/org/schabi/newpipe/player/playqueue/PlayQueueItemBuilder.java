@@ -5,34 +5,27 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
-import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.util.ImageDisplayConstants;
 import org.schabi.newpipe.util.Localization;
+import org.schabi.newpipe.util.PicassoHelper;
+import org.schabi.newpipe.util.ServiceHelper;
 
 public class PlayQueueItemBuilder {
-
     private static final String TAG = PlayQueueItemBuilder.class.toString();
-
-    public interface OnSelectedListener {
-        void selected(PlayQueueItem item, View view);
-        void held(PlayQueueItem item, View view);
-        void onStartDrag(PlayQueueItemHolder viewHolder);
-    }
-
     private OnSelectedListener onItemClickListener;
 
-    public PlayQueueItemBuilder(final Context context) {}
+    public PlayQueueItemBuilder(final Context context) {
+    }
 
-    public void setOnSelectedListener(OnSelectedListener listener) {
+    public void setOnSelectedListener(final OnSelectedListener listener) {
         this.onItemClickListener = listener;
     }
 
     public void buildStreamInfoItem(final PlayQueueItemHolder holder, final PlayQueueItem item) {
-        if (!TextUtils.isEmpty(item.getTitle())) holder.itemVideoTitleView.setText(item.getTitle());
+        if (!TextUtils.isEmpty(item.getTitle())) {
+            holder.itemVideoTitleView.setText(item.getTitle());
+        }
         holder.itemAdditionalDetailsView.setText(Localization.concatenateStrings(item.getUploader(),
-                NewPipe.getNameOfService(item.getServiceId())));
+                ServiceHelper.getNameOfServiceById(item.getServiceId())));
 
         if (item.getDuration() > 0) {
             holder.itemDurationView.setText(Localization.getDurationString(item.getDuration()));
@@ -40,8 +33,7 @@ public class PlayQueueItemBuilder {
             holder.itemDurationView.setVisibility(View.GONE);
         }
 
-        ImageLoader.getInstance().displayImage(item.getThumbnailUrl(), holder.itemThumbnailView,
-                ImageDisplayConstants.DISPLAY_THUMBNAIL_OPTIONS);
+        PicassoHelper.loadThumbnail(item.getThumbnailUrl()).into(holder.itemThumbnailView);
 
         holder.itemRoot.setOnClickListener(view -> {
             if (onItemClickListener != null) {
@@ -57,7 +49,6 @@ public class PlayQueueItemBuilder {
             return false;
         });
 
-        holder.itemThumbnailView.setOnTouchListener(getOnTouchListener(holder));
         holder.itemHandle.setOnTouchListener(getOnTouchListener(holder));
     }
 
@@ -70,5 +61,13 @@ public class PlayQueueItemBuilder {
             }
             return false;
         };
+    }
+
+    public interface OnSelectedListener {
+        void selected(PlayQueueItem item, View view);
+
+        void held(PlayQueueItem item, View view);
+
+        void onStartDrag(PlayQueueItemHolder viewHolder);
     }
 }

@@ -1,13 +1,12 @@
 package us.shandian.giga.ui.adapter;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -26,11 +25,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.core.view.ViewCompat;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
@@ -38,24 +38,33 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.schabi.newpipe.App;
 import org.schabi.newpipe.BuildConfig;
+import org.schabi.newpipe.LocalPlayerActivity;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.report.ErrorActivity;
-import org.schabi.newpipe.report.UserAction;
+import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import us.shandian.giga.get.DownloadMission;
 import us.shandian.giga.get.FinishedMission;
 import us.shandian.giga.get.Mission;
 import us.shandian.giga.get.MissionRecoveryInfo;
-import us.shandian.giga.io.StoredFileHelper;
+import org.schabi.newpipe.streams.io.StoredFileHelper;
 import us.shandian.giga.service.DownloadManager;
 import us.shandian.giga.service.DownloadManagerService;
 import us.shandian.giga.ui.common.Deleter;
@@ -89,37 +98,44 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
     private static final String DEFAULT_MIME_TYPE = "*/*";
     private static final String UNDEFINED_ETA = "--:--";
 
+    private static final int HASH_NOTIFICATION_ID = 123790;
 
     static {
         ALGORITHMS.put(R.id.md5, "MD5");
         ALGORITHMS.put(R.id.sha1, "SHA1");
     }
 
-    private Context mContext;
-    private LayoutInflater mInflater;
-    private DownloadManager mDownloadManager;
-    private Deleter mDeleter;
+    private final Context mContext;
+    private final LayoutInflater mInflater;
+    private final DownloadManager mDownloadManager;
+    private final Deleter mDeleter;
     private int mLayout;
-    private DownloadManager.MissionIterator mIterator;
-    private ArrayList<ViewHolderItem> mPendingDownloadsItems = new ArrayList<>();
-    private Handler mHandler;
+    private final DownloadManager.MissionIterator mIterator;
+    private final ArrayList<ViewHolderItem> mPendingDownloadsItems = new ArrayList<>();
+    private final Handler mHandler;
     private MenuItem mClear;
     private MenuItem mStartButton;
     private MenuItem mPauseButton;
-    private View mEmptyMessage;
+    private final View mEmptyMessage;
     private RecoverHelper mRecover;
-    private View mView;
-    private ArrayList<Mission> mHidden;
+    private final View mView;
+    private final ArrayList<Mission> mHidden;
     private Snackbar mSnackbar;
 
     private final Runnable rUpdater = this::updater;
     private final Runnable rDelete = this::deleteFinishedDownloads;
 
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+    private SharedPreferences mPrefs;
+
     public MissionAdapter(Context context, @NonNull DownloadManager downloadManager, View emptyMessage, View root) {
         mContext = context;
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(App.getApp());
+
         mDownloadManager = downloadManager;
 
-        mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = LayoutInflater.from(mContext);
         mLayout = R.layout.mission_item;
 
         mHandler = new Handler(context.getMainLooper());
@@ -210,7 +226,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         } else {
             h.progress.setMarquee(false);
             h.status.setText("100%");
-            h.progress.setProgress(1f);
+            h.progress.setProgress(1.0f);
             h.size.setText(Utility.formatBytes(item.mission.length));
         }
     }
@@ -243,7 +259,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         double progress;
         if (mission.unknownLength) {
             progress = Double.NaN;
-            h.progress.setProgress(0f);
+            h.progress.setProgress(0.0f);
         } else {
             progress = done / length;
         }
@@ -302,15 +318,13 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             float averageSpeed = speed;
 
             if (h.lastSpeedIdx < 0) {
-                for (int i = 0; i < h.lastSpeed.length; i++) {
-                    h.lastSpeed[i] = speed;
-                }
+                Arrays.fill(h.lastSpeed, speed);
                 h.lastSpeedIdx = 0;
             } else {
                 for (int i = 0; i < h.lastSpeed.length; i++) {
                     averageSpeed += h.lastSpeed[i];
                 }
-                averageSpeed /= h.lastSpeed.length + 1f;
+                averageSpeed /= h.lastSpeed.length + 1.0f;
             }
 
             String speedStr = Utility.formatSpeed(averageSpeed);
@@ -333,7 +347,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         }
     }
 
-    private void viewWithFileProvider(Mission mission) {
+    private void open(Mission mission) {
         if (checkInvalidFile(mission)) return;
 
         String mimeType = resolveMimeType(mission);
@@ -341,21 +355,26 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         if (BuildConfig.DEBUG)
             Log.v(TAG, "Mime: " + mimeType + " package: " + BuildConfig.APPLICATION_ID + ".provider");
 
-        Uri uri;
+        Uri uri = resolveShareableUri(mission);
 
-        if (mission.storage.isDirect()) {
-            uri = FileProvider.getUriForFile(
-                    mContext,
-                    BuildConfig.APPLICATION_ID + ".provider",
-                    new File(URI.create(mission.storage.getUri().toString()))
-            );
-        } else {
-            uri = mission.storage.getUri();
-        }
-
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
+        Intent intent = new Intent(mContext, LocalPlayerActivity.class);
         intent.setDataAndType(uri, mimeType);
+        intent.putExtra("segments", mission.segmentsJson);
+        intent.setFlags(FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+        mContext.startActivity(intent);
+    }
+
+    private void openExternally(Mission mission) {
+        if (checkInvalidFile(mission)) return;
+
+        String mimeType = resolveMimeType(mission);
+
+        if (BuildConfig.DEBUG)
+            Log.v(TAG, "Mime: " + mimeType + " package: " + BuildConfig.APPLICATION_ID + ".provider");
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(resolveShareableUri(mission), mimeType);
         intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -365,10 +384,8 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
         }
 
-        //mContext.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
         if (intent.resolveActivity(mContext.getPackageManager()) != null) {
-            mContext.startActivity(intent);
+            ShareUtils.openIntentInApp(mContext, intent, false);
         } else {
             Toast.makeText(mContext, R.string.toast_no_player, Toast.LENGTH_LONG).show();
         }
@@ -377,11 +394,40 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
     private void shareFile(Mission mission) {
         if (checkInvalidFile(mission)) return;
 
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType(resolveMimeType(mission));
-        intent.putExtra(Intent.EXTRA_STREAM, mission.storage.getUri());
+        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType(resolveMimeType(mission));
+        shareIntent.putExtra(Intent.EXTRA_STREAM, resolveShareableUri(mission));
+        shareIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
 
-        mContext.startActivity(Intent.createChooser(intent, null));
+        final Intent intent = new Intent(Intent.ACTION_CHOOSER);
+        intent.putExtra(Intent.EXTRA_INTENT, shareIntent);
+        // unneeded to set a title to the chooser on Android P and higher because the system
+        // ignores this title on these versions
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
+            intent.putExtra(Intent.EXTRA_TITLE, mContext.getString(R.string.share_dialog_title));
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
+
+        mContext.startActivity(intent);
+    }
+
+    /**
+     * Returns an Uri which can be shared to other applications.
+     *
+     * @see <a href="https://stackoverflow.com/questions/38200282/android-os-fileuriexposedexception-file-storage-emulated-0-test-txt-exposed">
+     * https://stackoverflow.com/questions/38200282/android-os-fileuriexposedexception-file-storage-emulated-0-test-txt-exposed</a>
+     */
+    private Uri resolveShareableUri(Mission mission) {
+        if (mission.storage.isDirect()) {
+            return FileProvider.getUriForFile(
+                mContext,
+                BuildConfig.APPLICATION_ID + ".provider",
+                new File(URI.create(mission.storage.getUri().toString()))
+            );
+        } else {
+            return mission.storage.getUri();
+        }
     }
 
     private static String resolveMimeType(@NonNull Mission mission) {
@@ -534,7 +580,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             );
         }
 
-        builder.setNegativeButton(android.R.string.ok, (dialog, which) -> dialog.cancel())
+        builder.setNegativeButton(R.string.ok, (dialog, which) -> dialog.cancel())
                 .setTitle(mission.storage.getName())
                 .create()
                 .show();
@@ -557,16 +603,12 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         try {
             service = NewPipe.getServiceByUrl(mission.source).getServiceInfo().getName();
         } catch (Exception e) {
-            service = "-";
+            service = ErrorInfo.SERVICE_NONE;
         }
 
-        ErrorActivity.reportError(
-                mContext,
-                mission.errObject,
-                null,
-                null,
-                ErrorActivity.ErrorInfo.make(action, service, request.toString(), reason)
-        );
+        ErrorUtil.createNotification(mContext,
+                new ErrorInfo(ErrorInfo.Companion.throwableToStringList(mission.errObject), action,
+                        service, request.toString(), reason));
     }
 
     public void clearFinishedDownloads(boolean delete) {
@@ -580,7 +622,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             }
             applyChanges();
 
-            String msg = String.format(mContext.getString(R.string.deleted_downloads), mHidden.size());
+            String msg = Localization.deletedDownloadCount(mContext, mHidden.size());
             mSnackbar = Snackbar.make(mView, msg, Snackbar.LENGTH_INDEFINITE);
             mSnackbar.setAction(R.string.undo, s -> {
                 Iterator<Mission> i = mHidden.iterator();
@@ -665,9 +707,35 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
                 applyChanges();
                 checkMasterButtonsVisibility();
                 return true;
+            case R.id.open_externally:
+                openExternally(h.item.mission);
+                return true;
             case R.id.md5:
             case R.id.sha1:
-                new ChecksumTask(mContext).execute(h.item.mission.storage, ALGORITHMS.get(id));
+                final NotificationManager notificationManager
+                        = ContextCompat.getSystemService(mContext, NotificationManager.class);
+                final NotificationCompat.Builder progressNotificationBuilder
+                        = new NotificationCompat.Builder(mContext,
+                        mContext.getString(R.string.hash_channel_id))
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
+                        .setContentTitle(mContext.getString(R.string.msg_calculating_hash))
+                        .setContentText(mContext.getString(R.string.msg_wait))
+                        .setProgress(0, 0, true)
+                        .setOngoing(true);
+
+                notificationManager.notify(HASH_NOTIFICATION_ID, progressNotificationBuilder
+                        .build());
+                final StoredFileHelper storage = h.item.mission.storage;
+                compositeDisposable.add(
+                        Observable.fromCallable(() -> Utility.checksum(storage, ALGORITHMS.get(id)))
+                                .subscribeOn(Schedulers.computation())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(result -> {
+                                    Utility.copyToClipboard(mContext, result);
+                                    notificationManager.cancel(HASH_NOTIFICATION_ID);
+                                })
+                );
                 return true;
             case R.id.source:
                 /*Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(h.item.mission.source));
@@ -750,8 +818,8 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         }
     }
 
-
     public void onDestroy() {
+        compositeDisposable.dispose();
         mDeleter.dispose();
     }
 
@@ -831,7 +899,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             super(view);
 
             progress = new ProgressDrawable();
-            ViewCompat.setBackground(itemView.findViewById(R.id.item_bkg), progress);
+            itemView.findViewById(R.id.item_bkg).setBackground(progress);
 
             status = itemView.findViewById(R.id.item_status);
             name = itemView.findViewById(R.id.item_name);
@@ -859,8 +927,14 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             itemView.setHapticFeedbackEnabled(true);
 
             itemView.setOnClickListener(v -> {
-                if (item.mission instanceof FinishedMission)
-                    viewWithFileProvider(item.mission);
+                if (item.mission instanceof FinishedMission) {
+                    if (mPrefs.getBoolean(mContext
+                            .getString(R.string.enable_local_player_key), false)) {
+                        open(item.mission);
+                    } else {
+                        openExternally(item.mission);
+                    }
+                }
             });
 
             itemView.setOnLongClickListener(v -> {
@@ -943,7 +1017,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         }
     }
 
-    class ViewHolderHeader extends RecyclerView.ViewHolder {
+    static class ViewHolderHeader extends RecyclerView.ViewHolder {
         TextView header;
 
         ViewHolderHeader(View view) {
@@ -952,60 +1026,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         }
     }
 
-
-    static class ChecksumTask extends AsyncTask<Object, Void, String> {
-        ProgressDialog progressDialog;
-        WeakReference<Activity> weakReference;
-
-        ChecksumTask(@NonNull Context context) {
-            weakReference = new WeakReference<>((Activity) context);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            Activity activity = getActivity();
-            if (activity != null) {
-                // Create dialog
-                progressDialog = new ProgressDialog(activity);
-                progressDialog.setCancelable(false);
-                progressDialog.setMessage(activity.getString(R.string.msg_wait));
-                progressDialog.show();
-            }
-        }
-
-        @Override
-        protected String doInBackground(Object... params) {
-            return Utility.checksum((StoredFileHelper) params[0], (String) params[1]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            if (progressDialog != null) {
-                Utility.copyToClipboard(progressDialog.getContext(), result);
-                if (getActivity() != null) {
-                    progressDialog.dismiss();
-                }
-            }
-        }
-
-        @Nullable
-        private Activity getActivity() {
-            Activity activity = weakReference.get();
-
-            if (activity != null && activity.isFinishing()) {
-                return null;
-            } else {
-                return activity;
-            }
-        }
-    }
-
     public interface RecoverHelper {
         void tryRecover(DownloadMission mission);
     }
-
 }

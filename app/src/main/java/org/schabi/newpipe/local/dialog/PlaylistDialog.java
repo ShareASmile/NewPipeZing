@@ -1,38 +1,42 @@
 package org.schabi.newpipe.local.dialog;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.Window;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import android.view.Window;
 
+import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
+import org.schabi.newpipe.local.playlist.LocalPlaylistManager;
 import org.schabi.newpipe.util.StateSaver;
 
 import java.util.List;
 import java.util.Queue;
+import java.util.function.Consumer;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 public abstract class PlaylistDialog extends DialogFragment implements StateSaver.WriteRead {
 
+    @Nullable
+    private DialogInterface.OnDismissListener onDismissListener = null;
+
     private List<StreamEntity> streamEntities;
 
-    private StateSaver.SavedState savedState;
-
-    protected void setInfo(final List<StreamEntity> entities) {
-        this.streamEntities = entities;
-    }
-
-    protected List<StreamEntity> getStreams() {
-        return streamEntities;
-    }
+    private org.schabi.newpipe.util.SavedState savedState;
 
     /*//////////////////////////////////////////////////////////////////////////
     // LifeCycle
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         savedState = StateSaver.tryToRestore(savedInstanceState, this);
     }
@@ -43,9 +47,13 @@ public abstract class PlaylistDialog extends DialogFragment implements StateSave
         StateSaver.onDestroy(savedState);
     }
 
+    public List<StreamEntity> getStreamEntities() {
+        return streamEntities;
+    }
+
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
         final Dialog dialog = super.onCreateDialog(savedInstanceState);
         //remove title
         final Window window = dialog.getWindow();
@@ -53,6 +61,14 @@ public abstract class PlaylistDialog extends DialogFragment implements StateSave
             window.requestFeature(Window.FEATURE_NO_TITLE);
         }
         return dialog;
+    }
+
+    @Override
+    public void onDismiss(@NonNull final DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onDismissListener != null) {
+            onDismissListener.onDismiss(dialog);
+        }
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -66,22 +82,69 @@ public abstract class PlaylistDialog extends DialogFragment implements StateSave
     }
 
     @Override
-    public void writeTo(Queue<Object> objectsToSave) {
+    public void writeTo(final Queue<Object> objectsToSave) {
         objectsToSave.add(streamEntities);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void readFrom(@NonNull Queue<Object> savedObjects) {
+    public void readFrom(@NonNull final Queue<Object> savedObjects) {
         streamEntities = (List<StreamEntity>) savedObjects.poll();
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         if (getActivity() != null) {
             savedState = StateSaver.tryToSave(getActivity().isChangingConfigurations(),
                     savedState, outState, this);
         }
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+    // Getter + Setter
+    //////////////////////////////////////////////////////////////////////////*/
+
+    @Nullable
+    public DialogInterface.OnDismissListener getOnDismissListener() {
+        return onDismissListener;
+    }
+
+    public void setOnDismissListener(
+            @Nullable final DialogInterface.OnDismissListener onDismissListener
+    ) {
+        this.onDismissListener = onDismissListener;
+    }
+
+    protected void setStreamEntities(final List<StreamEntity> streamEntities) {
+        this.streamEntities = streamEntities;
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+    // Dialog creation
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /**
+     * Creates a {@link PlaylistAppendDialog} when playlists exists,
+     * otherwise a {@link PlaylistCreationDialog}.
+     *
+     * @param context        context used for accessing the database
+     * @param streamEntities used for crating the dialog
+     * @param onExec         execution that should occur after a dialog got created, e.g. showing it
+     * @return Disposable
+     */
+    public static Disposable createCorrespondingDialog(
+            final Context context,
+            final List<StreamEntity> streamEntities,
+            final Consumer<PlaylistDialog> onExec
+    ) {
+        return new LocalPlaylistManager(NewPipeDatabase.getInstance(context))
+                .hasPlaylists()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(hasPlaylists ->
+                        onExec.accept(hasPlaylists
+                                ? PlaylistAppendDialog.newInstance(streamEntities)
+                                : PlaylistCreationDialog.newInstance(streamEntities))
+                );
     }
 }

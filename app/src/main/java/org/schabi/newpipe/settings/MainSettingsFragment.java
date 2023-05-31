@@ -1,29 +1,71 @@
 package org.schabi.newpipe.settings;
 
 import android.os.Bundle;
-import androidx.preference.Preference;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
-import org.schabi.newpipe.BuildConfig;
-import org.schabi.newpipe.CheckForNewAppVersionTask;
+import androidx.annotation.NonNull;
+
+import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.util.ReleaseVersionUtil;
 
 public class MainSettingsFragment extends BasePreferenceFragment {
-    public static final boolean DEBUG = !BuildConfig.BUILD_TYPE.equals("release");
+    public static final boolean DEBUG = MainActivity.DEBUG;
+
+    private SettingsActivity settingsActivity;
 
     @Override
-    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        addPreferencesFromResource(R.xml.main_settings);
+    public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
+        addPreferencesFromResourceRegistry();
 
-        if (!CheckForNewAppVersionTask.isGithubApk()) {
-            final Preference update = findPreference(getString(R.string.update_pref_screen_key));
-            getPreferenceScreen().removePreference(update);
+        setHasOptionsMenu(true); // Otherwise onCreateOptionsMenu is not called
+
+        // Check if the app is updatable
+        if (!ReleaseVersionUtil.isReleaseApk()) {
+            getPreferenceScreen().removePreference(
+                    findPreference(getString(R.string.update_pref_screen_key)));
 
             defaultPreferences.edit().putBoolean(getString(R.string.update_app_key), false).apply();
         }
 
+        // Hide debug preferences in RELEASE build variant
         if (!DEBUG) {
-            final Preference debug = findPreference(getString(R.string.debug_pref_screen_key));
-            getPreferenceScreen().removePreference(debug);
+            getPreferenceScreen().removePreference(
+                    findPreference(getString(R.string.debug_pref_screen_key)));
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(
+            @NonNull final Menu menu,
+            @NonNull final MenuInflater inflater
+    ) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        // -- Link settings activity and register menu --
+        settingsActivity = (SettingsActivity) getActivity();
+
+        inflater.inflate(R.menu.menu_settings_main_fragment, menu);
+
+        final MenuItem menuSearchItem = menu.getItem(0);
+
+        settingsActivity.setMenuSearchItem(menuSearchItem);
+
+        menuSearchItem.setOnMenuItemClickListener(ev -> {
+            settingsActivity.setSearchActive(true);
+            return true;
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        // Unlink activity so that we don't get memory problems
+        if (settingsActivity != null) {
+            settingsActivity.setMenuSearchItem(null);
+            settingsActivity = null;
+        }
+        super.onDestroy();
     }
 }

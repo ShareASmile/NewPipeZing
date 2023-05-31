@@ -1,34 +1,44 @@
 package org.schabi.newpipe.local;
 
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.ActionBar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewbinding.ViewBinding;
+
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.databinding.PignateFooterBinding;
 import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.list.ListViewContract;
 
-import static org.schabi.newpipe.util.AnimationUtils.animateView;
+import static org.schabi.newpipe.ktx.ViewUtils.animate;
+import static org.schabi.newpipe.ktx.ViewUtils.animateHideRecyclerViewAllowingScrolling;
+import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
 
 /**
  * This fragment is design to be used with persistent data such as
  * {@link org.schabi.newpipe.database.LocalItem}, and does not cache the data contained
  * in the list adapter to avoid extra writes when the it exits or re-enters its lifecycle.
- *
+ * <p>
  * This fragment destroys its adapter and views when {@link Fragment#onDestroyView()} is
  * called and is memory efficient when in backstack.
- * */
+ * </p>
+ *
+ * @param <I> List of {@link org.schabi.newpipe.database.LocalItem}s
+ * @param <N> {@link Void}
+ */
 public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
         implements ListViewContract<I, N>, SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -36,21 +46,19 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
     // Views
     //////////////////////////////////////////////////////////////////////////*/
 
-    protected View headerRootView;
-    protected View footerRootView;
-
+    private static final int LIST_MODE_UPDATE_FLAG = 0x32;
+    private ViewBinding headerRootBinding;
+    private ViewBinding footerRootBinding;
     protected LocalItemListAdapter itemListAdapter;
     protected RecyclerView itemsList;
     private int updateFlags = 0;
-
-    private static final int LIST_MODE_UPDATE_FLAG = 0x32;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Lifecycle - Creation
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         PreferenceManager.getDefaultSharedPreferences(activity)
@@ -69,9 +77,10 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
         super.onResume();
         if (updateFlags != 0) {
             if ((updateFlags & LIST_MODE_UPDATE_FLAG) != 0) {
-                final boolean useGrid = isGridLayout();
-                itemsList.setLayoutManager(useGrid ? getGridLayoutManager() : getListLayoutManager());
-                itemListAdapter.setGridItemVariants(useGrid);
+                final boolean useGrid = shouldUseGridLayout(requireContext());
+                itemsList.setLayoutManager(
+                        useGrid ? getGridLayoutManager() : getListLayoutManager());
+                itemListAdapter.setUseGridVariant(useGrid);
                 itemListAdapter.notifyDataSetChanged();
             }
             updateFlags = 0;
@@ -82,19 +91,21 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
     // Lifecycle - View
     //////////////////////////////////////////////////////////////////////////*/
 
-    protected View getListHeader() {
+    @Nullable
+    protected ViewBinding getListHeader() {
         return null;
     }
 
-    protected View getListFooter() {
-        return activity.getLayoutInflater().inflate(R.layout.pignate_footer, itemsList, false);
+    protected ViewBinding getListFooter() {
+        return PignateFooterBinding.inflate(activity.getLayoutInflater(), itemsList, false);
     }
 
     protected RecyclerView.LayoutManager getGridLayoutManager() {
         final Resources resources = activity.getResources();
         int width = resources.getDimensionPixelSize(R.dimen.video_item_grid_thumbnail_image_width);
         width += (24 * resources.getDisplayMetrics().density);
-        final int spanCount = (int) Math.floor(resources.getDisplayMetrics().widthPixels / (double)width);
+        final int spanCount = (int) Math.floor(resources.getDisplayMetrics().widthPixels
+                / (double) width);
         final GridLayoutManager lm = new GridLayoutManager(activity, spanCount);
         lm.setSpanSizeLookup(itemListAdapter.getSpanSizeLookup(spanCount));
         return lm;
@@ -105,18 +116,22 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
     }
 
     @Override
-    protected void initViews(View rootView, Bundle savedInstanceState) {
+    protected void initViews(final View rootView, final Bundle savedInstanceState) {
         super.initViews(rootView, savedInstanceState);
 
         itemListAdapter = new LocalItemListAdapter(activity);
 
-        final boolean useGrid = isGridLayout();
+        final boolean useGrid = shouldUseGridLayout(requireContext());
         itemsList = rootView.findViewById(R.id.items_list);
         itemsList.setLayoutManager(useGrid ? getGridLayoutManager() : getListLayoutManager());
 
-        itemListAdapter.setGridItemVariants(useGrid);
-        itemListAdapter.setHeader(headerRootView = getListHeader());
-        itemListAdapter.setFooter(footerRootView = getListFooter());
+        itemListAdapter.setUseGridVariant(useGrid);
+        headerRootBinding = getListHeader();
+        if (headerRootBinding != null) {
+            itemListAdapter.setHeader(headerRootBinding.getRoot());
+        }
+        footerRootBinding = getListFooter();
+        itemListAdapter.setFooter(footerRootBinding.getRoot());
 
         itemsList.setAdapter(itemListAdapter);
     }
@@ -131,13 +146,18 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull final Menu menu,
+                                    @NonNull final MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if (DEBUG) Log.d(TAG, "onCreateOptionsMenu() called with: menu = [" + menu +
-                "], inflater = [" + inflater + "]");
+        if (DEBUG) {
+            Log.d(TAG, "onCreateOptionsMenu() called with: "
+                    + "menu = [" + menu + "], inflater = [" + inflater + "]");
+        }
 
         final ActionBar supportActionBar = activity.getSupportActionBar();
-        if (supportActionBar == null) return;
+        if (supportActionBar == null) {
+            return;
+        }
 
         supportActionBar.setDisplayShowTitleEnabled(true);
     }
@@ -158,7 +178,7 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
-    public void startLoading(boolean forceLoad) {
+    public void startLoading(final boolean forceLoad) {
         super.startLoading(forceLoad);
         resetFragment();
     }
@@ -166,24 +186,23 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
     @Override
     public void showLoading() {
         super.showLoading();
-        if (itemsList != null) animateView(itemsList, false, 200);
-        if (headerRootView != null) animateView(headerRootView, false, 200);
+        if (itemsList != null) {
+            animateHideRecyclerViewAllowingScrolling(itemsList);
+        }
+        if (headerRootBinding != null) {
+            animate(headerRootBinding.getRoot(), false, 200);
+        }
     }
 
     @Override
     public void hideLoading() {
         super.hideLoading();
-        if (itemsList != null) animateView(itemsList, true, 200);
-        if (headerRootView != null) animateView(headerRootView, true, 200);
-    }
-
-    @Override
-    public void showError(String message, boolean showRetryButton) {
-        super.showError(message, showRetryButton);
-        showListFooter(false);
-
-        if (itemsList != null) animateView(itemsList, false, 200);
-        if (headerRootView != null) animateView(headerRootView, false, 200);
+        if (itemsList != null) {
+            animate(itemsList, true, 200);
+        }
+        if (headerRootBinding != null) {
+            animate(headerRootBinding.getRoot(), true, 200);
+        }
     }
 
     @Override
@@ -194,14 +213,18 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
 
     @Override
     public void showListFooter(final boolean show) {
-        if (itemsList == null) return;
+        if (itemsList == null) {
+            return;
+        }
         itemsList.post(() -> {
-            if (itemListAdapter != null) itemListAdapter.showFooter(show);
+            if (itemListAdapter != null) {
+                itemListAdapter.showFooter(show);
+            }
         });
     }
 
     @Override
-    public void handleNextItems(N result) {
+    public void handleNextItems(final N result) {
         isLoading.set(false);
     }
 
@@ -210,30 +233,31 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
     //////////////////////////////////////////////////////////////////////////*/
 
     protected void resetFragment() {
-        if (itemListAdapter != null) itemListAdapter.clearStreamItemList();
-    }
-
-    @Override
-    protected boolean onError(Throwable exception) {
-        resetFragment();
-        return super.onError(exception);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(getString(R.string.list_view_mode_key))) {
-            updateFlags |= LIST_MODE_UPDATE_FLAG;
+        if (itemListAdapter != null) {
+            itemListAdapter.clearStreamItemList();
         }
     }
 
-    protected boolean isGridLayout() {
-        final String list_mode = PreferenceManager.getDefaultSharedPreferences(activity).getString(getString(R.string.list_view_mode_key), getString(R.string.list_view_mode_value));
-        if ("auto".equals(list_mode)) {
-            final Configuration configuration = getResources().getConfiguration();
-            return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-                    && configuration.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE);
-        } else {
-            return "grid".equals(list_mode);
+    @Override
+    public void handleError() {
+        super.handleError();
+        resetFragment();
+
+        showListFooter(false);
+
+        if (itemsList != null) {
+            animateHideRecyclerViewAllowingScrolling(itemsList);
+        }
+        if (headerRootBinding != null) {
+            animate(headerRootBinding.getRoot(), false, 200);
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences,
+                                          final String key) {
+        if (key.equals(getString(R.string.list_view_mode_key))) {
+            updateFlags |= LIST_MODE_UPDATE_FLAG;
         }
     }
 }

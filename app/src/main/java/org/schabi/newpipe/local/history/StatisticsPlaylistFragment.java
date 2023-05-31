@@ -1,89 +1,81 @@
 package org.schabi.newpipe.local.history;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewbinding.ViewBinding;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.stream.StreamStatisticsEntry;
+import org.schabi.newpipe.database.stream.model.StreamEntity;
+import org.schabi.newpipe.databinding.PlaylistControlBinding;
+import org.schabi.newpipe.databinding.StatisticPlaylistControlBinding;
+import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
-import org.schabi.newpipe.extractor.stream.StreamType;
-import org.schabi.newpipe.info_list.InfoItemDialog;
+import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
 import org.schabi.newpipe.local.BaseLocalListFragment;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
-import org.schabi.newpipe.report.ErrorActivity;
-import org.schabi.newpipe.report.UserAction;
-import org.schabi.newpipe.settings.SettingsActivity;
+import org.schabi.newpipe.settings.HistorySettingsFragment;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
-import org.schabi.newpipe.util.StreamDialogEntry;
-import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.info_list.dialog.StreamDialogDefaultEntry;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import icepick.State;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 public class StatisticsPlaylistFragment
         extends BaseLocalListFragment<List<StreamStatisticsEntry>, Void> {
-
-    private View headerPlayAllButton;
-    private View headerPopupButton;
-    private View headerBackgroundButton;
-    private View playlistCtrl;
-    private View sortButton;
-    private ImageView sortButtonIcon;
-    private TextView sortButtonText;
-
+    private final CompositeDisposable disposables = new CompositeDisposable();
     @State
-    protected Parcelable itemsListState;
+    Parcelable itemsListState;
+    private StatisticSortMode sortMode = StatisticSortMode.LAST_PLAYED;
+
+    private StatisticPlaylistControlBinding headerBinding;
+    private PlaylistControlBinding playlistControlBinding;
 
     /* Used for independent events */
     private Subscription databaseSubscription;
     private HistoryRecordManager recordManager;
-    private final CompositeDisposable disposables = new CompositeDisposable();
 
-    private enum StatisticSortMode {
-        LAST_PLAYED,
-        MOST_PLAYED,
-    }
-
-    StatisticSortMode sortMode = StatisticSortMode.LAST_PLAYED;
-
-    protected List<StreamStatisticsEntry> processResult(final List<StreamStatisticsEntry> results) {
+    private List<StreamStatisticsEntry> processResult(final List<StreamStatisticsEntry> results) {
+        final Comparator<StreamStatisticsEntry> comparator;
         switch (sortMode) {
             case LAST_PLAYED:
-                Collections.sort(results, (left, right) ->
-                    right.latestAccessDate.compareTo(left.latestAccessDate));
-                return results;
+                comparator = Comparator.comparing(StreamStatisticsEntry::getLatestAccessDate);
+                break;
             case MOST_PLAYED:
-                Collections.sort(results, (left, right) ->
-                        Long.compare(right.watchCount, left.watchCount));
-                return results;
-            default: return null;
+                comparator = Comparator.comparingLong(StreamStatisticsEntry::getWatchCount);
+                break;
+            default:
+                return null;
         }
+        Collections.sort(results, comparator.reversed());
+        return results;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -91,28 +83,29 @@ public class StatisticsPlaylistFragment
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         recordManager = new HistoryRecordManager(getContext());
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater,
+                             @Nullable final ViewGroup container,
+                             @Nullable final Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_playlist, container, false);
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (activity != null && isVisibleToUser) {
+    public void onResume() {
+        super.onResume();
+        if (activity != null) {
             setTitle(activity.getString(R.string.title_activity_history));
         }
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull final Menu menu,
+                                    @NonNull final MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_history, menu);
     }
@@ -122,25 +115,20 @@ public class StatisticsPlaylistFragment
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
-    protected void initViews(View rootView, Bundle savedInstanceState) {
+    protected void initViews(final View rootView, final Bundle savedInstanceState) {
         super.initViews(rootView, savedInstanceState);
-        if(!useAsFrontPage) {
+        if (!useAsFrontPage) {
             setTitle(getString(R.string.title_last_played));
         }
     }
 
     @Override
-    protected View getListHeader() {
-        final View headerRootLayout = activity.getLayoutInflater().inflate(R.layout.statistic_playlist_control,
+    protected ViewBinding getListHeader() {
+        headerBinding = StatisticPlaylistControlBinding.inflate(activity.getLayoutInflater(),
                 itemsList, false);
-        playlistCtrl = headerRootLayout.findViewById(R.id.playlist_control);
-        headerPlayAllButton = headerRootLayout.findViewById(R.id.playlist_ctrl_play_all_button);
-        headerPopupButton = headerRootLayout.findViewById(R.id.playlist_ctrl_play_popup_button);
-        headerBackgroundButton = headerRootLayout.findViewById(R.id.playlist_ctrl_play_bg_button);
-        sortButton = headerRootLayout.findViewById(R.id.sortButton);
-        sortButtonIcon = headerRootLayout.findViewById(R.id.sortButtonIcon);
-        sortButtonText = headerRootLayout.findViewById(R.id.sortButtonText);
-        return headerRootLayout;
+        playlistControlBinding = headerBinding.playlistControl;
+
+        return headerBinding;
     }
 
     @Override
@@ -149,68 +137,31 @@ public class StatisticsPlaylistFragment
 
         itemListAdapter.setSelectedListener(new OnClickGesture<LocalItem>() {
             @Override
-            public void selected(LocalItem selectedItem) {
+            public void selected(final LocalItem selectedItem) {
                 if (selectedItem instanceof StreamStatisticsEntry) {
-                    final StreamStatisticsEntry item = (StreamStatisticsEntry) selectedItem;
-                    NavigationHelper.openVideoDetailFragment(getFM(),
-                            item.serviceId,
-                            item.url,
-                            item.title);
+                    final StreamEntity item =
+                            ((StreamStatisticsEntry) selectedItem).getStreamEntity();
+                    NavigationHelper.openVideoDetailFragment(requireContext(), getFM(),
+                            item.getServiceId(), item.getUrl(), item.getTitle(), null, false);
                 }
             }
 
             @Override
-            public void held(LocalItem selectedItem) {
+            public void held(final LocalItem selectedItem) {
                 if (selectedItem instanceof StreamStatisticsEntry) {
-                    showStreamDialog((StreamStatisticsEntry) selectedItem);
+                    showInfoItemDialog((StreamStatisticsEntry) selectedItem);
                 }
             }
         });
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_history_clear:
-                new AlertDialog.Builder(activity)
-                        .setTitle(R.string.delete_view_history_alert)
-                        .setNegativeButton(R.string.cancel, ((dialog, which) -> dialog.dismiss()))
-                        .setPositiveButton(R.string.delete, ((dialog, which) -> {
-                            final Disposable onDelete = recordManager.deleteWholeStreamHistory()
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(
-                                            howManyDeleted -> Toast.makeText(getContext(),
-                                                    R.string.watch_history_deleted,
-                                                    Toast.LENGTH_SHORT).show(),
-                                            throwable -> ErrorActivity.reportError(getContext(),
-                                                    throwable,
-                                                    SettingsActivity.class, null,
-                                                    ErrorActivity.ErrorInfo.make(
-                                                            UserAction.DELETE_FROM_HISTORY,
-                                                            "none",
-                                                            "Delete view history",
-                                                            R.string.general_error)));
-
-                            final Disposable onClearOrphans = recordManager.removeOrphanedRecords()
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(
-                                            howManyDeleted -> {},
-                                            throwable -> ErrorActivity.reportError(getContext(),
-                                                    throwable,
-                                                    SettingsActivity.class, null,
-                                                    ErrorActivity.ErrorInfo.make(
-                                                            UserAction.DELETE_FROM_HISTORY,
-                                                            "none",
-                                                            "Delete search history",
-                                                            R.string.general_error)));
-                            disposables.add(onClearOrphans);
-                            disposables.add(onDelete);
-                        }))
-                        .create()
-                        .show();
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        if (item.getItemId() == R.id.action_history_clear) {
+            HistorySettingsFragment
+                    .openDeleteWatchHistoryDialog(requireContext(), recordManager, disposables);
+        } else {
+            return super.onOptionsItemSelected(item);
         }
         return true;
     }
@@ -220,7 +171,7 @@ public class StatisticsPlaylistFragment
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void startLoading(boolean forceLoad) {
+    public void startLoading(final boolean forceLoad) {
         super.startLoading(forceLoad);
         recordManager.getStreamStatistics()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -234,19 +185,28 @@ public class StatisticsPlaylistFragment
     @Override
     public void onPause() {
         super.onPause();
-        itemsListState = itemsList.getLayoutManager().onSaveInstanceState();
+        itemsListState = Objects.requireNonNull(itemsList.getLayoutManager()).onSaveInstanceState();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (itemListAdapter != null) itemListAdapter.unsetSelectedListener();
-        if (headerBackgroundButton != null) headerBackgroundButton.setOnClickListener(null);
-        if (headerPlayAllButton != null) headerPlayAllButton.setOnClickListener(null);
-        if (headerPopupButton != null) headerPopupButton.setOnClickListener(null);
+        if (itemListAdapter != null) {
+            itemListAdapter.unsetSelectedListener();
+        }
+        if (playlistControlBinding != null) {
+            playlistControlBinding.playlistCtrlPlayBgButton.setOnClickListener(null);
+            playlistControlBinding.playlistCtrlPlayAllButton.setOnClickListener(null);
+            playlistControlBinding.playlistCtrlPlayPopupButton.setOnClickListener(null);
 
-        if (databaseSubscription != null) databaseSubscription.cancel();
+            headerBinding = null;
+            playlistControlBinding = null;
+        }
+
+        if (databaseSubscription != null) {
+            databaseSubscription.cancel();
+        }
         databaseSubscription = null;
     }
 
@@ -264,23 +224,28 @@ public class StatisticsPlaylistFragment
     private Subscriber<List<StreamStatisticsEntry>> getHistoryObserver() {
         return new Subscriber<List<StreamStatisticsEntry>>() {
             @Override
-            public void onSubscribe(Subscription s) {
+            public void onSubscribe(final Subscription s) {
                 showLoading();
 
-                if (databaseSubscription != null) databaseSubscription.cancel();
+                if (databaseSubscription != null) {
+                    databaseSubscription.cancel();
+                }
                 databaseSubscription = s;
                 databaseSubscription.request(1);
             }
 
             @Override
-            public void onNext(List<StreamStatisticsEntry> streams) {
+            public void onNext(final List<StreamStatisticsEntry> streams) {
                 handleResult(streams);
-                if (databaseSubscription != null) databaseSubscription.request(1);
+                if (databaseSubscription != null) {
+                    databaseSubscription.request(1);
+                }
             }
 
             @Override
-            public void onError(Throwable exception) {
-                StatisticsPlaylistFragment.this.onError(exception);
+            public void onError(final Throwable exception) {
+                showError(
+                        new ErrorInfo(exception, UserAction.SOMETHING_ELSE, "History Statistics"));
             }
 
             @Override
@@ -290,11 +255,13 @@ public class StatisticsPlaylistFragment
     }
 
     @Override
-    public void handleResult(@NonNull List<StreamStatisticsEntry> result) {
+    public void handleResult(@NonNull final List<StreamStatisticsEntry> result) {
         super.handleResult(result);
-        if (itemListAdapter == null) return;
+        if (itemListAdapter == null) {
+            return;
+        }
 
-        playlistCtrl.setVisibility(View.VISIBLE);
+        playlistControlBinding.getRoot().setVisibility(View.VISIBLE);
 
         itemListAdapter.clearStreamItemList();
 
@@ -304,21 +271,22 @@ public class StatisticsPlaylistFragment
         }
 
         itemListAdapter.addItems(processResult(result));
-        if (itemsListState != null) {
+        if (itemsListState != null && itemsList.getLayoutManager() != null) {
             itemsList.getLayoutManager().onRestoreInstanceState(itemsListState);
             itemsListState = null;
         }
 
-        headerPlayAllButton.setOnClickListener(view ->
-                NavigationHelper.playOnMainPlayer(activity, getPlayQueue(), false));
-        headerPopupButton.setOnClickListener(view ->
+        playlistControlBinding.playlistCtrlPlayAllButton.setOnClickListener(view ->
+                NavigationHelper.playOnMainPlayer(activity, getPlayQueue()));
+        playlistControlBinding.playlistCtrlPlayPopupButton.setOnClickListener(view ->
                 NavigationHelper.playOnPopupPlayer(activity, getPlayQueue(), false));
-        headerBackgroundButton.setOnClickListener(view ->
+        playlistControlBinding.playlistCtrlPlayBgButton.setOnClickListener(view ->
                 NavigationHelper.playOnBackgroundPlayer(activity, getPlayQueue(), false));
-        sortButton.setOnClickListener(view -> toggleSortMode());
+        headerBinding.sortButton.setOnClickListener(view -> toggleSortMode());
 
         hideLoading();
     }
+
     ///////////////////////////////////////////////////////////////////////////
     // Fragment Error Handling
     ///////////////////////////////////////////////////////////////////////////
@@ -326,16 +294,9 @@ public class StatisticsPlaylistFragment
     @Override
     protected void resetFragment() {
         super.resetFragment();
-        if (databaseSubscription != null) databaseSubscription.cancel();
-    }
-
-    @Override
-    protected boolean onError(Throwable exception) {
-        if (super.onError(exception)) return true;
-
-        onUnrecoverableError(exception, UserAction.SOMETHING_ELSE,
-                "none", "History Statistics", R.string.general_error);
-        return true;
+        if (databaseSubscription != null) {
+            databaseSubscription.cancel();
+        }
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -343,70 +304,61 @@ public class StatisticsPlaylistFragment
     //////////////////////////////////////////////////////////////////////////*/
 
     private void toggleSortMode() {
-        if(sortMode == StatisticSortMode.LAST_PLAYED) {
+        if (sortMode == StatisticSortMode.LAST_PLAYED) {
             sortMode = StatisticSortMode.MOST_PLAYED;
             setTitle(getString(R.string.title_most_played));
-            sortButtonIcon.setImageResource(ThemeHelper.getIconByAttr(R.attr.history, getContext()));
-            sortButtonText.setText(R.string.title_last_played);
+            headerBinding.sortButtonIcon.setImageResource(R.drawable.ic_history);
+            headerBinding.sortButtonText.setText(R.string.title_last_played);
         } else {
             sortMode = StatisticSortMode.LAST_PLAYED;
             setTitle(getString(R.string.title_last_played));
-            sortButtonIcon.setImageResource(ThemeHelper.getIconByAttr(R.attr.filter, getContext()));
-            sortButtonText.setText(R.string.title_most_played);
+            headerBinding.sortButtonIcon.setImageResource(
+                R.drawable.ic_filter_list);
+            headerBinding.sortButtonText.setText(R.string.title_most_played);
         }
         startLoading(true);
     }
 
-    private PlayQueue getPlayQueueStartingAt(StreamStatisticsEntry infoItem) {
+    private PlayQueue getPlayQueueStartingAt(final StreamStatisticsEntry infoItem) {
         return getPlayQueue(Math.max(itemListAdapter.getItemsList().indexOf(infoItem), 0));
     }
 
-    private void showStreamDialog(final StreamStatisticsEntry item) {
+    private void showInfoItemDialog(final StreamStatisticsEntry item) {
         final Context context = getContext();
-        final Activity activity = getActivity();
-        if (context == null || context.getResources() == null || activity == null) return;
         final StreamInfoItem infoItem = item.toStreamInfoItem();
 
-        if (infoItem.getStreamType() == StreamType.AUDIO_STREAM) {
-            StreamDialogEntry.setEnabledEntries(
-                    StreamDialogEntry.enqueue_on_background,
-                    StreamDialogEntry.start_here_on_background,
-                    StreamDialogEntry.delete,
-                    StreamDialogEntry.append_playlist,
-                    StreamDialogEntry.share);
-        } else {
-            StreamDialogEntry.setEnabledEntries(
-                    StreamDialogEntry.enqueue_on_background,
-                    StreamDialogEntry.enqueue_on_popup,
-                    StreamDialogEntry.start_here_on_background,
-                    StreamDialogEntry.start_here_on_popup,
-                    StreamDialogEntry.delete,
-                    StreamDialogEntry.append_playlist,
-                    StreamDialogEntry.share);
+        try {
+            final InfoItemDialog.Builder dialogBuilder =
+                    new InfoItemDialog.Builder(getActivity(), context, this, infoItem);
 
-            StreamDialogEntry.start_here_on_popup.setCustomAction(
-                    (fragment, infoItemDuplicate) -> NavigationHelper.playOnPopupPlayer(context, getPlayQueueStartingAt(item), true));
+            // set entries in the middle; the others are added automatically
+            dialogBuilder
+                    .addEntry(StreamDialogDefaultEntry.DELETE)
+                    .setAction(
+                            StreamDialogDefaultEntry.DELETE,
+                            (f, i) -> deleteEntry(
+                                    Math.max(itemListAdapter.getItemsList().indexOf(item), 0)))
+                    .setAction(
+                            StreamDialogDefaultEntry.START_HERE_ON_BACKGROUND,
+                            (f, i) -> NavigationHelper.playOnBackgroundPlayer(
+                                    context, getPlayQueueStartingAt(item), true))
+                    .create()
+                    .show();
+        } catch (final IllegalArgumentException e) {
+            InfoItemDialog.Builder.reportErrorDuringInitialization(e, infoItem);
         }
-
-        StreamDialogEntry.start_here_on_background.setCustomAction(
-                (fragment, infoItemDuplicate) -> NavigationHelper.playOnBackgroundPlayer(context, getPlayQueueStartingAt(item), true));
-        StreamDialogEntry.delete.setCustomAction((fragment, infoItemDuplicate) ->
-            deleteEntry(Math.max(itemListAdapter.getItemsList().indexOf(item), 0)));
-
-        new InfoItemDialog(activity, infoItem, StreamDialogEntry.getCommands(context), (dialog, which) ->
-                StreamDialogEntry.clickOn(which, this, infoItem)).show();
     }
 
     private void deleteEntry(final int index) {
-        final LocalItem infoItem = itemListAdapter.getItemsList()
-                .get(index);
-        if(infoItem instanceof StreamStatisticsEntry) {
+        final LocalItem infoItem = itemListAdapter.getItemsList().get(index);
+        if (infoItem instanceof StreamStatisticsEntry) {
             final StreamStatisticsEntry entry = (StreamStatisticsEntry) infoItem;
-            final Disposable onDelete = recordManager.deleteStreamHistory(entry.streamId)
+            final Disposable onDelete = recordManager
+                    .deleteStreamHistoryAndState(entry.getStreamId())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            howManyDeleted -> {
-                                if(getView() != null) {
+                            () -> {
+                                if (getView() != null) {
                                     Snackbar.make(getView(), R.string.one_item_deleted,
                                             Snackbar.LENGTH_SHORT).show();
                                 } else {
@@ -415,9 +367,8 @@ public class StatisticsPlaylistFragment
                                             Toast.LENGTH_SHORT).show();
                                 }
                             },
-                            throwable -> showSnackBarError(throwable,
-                                    UserAction.DELETE_FROM_HISTORY, "none",
-                                    "Deleting item failed", R.string.general_error));
+                            throwable -> showSnackBarError(new ErrorInfo(throwable,
+                                    UserAction.DELETE_FROM_HISTORY, "Deleting item")));
 
             disposables.add(onDelete);
         }
@@ -433,13 +384,18 @@ public class StatisticsPlaylistFragment
         }
 
         final List<LocalItem> infoItems = itemListAdapter.getItemsList();
-        List<StreamInfoItem> streamInfoItems = new ArrayList<>(infoItems.size());
+        final List<StreamInfoItem> streamInfoItems = new ArrayList<>(infoItems.size());
         for (final LocalItem item : infoItems) {
             if (item instanceof StreamStatisticsEntry) {
                 streamInfoItems.add(((StreamStatisticsEntry) item).toStreamInfoItem());
             }
         }
         return new SinglePlayQueue(streamInfoItems, index);
+    }
+
+    private enum StatisticSortMode {
+        LAST_PLAYED,
+        MOST_PLAYED,
     }
 }
 

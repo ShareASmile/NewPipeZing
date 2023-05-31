@@ -7,32 +7,37 @@ import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.playlist.PlaylistMetadataEntry;
 import org.schabi.newpipe.local.LocalItemBuilder;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
-import org.schabi.newpipe.util.ImageDisplayConstants;
+import org.schabi.newpipe.util.PicassoHelper;
+import org.schabi.newpipe.util.Localization;
 
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
 
 public class LocalPlaylistItemHolder extends PlaylistItemHolder {
-
-    public LocalPlaylistItemHolder(LocalItemBuilder infoItemBuilder, ViewGroup parent) {
+    public LocalPlaylistItemHolder(final LocalItemBuilder infoItemBuilder, final ViewGroup parent) {
         super(infoItemBuilder, parent);
     }
 
-    LocalPlaylistItemHolder(LocalItemBuilder infoItemBuilder, int layoutId, ViewGroup parent) {
+    LocalPlaylistItemHolder(final LocalItemBuilder infoItemBuilder, final int layoutId,
+                            final ViewGroup parent) {
         super(infoItemBuilder, layoutId, parent);
     }
 
     @Override
-    public void updateFromItem(final LocalItem localItem, HistoryRecordManager historyRecordManager, final DateFormat dateFormat) {
-        if (!(localItem instanceof PlaylistMetadataEntry)) return;
+    public void updateFromItem(final LocalItem localItem,
+                               final HistoryRecordManager historyRecordManager,
+                               final DateTimeFormatter dateTimeFormatter) {
+        if (!(localItem instanceof PlaylistMetadataEntry)) {
+            return;
+        }
         final PlaylistMetadataEntry item = (PlaylistMetadataEntry) localItem;
 
         itemTitleView.setText(item.name);
-        itemStreamCountView.setText(String.valueOf(item.streamCount));
+        itemStreamCountView.setText(Localization.localizeStreamCountMini(
+                itemStreamCountView.getContext(), item.streamCount));
         itemUploaderView.setVisibility(View.INVISIBLE);
 
-        itemBuilder.displayImage(item.thumbnailUrl, itemThumbnailView,
-                ImageDisplayConstants.DISPLAY_PLAYLIST_OPTIONS);
+        PicassoHelper.loadPlaylistThumbnail(item.thumbnailUrl).into(itemThumbnailView);
 
-        super.updateFromItem(localItem, historyRecordManager, dateFormat);
+        super.updateFromItem(localItem, historyRecordManager, dateTimeFormatter);
     }
 }

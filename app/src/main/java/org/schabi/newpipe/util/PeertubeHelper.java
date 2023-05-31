@@ -2,7 +2,8 @@ package org.schabi.newpipe.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 import com.grack.nanojson.JsonArray;
 import com.grack.nanojson.JsonObject;
@@ -19,47 +20,52 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PeertubeHelper {
+public final class PeertubeHelper {
+    private PeertubeHelper() { }
 
-    public static List<PeertubeInstance> getInstanceList(Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String savedInstanceListKey = context.getString(R.string.peertube_instance_list_key);
+    public static List<PeertubeInstance> getInstanceList(final Context context) {
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        final String savedInstanceListKey = context.getString(R.string.peertube_instance_list_key);
         final String savedJson = sharedPreferences.getString(savedInstanceListKey, null);
         if (null == savedJson) {
             return Collections.singletonList(getCurrentInstance());
         }
 
         try {
-            JsonArray array = JsonParser.object().from(savedJson).getArray("instances");
-            List<PeertubeInstance> result = new ArrayList<>();
-            for (Object o : array) {
+            final JsonArray array = JsonParser.object().from(savedJson).getArray("instances");
+            final List<PeertubeInstance> result = new ArrayList<>();
+            for (final Object o : array) {
                 if (o instanceof JsonObject) {
-                    JsonObject instance = (JsonObject) o;
-                    String name = instance.getString("name");
-                    String url = instance.getString("url");
+                    final JsonObject instance = (JsonObject) o;
+                    final String name = instance.getString("name");
+                    final String url = instance.getString("url");
                     result.add(new PeertubeInstance(url, name));
                 }
             }
             return result;
-        } catch (JsonParserException e) {
+        } catch (final JsonParserException e) {
             return Collections.singletonList(getCurrentInstance());
         }
 
     }
 
-    public static PeertubeInstance selectInstance(PeertubeInstance instance, Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String selectedInstanceKey = context.getString(R.string.peertube_selected_instance_key);
-        JsonStringWriter jsonWriter = JsonWriter.string().object();
+    public static PeertubeInstance selectInstance(final PeertubeInstance instance,
+                                                  final Context context) {
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        final String selectedInstanceKey
+                = context.getString(R.string.peertube_selected_instance_key);
+        final JsonStringWriter jsonWriter = JsonWriter.string().object();
         jsonWriter.value("name", instance.getName());
         jsonWriter.value("url", instance.getUrl());
-        String jsonToSave = jsonWriter.end().done();
+        final String jsonToSave = jsonWriter.end().done();
         sharedPreferences.edit().putString(selectedInstanceKey, jsonToSave).apply();
         ServiceList.PeerTube.setInstance(instance);
         return instance;
     }
 
-    public static PeertubeInstance getCurrentInstance(){
+    public static PeertubeInstance getCurrentInstance() {
         return ServiceList.PeerTube.getInstance();
     }
 }
