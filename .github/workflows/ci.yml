@@ -5,6 +5,7 @@ on:
   pull_request:
     branches:
       - dev
+      - feed-group-tabs
       - master
       - release**
     paths-ignore:
@@ -18,6 +19,7 @@ on:
   push:
     branches:
       - dev
+      - feed-group-tabs
       - master
     paths-ignore:
       - 'README.md'
