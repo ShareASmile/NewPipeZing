@@ -50,7 +50,7 @@ public class AppearanceSettingsFragment extends BasePreferenceFragment {
 
     @Override
     public boolean onPreferenceTreeClick(final Preference preference) {
-        if (preference.getKey().equals(getString(R.string.caption_settings_key))) {
+        if (getString(R.string.caption_settings_key).equals(preference.getKey())) {
             try {
                 startActivity(new Intent(Settings.ACTION_CAPTIONING_SETTINGS));
             } catch (final ActivityNotFoundException e) {
@@ -74,7 +74,7 @@ public class AppearanceSettingsFragment extends BasePreferenceFragment {
         defaultPreferences.edit().putBoolean(Constants.KEY_THEME_CHANGE, true).apply();
         defaultPreferences.edit().putString(themeKey, newValue.toString()).apply();
 
-        ThemeHelper.setDayNightMode(getContext(), newValue.toString());
+        ThemeHelper.setDayNightMode(requireContext(), newValue.toString());
 
         if (!newValue.equals(beginningThemeKey) && getActivity() != null) {
             // if it's not the current theme

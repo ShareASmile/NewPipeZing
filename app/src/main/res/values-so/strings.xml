@@ -19,7 +19,7 @@
     <string name="notification_action_2_title">Batoonka hawsha sadexaad</string>
     <string name="notification_action_1_title">Batoonka hawsha labaad</string>
     <string name="notification_action_0_title">Batoonka hawsha koowaad</string>
-    <string name="notification_scale_to_square_image_summary">La ekaysii galka muuqaalka xaga ogaysiisyada ka muuqda cabirka 1:1 ayadoo laga soo baddalayo 16:9 (wuxuu keeni karaa shucaac)</string>
+    <string name="notification_scale_to_square_image_summary">La ekaysii galka muuqaalka xaga ogaysiisyada ka muuqda cabirka 1:1 ayadoo laga soo baddalayo 16:9</string>
     <string name="notification_scale_to_square_image_title">Galka la ekaysii cabirka 1:1</string>
     <string name="show_play_with_kodi_summary">Soo bandhig istikhyaar ah in muuqaalka lagu furo xarunta madadaalada Kodi</string>
     <string name="show_play_with_kodi_title">Soodhig istikhyaarka \"Ku fur Kodi\"</string>
@@ -319,7 +319,6 @@
     <string name="duration_live">Toos</string>
     <string name="undo">Soo celi</string>
     <string name="disabled">Xidhan</string>
-    <string name="yes">Haa</string>
     <string name="users">Isticmaale</string>
     <string name="videos_string">Muuqaalo</string>
     <string name="all">Dhammaan</string>
@@ -361,7 +360,6 @@
     <string name="content">Luuqada &amp; Fadhiga Kale</string>
     <string name="popup_playing_toast">Ku daaraya daaqada</string>
     <string name="background_player_playing_toast">Ka daaraya xaga dambe</string>
-    <string name="settings_category_notification_title">Ogaysiisyada</string>
     <string name="settings_category_updates_title">Cusboonaysiinta</string>
     <string name="settings_category_debug_title">Cilad bixinta</string>
     <string name="settings_category_appearance_title">Nashqada</string>
@@ -635,7 +633,6 @@
     <string name="feed_load_error_account_info">Lama soo kicin karo bandhigga: \'%s\'.</string>
     <string name="feed_load_error">Khalad ayaa ka dhacay sookicintii</string>
     <string name="downloads_storage_use_saf_summary_api_29">Laga bilaabo Android 10 kaliya waxaa la isticmaali \'SAF\'</string>
-    <string name="downloads_storage_use_saf_summary_api_19">\'SAF\' kuma shaqeeyo Android KitKat iyo wixii ka hooseeya</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Dajin walba meeshii lagu kaydin lahaa ayaa lagu waydiin</string>
     <string name="disable_media_tunneling_summary">Iska xidh kala-leexinta muuqaalada/dhagaysiga hadaad lakulanto shaashad madow ama muuqaalka oo isistaaga</string>
     <string name="disable_media_tunneling_title">Xidh kala-leexinta</string>
@@ -648,10 +645,48 @@
     <string name="comments_are_disabled">Fallooyinka waa laxidhay</string>
     <string name="detail_heart_img_view_description">Kahelay soosaaraha</string>
     <string name="mark_as_watched">Waan daawaday</string>
-    <string name="error_show_channel_details">Khalad ayaa ka dhacay Faahfaahinta Kanaalka</string>
-    <string name="loading_channel_details">Soo kicinaya faahfaahinta Kanaalka…</string>
     <string name="show_image_indicators_summary">Soo bandhig shaambado midabka Picasso leh sawirrada dushooda oo tilmaamaya isha laga keenay: guduud waa khadka, buluug waa kaydka gudaha, cagaar waa kaydka K/G</string>
     <string name="show_image_indicators_title">Tus tilmaamayaasha sawirka</string>
     <string name="remote_search_suggestions">Soojeedinada raadinta banaanka</string>
     <string name="local_search_suggestions">Soojeedinada raadinta gudaha</string>
+    <string name="progressive_load_interval_title">Cabirka soodaarida udhexeeya</string>
+    <string name="crash_the_player">Jabi Daareha</string>
+<!-- SponsorBlock -->
+    <string name="sponsor_block">SponsorBlock</string>
+    <string name="sponsor_block_home_page_title">Fur website-ka</string>
+    <string name="sponsor_block_home_page_summary">Booqo website-ka rasmiga ah ee SponsorBlock.</string>
+    <string name="sponsor_block_enable_title">Ka bood Xaysisiistayaasha</string>
+    <string name="sponsor_block_enable_summary">Isticmaal nidaamka wadashaqaynta [API] SponsorBlock Si uu app-ku si iskii ah oga boodo xayisiisyada ku dhex jira muuqaalada. Nidaamkan hadda wuxuu ku shaqeeyaa muuqaalada YouTube kaliya.</string>
+    <string name="sponsor_block_api_url_title">Tixraaca wadashaqaynta [API]</string>
+    <string name="sponsor_block_api_url_summary">Tixraaca la isticmaali doono marka la hirgalinayo nidaamka wadashaqaynta SponsorBlock. Waa in la fadhiisiyaa tixraacan si uu SponsorBlock u shaqeeyo.</string>
+    <string name="sponsor_block_notifications_title">I ogaysii ka boodida</string>
+    <string name="sponsor_block_notifications_summary">Tus ogaysiis yar marka xayisiis laga boodo.</string>
+    <string name="sponsor_block_privacy_title">Siyaasada Sirdhawrka</string>
+    <string name="sponsor_block_privacy_summary">Fur Siyaasada Sirdhawrka SponsorBlock.</string>
+    <string name="sponsor_block_api_url_help_text">Kani waa tixraaca la isticmaali doono markuu app-ku u baahanyahay inuu ogaado qaybaha muuqaalka ee uu ka boodayo.\n\nWaxaad ku fadhiisin kartaa tixraaca rasmiga ah ee SponsorBlock adoo ku dhufanaya istikhyaarka hoose ee \'Isticmaal ka rasmiga ah\', inkastoo lagugula talinayo inaad akhrido Siyaasada Sir-dhawrka SponsorBlock.</string>
+    <string name="sponsor_block_privacy_policy_text">Siyaasada Sirdhawrka SponsorBlock</string>
+    <string name="sponsor_block_homepage_url">https://sponsor.ajay.app/</string>
+    <string name="sponsor_block_default_api_url">https://sponsor.ajay.app/api/</string>
+    <string name="sponsor_block_privacy_policy_url">https://gist.github.com/ajayyy/aa9f8ded2b573d4f73a3ffa0ef74f796</string>
+    <string name="sponsor_block_skip_sponsor_toast">Waxaa laga booday xayisiiste</string>
+    <string name="sponsor_block_skip_intro_toast">Waxaa laga booday kala-badhe/hordhac</string>
+    <string name="sponsor_block_skip_outro_toast">Waxaa laga booday qaybaha dhamaadka/xusid</string>
+    <string name="sponsor_block_skip_interaction_toast">Waxaa laga booday xusuusin falcelin</string>
+    <string name="sponsor_block_skip_self_promo_toast">Waxaa laga booday xayisiis aan cidu maalgashanin/isxayisiin</string>
+    <string name="sponsor_block_skip_non_music_toast">Waxaa laga booday qayb aan hees ahayn</string>
+    <string name="sponsor_block_toggle_skipping">Furo ka boodida xayisiistayaasha</string>
+    <string name="sponsor_block_clear_whitelist_title">Nadiifi Kuwa La Ogolyahay</string>
+    <string name="sponsor_block_clear_whitelist_summary">Nadiifi soosaarayaasha uusa SponsorBlock qabanaynin.</string>
+    <string name="sponsor_block_enabled_toast">SponsorBlock wuu furanyahay</string>
+    <string name="sponsor_block_disabled_toast">SponsorBlock wuu xidhanyahay</string>
+    <string name="sponsor_block_whitelist_cleared_toast">Waa la nafiifiyay Kuwa La Ogolyahay</string>
+    <string name="sponsor_block_uploader_added_to_whitelist_toast">Soosaaraha waxaa lagu daray Kuwa La Ogolyahay</string>
+    <string name="sponsor_block_uploader_removed_from_whitelist_toast">Soosaaraha waxaa laga saaray Kuwa La Ogolyahay</string>
+    <string name="sponsor_block_confirm_clear_whitelist">Ma hubtaa tirtirista Kuwa La Ogolyahay?</string>
+    <string name="sponsor_block_confirm_reset_colors">Ma hubtaa inaad dib ugu celinayso midabada qaybaha siday ahaayeen?</string>
+    <string name="sponsor_block_reset_colors_toast">Dib uceli midabbada .</string>
+    <!-- Extras -->
+    <string name="extras">Dheeraad ah</string>
+    <string name="extras_todo_summary">Waxkabaddalada yaryar, macmilida, iyo fadhiyo dheeraad ah.</string>
+    <string name="experimental_settings">Fadhiga tijaabada ah</string>
 </resources>

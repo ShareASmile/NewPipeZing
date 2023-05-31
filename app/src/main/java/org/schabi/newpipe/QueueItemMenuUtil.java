@@ -14,9 +14,9 @@ import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.util.NavigationHelper;
-import org.schabi.newpipe.util.SaveUploaderUrlHelper;
+import org.schabi.newpipe.util.SparseItemUtil;
 
-import java.util.Collections;
+import java.util.List;
 
 public final class QueueItemMenuUtil {
     private QueueItemMenuUtil() {
@@ -53,7 +53,7 @@ public final class QueueItemMenuUtil {
                 case R.id.menu_item_append_playlist:
                     PlaylistDialog.createCorrespondingDialog(
                             context,
-                            Collections.singletonList(new StreamEntity(item)),
+                            List.of(new StreamEntity(item)),
                             dialog -> dialog.show(
                                     fragmentManager,
                                     "QueueItemMenuUtil@append_playlist"
@@ -62,7 +62,8 @@ public final class QueueItemMenuUtil {
 
                     return true;
                 case R.id.menu_item_channel_details:
-                    SaveUploaderUrlHelper.saveUploaderUrlIfNeeded(context, item,
+                    SparseItemUtil.fetchUploaderUrlIfSparse(context, item.getServiceId(),
+                            item.getUrl(), item.getUploaderUrl(),
                             // An intent must be used here.
                             // Opening with FragmentManager transactions is not working,
                             // as PlayQueueActivity doesn't use fragments.

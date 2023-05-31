@@ -70,9 +70,10 @@ public final class NewPipeSettings {
         PreferenceManager.setDefaultValues(context, R.xml.appearance_settings, true);
         PreferenceManager.setDefaultValues(context, R.xml.history_settings, true);
         PreferenceManager.setDefaultValues(context, R.xml.content_settings, true);
-        PreferenceManager.setDefaultValues(context, R.xml.notification_settings, true);
+        PreferenceManager.setDefaultValues(context, R.xml.player_notification_settings, true);
         PreferenceManager.setDefaultValues(context, R.xml.update_settings, true);
         PreferenceManager.setDefaultValues(context, R.xml.debug_settings, true);
+        PreferenceManager.setDefaultValues(context, R.xml.sponsor_block_category_settings, true);
 
         saveDefaultVideoDownloadDirectory(context);
         saveDefaultAudioDownloadDirectory(context);
@@ -116,7 +117,7 @@ public final class NewPipeSettings {
     public static boolean useStorageAccessFramework(final Context context) {
         // There's a FireOS bug which prevents SAF open/close dialogs from being confirmed with a
         // remote (see #6455).
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || DeviceUtils.isFireTv()) {
+        if (DeviceUtils.isFireTv()) {
             return false;
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             return true;

@@ -16,7 +16,6 @@ import org.schabi.newpipe.player.playqueue.events.SelectEvent;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -258,13 +257,10 @@ public abstract class PlayQueue implements Serializable {
     }
 
     /**
-     * Appends the given {@link PlayQueueItem}s to the current play queue.
-     *
-     * @see #append(List items)
-     * @param items {@link PlayQueueItem}s to append
+     * Notifies that a change has occurred.
      */
-    public synchronized void append(@NonNull final PlayQueueItem... items) {
-        append(Arrays.asList(items));
+    public synchronized void notifyChange() {
+        broadcast(new AppendEvent(0));
     }
 
     /**
@@ -528,7 +524,19 @@ public abstract class PlayQueue implements Serializable {
             return false;
         }
         final PlayQueue other = (PlayQueue) obj;
-        return streams.equals(other.streams);
+        if (size() != other.size()) {
+            return false;
+        }
+        for (int i = 0; i < size(); i++) {
+            final PlayQueueItem stream = streams.get(i);
+            final PlayQueueItem otherStream = other.streams.get(i);
+            // Check is based on serviceId and URL
+            if (stream.getServiceId() != otherStream.getServiceId()
+                    || !stream.getUrl().equals(otherStream.getUrl())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="main_bg_subtitle">Nhấn vào kính lúp để bắt đầu.</string>
+    <string name="main_bg_subtitle">Nhấn vào nút tìm kiếm để bắt đầu.</string>
     <string name="upload_date_text">Đăng vào %1$s</string>
     <string name="no_player_found">Không tìm thấy trình phát. Cài đặt VLC\?</string>
     <string name="install">Cài đặt</string>
     <string name="cancel">Hủy</string>
     <string name="open_in_browser">Mở trong trình duyệt</string>
-    <string name="open_in_popup_mode">Mở trong chế độ popup</string>
+    <string name="open_in_popup_mode">Mở bằng chế độ popup</string>
     <string name="share">Chia sẻ</string>
     <string name="download">Tải về</string>
     <string name="search">Tìm kiếm</string>
@@ -38,25 +38,24 @@
     <string name="theme_title">Chủ đề</string>
     <string name="light_theme_title">Sáng</string>
     <string name="dark_theme_title">Tối</string>
-    <string name="black_theme_title">Đen</string>
+    <string name="black_theme_title">Đen (Amoled)</string>
     <string name="popup_remember_size_pos_title">Nhớ thuộc tính của popup</string>
     <string name="popup_remember_size_pos_summary">Nhớ kích thước và vị trí lần trước của popup</string>
     <string name="show_search_suggestions_title">Đề xuất tìm kiếm</string>
     <string name="show_search_suggestions_summary">Chọn các đề xuất để hiển thị khi tìm kiếm</string>
     <string name="download_dialog_title">Tải về</string>
-    <string name="show_next_and_similar_title">Hiển thị video \"Tiếp theo\" và \"Tương tự\"</string>
+    <string name="show_next_and_similar_title">Hiện video \"Tiếp theo\" và \"Tương tự\"</string>
     <string name="unsupported_url">URL không được hỗ trợ</string>
     <string name="settings_category_appearance_title">Hiển thị</string>
-    <string name="background_player_playing_toast">Phát ở chế độ nền</string>
+    <string name="background_player_playing_toast">Phát ở dưới nền</string>
     <string name="popup_playing_toast">Phát ở chế độ popup</string>
     <string name="content">Nội dung</string>
-    <string name="show_age_restricted_content_title">Cho phép và hiển thị nội dung có giới hạn độ tuổi</string>
+    <string name="show_age_restricted_content_title">Hiển thị nội dung bị giới hạn độ tuổi</string>
     <string name="duration_live">Trực tiếp</string>
     <string name="downloads">Tải xuống</string>
     <string name="downloads_title">Tải xuống</string>
     <string name="error_report_title">Báo lỗi</string>
     <string name="all">Tất cả</string>
-    <string name="yes">Có</string>
     <string name="disabled">Vô hiệu</string>
     <string name="clear">Xóa</string>
     <string name="best_resolution">Độ phân giải tốt nhất</string>
@@ -68,23 +67,23 @@
     <string name="content_not_available">Nội dung không khả dụng</string>
     <string name="could_not_setup_download_menu">Không thể thiết lập menu tải về</string>
     <string name="app_ui_crash">Ứng dụng / Giao diện người dùng bị lỗi</string>
-    <string name="sorry_string">Xin lỗi, điều đó không nên xảy ra.</string>
+    <string name="sorry_string">Hmm, app đã xảy ra lỗi, lướt xuống để xem lỗi.</string>
     <string name="error_report_button_text">Báo lỗi qua email</string>
-    <string name="error_snackbar_message">Xin lỗi, có gì đó đã xảy ra.</string>
+    <string name="error_snackbar_message">Xin lỗi, đã xảy ra sự cố.</string>
     <string name="error_snackbar_action">Báo cáo</string>
     <string name="what_device_headline">Thông tin:</string>
     <string name="what_happened_headline">Chuyện gì đã xảy ra:</string>
-    <string name="info_labels">Cái gì:\\nYêu cầu:\\nNgôn ngữ của nội dung:\\nVùng miền (quốc gia) của nội dung:\\nNgôn ngữ của ứng dụng:\\nDịch vụ:\\nThời gian GMT:\\nTên gói:\\nPhiên bản:\\nPhiên bản hệ điều hành:</string>
+    <string name="info_labels">Loại lỗi:\\nYêu cầu:\\nNgôn ngữ của nội dung:\\nVùng miền (quốc gia) của nội dung:\\nNgôn ngữ của ứng dụng:\\nDịch vụ:\\nThời gian GMT:\\nTên gói:\\nPhiên bản:\\nPhiên bản hệ điều hành:</string>
     <string name="your_comment">Nhận xét của bạn (bằng tiếng Anh):</string>
     <string name="error_details_headline">Chi tiết:</string>
-    <string name="detail_thumbnail_view_description">Xem video, thời lượng:</string>
+    <string name="detail_thumbnail_view_description">Video xem, thời lượng:</string>
     <string name="detail_uploader_thumbnail_view_description">Hình thu nhỏ của avatar người tải lên</string>
     <string name="detail_likes_img_view_description">Lượt thích</string>
-    <string name="detail_dislikes_img_view_description">Dislike</string>
+    <string name="detail_dislikes_img_view_description">Lượt không thích</string>
     <string name="video">Video</string>
     <string name="audio">Âm thanh</string>
     <string name="retry">Thử lại</string>
-    <string name="short_thousand">ngàn</string>
+    <string name="short_thousand">nghìn</string>
     <string name="short_million">triệu</string>
     <string name="short_billion">tỉ</string>
     <string name="start">Bắt đầu</string>
@@ -97,22 +96,22 @@
     <string name="msg_error">Lỗi</string>
     <string name="msg_running">NewPipe đang tải xuống</string>
     <string name="msg_running_detail">Chạm để biết chi tiết</string>
-    <string name="msg_wait">Xin hãy đợi…</string>
+    <string name="msg_wait">Đợi chút xíu nha…</string>
     <string name="msg_copied">Đã sao chép vào clipboard</string>
     <string name="no_available_dir">Hãy chọn một thư mục để tải xuống trong phần cài đặt</string>
     <string name="msg_popup_permission">Chế độ popup cần quyền này
-\n để hoạt động</string>
+\n để hoạt động, hãy bật trong phần cài đặt</string>
     <string name="title_activity_recaptcha">reCAPTCHA</string>
     <string name="recaptcha_request_toast">Yêu cầu reCAPTCHA</string>
     <string name="title_activity_about">Giới thiệu về NewPipe</string>
     <string name="title_licenses">Giấy phép của bên thứ ba</string>
     <string name="copyright" formatted="true">© %1$s bởi %2$s dưới %3$s</string>
-    <string name="tab_about">Thông tin</string>
+    <string name="tab_about">Thông tin &amp; Các câu hỏi</string>
     <string name="tab_licenses">Giấy phép</string>
-    <string name="app_description">Trình phát nội dung nhẹ và mã nguồn mở cho Android.</string>
+    <string name="app_description">Trình phát video YT nhẹ, mã nguồn mở và không quảng cáo cho Android.</string>
     <string name="view_on_github">Xem trên GitHub</string>
     <string name="app_license_title">Giấy phép của NewPipe</string>
-    <string name="contribution_encouragement">Sự đóng góp luôn được hoan nghênh – cho dù bạn dịch, có ý tưởng thiết kế, dọn code, hay thay đổi rất nhiều phần code. Càng làm nhiều thì ứng dụng này sẽ càng tốt!</string>
+    <string name="contribution_encouragement">Sự đóng góp của bạn luôn được hoan nghênh – kể cả khi bạn dịch, thay đổi giao diện, dọn code, thêm tính năng hay thay đổi những thứ khác, sự giúp đỡ của bạn vẫn đáng được trân trọng. Bạn càng làm nhiều, ứng dụng này sẽ càng tốt hơn bao giờ hết !</string>
     <string name="read_full_license">Đọc giấy phép</string>
     <string name="contribution_title">Đóng góp</string>
     <string name="content_language_title">Ngôn ngữ nội dung ưu tiên</string>
@@ -147,7 +146,7 @@
     <string name="enable_watch_history_summary">Theo dõi các video đã xem</string>
     <string name="resume_on_audio_focus_gain_title">Tiếp tục phát</string>
     <string name="resume_on_audio_focus_gain_summary">Tiếp tục phát sau khi bị gián đoạn (ví dụ: cuộc gọi điện thoại)</string>
-    <string name="show_hold_to_append_title">Hiển thị mẹo \"Giữ để thêm vào hàng đợi\"</string>
+    <string name="show_hold_to_append_title">Hiển thị \"Giữ để thêm vào hàng đợi\"</string>
     <string name="show_hold_to_append_summary">Hiển thị mẹo khi nhấn nút phát trong nền hoặc phát trên popup trong trang \"Chi tiết\"</string>
     <string name="default_content_country_title">Quốc gia nội dung mặc định</string>
     <string name="settings_category_player_title">Phát</string>
@@ -157,7 +156,7 @@
     <string name="playlists">Playlist</string>
     <string name="tracks">Bản nhạc</string>
     <string name="users">Người dùng</string>
-    <string name="undo">Hủy bỏ</string>
+    <string name="undo">Hoàn tác</string>
     <string name="play_all">Chơi tất cả</string>
     <string name="always">Luôn luôn</string>
     <string name="just_once">Chỉ một lần</string>
@@ -170,19 +169,19 @@
     <string name="switch_to_main">Chuyển sang Main</string>
     <string name="import_data_title">Nhập cơ sở dữ liệu</string>
     <string name="export_data_title">Xuất cơ sở dữ liệu</string>
-    <string name="import_data_summary">Ghi đè lịch sử, danh sách đăng ký, playlist (và cài đặt, nếu có chọn) hiện tại của bạn</string>
+    <string name="import_data_summary">Ghi đè lịch sử, kênh đăng ký, playlist hiện tại (và cài đặt, nếu có) của bạn</string>
     <string name="export_data_summary">Xuất lịch sử, danh sách đăng ký, playlist và cài đặt</string>
     <string name="clear_views_history_title">Xóa lịch sử xem</string>
-    <string name="clear_views_history_summary">Xóa lịch sử các luồng đã phát và vị trí phát</string>
+    <string name="clear_views_history_summary">Xóa lịch sử những video đã xem và vị trí phát</string>
     <string name="delete_view_history_alert">Xóa toàn bộ lịch sử xem\?</string>
-    <string name="watch_history_deleted">Đã xóa lịch sử xem</string>
+    <string name="watch_history_deleted">Lịch sử xem đã bị xóa</string>
     <string name="clear_search_history_title">Xóa lịch sử tìm kiếm</string>
-    <string name="clear_search_history_summary">Xóa lịch sử của từ khóa tìm kiếm</string>
+    <string name="clear_search_history_summary">Xóa lịch sử tìm kiếm mà bạn đã ghi</string>
     <string name="delete_search_history_alert">Xóa toàn bộ lịch sử tìm kiếm\?</string>
     <string name="search_history_deleted">Đã xóa lịch sử tìm kiếm</string>
-    <string name="player_stream_failure">Không thể phát luồng này</string>
+    <string name="player_stream_failure">Không thể phát video này</string>
     <string name="player_unrecoverable_failure">Đã xảy ra lỗi trình phát không thể khôi phục</string>
-    <string name="player_recoverable_failure">Phục hồi từ lỗi trình phát</string>
+    <string name="player_recoverable_failure">Phục hồi lại trình phát bị lỗi</string>
     <string name="external_player_unsupported_link_type">Trình phát ngoài không hỗ trợ các loại liên kết này</string>
     <string name="video_streams_empty">Không tìm thấy luồng video nào</string>
     <string name="audio_streams_empty">Không tìm thấy luồng audio nào</string>
@@ -192,7 +191,7 @@
     <string name="file_name_empty_error">Tên tệp không được để trống</string>
     <string name="error_occurred_detail">Đã xảy ra lỗi: %1$s</string>
     <string name="no_streams_available_download">Không có luồng nào để tải về</string>
-    <string name="empty_subscription_feed_subtitle">Không có gì ở đây</string>
+    <string name="empty_subscription_feed_subtitle">Không có gì cả :P</string>
     <string name="detail_drag_description">Kéo để sắp xếp lại</string>
     <string name="no_subscribers">Không có người đăng ký</string>
     <plurals name="subscribers">
@@ -218,19 +217,19 @@
     <string name="charset_most_special_characters">Hầu hết các ký tự đặc biệt</string>
     <string name="toast_no_player">Không có ứng dụng nào được cài đặt để phát tệp này</string>
     <string name="donation_title">Đóng góp</string>
-    <string name="donation_encouragement">NewPipe được phát triển bởi các tình nguyện viên dành thời gian mang lại cho bạn trải nghiệm tốt nhất. Đóng góp một tách cà phê để giúp các nhà phát triển làm NewPipe tốt hơn nữa.</string>
-    <string name="give_back">Trả lại</string>
-    <string name="website_title">Trang mạng</string>
-    <string name="website_encouragement">Truy cập trang web NewPipe để biết thêm thông tin và tin tức.</string>
+    <string name="donation_encouragement">NewPipe được phát triển bởi các tình nguyện viên dành thời gian và tâm huyết của mình để mang lại cho bạn trải nghiệm tốt nhất. Đóng góp một chút xiền để giúp chúng tôi làm NewPipe tốt hơn nữa (Nếu bạn muốn).</string>
+    <string name="give_back">Đôn Nét</string>
+    <string name="website_title">Trang web</string>
+    <string name="website_encouragement">Truy cập website chính thức của NewPipe để biết thêm thông tin và tin tức.</string>
     <string name="privacy_policy_title">Chính sách bảo mật của NewPipe</string>
-    <string name="privacy_policy_encouragement">Dự án NewPipe rất coi trọng quyền riêng tư của bạn. Do đó, ứng dụng không thu thập bất kỳ dữ liệu nào mà không có sự đồng ý của bạn.
+    <string name="privacy_policy_encouragement">NewPipe rất coi trọng quyền riêng tư của bạn. Do đó, ứng dụng không thu thập bất kỳ dữ liệu nào mà không có sự đồng ý của bạn.
 \nChính sách bảo mật của NewPipe giải thích chi tiết dữ liệu nào được gửi và lưu trữ khi bạn gửi báo cáo sự cố.</string>
     <string name="read_privacy_policy">Đọc chính sách bảo mật</string>
     <string name="app_license">NewPipe là phần mềm miễn phí copyleft: Bạn có thể sử dụng, nghiên cứu, chia sẻ và cải thiện nó theo ý của bạn. Nói cụ thể hơn, bạn có thể phân phối lại và/hoặc sửa đổi nó theo các điều khoản trong Giấy phép Công cộng GNU (GPL) được xuất bản bởi Quỹ Phần mềm Tự do (FSF), theo phiên bản 3 hoặc bất kì phiên bản nào sau này của Giấy phép (tùy ý bạn).</string>
     <string name="title_activity_history">Lịch sử</string>
     <string name="action_history">Lịch sử</string>
     <string name="delete_item_search_history">Bạn có muốn xóa mục này khỏi lịch sử tìm kiếm không?</string>
-    <string name="title_last_played">Lần chơi cuối</string>
+    <string name="title_last_played">Lần phát cuối</string>
     <string name="title_most_played">Hầu hết phát</string>
     <string name="main_page_content">Nội dung trang chính</string>
     <string name="blank_page_summary">Trang trống</string>
@@ -245,9 +244,9 @@
     <string name="could_not_import_all_files">Cảnh báo: Không thể nhập tất cả các tệp.</string>
     <string name="override_current_data">Thao tác này sẽ ghi đè cài đặt hiện tại của bạn.</string>
     <string name="import_settings">Bạn cũng muốn nhập cài đặt?</string>
-    <string name="trending">Xu hướng</string>
-    <string name="new_and_hot">Mới và hot</string>
-    <string name="play_queue_remove">Tẩy xoá</string>
+    <string name="trending">Thịnh hành</string>
+    <string name="new_and_hot">Mới và đang hot</string>
+    <string name="play_queue_remove">Loại bỏ</string>
     <string name="play_queue_stream_detail">Chi tiết</string>
     <string name="play_queue_audio_settings">Cài đặt âm thanh</string>
     <string name="hold_to_append">Giữ để nối tiếp</string>
@@ -280,7 +279,7 @@
     <string name="resize_zoom">Thu phóng</string>
     <string name="caption_auto_generated">Tự động tạo ra</string>
     <string name="caption_setting_title">Phụ đề</string>
-    <string name="caption_setting_description">Sửa cỡ chữ và kiểu màu nền phụ đề. Yêu cầu khởi động lại ứng dụng để có hiệu lực</string>
+    <string name="caption_setting_description">Sửa cỡ chữ, màu chữ và kiểu màu nền phụ đề. Hãy khởi động lại ứng dụng để áp dụng</string>
     <string name="enable_leak_canary_summary">Theo dõi rò rỉ bộ nhớ có thể khiến ứng dụng trở nên không phản hồi khi đổ xô đống</string>
     <string name="enable_disposed_exceptions_title">Báo các lỗi out-of-lifecycle</string>
     <string name="enable_disposed_exceptions_summary">Buộc báo cáo ngoại lệ Rx không thể gửi được bên ngoài vòng đời của mảnh hoặc hoạt động sau khi xử lý</string>
@@ -293,36 +292,37 @@
     <string name="previous_export">Xuất trước</string>
     <string name="subscriptions_import_unsuccessful">Không thể nhập đăng ký</string>
     <string name="subscriptions_export_unsuccessful">Không thể xuất đăng ký</string>
-    <string name="import_youtube_instructions">Nhập danh sách đăng ký YouTube từ một bản Google Takeout:
+    <string name="import_youtube_instructions">Nhập danh sách đăng ký YouTube từ Google Takeout:
 \n
 \n1. Vào URL này: %1$s
 \n2. Đăng nhập khi được yêu cầu
 \n3. Nhấn chọn \"Bao gồm tất cả dữ liệu trên YouTube\", sau đó nhấn \"Bỏ chọn tất cả\", sau đó chỉ chọn mục \"đăng kí\" rồi nhấn OK
 \n4. Nhấn nút \"Bước tiếp theo\" rồi nhấn \"Tạo tệp xuất\"
 \n5. Nhấn nút \"Tải xuống\" khi nó xuất hiện
-\n6. Từ file zip mới tải về, trích xuất file .json ra (thường nằm ở đường dẫn \"YouTube và YouTube Music/đăng kí/subscriptions.json\") rồi nhập vào đây.</string>
-    <string name="import_soundcloud_instructions">Nhập hồ sơ SoundCloud bằng cách nhập URL hoặc ID của bạn:
+\n6. Từ file zip mới tải về, trích xuất file .json ra (thường nằm ở đường dẫn \"YouTube và YouTube Music/đăng kí/subscriptions.json\") rồi nhập vào đây.
+\n7. [Nếu nhập file .zip không thành công] Hãy giải nén tệp .csv (thường nó được để dưới phần \"YouTube and YouTube Music/subscriptions/subscriptions.csv\"), nhấn vào nút NHẬP TỆP ở phía bên dưới rồi chọn tệp csv đã được giải nén</string>
+    <string name="import_soundcloud_instructions">Để nhập hồ sơ SoundCloud bằng cách nhập URL hoặc ID của bạn, hãy làm các bước như sau:
 \n
-\n1. Bật \"chế độ màn hình\" trong trình duyệt web (trang web không khả dụng cho thiết bị di động)
+\n1. Bật \"chế độ máy tính\" trong trình duyệt web (trang web không khả dụng cho thiết bị di động)
 \n2. Truy cập URL này: %1$s
 \n3. Đăng nhập khi được hỏi
 \n4. Sao chép URL tiểu sử mà bạn đã được chuyển hướng đến.</string>
-    <string name="import_network_expensive_warning">Hãy nhớ rằng hoạt động này có thể là mạng đắt tiền.
+    <string name="import_network_expensive_warning">Hãy nhớ rằng hoạt động này có thể khiến bạn bị mất kênh bạn đã đăng ký trước đó.
 \n
-\nBạn có muốn tiếp tục?</string>
+\nBạn có muốn tiếp tục không\?</string>
     <string name="playback_speed_control">Điều khiển tốc độ phát lại</string>
-    <string name="playback_tempo">Speed</string>
-    <string name="playback_pitch">Chiều cao</string>
-    <string name="unhook_checkbox">Hủy liên kết (có thể gây méo)</string>
-    <string name="skip_silence_checkbox">Tua đi nhanh trong khi im lặng</string>
+    <string name="playback_tempo">Tốc độ</string>
+    <string name="playback_pitch">Độ cao</string>
+    <string name="unhook_checkbox">Bỏ gắn (có thể gây méo nhưng vui)</string>
+    <string name="skip_silence_checkbox">Tua nhanh trong im lặng</string>
     <string name="playback_step">Tiếp theo</string>
-    <string name="playback_reset">Cài lại</string>
+    <string name="playback_reset">Đặt lại</string>
     <string name="start_accept_privacy_policy">Để tuân thủ Quy định bảo vệ dữ liệu chung của châu Âu (GDPR), chúng tôi sẽ thu hút sự chú ý của bạn đến chính sách bảo mật của NewPipe. Vui lòng đọc kỹ.
 \nBạn phải chấp nhận nó để gửi cho chúng tôi báo cáo lỗi.</string>
     <string name="accept">Chấp nhận</string>
     <string name="decline">Từ chối</string>
     <string name="limit_data_usage_none_description">Không giới hạn</string>
-    <string name="limit_mobile_data_usage_title">Giới hạn độ phân giải khi sử dụng dữ liệu di động</string>
+    <string name="limit_mobile_data_usage_title">Giới hạn độ phân giải khi sử dụng 3G, 4G</string>
     <string name="minimize_on_exit_title">Thu nhỏ khi chuyển qua ứng dụng khác</string>
     <string name="minimize_on_exit_summary">Hành động khi chuyển sang ứng dụng khác từ trình phát chính — %s</string>
     <string name="minimize_on_exit_none_description">Không</string>
@@ -344,7 +344,7 @@
     <string name="saved_tabs_invalid_json">Không thể đọc tab đã lưu, sử dụng tab mặc định</string>
     <string name="restore_defaults">Khôi phục về mặc định</string>
     <string name="restore_defaults_confirmation">Bạn có muốn khôi phục về mặc định\?</string>
-    <string name="subscribers_count_not_available">Số người đăng ký không có</string>
+    <string name="subscribers_count_not_available">Số người đăng ký không khả dụng</string>
     <string name="main_page_content_summary">Chọn các tab để hiện trên trang chủ</string>
     <string name="top_50">Top 50 phổ biến</string>
     <string name="import_soundcloud_instructions_hint">Nhập ID SoundCloud hoặc link soundcloud.com/&lt;ID của bạn&gt;</string>
@@ -354,7 +354,7 @@
     <string name="list">Danh sách</string>
     <string name="grid">Lưới</string>
     <string name="auto">Tự động</string>
-    <string name="app_update_notification_content_title">Đã có bản cập nhật NewPipe!</string>
+    <string name="app_update_notification_content_title">Đã có bản cập nhật mới!</string>
     <string name="app_update_notification_content_text">Nhấn để tải về</string>
     <string name="missions_header_finished">Xong</string>
     <string name="paused">đã tạm dừng</string>
@@ -409,9 +409,9 @@
     <string name="enable_queue_limit_desc">Chỉ một tải xuống sẽ chạy</string>
     <string name="start_downloads">Bắt đầu tải xuống</string>
     <string name="pause_downloads">Tạm dừng tải xuống</string>
-    <string name="downloads_storage_ask_title">Hỏi vị trí tải xuống</string>
-    <string name="downloads_storage_ask_summary">Bạn sẽ được hỏi vị trí lưu mỗi lần tải xuống.
-\nHãy bật trình chọn thư mục của hệ thống (SAF) nếu bạn muốn tải xuống vào một chiếc thẻ SD ngoài</string>
+    <string name="downloads_storage_ask_title">Hỏi nơi thư mục để tải xuống</string>
+    <string name="downloads_storage_ask_summary">Bạn sẽ được hỏi nơi lưu vào mỗi lần tải xuống.
+\nHãy bật trình chọn thư mục của hệ thống (SAF) nếu bạn muốn tải xuống vào một cái thẻ nhớ</string>
     <string name="clear_playback_states_title">Xóa vị trí phát</string>
     <string name="clear_playback_states_summary">Xóa toàn bộ vị trí phát</string>
     <string name="delete_playback_states_alert">Xác nhận xóa toàn bộ vị trí phát\?</string>
@@ -436,16 +436,16 @@
     </plurals>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Có, và video đã xem một phần</string>
     <string name="remove_watched_popup_warning">Video đã xem trước và sau khi được thêm vào playlist sẽ bị xóa.
-\nBạn có chắc không\? Không thể hồi phục!</string>
+\nBạn có chắc không\? Video sẽ không thể hồi phục được!</string>
     <string name="remove_watched_popup_title">Xóa video đã xem\?</string>
-    <string name="remove_watched">Xóa đã xem</string>
+    <string name="remove_watched">Xóa video đã xem</string>
     <string name="systems_language">Mặt định hệ thống</string>
     <string name="app_language_title">Ngôn ngữ ứng dụng</string>
     <string name="downloads_storage_use_saf_summary">\'Storage Access Framework\' cho phép tải về thẻ SD</string>
     <string name="downloads_storage_use_saf_title">Sử dụng trình chọn thư mục của hệ thống (SAF)</string>
     <string name="delete_downloaded_files">Xóa file đã tải về</string>
     <string name="clear_download_history">Xóa lịch sử tải về</string>
-    <string name="error_download_resource_gone">Không thể khôi phục bản download này</string>
+    <string name="error_download_resource_gone">Không thể khôi phục bản tải xuống này</string>
     <string name="unmute">Bật tiếng</string>
     <string name="mute">Tắt tiếng</string>
     <string name="most_liked">Yêu thích nhất</string>
@@ -472,7 +472,7 @@
     <string name="restricted_video">Video này bị giới hạn độ tuổi.
 \n
 \nBật \"%1$s\" trong cài đặt nếu bạn muốn xem video này.</string>
-    <string name="youtube_restricted_mode_enabled_title">hế độ giới hạn YouTube</string>
+    <string name="youtube_restricted_mode_enabled_title">Bật chế độ hạn chế Youtube</string>
     <string name="peertube_instance_add_https_only">Chỉ URL HTTPS được hỗ trợ</string>
     <string name="peertube_instance_url_summary">Chọn thực thể PeerTube ưa thích</string>
     <string name="peertube_instance_url_title">Thực thể PeerTube</string>
@@ -503,8 +503,8 @@
     <string name="feed_use_dedicated_fetch_method_summary">Có thể được với một số dịch vụ, thường sẽ nhanh hơn nhưng có thể bị giới hạn nội dung nhận được hoặc nội dung nhận được không đầy đủ (v.d. thời lượng, trạng thái,..)</string>
     <string name="feed_update_threshold_option_always_update">Luôn cập nhật</string>
     <string name="feed_update_threshold_summary">Khoảng thời gian kể từ lần cuối cập nhật thông tin kênh trước khi nó được coi là hết hạn — %s</string>
-    <string name="feed_update_threshold_title">Ngưỡng thời gian cập nhật feed</string>
-    <string name="settings_category_feed_title">Nguồn cấp (feed)</string>
+    <string name="feed_update_threshold_title">Ngưỡng thời gian cập nhật thông báo</string>
+    <string name="settings_category_feed_title">Thông báo (feed)</string>
     <string name="feed_create_new_group_button_title">Tạo mới</string>
     <string name="feed_group_dialog_delete_message">Bạn muốn xóa nhóm kênh này\?</string>
     <string name="feed_group_dialog_empty_name">Tên nhóm kênh trống</string>
@@ -513,10 +513,10 @@
     </plurals>
     <string name="feed_group_dialog_empty_selection">Chưa chọn kênh nào</string>
     <string name="feed_group_dialog_select_subscriptions">Chọn kênh</string>
-    <string name="feed_processing_message">Đang xử lý feed…</string>
+    <string name="feed_processing_message">Đang xử lý thông báo…</string>
     <string name="feed_subscription_not_loaded_count">Số kênh không tải được: %d</string>
-    <string name="feed_notification_loading">Đang tải feed…</string>
-    <string name="feed_oldest_subscription_update">Feed cập nhật lần cuối vào: %s</string>
+    <string name="feed_notification_loading">Đang tải thông báo…</string>
+    <string name="feed_oldest_subscription_update">Thông báo cập nhật lần cuối vào: %s</string>
     <string name="new_seek_duration_toast">Do giới hạn của ExoPlayer, khoảng thời gian tua đã được đặt lại thành %d giây</string>
     <string name="recovering">đang khôi phục</string>
     <string name="playlist_no_uploader">Tự tạo (không tìm thấy người upload)</string>
@@ -526,14 +526,13 @@
     <string name="feed_group_show_only_ungrouped_subscriptions">Chỉ hiện các kênh chưa được nhóm</string>
     <string name="never">Không bao giờ</string>
     <string name="wifi_only">Chỉ trên Wi-Fi</string>
-    <string name="autoplay_summary">Hành vi tự động phát — %s</string>
-    <string name="title_activity_play_queue">Hàng đợi phát</string>
+    <string name="autoplay_summary">Tự động phát — %s</string>
+    <string name="title_activity_play_queue">Phát hàng đợi (Video)</string>
     <string name="no_playlist_bookmarked_yet">Không có danh sách nào ở đây</string>
     <string name="select_a_playlist">Chọn danh sách</string>
-    <string name="error_report_open_github_notice">Vui lòng kiểm tra xem vấn đề bạn đang gặp đã có báo cáo trước đó chưa. Nếu bạn tạo nhiều báo cáo trùng lặp, bạn sẽ làm tốn thời gian để chúng tôi đọc thay vì thực sự sửa lỗi.</string>
+    <string name="error_report_open_github_notice">Vui lòng kiểm tra xem vấn đề mà bạn đang gặp đã báo cáo trước đó hay chưa. Nếu bạn tạo quá nhiều báo cáo trùng lặp, bạn sẽ khiến cho chúng tôi tốn thời gian để đọc chúng thay vì sửa lỗi bạn gặp.</string>
     <string name="error_report_open_issue_button_text">Báo cáo trên GitHub</string>
     <string name="copy_for_github">Sao chép bản báo cáo đã được định dạng</string>
-    <string name="settings_category_notification_title">Thông báo</string>
     <string name="unsupported_url_dialog_message">Không thể đọc URL này. Mở với app khác\?</string>
     <string name="auto_queue_toggle">Tự động thêm vào hàng đợi</string>
     <string name="clear_queue_confirmation_description">Hàng đợi của trình phát hiện tại sẽ bị thay thế</string>
@@ -549,20 +548,20 @@
     <string name="notification_action_3_title">Nút hành động thứ tư</string>
     <string name="notification_action_2_title">Nút hành động thứ ba</string>
     <string name="notification_action_1_title">Nút hành động thứ hai</string>
-    <string name="notification_action_0_title">Nút hành đông đầu tiên</string>
-    <string name="notification_scale_to_square_image_summary">Phóng ảnh thu nhỏ của video trong thông báo từ tỉ lệ 16:9 xuống 1:1 (có thể gây méo ảnh)</string>
-    <string name="notification_scale_to_square_image_title">Phóng ảnh thu nhỏ theo tỉ lệ 1:1</string>
+    <string name="notification_action_0_title">Nút hành động đầu tiên</string>
+    <string name="notification_scale_to_square_image_summary">Chỉnh ảnh thu nhỏ của video trên thanh thông báo từ tỉ lệ 16:9 thành 1:1 (có thể gây méo ảnh)</string>
+    <string name="notification_scale_to_square_image_title">Chỉnh ảnh thu nhỏ thành tỉ lệ 1:1</string>
     <string name="search_showing_result_for">Đang hiện kết quả cho: %s</string>
-    <string name="enqueue_stream">Hàng</string>
-    <string name="show_age_restricted_content_summary">Hiển thị nội dung không an toàn cho trẻ em vì có giới hạn độ tuổi (+18)</string>
+    <string name="enqueue_stream">Thêm vào danh sách đang phát</string>
+    <string name="show_age_restricted_content_summary">Hiển thị nội dung không phù hợp vì có giới hạn độ tuổi (18+)</string>
     <string name="show_thumbnail_summary">Hiện ảnh thu nhỏ (thumbnail) trên nền màn hình khóa và trong thông báo</string>
     <string name="show_thumbnail_title">Xem hình thu nhỏ</string>
-    <string name="show_memory_leaks">Kiểm tra bộ</string>
-    <string name="enqueued">Hàng</string>
-    <string name="clear_cookie_summary">Xoá Cookie mà NewPipe lưu trữ sau khi bạn vượt</string>
-    <string name="recaptcha_cookies_cleared">Cookie đã được</string>
-    <string name="clear_cookie_title">Xoá bỏ Cookie của</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube cung cấp \"Chế độ hạn chế\" để ẩn nội dung người lớn</string>
+    <string name="show_memory_leaks">Kiểm tra bộ nhớ</string>
+    <string name="enqueued">Đã thêm vào danh sách đang phát</string>
+    <string name="clear_cookie_summary">Xoá Cookie mà NewPipe lưu trữ sau khi bạn hoàn thành nó</string>
+    <string name="recaptcha_cookies_cleared">Cookie reCAPTCHA đã được xóa</string>
+    <string name="clear_cookie_title">Xóa bỏ Cookie của reCAPCHA</string>
+    <string name="youtube_restricted_mode_enabled_summary">YouTube cung cấp \"Chế độ hạn chế\" để ẩn nội dung không phụ hợp</string>
     <string name="notification_colorize_summary">Yêu cầu Android tùy chỉnh màu của thông báo theo màu chính của ảnh thu nhỏ (lưu ý rằng việc này không khả dụng trên tất cả thiết bị)</string>
     <string name="notification_colorize_title">Tô màu thông báo</string>
     <string name="no_app_to_open_intent">Thiết bị của bạn không có ứng dụng để mở tệp này</string>
@@ -570,7 +569,7 @@
     <string name="recent">Gần đây</string>
     <string name="msg_calculating_hash">Đang tính hash</string>
     <string name="description_tab_description">Mô tả</string>
-    <string name="related_items_tab_description">Stream liên quan</string>
+    <string name="related_items_tab_description">Video liên quan</string>
     <string name="comments_tab_description">Bình luận</string>
     <string name="hash_channel_description">Thông báo cho quá trình hash video</string>
     <string name="hash_channel_name">Thông báo hash video</string>
@@ -579,16 +578,16 @@
     <string name="show_description_summary">Tắt để ẩn mô tả video và các thông tin bổ sung</string>
     <string name="show_description_title">Hiện mô tả</string>
     <string name="open_with">Mở bằng</string>
-    <string name="download_has_started">Tệp đã bắt đầu được tải xuống</string>
-    <string name="select_night_theme_toast">Bạn có thể chọn giao diện tối cho mình bên dưới</string>
-    <string name="night_theme_summary">Chọn giao diện tối của bạn — %s</string>
-    <string name="auto_device_theme_title">Tự động (theme hệ thống)</string>
+    <string name="download_has_started">Tệp tin đã bắt đầu được tải xuống</string>
+    <string name="select_night_theme_toast">Bạn có thể chọn giao diện ban đêm cho mình phía bên dưới</string>
+    <string name="night_theme_summary">Chọn giao diện ban đêm của bạn — %s</string>
+    <string name="auto_device_theme_title">Tự động (giao diện hệ thống)</string>
     <string name="radio">Radio</string>
     <string name="paid_content">Nội dung này chỉ dành cho người dùng trả phí, nên NewPipe không thể phát hay tải xuống.</string>
     <string name="youtube_music_premium_content">Video này chỉ được dành cho thành viên YouTube Music Premium, nên NewPipe không thể phát hay tải xuống.</string>
     <string name="private_content">Nội dung này được để ở chế độ riêng tư, nên NewPipe không thể phát hay tải xuống.</string>
     <string name="soundcloud_go_plus_content">Đây là một track SoundCloud Go+, nên NewPipe không thể phát hay tải xuống được, ít nhất là tại quốc gia của bạn.</string>
-    <string name="georestricted_content">Nội dung này không có ở quốc gia của bạn.</string>
+    <string name="georestricted_content">Nội dung này không có sẵn ở quốc gia của bạn.</string>
     <string name="crash_the_app">Làm văng ứng dụng</string>
     <string name="restricted_video_no_stream">Video này đã bị giới hạn độ tuổi.
 \nVì những quy định mới của YouTube, NewPipe không thể phát được video này, vì không thể tìm thấy nguồn phát video.</string>
@@ -611,7 +610,7 @@
     <string name="metadata_support">Hỗ trợ</string>
     <string name="metadata_language">Ngôn ngữ</string>
     <string name="metadata_age_limit">Giới hạn độ tuổi</string>
-    <string name="metadata_privacy">Sự riêng tư</string>
+    <string name="metadata_privacy">Chế độ</string>
     <string name="metadata_licence">Giấy phép</string>
     <string name="metadata_tags">Thẻ</string>
     <string name="metadata_category">Thể loại</string>
@@ -619,27 +618,24 @@
     <string name="description_select_enable">Bật chọn văn bản trong mô tả</string>
     <string name="description_select_note">Bây giờ bạn có thể chọn văn bản trong mô tả. Lưu ý rằng trang có thể nhấp nháy và các liên kết có thể không nhấn vào được trong khi ở chế độ chọn.</string>
     <string name="service_provides_reason">%s cung cấp lý do này:</string>
-    <string name="account_terminated">Tài khoản bị chấm dứt</string>
+    <string name="account_terminated">Tài khoản đã bị chấm dứt</string>
     <string name="feed_toggle_show_played_items">Hiện các mục đã xem</string>
     <string name="feed_load_error_fast_unknown">Chế độ nguồn dữ liệu nhanh không cung cấp thêm thông tin về cái này.</string>
-    <string name="feed_load_error_terminated">Tài khoản của tác giả đã bị chấm dứt.
+    <string name="feed_load_error_terminated">Tài khoản của người này đã bị chấm dứt.
 \nNewPipe sẽ không thể tải nguồn dữ liệu này trong tương lai.
 \nBạn có muốn huỷ đăng ký kênh này không\?</string>
-    <string name="feed_load_error_account_info">Không thể tải nguồn dữ liệu cho \'%s\'.</string>
-    <string name="feed_load_error">Lỗi khi tải nguồn dữ liệu</string>
-    <string name="downloads_storage_use_saf_summary_api_29">Bắt đầu từ Android 10, chỉ có \'Storage Access Framework\' được hỗ trợ</string>
-    <string name="downloads_storage_use_saf_summary_api_19">\'Storage Access Framework\' không được hỗ trợ trên Android KitKat và cũ hơn</string>
+    <string name="feed_load_error_account_info">Không thể tải thông báo cho \'%s\'.</string>
+    <string name="feed_load_error">Lỗi khi tải nguồn thông báo</string>
+    <string name="downloads_storage_use_saf_summary_api_29">\'Storage Access Framework\' chỉ được hỗ trợ từ Android 10 trở đi</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Bạn sẽ được hỏi nơi bạn muốn lưu mỗi mục tải xuống</string>
     <string name="no_dir_yet">Chưa có thư mục tải xuống nào được đặt, hãy chọn thư mục tải xuống mặc định ngay</string>
     <string name="dont_show">Không hiện</string>
     <string name="low_quality_smaller">Chất lượng thấp (nhỏ hơn)</string>
     <string name="high_quality_larger">Chất lượng cao (lớn hơn)</string>
     <string name="seekbar_preview_thumbnail_title">Xem trước hình thu nhỏ trên thanh tua</string>
-    <string name="comments_are_disabled">Bình luận đang bị tắt</string>
-    <string name="detail_heart_img_view_description">Đã được người tạo gắn tim</string>
+    <string name="comments_are_disabled">Bình luận đã bị tắt</string>
+    <string name="detail_heart_img_view_description">Đã được chủ kênh thả \"thính\"</string>
     <string name="mark_as_watched">Đánh dấu là đã xem</string>
-    <string name="loading_channel_details">Đang tải chi tiết kênh…</string>
-    <string name="error_show_channel_details">Lỗi tại Hiện chi tiết kênh</string>
     <string name="show_image_indicators_summary">Hiện ruy băng được tô màu Picasso ở trên cùng các hình ảnh và chỉ ra nguồn của chúng: đỏ đối với mạng, xanh lam đối với ổ đĩa và xanh lá đối với bộ nhớ</string>
     <string name="show_image_indicators_title">Hiện dấu chỉ hình ảnh</string>
     <string name="remote_search_suggestions">Đề xuất tìm kiếm trên mạng</string>
@@ -654,11 +650,11 @@
     <string name="start_main_player_fullscreen_summary">Không bắt đầu video ở trình phát mini, mà chuyển trực tiếp thành chế độ toàn màn hình, nếu tự động xoay bị khóa. Bạn vẫn có thể truy cập trình phát mini bằng cách thoát khỏi toàn màn hình</string>
     <string name="start_main_player_fullscreen_title">Khởi động trình phát chính ở toàn màn hình</string>
     <string name="enqueued_next">Đã cho mục tiếp vào hàng đợi</string>
-    <string name="enqueue_next_stream">Cho mục tiếp vào hàng đợi</string>
+    <string name="enqueue_next_stream">Cho video kế tiếp vào hàng đợi</string>
     <string name="processing_may_take_a_moment">Đang thực hiện...Có thể mất một lúc</string>
-    <string name="error_report_channel_name">Thông báo báo cáo lỗi</string>
+    <string name="error_report_channel_name">Thông báo lỗi</string>
     <string name="error_report_channel_description">Thông báo để báo cáo lỗi</string>
-    <string name="error_report_notification_title">NewPipe đã gặp lỗi, nhấn để báo cáo</string>
+    <string name="error_report_notification_title">NewPipe đã gặp sự cố, nhấn để xem và báo cáo</string>
     <string name="error_report_notification_toast">Có lỗi xảy ra, hãy xem thông báo</string>
     <string name="show_crash_the_player_title">Hiện \"làm trình phát dừng\"</string>
     <string name="show_crash_the_player_summary">Hiện tùy chọn dừng đột ngột khi sử dụng trình phát</string>
@@ -667,10 +663,52 @@
     <string name="manual_update_title">Kiểm tra cập nhật</string>
     <string name="manual_update_description">Kiểm tra phiên bản mới theo cách thủ công</string>
     <string name="checking_updates_toast">Đang kiểm tra cập nhật…</string>
-    <string name="feed_new_items">Mục feed mới</string>
+    <string name="feed_new_items">Mục thông báo mới</string>
     <string name="crash_the_player">Làm trình phát dừng</string>
     <string name="no_appropriate_file_manager_message_android_10">Không tìm thấy ứng dụng quản lý tệp phù hợp nào để thực hiện hành động.
 \nVui lòng cài đặt ứng dụng quản lý tệp tương thích với Storage Access Framework.</string>
     <string name="no_appropriate_file_manager_message">Không tìm thấy ứng dụng quản lý tệp phù hợp nào để thực hiện hành động.
-\nVui lòng cài đặt ứng dụng quản lý tệp hoặc tắt \'%s\' trong cài đặt tải xuống.</string>
+\nVui lòng cài đặt ứng dụng quản lý tệp hoặc tắt \'%s\' trong cài đặt tải xuống</string>
+    <string name="progressive_load_interval_summary">Thay đổi kích thước khoảng thời gian tải (tầm khoảng %s). Để ở giá trị thấp hơn có thể sẽ tăng tốc độ tải video hơn ban đầu. Khởi động lại trình phát để áp dụng thay đổi</string>
+    <string name="leak_canary_not_available">LeakCanary không khả dụng</string>
+    <string name="progressive_load_interval_exoplayer_default">ExoPlayer mặc định</string>
+    <string name="detail_pinned_comment_view_description">Bình luận được ghim</string>
+    <string name="settings_category_player_notification_title">Thông báo trình phát</string>
+    <string name="settings_category_player_notification_summary">Thiết lập thông báo hiện đang phát</string>
+    <string name="notifications">Thông báo</string>
+    <string name="streams_notification_channel_name">Luồng truyền mới</string>
+    <string name="streams_notification_channel_description">Thông báo về video mới đối với mục đăng ký</string>
+    <plurals name="new_streams">
+        <item quantity="other">%s luồng truyền mới</item>
+    </plurals>
+    <string name="loading_stream_details">Đang tải chi tiết luồng truyền…</string>
+    <string name="check_new_streams">Chạy kiểm tra luồng truyền mới</string>
+    <string name="enable_streams_notifications_title">Thông báo video mới</string>
+    <string name="enable_streams_notifications_summary">Thông báo về video mới từ kênh bạn đã đăng ký</string>
+    <string name="streams_notifications_interval_title">Thời gian kiểm tra</string>
+    <string name="streams_notifications_network_title">Yêu cầu kết nối mạng</string>
+    <string name="any_network">Bất kỳ loại mạng nào (có thể tính phí)</string>
+    <string name="delete_downloaded_files_confirm">Xóa tất cả tệp đã tải xuống khỏi ổ đĩa\?</string>
+    <string name="notifications_disabled">Thông báo bị tắt</string>
+    <string name="get_notified">Được thông báo</string>
+    <string name="you_successfully_subscribed">Bạn hiện đã đăng ký kênh này</string>
+    <string name="toggle_all">Bật/tắt tất cả</string>
+    <string name="percent">Phần trăm</string>
+    <string name="enumeration_comma">,</string>
+    <string name="semitone">Nửa cung</string>
+    <string name="streams_not_yet_supported_removed">Luồng video mà không được trình tải xuống hỗ trợ sẽ không hiện</string>
+    <string name="no_video_streams_available_for_external_players">Không có video khả dụng cho trình chạy ngoài</string>
+    <string name="selected_stream_external_player_not_supported">Video bạn chọn không hỗ trợ trình chạy bên ngoài</string>
+    <string name="no_audio_streams_available_for_external_players">Video này không có âm thanh khả dụng cho trình chạy ngoài</string>
+    <string name="select_quality_external_players">Chọn chất lượng cho trình chạy ngoài</string>
+    <string name="unknown_format">Định dạng không xác định (:P)</string>
+    <string name="unknown_quality">Độ phân giải không xác định</string>
+    <string name="progressive_load_interval_title">Kích thước khoảng thời gian tải</string>
+    <string name="feed_toggle_show_future_items">Hiện video đề xuất</string>
+    <string name="feed_toggle_hide_future_items">Ẩn video đề xuất</string>
+    <string name="sort">Thể loại</string>
+    <string name="faq_title">Câu hỏi thường gặp</string>
+    <string name="faq">Xem trên website</string>
+    <string name="faq_description">Nếu bạn gặp rắc rối khi sử dụng ứng dụng , hãy chắc chắn rằng bạn đã tìm kiếm các câu hỏi thường thấy !</string>
+    <string name="feed_toggle_hide_played_items">Ẩn các video đã xem</string>
 </resources>
