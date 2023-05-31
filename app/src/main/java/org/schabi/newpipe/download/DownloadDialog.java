@@ -571,7 +571,7 @@ public class DownloadDialog extends DialogFragment
         switch (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()) {
             case R.id.audio_button:
             case R.id.video_button:
-			    dialogBinding.fileName.setText(fileName);
+		dialogBinding.fileName.setText(fileName);
                 break;
             case R.id.subtitle_button:
                 final String setSubtitleLanguageCode = subtitleStreamsAdapter
