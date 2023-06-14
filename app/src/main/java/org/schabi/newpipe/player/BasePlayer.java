@@ -136,7 +136,7 @@ public abstract class BasePlayer implements
     // Playback
     //////////////////////////////////////////////////////////////////////////*/
 
-    protected static final float[] PLAYBACK_SPEEDS = {0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f};
+    protected static final float[] PLAYBACK_SPEEDS = {0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f, 2.25f, 2.5f, 2.75f, 3.0f};
 
     protected PlayQueue playQueue;
     protected PlayQueueAdapter playQueueAdapter;
@@ -159,7 +159,7 @@ public abstract class BasePlayer implements
     //////////////////////////////////////////////////////////////////////////*/
 
     protected static final int PLAY_PREV_ACTIVATION_LIMIT_MILLIS = 5000; // 5 seconds
-    protected static final int PROGRESS_LOOP_INTERVAL_MILLIS = 1000; // 1 seconds
+    protected static final int PROGRESS_LOOP_INTERVAL_MILLIS = 2000; // 2 seconds
 
     protected SimpleExoPlayer simpleExoPlayer;
     protected AudioReactor audioReactor;

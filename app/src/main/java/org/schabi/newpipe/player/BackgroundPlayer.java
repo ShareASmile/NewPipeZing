@@ -89,7 +89,7 @@ public final class BackgroundPlayer extends Service {
     private static final String TAG = "BackgroundPlayer";
     private static final boolean DEBUG = BasePlayer.DEBUG;
     private static final int NOTIFICATION_ID = 123789;
-    private static final int NOTIFICATION_UPDATES_BEFORE_RESET = 60;
+    private static final int NOTIFICATION_UPDATES_BEFORE_RESET = 120;
     private BasePlayerImpl basePlayerImpl;
 
     /*//////////////////////////////////////////////////////////////////////////
