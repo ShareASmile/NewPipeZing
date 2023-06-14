@@ -496,6 +496,7 @@
     <string name="enqueued">Esitusjärjekorda lisatud</string>
     <string name="most_liked">Enim meeldimisi</string>
     <string name="title_activity_play_queue">Esitusjärjekord</string>
+	<string name="settings_category_notification_title">Teavitus</string>
     <string name="enqueue_stream">Lisa esitusjärjekorda</string>
     <string name="recently_added">Hiljuti lisatud</string>
     <string name="local">Kohalikud</string>
@@ -674,7 +675,6 @@
     <string name="error_report_notification_title">NewPipe töös tekkis viga, sellest teavitamiseks klõpsi</string>
     <string name="crash_the_player">Jooksuta meediamängija kokku</string>
     <string name="show_error_snackbar">Näita veateate akent</string>
-    <string name="background_player_already_playing_toast">Meedia esitamine taustal toimib juba</string>
     <string name="error_report_channel_name">Teavitus vigadest</string>
     <string name="error_report_channel_description">Teavitused vigadest informeerimiseks</string>
     <string name="error_report_notification_toast">Tekkis viga, vaata vastavat teadet</string>
@@ -685,6 +685,7 @@
 \nPalun paigalda nutiseadmesse failihaldur, mis järgib Storage Access Framework reeglistikku.</string>
     <string name="detail_pinned_comment_view_description">Esiletõstetud kommentaar</string>
     <string name="leak_canary_not_available">LeakCanary pole saadaval</string>
-    <string name="progressive_load_interval_default">ExoPlayer\'i vaikimisi väärtused</string>
+    <string name="progressive_load_interval_exoplayer_default">ExoPlayer\'i vaikimisi väärtused</string>
     <string name="progressive_load_interval_summary">Muuda video laadimise välpa (hetkel %s). Väiksemast väärtusest võib abi olla, kui tahad et video esitamine algaks varem. Muudatuste jõustamine eeldab rakenduse uuesti käivitamist.</string>
+    <string name="delete_downloaded_files_confirm">Kas kustutame kõik allalaaditud failid andmekandjalt\?</string>
 </resources>

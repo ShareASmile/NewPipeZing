@@ -387,6 +387,7 @@
     <string name="notification_action_3_title">Четвърто действие</string>
     <string name="seek_duration_title">Стъпка на превъртане</string>
     <string name="mark_as_watched">Маркирай като гледан</string>
+	<string name="settings_category_notification_title">Паведамленні</string>
     <string name="notification_action_1_title">Второ действие</string>
     <string name="notification_action_0_title">Първо действие</string>
     <string name="notification_action_2_title">Трето действие</string>

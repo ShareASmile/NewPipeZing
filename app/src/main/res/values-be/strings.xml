@@ -451,6 +451,7 @@
     <string name="enqueue_stream">Дадаць у чаргу</string>
     <string name="enqueued">Даданае у чаргу</string>
     <string name="title_activity_play_queue">Чарга прайгравання</string>
+	<string name="settings_category_notification_title">Паведамленні</string>
     <string name="most_liked">Найбольш папулярнае</string>
     <string name="local">Лакальнае</string>
     <string name="recently_added">Нядаўна дададзенае</string>

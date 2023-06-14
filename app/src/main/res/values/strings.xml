@@ -80,6 +80,7 @@
     <string name="seek_duration_title">Fast-forward/-rewind seek duration</string>
     <string name="progressive_load_interval_title">Playback load interval size</string>
     <string name="progressive_load_interval_summary">Change the load interval size (currently %s). A lower value may speed up initial video loading. Changes require a player restart.</string>
+	<string name="settings_category_notification_title">Notification</string>
     <string name="clear_queue_confirmation_title">Ask for confirmation before clearing a queue</string>
     <string name="clear_queue_confirmation_summary">Switching from one player to another may replace your queue</string>
     <string name="clear_queue_confirmation_description">The active player queue will be replaced</string>
@@ -143,8 +144,6 @@
     <string name="settings_category_appearance_title">Appearance</string>
     <string name="settings_category_debug_title">Debug</string>
     <string name="settings_category_updates_title">Updates</string>
-    <string name="settings_category_player_notification_title">Player notification</string>
-    <string name="settings_category_player_notification_summary">Configure current playing stream notification</string>
     <string name="background_player_playing_toast">Playing in background</string>
     <string name="popup_playing_toast">Playing in popup mode</string>
     <string name="content">Content</string>
@@ -178,15 +177,12 @@
     <string name="always">Always</string>
     <string name="just_once">Just Once</string>
     <string name="file">File</string>
-    <string name="notifications">Notifications</string>
     <string name="notification_channel_name">NewPipe notification</string>
     <string name="notification_channel_description">Notifications for NewPipe\'s player</string>
     <string name="app_update_notification_channel_name">App update notification</string>
     <string name="app_update_notification_channel_description">Notifications for new NewPipe versions</string>
     <string name="hash_channel_name">Video hash notification</string>
     <string name="hash_channel_description">Notifications for video hashing progress</string>
-    <string name="streams_notification_channel_name">New streams</string>
-    <string name="streams_notification_channel_description">Notifications about new streams for subscriptions</string>
     <string name="error_report_channel_name">Error report notification</string>
     <string name="error_report_channel_description">Notifications to report errors</string>
     <string name="unknown_content">[Unknown]</string>
@@ -305,10 +301,6 @@
     </plurals>
     <string name="no_comments">No comments</string>
     <string name="comments_are_disabled">Comments are disabled</string>
-    <plurals name="new_streams">
-        <item quantity="one">%s new stream</item>
-        <item quantity="other">%s new streams</item>
-    </plurals>
     <!-- Missions -->
     <string name="start">Start</string>
     <string name="pause">Pause</string>
@@ -465,7 +457,6 @@
     <string name="show_image_indicators_summary">Show Picasso colored ribbons on top of images indicating their source: red for network, blue for disk and green for memory</string>
     <string name="show_crash_the_player_title">Show \"Crash the player\"</string>
     <string name="show_crash_the_player_summary">Shows a crash option when using the player</string>
-    <string name="check_new_streams">Run check for new streams</string>
     <string name="crash_the_app">Crash the app</string>
     <string name="show_error_snackbar">Show an error snackbar</string>
     <string name="create_error_notification">Create an error notification</string>
@@ -497,10 +488,10 @@
     <string name="playback_pitch">Pitch</string>
     <string name="unhook_checkbox">Unhook (may cause distortion)</string>
     <string name="skip_silence_checkbox">Fast-forward during silence</string>
-    <string name="adjust_by_semitones_checkbox">Adjust pitch by musical semitones</string>
     <string name="playback_step">Step</string>
-    <string name="playback_tempo_step">Tempo step</string>
     <string name="playback_reset">Reset</string>
+    <string name="percent">Percent</string>
+    <string name="semitone">Semitone</string>
     <!-- GDPR dialog -->
     <string name="start_accept_privacy_policy">In order to comply with the European General Data Protection Regulation (GDPR), we hereby draw your attention to NewPipe\'s privacy policy. Please read it carefully.
 \nYou must accept it to send us the bug report.</string>
@@ -511,6 +502,10 @@
     <string name="limit_mobile_data_usage_title">Limit resolution when using mobile data</string>
     <string-array name="limit_data_usage_description_list">
         <item>@string/limit_data_usage_none_description</item>
+        <item>2160p60</item>
+        <item>2160p</item>
+        <item>1440p60</item>
+        <item>1440p</item>
         <item>1080p60</item>
         <item>1080p</item>
         <item>720p60</item>
@@ -520,12 +515,6 @@
         <item>240p</item>
         <item>144p</item>
     </string-array>
-    <!-- Notifications settings -->
-    <string name="enable_streams_notifications_title">New streams notifications</string>
-    <string name="enable_streams_notifications_summary">Notify about new streams from subscriptions</string>
-    <string name="streams_notifications_interval_title">Checking frequency</string>
-    <string name="streams_notifications_network_title">Required network connection</string>
-    <string name="any_network">Any network</string>
     <!-- Updates Settings -->
     <string name="updates_setting_title">Updates</string>
     <string name="updates_setting_description">Show a notification to prompt app update when a new version is available</string>
@@ -733,11 +722,12 @@
     <string name="on">On</string>
     <string name="off">Off</string>
     <!-- Progressive Load Interval -->
-    <string name="progressive_load_interval_default">ExoPlayer default</string>
-    <!-- New streams notifications -->
-    <string name="notifications_disabled">Notifications are disabled</string>
-    <string name="get_notified">Get notified</string>
-    <string name="you_successfully_subscribed">You now subscribed to this channel</string>
-    <string name="enumeration_comma">,</string>
-    <string name="toggle_all">Toggle all</string>
+    <string name="progressive_load_interval_exoplayer_default">ExoPlayer default</string>
+    <string name="streams_not_yet_supported_removed">Streams which are not yet supported by the downloader are not shown</string>
+    <string name="selected_stream_external_player_not_supported">The selected stream is not supported by external players</string>
+    <string name="no_audio_streams_available_for_external_players">No audio streams are available for external players</string>
+    <string name="no_video_streams_available_for_external_players">No video streams are available for external players</string>
+    <string name="select_quality_external_players">Select quality for external players</string>
+    <string name="unknown_format">Unknown format</string>
+    <string name="unknown_quality">Unknown quality</string>
 </resources>

@@ -409,6 +409,7 @@
     <string name="play_queue_audio_settings">Axustes del audiu</string>
     <string name="play_queue_remove">Desaniciar</string>
     <string name="title_activity_play_queue">Cola de reproducción</string>
+	<string name="settings_category_notification_title">Avisu permanente</string>
     <string name="most_liked">Lo que más prestó</string>
     <string name="recently_added">Amestóse apocayá</string>
     <string name="local">Llocal</string>

@@ -544,6 +544,7 @@
     <string name="wifi_only">Vain Wi-Fi-verkossa</string>
     <string name="autoplay_summary">Aloita toisto automaattisesti — %s</string>
     <string name="title_activity_play_queue">Toistojono</string>
+	<string name="settings_category_notification_title">Ilmoitus</string>
     <string name="unsupported_url_dialog_message">Ei tunnistettu URL:ää. Avataanko toisessa sovelluksessa\?</string>
     <string name="auto_queue_toggle">Automaattinen jonoon lisääminen</string>
     <string name="clear_queue_confirmation_description">Aktiivisen soittimen jono korvataan</string>
@@ -684,4 +685,5 @@
     <string name="show_crash_the_player_summary">Näytä soitinta käytettäessä soittimen kaatamisen vaihtoehto</string>
     <string name="show_error_snackbar">Näytä virheen ponnahdusilmoitus</string>
     <string name="feed_new_items">Uudet syötteet</string>
+    <string name="notifications">Ilmoitukset</string>
 </resources>

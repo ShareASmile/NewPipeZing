@@ -282,6 +282,7 @@
     <string name="contribution_encouragement">Ĉu vi havas ideojn pri; traduko, desegnaĵoj ŝanĝoj, purigado de kodo, aŭ realaj masivaj ŝanĝoj—helpo ĉiam estas bonvena. Ju pli oni faras, des pli bonas!</string>
     <string name="read_full_license">Legi permesilon</string>
     <string name="contribution_title">Kontribui</string>
+	<string name="settings_category_notification_title">Sciigo</string>
     <string name="settings_file_charset_title">Permesitaj karakteroj en dosiernomoj</string>
     <string name="settings_file_replacement_character_summary">Nevalidaj karakteroj estas anstataŭigita kun ĉi tiu valoro</string>
     <string name="settings_file_replacement_character_title">Anstataŭa karaktero</string>

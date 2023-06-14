@@ -442,4 +442,5 @@
     <string name="dont_show">Jangan tunjuk</string>
     <string name="unmute">Nyahbisu</string>
     <string name="notification_colorize_summary">Minta Android menyesuaikan warna pemberitahuan sesuai dengan warna utama di thumbnail (perhatikan bahawa ini tidak tersedia dalam semua perangkat)</string>
+    <string name="settings_category_notification_title">Pemberitahuan</string>
 </resources>

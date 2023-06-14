@@ -50,7 +50,7 @@ public class AppearanceSettingsFragment extends BasePreferenceFragment {
 
     @Override
     public boolean onPreferenceTreeClick(final Preference preference) {
-        if (getString(R.string.caption_settings_key).equals(preference.getKey())) {
+        if (preference.getKey().equals(getString(R.string.caption_settings_key))) {
             try {
                 startActivity(new Intent(Settings.ACTION_CAPTIONING_SETTINGS));
             } catch (final ActivityNotFoundException e) {

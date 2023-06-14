@@ -315,7 +315,7 @@
     <string name="privacy_policy_encouragement">NewPipe proiektuak aintzat hartzen du zure pribatutasuna. Aplikazioak ez du zure baimenik gabe daturik jasotzen.
 \nNewPipe pribatutasun politikak azaltzen du zehazki bidali eta gordetako informazioa zein den kraskatze txosten bat bidaltzen duzunean.</string>
     <string name="read_privacy_policy">Irakurri pribatutasun politika</string>
-    <string name="start_accept_privacy_policy">European General Data Protection Regulation (GDPR) legea betetzeko, NewPipe pribatutasun politika irakurtzera gonbidaatzen zaitugu.
+    <string name="start_accept_privacy_policy">Datuak Babesteko Araudi Orokorra (GDPR) betetzeko, NewPipe-en pribatutasun politika kontuan hartzera gonbidatzen zaitugu. Mesedez, irakurri kontu handiz.
 \nAkats txosten bat bidali ahal izateko onartu behar duzu.</string>
     <string name="accept">Onartu</string>
     <string name="decline">Ukatu</string>
@@ -536,6 +536,7 @@
     <string name="autoplay_summary">Erreprodukzioa automatikoki hasi — %s</string>
     <string name="show_memory_leaks">Erakutsi memoria galerak</string>
     <string name="title_activity_play_queue">Ilara erreproduzitu</string>
+	<string name="settings_category_notification_title">Jakinarazpena</string>
     <string name="no_playlist_bookmarked_yet">Oraindik ez dago erreprodukzio-zerrenda laster-markarik</string>
     <string name="select_a_playlist">Playlist bat aukeratu</string>
     <string name="error_report_open_github_notice">Mesedez, egiaztatu jada zure arazoarekin diskusiorik sortuta badagoen. Sarrera duplikatuak daudenean, arazoa ebazteko erabili dezakegun denbora galtzen ari gara.</string>
@@ -664,9 +665,8 @@
     <string name="start_main_player_fullscreen_title">Hasi erreproduzitzaile nagusia pantaila osoan</string>
     <string name="enqueued_next">Isatsari bideo hau erantsita</string>
     <string name="enqueue_next_stream">Gehitu bideo hau isatsari</string>
-    <string name="show_crash_the_player_title">Erakutsi \"itxi erreproduzigailua\"</string>
+    <string name="show_crash_the_player_title">Erakutsi \"Itxi erreproduzigailua\"</string>
     <string name="processing_may_take_a_moment">Prozesatzen... Itxoin mesedez</string>
-    <string name="background_player_already_playing_toast">Atzeko planoan erreproduzitzen dagoeneko</string>
     <string name="error_report_channel_name">Erroreen txostenen jakinarazpena</string>
     <string name="error_report_channel_description">Jakinarazpenak erroreen berri emateko</string>
     <string name="error_report_notification_title">NewPipe-k errore bat aurkitu du, sakatu berri emateko</string>
@@ -684,4 +684,10 @@
     <string name="show_crash_the_player_summary">Erreproduzigailua erabiltzean ustekabean ixteko aukera ematen du</string>
     <string name="show_error_snackbar">Erakutsi errore barra bat</string>
     <string name="create_error_notification">Sortu errore jakinarazpen bat</string>
+    <string name="progressive_load_interval_summary">Aldatu karga maiztasun tamaina (unean %s). Balio txikiago batek bideoaren hasierako karga azkartu dezake. Erreproduzigailuaren berrabiarazte bat behar du.</string>
+    <string name="delete_downloaded_files_confirm">Ezabatu deskargatutako fitxategi guztiak biltegitik\?</string>
+    <string name="leak_canary_not_available">LeakCanary ez dago eskuragarri</string>
+    <string name="progressive_load_interval_exoplayer_default">ExoPlayer lehenetsia</string>
+    <string name="percent">Portzentaia</string>
+    <string name="semitone">Semitonoa</string>
 </resources>
