@@ -685,5 +685,6 @@
 	<string name="featured">Featured</string>
     <string name="radio">Radio</string>
 	<string name="always_expand_description">Always expand description</string>
+	<string name="detail_pinned_comment_view_description">Pinned comment</string>
 	<string name="detail_heart_img_view_description">Hearted by creator</string>
 </resources>
