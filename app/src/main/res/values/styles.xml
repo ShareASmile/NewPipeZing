@@ -61,6 +61,7 @@
         <item name="ic_grid">@drawable/ic_apps_black_24dp</item>
         <item name="ic_delete">@drawable/ic_delete_black_24dp</item>
         <item name="ic_settings_update">@drawable/ic_cloud_download_black_24dp</item>
+		<item name="ic_timer">@drawable/ic_timer_black_24dp</item>
         <item name="ic_done">@drawable/ic_done_black_24dp</item>
         <item name="ic_refresh">@drawable/ic_refresh_black_24dp</item>
         <item name="ic_computer">@drawable/ic_computer_black_24dp</item>
@@ -169,6 +170,7 @@
         <item name="ic_delete">@drawable/ic_delete_white_24dp</item>
         <item name="ic_pause">@drawable/ic_pause_white_24dp</item>
         <item name="ic_settings_update">@drawable/ic_cloud_download_white_24dp</item>
+		<item name="ic_timer">@drawable/ic_timer_white_24dp</item>
         <item name="ic_done">@drawable/ic_done_white_24dp</item>
         <item name="ic_refresh">@drawable/ic_refresh_white_24dp</item>
         <item name="ic_computer">@drawable/ic_computer_white_24dp</item>

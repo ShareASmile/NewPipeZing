@@ -32,7 +32,7 @@
         android:layout_toEndOf="@+id/itemThumbnailView"
         android:contentDescription="@string/detail_pinned_comment_view_description"
         android:visibility="gone"
-        app:srcCompat="@drawable/ic_pin"
+        app:srcCompat="@drawable/ic_pin_black_24dp"
         tools:visibility="visible" />
 
     <TextView
