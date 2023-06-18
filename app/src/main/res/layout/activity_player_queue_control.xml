@@ -30,42 +30,17 @@
         android:id="@+id/play_queue"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/progress_bar"
+        android:layout_above="@id/center"
         android:layout_below="@id/appbar"
         android:scrollbars="vertical"
         app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/play_queue_item" />
 
     <RelativeLayout
-        android:id="@+id/seek_bar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/center">
-        <TextView
-            android:id="@+id/seek_display"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="#c0000000"
-            android:paddingLeft="30dp"
-            android:paddingTop="5dp"
-            android:paddingRight="30dp"
-            android:paddingBottom="5dp"
-            android:textColor="@android:color/white"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            tools:ignore="RtlHardcoded"
-            tools:text="1:06:29"
-            tools:visibility="visible" />
-    </RelativeLayout>
-
-    <RelativeLayout
         android:id="@+id/center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/progress_bar"
-        android:gravity="center">
+        android:layout_above="@+id/playback_controls">
 
         <LinearLayout
             android:id="@+id/metadata"
@@ -105,18 +80,36 @@
                 tools:text="Duis posuere arcu condimentum lobortis mattis." />
         </LinearLayout>
 
-
+        <TextView
+            android:id="@+id/seek_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="#c0000000"
+            android:paddingLeft="30dp"
+            android:paddingTop="5dp"
+            android:paddingRight="30dp"
+            android:paddingBottom="5dp"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:ignore="RtlHardcoded"
+            tools:text="1:06:29"
+            tools:visibility="visible" />
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/player_controls_background"
+        android:gravity="center"
         android:orientation="horizontal"
         android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:layout_above="@+id/playback_controls">
+        android:paddingRight="12dp">
+
         <TextView
             android:id="@+id/current_time"
             android:layout_width="wrap_content"
@@ -170,9 +163,8 @@
         android:id="@+id/playback_controls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/progress_bar"
         android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="12dp
         tools:ignore="RtlHardcoded">
 
         <ImageButton
@@ -193,8 +185,8 @@
 
         <ImageButton
             android:id="@+id/control_backward"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_toLeftOf="@+id/control_fast_rewind"
@@ -272,8 +264,8 @@
 
         <ImageButton
             android:id="@+id/control_forward"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
             android:layout_toRightOf="@+id/control_fast_forward"
