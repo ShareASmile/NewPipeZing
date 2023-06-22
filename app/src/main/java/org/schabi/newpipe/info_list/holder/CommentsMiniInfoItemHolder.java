@@ -26,7 +26,6 @@ import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ShareUtils;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -126,12 +125,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
         streamUrl = item.getUrl();
 
         itemContentView.setLines(COMMENT_DEFAULT_LINES);
-        //commentText = item.getCommentText();
-        try {
-            commentText = item.getCommentText().getContent();
-        } catch (Exception e) {
-            commentText = " ";
-        }
+        commentText = item.getCommentText();
         itemContentView.setText(commentText);
         itemContentView.setOnTouchListener(CommentTextOnTouchListener.INSTANCE);
 
