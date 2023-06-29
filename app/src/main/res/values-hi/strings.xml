@@ -483,7 +483,7 @@
 	<string name="featured">विशेष रुप से प्रदर्शित</string>
     <string name="albums">एल्बम</string>
     <string name="videos_string">वीडियो</string>
-    <string name="restricted_video">यह वीडियो उम्र प्रतिबंधित है।
+    <string name="restricted_video">यह वीडियो उम्र प्रतिबंधित है।</string>
     <string name="clear_playback_states_title">प्लेबैक स्थानों को मिटायें</string>
     <string name="clear_playback_states_summary">सारे प्लेबैक स्थानों को मिटायें</string>
     <string name="delete_playback_states_alert">सारे प्लेबैक स्थानों को मिटायें\?</string>
