@@ -413,6 +413,7 @@
                     android:background="?attr/selectableItemBackground"
                     android:contentDescription="@string/switch_to_background"
                     tools:ignore="RtlHardcoded" />
+
             </RelativeLayout>
 
             <LinearLayout

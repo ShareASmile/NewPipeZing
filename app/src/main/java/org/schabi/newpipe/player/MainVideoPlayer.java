@@ -129,6 +129,8 @@ public final class MainVideoPlayer extends AppCompatActivity
 
     private ContentObserver rotationObserver;
 
+    private int customSponsorStartTime;
+
     /*//////////////////////////////////////////////////////////////////////////
     // Activity LifeCycle
     //////////////////////////////////////////////////////////////////////////*/
@@ -813,7 +815,6 @@ public final class MainVideoPlayer extends AppCompatActivity
             super.onMuteUnmuteButtonClicked();
             setMuteButton(muteButton, playerImpl.isMuted());
         }
-
 
         @Override
         public void onClick(final View v) {
