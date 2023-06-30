@@ -89,7 +89,7 @@
     <string name="download_dialog_title">ਡਾਊਨਲੋਡ</string>
     <string name="next_video_title">ਅੱਗੇ</string>
     <string name="show_next_and_similar_title">\'ਅੱਗੇ\' ਅਤੇ \'ਸਮਾਨਅੰਤਰ\' ਵੀਡੀਓ ਵਿਖਾਓ</string>
-    <string name="show_hold_to_append_title">\"Hold to append\" ਸੁਝਾਅ ਵਿਖਾਓ</string>
+    <string name="show_hold_to_append_title">\"ਜੋੜਨ ਲਈ ਬਟਨ ਦਬਾ ਕੇ ਰੱਖੋ\" ਵਿਖਾਓ</string>
     <string name="show_hold_to_append_summary">ਵੀਡੀਓ ਦੇ ਵੇਰਵੇ ਪੰਨੇ \'ਤੇ ਬੈਕਗ੍ਰਾਊਂਡ ਜਾਂ ਪੌਪ-ਅਪ ਬਟਨ ਨੱਪਣ \'ਤੇ ਸੰਕੇਤ ਵਿਖਾਓ</string>
     <string name="unsupported_url">ਅਣ-ਸਹਾਇਕ URL</string>
     <string name="default_content_country_title">ਮੂਲ ਦੇਸ਼ ਸਮੱਗਰੀ</string>
@@ -351,13 +351,13 @@
     <string name="playlist_thumbnail_change_success">ਪਲੇ-ਲਿਸਟ ਥੰਮਨੇਲ ਬਦਲਿਆ ਗਿਆ।</string>
     <string name="playlist_delete_failure">ਪਲੇ-ਲਿਸਟ ਨੂੰ ਮਿਟਾ ਨਹੀਂ ਸਕੇ.</string>
 	<string name="playlist_no_uploader">ਆਪਣੇ-ਆਪ ਬਣੀ (ਕੋਈ ਅਪਲੋਡਰ ਨਹੀਂ ਲੱਭਿਆ)</string>
-    <string name="caption_none">No captions</string>
+    <string name="caption_none">ਕੋਈ ਕੈਪਸ਼ਨਾਂ ਨਹੀਂ </string>
     <string name="resize_fit">ਫਿੱਟ</string>
     <string name="resize_fill">ਭਰੋ</string>
     <string name="resize_zoom">ਜ਼ੂਮ</string>
-    <string name="caption_auto_generated">Auto-Generated</string>
-    <string name="caption_setting_title">captions</string>
-    <string name="caption_setting_description">ਪਲੇਅਰ caption, text ਸਕੇਲ ਅਤੇ ਬੈਕਗ੍ਰਾਊਂਡ ਸਟਾਈਲ ਨੂੰ ਸੋਧੋ. ਪ੍ਰਭਾਵ ਨੂੰ ਲਾਗੂ ਕਰਨ ਲਈ ਐਪ ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰਨ ਦੀ ਜ਼ਰੂਰਤ ਹੈ।</string>
+    <string name="caption_auto_generated">ਸਵੈ-ਉਤਪੰਨ</string>
+    <string name="caption_setting_title">ਕੈਪਸ਼ਨਾਂ</string>
+    <string name="caption_setting_description">ਪਲੇਅਰ ਕੈਪਸ਼ਨ , ਟੈਕਸਟ ਸਕੇਲ ਅਤੇ ਬੈਕਗ੍ਰਾਊਂਡ ਸਟਾਈਲ ਨੂੰ ਸੋਧੋ. ਪ੍ਰਭਾਵ ਨੂੰ ਲਾਗੂ ਕਰਨ ਲਈ ਐਪ ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰਨ ਦੀ ਜ਼ਰੂਰਤ ਹੈ।</string>
     <string name="enable_leak_canary_title">LeakCanary ਚਲਾਉ</string>
     <string name="enable_leak_canary_summary">ਮੈਮੋਰੀ ਲੀਕ monitoring, ਐਪ ਨੂੰ Unresponsive ਬਣਾ ਸਕਦੀ ਹੈ ਜਦੋਂ ਹੀਪ dumping ਹੁੰਦੀ ਹੈ</string>
     <string name="enable_disposed_exceptions_title">Out-of-lifecycle ERROR ਰਿਪੋਰਟ ਕਰੋ</string>
@@ -433,6 +433,7 @@
 	<string name="permission_display_over_apps">ਦੂਜੀਆਂ ਐਪਾਂ ਦੇ ਉੱਤੇ ਵਿਖਾਉਣ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ</string>
     <string name="subscribers_count_not_available">ਸਬਸਕ੍ਰਾਇਬਰਾਂ ਦੀ ਗਿਣਤੀ ਉਪਲਬਧ ਨਹੀਂ ਹੈ</string>
     <string name="main_page_content_summary">ਮੁੱਖ ਪੰਨੇ ਤੇ ਕਿਹੜੇ ਟੈਬ ਵਿਖਾਏ ਜਾਣਗੇ</string>
+    <string name="main_page_content_swipe_remove">ਆਈਟਮਾਂ ਨੂੰ ਹਟਾਉਣ ਲਈ ਸਵਾਈਪ ਕਰੋ</string>
     <string name="selection">ਚੋਣ</string>
     <string name="updates_setting_title">ਅਪਡੇਟਾਂ</string>
     <string name="updates_setting_description">ਜਦੋਂ ਨਵਾਂ ਸੰਸਕਰਣ ਉਪਲਬਧ ਹੁੰਦਾ ਹੈ ਤਾਂ ਐਪ ਅਪਡੇਟ ਨੂੰ ਪੁੱਛਣ ਲਈ ਇੱਕ ਨੋਟੀਫਿਕੇਸ਼ਨ ਵਿਖਾਓ</string>
@@ -453,7 +454,7 @@
     <string name="download_finished">ਡਾਊਨਲੋਡ ਮੁਕੰਮਲ</string>
     <string name="download_finished_more">%s ਡਾਊਨਲੋਡ ਮੁਕੰਮਲ</string>
     <string name="generate_unique_name">ਵਿਲੱਖਣ ਨਾਮ ਬਣਾਓ</string>
-    <string name="overwrite">overwrite</string>
+    <string name="overwrite">ਓਵਰਰਾਈਟ</string>
     <string name="download_already_running">ਇਸ ਨਾਮ ਦੇ ਨਾਲ ਇੱਕ ਡਾਊਨਲੋਡ ਪਹਿਲਾਂ ਤੋਂ ਜਾਰੀ ਹੈ</string>
     <string name="show_error">ਤਰੁੱਟੀ ਵਿਖਾਓ</string>
     <string name="label_code">ਕੋਡ</string>
@@ -595,5 +596,4 @@
 	<string name="detail_heart_img_view_description">ਦਿਲੋਂ ਪਸੰਦ ਕੀਤਾ</string>
     <string name="progressive_load_interval_title">ਪਲੇਅਬੈਕ ਲੋਡ ਦਾ ਅੰਤਰਾਲ ਆਕਾਰ</string>
     <string name="progressive_load_interval_summary">ਪ੍ਰਗਤੀਸ਼ੀਲ ਸਮੱਗਰੀ ਉੱਤੇ ਲੋਡ ਅੰਤਰਾਲ ਆਕਾਰ ਬਦਲੋ (ਮੌਜੂਦਾ %s ਤੇ)। ਛੋਟੀ ਸੰਖਿਆ ਉਸਨੂੰ ਜਲਦੀ ਸ਼ੁਰੂ ਕਰਨ ਵਿੱਚ ਮੱਦਦ ਦੇ ਸਕਦੀ ਹੈ</string>
-    <string name="main_page_content_swipe_remove">ਆਈਟਮਾਂ ਨੂੰ ਹਟਾਉਣ ਲਈ ਸਵਾਈਪ ਕਰੋ</string>
 </resources>
