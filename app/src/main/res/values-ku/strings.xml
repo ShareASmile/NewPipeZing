@@ -256,7 +256,6 @@
     <string name="no_streams_available_download">هیچ پەخشێک نییە بۆ دابەزاندن</string>
     <string name="caption_setting_title">ژێرنووسەکان</string>
     <string name="caption_setting_description">بەهۆی گۆڕانکاری لە شێوەی ژێرنووسکردنەکە. پێویستە ئەپەکە دابخەیت و دیسانەوە بیکەیتەوە.</string>
-    <string name="toast_no_player">هیچ ئەپێک دانەمەزراوە بۆ کارپێکردنی ئەم فایلە</string>
     <string name="clear_views_history_title">سڕینەوەی مێژووی تەماشاکردن</string>
     <string name="clear_views_history_summary">مێژوو دەسڕێتەوە لەگەڵ ڤیدیۆ کارپێکراوەکان و شوێنی لیستە ڤیدیۆییەکان</string>
     <string name="delete_view_history_alert">تەواوی مێژووی تەماشاکردن بسڕدرێتەوە؟</string>
@@ -277,10 +276,6 @@
     <string name="users">بەکاربەرەکان</string>
     <string name="unsubscribe">بەشدارنەبوون</string>
     <string name="tab_choose">هەڵبژاردنی پەڕە</string>
-    <string name="volume_gesture_control_title">کۆنترۆڵی دەنگ بەجوڵەی پەنجە</string>
-    <string name="volume_gesture_control_summary">جوڵەی پەنجەت لەسەر ڕوونما بەکاربهێنە بۆ گۆڕینی ئاستی دەنگ</string>
-    <string name="brightness_gesture_control_title">کۆنترۆڵی ڕووناکی بەجوڵەی پەنجە</string>
-    <string name="brightness_gesture_control_summary">جوڵەی پەنجەت لەسەر ڕوونما بەکاربهێنە بۆ گۆڕینی ئاستی ڕووناکی ڕوونما</string>
     <string name="content_language_title">زمانی بنەڕەتی ئەپ</string>
     <string name="settings_category_updates_title">نوێکارییەکان</string>
     <string name="file_deleted">فایل سڕایەوە</string>

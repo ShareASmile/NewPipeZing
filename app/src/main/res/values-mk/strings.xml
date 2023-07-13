@@ -300,7 +300,6 @@
     <string name="search_history_deleted">Избришана е историјата на пребарувања.</string>
     <string name="no_streams_available_download">Нема стримови за симнување</string>
     <string name="one_item_deleted">1 ставка избришана.</string>
-    <string name="toast_no_player">Нема апликација за пуштање на овој фајл</string>
     <string name="app_license">NewPipe е „copyleft“ слободен софтвер: Можеш да ја користиш, истражуваш и подобруваш по твоја желба. Можеш да ја редистрибуираш и/или да ја промениш под условите на GNU GPL лиценцата, публикувана од фондацијата FSF - или верзија 3 од лиценцата, или (по можност) понова верзија.</string>
     <string name="import_settings">Дали сакаш да се внесат и подесувањата?</string>
     <string name="preferred_open_action_settings_title">Претпочитана акција за „отворање“</string>
@@ -331,10 +330,6 @@
     <string name="minimize_on_exit_popup_description">Смали го во прозорче</string>
     <string name="unsubscribe">Откажете претплата</string>
     <string name="tab_choose">Одбери јазиче</string>
-    <string name="volume_gesture_control_title">Гест за контрола на гласност</string>
-    <string name="volume_gesture_control_summary">Користете гестови за подесување на гласноста</string>
-    <string name="brightness_gesture_control_title">Гестови за контрола на осветленост</string>
-    <string name="brightness_gesture_control_summary">Користете гест за контрола на осветленоста</string>
     <string name="settings_category_updates_title">Ажурирања</string>
     <string name="file_deleted">Дадотеката е избришана</string>
     <string name="app_update_notification_channel_name">Известување за ажурирање на апликација</string>

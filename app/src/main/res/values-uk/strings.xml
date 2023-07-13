@@ -21,7 +21,7 @@
     <string name="download_path_audio_summary">Завантажені аудіофайли зберігаються тут</string>
     <string name="default_resolution_title">Типова роздільність</string>
     <string name="play_with_kodi_title">Програти в Kodi</string>
-    <string name="kore_not_found">Встановити відсутній застосунок Kore\?</string>
+    <string name="kore_not_found">Установити відсутній застосунок Kore\?</string>
     <string name="show_play_with_kodi_title">Показати опцію «Відтворити у Kodi»</string>
     <string name="show_play_with_kodi_summary">Показати опцію відтворення відео в Kodi</string>
     <string name="play_audio">Аудіо</string>
@@ -47,12 +47,12 @@
     <string name="content_not_available">Вміст недоступний</string>
     <string name="could_not_setup_download_menu">Не вдалося налаштувати меню завантаження</string>
     <string name="sorry_string">Перепрошуємо, цього не мало статися.</string>
-    <string name="error_report_button_text">Надіслати звіт про помилки е-поштою</string>
+    <string name="error_report_button_text">Надіслати звіт е-поштою</string>
     <string name="error_snackbar_message">Вибачте, щось пішло не так.</string>
     <string name="error_snackbar_action">Звіт</string>
     <string name="what_device_headline">Інформація:</string>
     <string name="what_happened_headline">Що сталося:</string>
-    <string name="main_bg_subtitle">Натисніть на «лупу», щоб почати.</string>
+    <string name="main_bg_subtitle">Торкніться лупи, щоб розпочати.</string>
     <string name="black_theme_title">Чорна</string>
     <string name="downloads">Завантаження</string>
     <string name="downloads_title">Завантаження</string>
@@ -197,7 +197,7 @@
     <string name="tab_about">Про застосунок і ЧаП</string>
     <string name="app_description">Вільне та легке потокове програвання на Android.</string>
     <string name="contribution_encouragement">Які б не були ваші ідеї: переклад, дизайн, легкий чи глобальний рефакторинг — будь-яка допомога завжди у пригоді. Що більше зроблено, то ліпшим стає NewPipe!</string>
-    <string name="settings_category_debug_title">Зневадження</string>
+    <string name="settings_category_debug_title">Налагодження</string>
     <string name="empty_list_subtitle">Нічого немає… чути лише цвіркунів</string>
     <string name="no_views">Немає переглядів</string>
     <plurals name="views">
@@ -307,7 +307,6 @@
     <string name="preferred_open_action_settings_summary">Типова дія під час відкриття вмісту — %s</string>
     <string name="caption_setting_title">Субтитри</string>
     <string name="caption_setting_description">Зміна висоти тексту субтитрів та стилів тла. Потребує перезапуску застосунку</string>
-    <string name="toast_no_player">Не встановлено застосунків для відтворення цього файлу</string>
     <string name="clear_views_history_title">Очистити історію переглядів</string>
     <string name="clear_views_history_summary">Видаляє історію відтворень і позицій відтворення</string>
     <string name="delete_view_history_alert">Видалити всю історію переглядів\?</string>
@@ -346,10 +345,6 @@
     <string name="grid">Сiтка</string>
     <string name="unsubscribe">Відписатися</string>
     <string name="tab_choose">Обрати вкладку</string>
-    <string name="volume_gesture_control_title">Жест керування гучністю</string>
-    <string name="volume_gesture_control_summary">Змінювати гучність звуку жестами</string>
-    <string name="brightness_gesture_control_title">Жест керування яскравістю</string>
-    <string name="brightness_gesture_control_summary">Змінювати яскравість програвача жестами</string>
     <string name="settings_category_updates_title">Оновлення</string>
     <string name="events">Події</string>
     <string name="file_deleted">Файл видалено</string>
@@ -596,7 +591,7 @@
     <string name="enqueued">Додано у чергу</string>
     <string name="enqueue_stream">Додати у чергу</string>
     <string name="recaptcha_solve">Розв\'язати</string>
-    <string name="msg_calculating_hash">Обчислення гешу</string>
+    <string name="msg_calculating_hash">Обчислення хешу</string>
     <string name="clear_cookie_summary">Очистити збережені під час вирішення reCAPTCHA реп\'яшки (cookies)</string>
     <string name="recaptcha_cookies_cleared">Реп\'яшки (cookies) reCAPTCHA видалено</string>
     <string name="clear_cookie_title">Очистити реп\'яшки (cookies) reCAPTCHA</string>
@@ -647,7 +642,6 @@
     <string name="on">Увімкнути</string>
     <string name="tablet_mode_title">Режим планшета</string>
     <string name="account_terminated">Обліковий запис припинено</string>
-    <string name="feed_toggle_show_played_items">Показувати переглянуті обʼєкти</string>
     <string name="feed_load_error_fast_unknown">Режим швидкої підписки не надає багато інформації щодо цього.</string>
     <string name="comments_are_disabled">Коментарі вимкнено</string>
     <string name="dont_show">Не показувати</string>
@@ -698,7 +692,6 @@
     <string name="detail_pinned_comment_view_description">Закріплений коментар</string>
     <string name="leak_canary_not_available">LeakCanary недоступний</string>
     <string name="progressive_load_interval_exoplayer_default">Типовий ExoPlayer</string>
-    <string name="progressive_load_interval_summary">Змінити розмір інтервалу завантаження (наразі %s). Менше значення може прискорити початкове завантаження відео. Зміни вимагають перезапуску програвача</string>
     <string name="you_successfully_subscribed">Ви підписалися на цей канал</string>
     <string name="enumeration_comma">,</string>
     <string name="streams_notification_channel_description">Сповіщення про нові трансляції для підписок</string>
@@ -733,7 +726,6 @@
     <string name="unknown_quality">Невідома якість</string>
     <string name="progressive_load_interval_title">Розмір інтервалу завантаження відтворення</string>
     <string name="feed_toggle_show_future_items">Показати наступні елементи</string>
-    <string name="feed_toggle_hide_played_items">Сховати переглянуті елементи</string>
     <string name="feed_toggle_hide_future_items">Сховати майбутні елементи</string>
     <string name="faq">Переглянути на сайті</string>
     <string name="faq_title">Поширені запитання</string>
@@ -743,4 +735,27 @@
     <string name="app_update_available_notification_text">Торкніться, щоб завантажити %s</string>
     <string name="import_subscriptions_hint">Імпорт або експорт підписок з 3-крапкового меню</string>
     <string name="fast_mode">Швидкий режим</string>
+    <string name="night_theme_available">Ця опція доступна, лише якщо темою обрано %s</string>
+    <string name="unset_playlist_thumbnail">Прибрати постійну мініатюру</string>
+    <string name="card">Картки</string>
+    <string name="msg_failed_to_copy">Не вдалося скопіювати до буфера обміну</string>
+    <string name="playlist_add_stream_success_duplicate">Дублікат додано %d раз(ів)</string>
+    <string name="duplicate_in_playlist">У виділених сірим кольором добірках цей елемент уже є.</string>
+    <string name="ignore_hardware_media_buttons_title">Ігнорувати події апаратних медіакнопок</string>
+    <string name="ignore_hardware_media_buttons_summary">Корисно, наприклад, якщо ви використовуєте гарнітуру зі зламаними фізичними кнопками</string>
+    <string name="remove_duplicates">Вилучити дублікати</string>
+    <string name="remove_duplicates_title">Вилучити дублікати\?</string>
+    <string name="remove_duplicates_message">Бажаєте вилучити всі повторювані трансляції в цій добірці\?</string>
+    <string name="feed_show_hide_streams">Показати/сховати трансляції</string>
+    <string name="feed_show_upcoming">Незабаром</string>
+    <string name="feed_hide_streams_title">Показати такі трансляції</string>
+    <string name="feed_show_watched">Повністю переглянуто</string>
+    <string name="feed_show_partially_watched">Частково переглянуто</string>
+    <string name="brightness">Яскравість</string>
+    <string name="none">Нічого</string>
+    <string name="left_gesture_control_title">Дія жестом ліворуч</string>
+    <string name="left_gesture_control_summary">Виберіть жест для лівої половини екрана програвача</string>
+    <string name="right_gesture_control_summary">Виберіть жест для правої половини екрана програвача</string>
+    <string name="right_gesture_control_title">Дія жесту праворуч</string>
+    <string name="volume">Гучність</string>
 </resources>

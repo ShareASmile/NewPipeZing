@@ -29,7 +29,7 @@
     <string name="show_higher_resolutions_title">Rodyti didesnes raiškas</string>
     <string name="show_higher_resolutions_summary">Tik kai kurie įrenginiai palaiko 2K/4K vaizdo įrašų peržiūrą</string>
     <string name="play_with_kodi_title">Groti su Kodi</string>
-    <string name="kore_not_found">Įdiegti nereastą Kore programėlę\?</string>
+    <string name="kore_not_found">Įdiegti nereastą Kode programėlę\?</string>
     <string name="show_play_with_kodi_title">Rodyti „Peržiūra su Kodi“ pasirinkimą</string>
     <string name="show_play_with_kodi_summary">Rodyti pasirinkimą peržiūrėti vaizdo įrašus per Kodi mediacentrą</string>
     <string name="play_audio">Garso įrašas</string>
@@ -97,14 +97,14 @@
     </plurals>
     <string name="start">Pradėti</string>
     <string name="pause">Pauzė</string>
-    <string name="delete">Ištrinti</string>
+    <string name="delete">Naikinti</string>
     <string name="checksum">Kontrolinė suma</string>
     <string name="ok">Gerai</string>
     <string name="msg_name">Failo pavadinimas</string>
     <string name="msg_threads">Gijos</string>
     <string name="msg_error">Klaida</string>
-    <string name="msg_running">NewPipe Atsiunčiama</string>
-    <string name="msg_running_detail">Palieskite, kad peržiūrėtumėte išsamią informaciją</string>
+    <string name="msg_running">NewPipe atsisiunčiama</string>
+    <string name="msg_running_detail">Bakstelėkite, kad peržiūrėtumėte išsamią informaciją</string>
     <string name="msg_wait">Prašome palaukti…</string>
     <string name="msg_copied">Nukopijuota į iškarpinę</string>
     <string name="no_available_dir">Prašome pasirinkti galimą atsisiuntimų aplankalą</string>
@@ -212,9 +212,9 @@
     <string name="video_streams_empty">Nerasta video srautų</string>
     <string name="audio_streams_empty">Nerasta audio srautų</string>
     <string name="detail_drag_description">Tempti kad perrūšiuoti</string>
-    <string name="create">Sukurti</string>
+    <string name="create">Kurti</string>
     <string name="dismiss">Nutraukti</string>
-    <string name="rename">Pervadinti</string>
+    <string name="rename">Pervardyti</string>
     <string name="title_last_played">Vėliausiai žiūrėta</string>
     <string name="title_most_played">Dažniausiai žiūrėta</string>
     <string name="export_complete_toast">Eksportavimas baigtas</string>
@@ -230,7 +230,7 @@
     <string name="always_ask_open_action">Visada klausti</string>
     <string name="preferred_player_fetcher_notification_title">Gauname informaciją…</string>
     <string name="preferred_player_fetcher_notification_message">Įkeliamas pasirinktas turinys</string>
-    <string name="create_playlist">Naujas grojaraštį</string>
+    <string name="create_playlist">Naujas grojaraštis</string>
     <string name="rename_playlist">Pervadinti</string>
     <string name="name">Pavadinimas</string>
     <string name="add_to_playlist">Pridėti į grojaraštį</string>
@@ -311,7 +311,7 @@
     <string name="app_update_notification_channel_description">Pranešimas apie naują NewPipe versiją</string>
     <string name="app_update_notification_channel_name">Programos atnaujinimo pranešimas</string>
     <string name="file">Failą</string>
-    <string name="file_deleted">Failas pašalintas</string>
+    <string name="file_deleted">Failas panaikintas</string>
     <string name="artists">Atlikėjai</string>
     <string name="albums">Albumai</string>
     <string name="songs">Dainos</string>
@@ -341,10 +341,6 @@
     <string name="settings_category_clear_data_title">Išvalyti duomenis</string>
     <string name="enable_playback_state_lists_summary">Sąraše rodyti atkūrimo vietos indikatorių</string>
     <string name="enable_playback_state_lists_title">Vietos sąraše</string>
-    <string name="brightness_gesture_control_summary">Naudoti gestus ryškumo valdymui</string>
-    <string name="brightness_gesture_control_title">Ryškumo gesto valdymas</string>
-    <string name="volume_gesture_control_summary">Naudoti gestus garsumo valdymui</string>
-    <string name="volume_gesture_control_title">Garsumo gesto valdymas</string>
     <string name="auto_queue_toggle">Auto eilė</string>
     <string name="auto_queue_summary">Tęsti atkūrimą į eilę pridedant susijusius srautus</string>
     <string name="auto_queue_title">Automatiškai pridėti sekantį į eilę</string>
@@ -512,7 +508,6 @@
     <string name="privacy_policy_encouragement">NewPipe į jūsų privatumą žiūri labai rimtai. Programa be jūsų sutikimo nerenka jokių duomenų.
 \nNewPipe privatumo politika išsamiai parodo kokie duomenys siunčiami ir saugomi pranešant apie problemą.</string>
     <string name="privacy_policy_title">NewPipe privatumo politika</string>
-    <string name="toast_no_player">Šio failo atkūrimui nėra įdiegtos programos</string>
     <string name="recaptcha_done_button">Atlikta</string>
     <string name="recaptcha_solve">Išspręsta</string>
     <string name="subtitle_activity_recaptcha">Paspauskite \"atlikta\" kai išspręsta</string>
@@ -638,7 +633,6 @@
     <string name="description_select_note">Dabar apraše galite pasirinkti tekstą aprašyme. Atminkite, kad puslapis gali mirgėti, o nuorodos gali būti nespustelėjamos, kai veikia pasirinkimo režimas.</string>
     <string name="service_provides_reason">%s pateikia šią priežastį:</string>
     <string name="account_terminated">Paskyra anuliuota</string>
-    <string name="feed_toggle_show_played_items">Rodyti peržiūrėtus elementus</string>
     <string name="feed_load_error_fast_unknown">Greito srauto režimas nesuteikia daugiau informacijos apie tai.</string>
     <string name="feed_load_error_terminated">Autoriaus paskyra anuliuota.
 \n„NewPipe“ negalės įkelti šio kanalo ateityje.
@@ -686,7 +680,7 @@
 \nĮdiekite „Storage Access Framework“ suderinamą su šia failų tvarkykle</string>
     <string name="error_report_channel_description">Pranešimai pranešimui apie klaidas</string>
     <string name="show_crash_the_player_title">Rodyti „Grotuvas užlūžo“</string>
-    <string name="create_error_notification">Sukurti klaidos pranešimą</string>
+    <string name="create_error_notification">Kurti klaidos pranešimą</string>
     <string name="error_report_notification_title">NewPipe susidūrė su klaida, paspauskite norėdami pranešti</string>
     <string name="no_appropriate_file_manager_message">Šiam veiksmui nebuvo rasta tinkama failų tvarkyklė.
 \nĮdiekite failų tvarkyklę arba pabandykite išjungti \"%s\" atsisiuntimo nustatymuose</string>
@@ -727,7 +721,6 @@
     <string name="selected_stream_external_player_not_supported">Pasirinktos transliacijos išoriniai grotuvai nepalaiko</string>
     <string name="no_audio_streams_available_for_external_players">Išoriniams grotuvams garso transliacijos nepasiekiamos</string>
     <string name="select_quality_external_players">Pasirinkite kokybę skirtą išoriniams grotuvams</string>
-    <string name="feed_toggle_hide_played_items">Slėpti peržiūrėtus elementus</string>
     <string name="notifications_disabled">Pranešimai yra išjungti</string>
     <string name="progressive_load_interval_exoplayer_default">„ExoPlayer“ numatytasis</string>
     <string name="unknown_quality">Nežinoma kokybė</string>

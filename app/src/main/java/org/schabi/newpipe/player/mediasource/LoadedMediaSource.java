@@ -15,7 +15,7 @@ public class LoadedMediaSource extends WrappingMediaSource implements ManagedMed
     private final long expireTimestamp;
 
     /**
-     * Uses a {@link WrappingMediaSource} to wrap one child {@link MediaSource}
+     * Uses a {@link WrappingMediaSource} to wrap one child {@link MediaSource}s
      * containing actual media. This wrapper {@link LoadedMediaSource} holds the expiration
      * timestamp as a {@link ManagedMediaSource} to allow explicit playlist management under
      * {@link ManagedMediaSourcePlaylist}.

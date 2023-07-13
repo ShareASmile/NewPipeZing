@@ -250,7 +250,6 @@
     <string name="copyright" formatted="true">© %1$s nga %2$s nën %3$s</string>
     <string name="title_licenses">Licensat e palëve të treta</string>
     <string name="title_activity_about">Rreth NewPipe</string>
-    <string name="toast_no_player">Nuk ka aplikacion të instaluar që mund ta luajë këtë skedar</string>
     <string name="charset_most_special_characters">Shumica e karaktereve speciale</string>
     <string name="charset_letters_and_digits">Shkronjat dhe numrat</string>
     <string name="settings_file_replacement_character_title">Karakteri zëvendësues</string>
@@ -483,10 +482,6 @@
     <string name="enable_search_history_summary">Ruani frazat e kërkuara lokalisht</string>
     <string name="enable_search_history_title">Historia e kërkimit</string>
     <string name="show_search_suggestions_summary">Shfaq sugjerime kur jeni duke kërkuar</string>
-    <string name="brightness_gesture_control_summary">Përdorni gjestet për të kontrolluar ndriçimin e luajtësit</string>
-    <string name="brightness_gesture_control_title">Kontrolli i gjesteve të ndriçimit</string>
-    <string name="volume_gesture_control_summary">Përdorni gjeste për të kontrolluar volumin e luajtësit</string>
-    <string name="volume_gesture_control_title">Kontrolli i gjesteve të volumit</string>
     <string name="auto_queue_summary">Vazhdoje radhën e luajtjes së mbarueshme (e papërsëritur) duke shtuar një stream të ngjashëm</string>
     <string name="auto_queue_title">Auto-radhit stream-in e radhës</string>
     <string name="metadata_cache_wipe_complete_notice">Depoja e të dhënave meta u boshatis</string>
@@ -508,7 +503,7 @@
     <string name="default_audio_format_title">Formati i parazgjedhur audio</string>
     <string name="show_play_with_kodi_summary">Shfaq një opsion për të luajtur videot përmes Kodi</string>
     <string name="show_play_with_kodi_title">Shfaq opsionin \"Luaj me Kodi\"</string>
-    <string name="kore_not_found">Instaloni aplikacionin Kore që mungon\?</string>
+    <string name="kore_not_found">Instaloni aplikacionin Kode që mungon\?</string>
     <string name="show_higher_resolutions_summary">Vetëm disa pajisje mund të luajnë video 2K/4K</string>
     <string name="show_higher_resolutions_title">Shfaq rezolucione më të larta</string>
     <string name="default_popup_resolution_title">Rezolucioni i parazgjedhur i popup</string>
@@ -616,7 +611,6 @@
     <string name="private_content">Kjo përmbajtje është private, kështu që nuk mund të luhet apo shkarkohet nga NewPipe.</string>
     <string name="georestricted_content">Kjo përmbajtje nuk është e disponueshme në shtetin tuaj.</string>
     <string name="show_thumbnail_summary">Përdor pamje statike për sfondin e ekranit të kyçur si dhe për njoftimet</string>
-    <string name="feed_toggle_show_played_items">Shfaq objektet e para</string>
     <string name="feed_load_error_fast_unknown">Modaliteti i feed-it të shpejtë nuk mundëson më tepër informacion mbi këtë.</string>
     <string name="feed_load_error_terminated">Llogaria e autorit është bllokuar.
 \nNewPipe nuk do mund ta ngarkojë këtë feed në të ardhmen.

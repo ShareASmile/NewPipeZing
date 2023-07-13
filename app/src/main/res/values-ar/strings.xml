@@ -46,7 +46,7 @@
     <string name="general_error">خطأ</string>
     <string name="parsing_error">تعذر تحليل الموقع</string>
     <string name="youtube_signature_deobfuscation_error">تعذر فك تشفير توقيع رابط الفيديو</string>
-    <string name="main_bg_subtitle">اضغط على العدسة المكبرة للبدء.</string>
+    <string name="main_bg_subtitle">اضغط على \"العدسة المكبرة\" للبدء.</string>
     <string name="subscribe_button_title">اشتراك</string>
     <string name="subscribed_button_title">مشترك</string>
     <string name="tab_subscriptions">الاشتراكات</string>
@@ -105,7 +105,7 @@
     <string name="player_unrecoverable_failure">حدث خطأ للمشغل غير قابل للاسترداد</string>
     <string name="player_recoverable_failure">استرداد المشغل من الخطأ</string>
     <string name="sorry_string">عذرًا، لم ينبغِ أن يحدث ذلك.</string>
-    <string name="error_report_button_text">الإبلاغ عن هذا الخطأ عبر البريد الإلكتروني</string>
+    <string name="error_report_button_text">الإبلاغ عن طريق البريد الإلكتروني</string>
     <string name="error_snackbar_message">عذرًا، حدث خطأ ما.</string>
     <string name="error_snackbar_action">أبلِغ</string>
     <string name="what_device_headline">معلومات:</string>
@@ -288,7 +288,6 @@
     <string name="invalid_file">الملف غير موجود أو الإذن بالقراءة أو الكتابة إليه غير موجود</string>
     <string name="no_streams_available_download">لا يوجد بث متاح للتنزيل</string>
     <string name="one_item_deleted">تم حذف عنصر واحد.</string>
-    <string name="toast_no_player">لم يتم تثبيت أي تطبيق لتشغيل هذا الملف</string>
     <string name="app_license">NewPipe هو برنامج مفتوح المصدر وبحقوق متروكة: يمكنك استخدام الكود ودراسته وتحسينه كما شئت. وعلى وجه التحديد يمكنك إعادة توزيعه / أو تعديله تحت شروط رخصة GNU العمومية والتي نشرتها مؤسسة البرمجيات الحرة، سواء الإصدار 3 من الرخصة، أو (باختيارك) أي إصدار أحدث.</string>
     <string name="title_last_played">آخر ما تم تشغيله</string>
     <string name="title_most_played">الأكثر تشغيلا</string>
@@ -347,13 +346,9 @@
     <string name="users">المستخدمين</string>
     <string name="unsubscribe">إلغاء الاشتراك</string>
     <string name="tab_choose">اختر علامة التبويب</string>
-    <string name="volume_gesture_control_summary">استخدم إيماءات التحكم في صوت المشغّل</string>
-    <string name="brightness_gesture_control_title">التحكم بإيماءات السطوع</string>
-    <string name="brightness_gesture_control_summary">استخدام الإيماءات للتحكم بسطوع المشغّل</string>
     <string name="settings_category_updates_title">التحديثات</string>
     <string name="file_deleted">تم حذف الملف</string>
     <string name="app_update_notification_channel_name">تنبيه تحديث التطبيق</string>
-    <string name="volume_gesture_control_title">إيماء التحكم بالصوت</string>
     <string name="events">الأحداث</string>
     <string name="app_update_notification_channel_description">إشعارات لإصدار NewPipe الجديد</string>
     <string name="download_to_sdcard_error_title">وحدة التخزين الخارجية غير متوفرة</string>
@@ -676,7 +671,6 @@
     <string name="off">إيقاف</string>
     <string name="on">تشغيل</string>
     <string name="tablet_mode_title">وضع الجهاز اللوحي</string>
-    <string name="feed_toggle_show_played_items">إظهار العناصر التي تمت مشاهدتها</string>
     <string name="comments_are_disabled">تم تعطيل التعليقات</string>
     <string name="dont_show">لا تظهر</string>
     <string name="low_quality_smaller">جودة منخفضة (أصغر)</string>
@@ -730,7 +724,6 @@
     <string name="detail_pinned_comment_view_description">تعليق مثبت</string>
     <string name="leak_canary_not_available">LeakCanary غير متوفر</string>
     <string name="progressive_load_interval_exoplayer_default">الافتراضي ExoPlayer</string>
-    <string name="progressive_load_interval_summary">تغيير حجم الفاصل الزمني للتحميل (حاليا %s). قد تؤدي القيمة الأقل إلى تسريع تحميل الفيديو الأولي. تتطلب التغييرات إعادة تشغيل المشغل</string>
     <string name="settings_category_player_notification_summary">تكوين إشعار مشغل البث الحالي</string>
     <string name="notifications">الإشعارات</string>
     <string name="loading_stream_details">تحميل تفاصيل البث…</string>
@@ -769,7 +762,6 @@
     <string name="progressive_load_interval_title">حجم الفاصل الزمني لتحميل التشغيل</string>
     <string name="feed_toggle_show_future_items">عرض العناصر المستقبلية</string>
     <string name="feed_toggle_hide_future_items">إخفاء العناصر المستقبلية</string>
-    <string name="feed_toggle_hide_played_items">إخفاء العناصر التي تمت مشاهدتها</string>
     <string name="faq_title">أسئلة مكررة</string>
     <string name="faq_description">إذا كنت تواجه مشكلة في استخدام التطبيق ، فتأكد من مراجعة هذه الإجابات للأسئلة الشائعة!</string>
     <string name="faq">مشاهدة على الموقع</string>
@@ -778,4 +770,27 @@
     <string name="app_update_available_notification_text">انقر للتنزيل %s</string>
     <string name="fast_mode">الوضع السريع</string>
     <string name="import_subscriptions_hint">استيراد الاشتراكات أو تصديرها من القائمة المكونة من 3 نقاط</string>
+    <string name="night_theme_available">هذا الخيار متاح فقط إذا تم تحديد %s للسمة</string>
+    <string name="unset_playlist_thumbnail">إلغاء تعيين الصورة المصغرة الدائمة</string>
+    <string name="msg_failed_to_copy">فشل النسخ إلى الحافظة</string>
+    <string name="card">البطاقة</string>
+    <string name="playlist_add_stream_success_duplicate">تمت إضافة وقت (أوقات) مكررة %d</string>
+    <string name="duplicate_in_playlist">تحتوي قوائم التشغيل رمادية اللون بالفعل على هذا العنصر.</string>
+    <string name="ignore_hardware_media_buttons_summary">مفيد ، على سبيل المثال ، إذا كنت تستخدم سماعة رأس بأزرار مادية مكسورة</string>
+    <string name="ignore_hardware_media_buttons_title">تجاهل أحداث ازرار الوسائط الأجهزة</string>
+    <string name="remove_duplicates_message">هل تريد إزالة جميع التدفقات المكررة في قائمة التشغيل هذه؟</string>
+    <string name="feed_show_hide_streams">إظهار/إخفاء التدفقات</string>
+    <string name="feed_show_partially_watched">تمت مشاهدته جزئيا</string>
+    <string name="feed_show_upcoming">القادمة</string>
+    <string name="remove_duplicates">إزالة التكرارات</string>
+    <string name="remove_duplicates_title">إزالة التكرارات؟</string>
+    <string name="feed_hide_streams_title">إظهار التدفقات التالية</string>
+    <string name="feed_show_watched">شاهدت بالكامل</string>
+    <string name="left_gesture_control_title">إجراء الإيماءة اليسرى</string>
+    <string name="right_gesture_control_title">اجراء الإيماءة اليمنى</string>
+    <string name="brightness">السطوع</string>
+    <string name="none">بدون</string>
+    <string name="left_gesture_control_summary">اختر إيماءة للنصف الأيسر من شاشة المشغل</string>
+    <string name="right_gesture_control_summary">اختر إيماءة للنصف الأيمن من شاشة المشغل</string>
+    <string name="volume">مستوى الصوت</string>
 </resources>

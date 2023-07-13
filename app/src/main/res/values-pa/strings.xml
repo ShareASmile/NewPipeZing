@@ -138,7 +138,7 @@
     <string name="error_occurred_detail">ਇੱਕ ਤਰੁੱਟੀ ਆਈ ਹੈ: %1$s</string>
     <string name="no_streams_available_download">ਡਾਊਨਲੋਡ ਕਰਨ ਲਈ ਕੋਈ ਸਟ੍ਰੀਮ ਉਪਲਬਧ ਨਹੀਂ ਹੈ</string>
     <string name="sorry_string">ਮੁਆਫ ਕਰਨਾ, ਅਜਿਹਾ ਨਹੀਂ ਹੋਣਾ ਚਾਹੀਦਾ ਸੀ।</string>
-    <string name="error_report_button_text">ਈ-ਮੇਲ ਦੁਆਰਾ ਇਸ ਤਰੁੱਟੀ ਦੀ ਇਤਲਾਹ ਦਿਓ</string>
+    <string name="error_report_button_text">ਈ-ਮੇਲ ਦੁਆਰਾ ਇਤਲਾਹ ਦਿਓ</string>
     <string name="error_snackbar_message">ਅਫ਼ਸੋਸ ਹੈ, ਕੁਝ ਤਰੁੱਟੀਆਂ ਸਾਹਮਣੇ ਆਈਆਂ ਹਨ।</string>
     <string name="error_snackbar_action">ਇਤਲਾਹ ਕਰੋ</string>
     <string name="what_device_headline">ਜਾਣਕਾਰੀ:</string>
@@ -201,7 +201,6 @@
     <string name="settings_file_replacement_character_title">ਵਟਾਂਦਰਾ ਚਿੰਨ</string>
     <string name="charset_letters_and_digits">ਅੱਖਰ ਅਤੇ ਅੰਕ</string>
     <string name="charset_most_special_characters">ਬਹੁਤੇ ਖ਼ਾਸ ਅੱਖਰ</string>
-    <string name="toast_no_player">ਇਸ ਫਾਈਲ ਨੂੰ ਚਲਾਉਣ ਲਈ ਕੋਈ ਐਪ ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ</string>
     <string name="title_activity_about">ਨਿਊਪਾਈਪ ਬਾਰੇ</string>
     <string name="title_licenses">ਤੀਜੀ ਧਿਰ ਦੇ ਲਾਈਸੈਂਸ</string>
     <string name="copyright" formatted="true">© %1$s ਵਲੋਂ %2$s, %3$s ਅਧੀਨ</string>
@@ -333,10 +332,6 @@
     <string name="users">ਯੂਜ਼ਰਸ</string>
     <string name="unsubscribe">ਅਨ-ਸਬਸਕ੍ਰਾਈਬ ਕਰੋ</string>
     <string name="tab_choose">ਟੈਬ ਚੁਣੋ</string>
-    <string name="volume_gesture_control_title">ਆਵਾਜ਼ ਸ਼ਵਾਵਾਂ ਕੰਟਰੋਲ</string>
-    <string name="volume_gesture_control_summary">ਆਵਾਜ਼ ਕੰਟਰੋਲ ਕਰਨ ਲਈ ਸ਼ਵਾਵਾਂ ਦੀ ਵਰਤੋਂ ਕਰੋ</string>
-    <string name="brightness_gesture_control_title">ਸਕ੍ਰੀਨ ਲਾਈਟ ਸ਼ਵਾਵਾਂ ਕੰਟਰੋਲ</string>
-    <string name="brightness_gesture_control_summary">ਵੀਡੀਓ ਸਕ੍ਰੀਨ ਦੀ ਚਮਕ ਕੰਟਰੋਲ ਕਰਨ ਲਈ ਸ਼ਵਾਵਾਂ ਦੀ ਵਰਤੋਂ ਕਰੋ</string>
     <string name="content_language_title">ਮੂਲ ਭਾਸ਼ਾ ਸਮੱਗਰੀ</string>
     <string name="settings_category_updates_title">ਅਪਡੇਟਾਂ</string>
     <string name="file_deleted">ਫਾਈਲ ਮਿਟਾ ਦਿੱਤੀ ਗਈ ਹੈ</string>
@@ -648,7 +643,6 @@
     <string name="local_search_suggestions">ਖੋਜ ਦੇ ਸਥਾਨਕ ਸੁਝਾਅ</string>
     <string name="remote_search_suggestions">ਖੋਜ ਦੇ ਰਿਮੋਟ ਸੁਝਾਅ</string>
     <string name="start_main_player_fullscreen_title">ਮੁੱਖ ਪਲੇਅਰ ਪੂਰੀ ਸਕਰੀਨ ਵਿੱਚ ਸ਼ੁਰੂ ਕਰੋ</string>
-    <string name="feed_toggle_show_played_items">ਵੇਖ ਚੁੱਕੀਆਂ ਆਈਟਮਾਂ ਵਿਖਾਓ</string>
     <string name="progressive_load_interval_title">ਪਲੇਅਬੈਕ ਲੋਡ ਦਾ ਅੰਤਰਾਲ ਆਕਾਰ</string>
     <plurals name="new_streams">
         <item quantity="one">%s ਨਵੀਂ ਸਟਰੀਮ</item>
@@ -664,7 +658,6 @@
     <string name="show_error_snackbar">ਤਰੁੱਟੀ ਤੇ ਸਨੈਕਬਾਰ ਵਿਖਾਓ</string>
     <string name="feed_use_dedicated_fetch_method_summary">ਕੁਝ ਸੇਵਾਵਾਂ ਵਿੱਚ ਹੀ ਉਪਲੱਬਧ ਇਹ ਤਰੀਕਾ ਸਬਸਕ੍ਰਿਪਸ਼ਨ ਫੀਡ ਵਿੱਚ ਤੇਜ ਜਾਣਕਾਰੀ ਮੁਹੱਈਆ ਕਰਵਾਉਂਦਾ ਹੈ, ਪਰ ਕੁਝ ਗਿਣਤੀ ਦੀਆਂ ਹੀ ਆਈਟਮ ਪ੍ਰਦਾਨ ਕਰ ਸਕਦਾ ਹੈ ਉਹ ਵੀ ਅਕਸਰ ਬਿਨਾਂ ਪੂਰੀ ਜਾਣਕਾਰੀ( ਜਿਵੇਂ ਅਵਧੀ, ਸਟਰੀਮ ਦੀ ਕਿਸਮ, ਕੋਈ ਸਟਰੀਮ ਲਾਈਵ ਹੈ, ਨਹੀਂ ਦੱਸਦਾ)</string>
     <string name="soundcloud_go_plus_content">ਇਹ ਸਾਊਂਡਕਲਾਊਡ ਗੋ-ਪਲੱਸ ਟਰੈਕ ਹੈ, ਤੁਹਾਡੇ ਦੇਸ਼ ਵਿੱਚ ਇਹ ਸਟ੍ਰੀਮ ਜਾਂ ਡਾਊਨਲੋਡ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ।</string>
-    <string name="feed_toggle_hide_played_items">ਵੇਖ ਚੁੱਕੀਆਂ ਆਈਟਮਾਂ ਲੁਕਾਓ</string>
     <string name="unknown_format">ਅਗਿਆਤ ਫਾਰਮੈਟ</string>
     <string name="unknown_quality">ਅਗਿਆਤ ਕੁਆਲਿਟੀ</string>
     <string name="feed_toggle_show_future_items">ਭਵਿੱਖ-ਪ੍ਰਕਾਸ਼ਤ ਆਈਟਮ ਵਿਖਾਓ</string>
@@ -726,4 +719,27 @@
     <string name="import_subscriptions_hint">3-ਡੌਟ ਮੀਨੂ ਤੋਂ ਸਬਸਕ੍ਰਿਪਸ਼ਨਾਂ ਨੂੰ ਆਯਾਤ ਜਾਂ ਨਿਰਯਾਤ ਕਰੋ</string>
     <string name="app_update_unavailable_toast">ਤੁਸੀਂ ਨਿਊਪਾਈਪ ਦਾ ਨਵੀਨਤਮ ਸੰਸਕਰਣ ਚਲਾ ਰਹੇ ਹੋ</string>
     <string name="app_update_available_notification_text">%s ਨੂੰ ਡਾਊਨਲੋਡ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ</string>
+    <string name="night_theme_available">ਇਹ ਵਿਕਲਪ ਤਾਂ ਹੀ ਉਪਲਬਧ ਹੈ ਜੇਕਰ %s ਨੂੰ ਥੀਮ ਲਈ ਚੁਣਿਆ ਗਿਆ ਹੈ</string>
+    <string name="unset_playlist_thumbnail">ਸਥਾਈ ਥੰਮਨੇਲ ਨੂੰ ਅਨਸੈੱਟ ਕਰੋ</string>
+    <string name="msg_failed_to_copy">ਕਲਿੱਪਬੋਰਡ \'ਤੇ ਕਾਪੀ ਕਰਨ ਵਿੱਚ ਅਸਫਲ</string>
+    <string name="card">ਕਾਰਡ</string>
+    <string name="duplicate_in_playlist">ਪਲੇਲਿਸਟਾਂ ਜੋ ਧੁੰਦਲੀਆਂ ਹੋ ਗਈਆਂ ਹਨ ਉਹਨਾਂ ਵਿੱਚ ਪਹਿਲਾਂ ਹੀ ਇਹ ਆਈਟਮ ਹੈ।</string>
+    <string name="playlist_add_stream_success_duplicate">ਡੁਪਲੀਕੇਟ ਜੋੜਿਆ ਗਿਆ %d ਵਾਰ</string>
+    <string name="ignore_hardware_media_buttons_summary">ਉਪਯੋਗੀ ਹੈ, ਉਦਾਹਰਨ ਲਈ, ਜੇਕਰ ਤੁਸੀਂ ਟੁੱਟੇ ਭੌਤਿਕ ਬਟਨਾਂ ਵਾਲਾ ਹੈੱਡਸੈੱਟ ਵਰਤ ਰਹੇ ਹੋ</string>
+    <string name="remove_duplicates">ਡੁਪਲੀਕੇਟ ਹਟਾਓ</string>
+    <string name="remove_duplicates_title">ਕੀ ਡੁਪਲੀਕੇਟ ਹਟਾਉਣੇ ਹਨ\?</string>
+    <string name="remove_duplicates_message">ਕੀ ਤੁਸੀਂ ਇਸ ਪਲੇਲਿਸਟ ਵਿੱਚ ਸਾਰੀਆਂ ਡੁਪਲੀਕੇਟ ਸਟ੍ਰੀਮਾਂ ਨੂੰ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ\?</string>
+    <string name="feed_hide_streams_title">ਅੱਗੇ ਦਿੱਤੀਆਂ ਸਟ੍ਰੀਮਾਂ ਵਿਖਾਓ</string>
+    <string name="feed_show_watched">ਪੂਰੀ ਤਰ੍ਹਾਂ ਵੇਖਿਆ ਗਿਆ</string>
+    <string name="feed_show_partially_watched">ਅੰਸ਼ਕ ਤੌਰ \'ਤੇ ਵੇਖਿਆ ਗਿਆ</string>
+    <string name="feed_show_upcoming">ਆਗਾਮੀ</string>
+    <string name="ignore_hardware_media_buttons_title">ਹਾਰਡਵੇਅਰ ਮੀਡੀਆ ਬਟਨ ਇਵੈਂਟਾਂ ਨੂੰ ਅਣਡਿੱਠ ਕਰੋ</string>
+    <string name="feed_show_hide_streams">ਸਟ੍ਰੀਮ ਵਿਖਾਓ/ਲੁਕਾਓ</string>
+    <string name="right_gesture_control_title">ਸੱਜੇ ਪਾਸੇ ਦੀ ਸੰਕੇਤ ਕਿਰਿਆ</string>
+    <string name="left_gesture_control_title">ਖੱਬੇ ਪਾਸੇ ਦੀ ਸੰਕੇਤ ਕਿਰਿਆ</string>
+    <string name="brightness">ਚਮਕ</string>
+    <string name="none">ਕੋਈ ਨਹੀਂ</string>
+    <string name="left_gesture_control_summary">ਪਲੇਅਰ ਸਕ੍ਰੀਨ ਦੇ ਖੱਬੇ ਅੱਧ ਲਈ ਸੰਕੇਤ ਚੁਣੋ</string>
+    <string name="right_gesture_control_summary">ਪਲੇਅਰ ਸਕ੍ਰੀਨ ਦੇ ਸੱਜੇ ਅੱਧ ਲਈ ਸੰਕੇਤ ਚੁਣੋ</string>
+    <string name="volume">ਆਵਾਜ਼</string>
 </resources>

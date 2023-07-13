@@ -158,6 +158,22 @@
                     </LinearLayout>
 
                     <org.schabi.newpipe.views.NewPipeTextView
+                        android:id="@+id/audioTrackTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:minWidth="0dp"
+                        android:padding="@dimen/player_main_buttons_padding"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        tools:ignore="HardcodedText,RtlHardcoded"
+                        tools:visibility="visible"
+                        tools:text="English (Original)" />
+
+                    <org.schabi.newpipe.views.NewPipeTextView
                         android:id="@+id/qualityTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
@@ -212,11 +228,11 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:paddingStart="6dp"
-                        android:paddingTop="5dp"
                         android:paddingEnd="6dp"
                         android:paddingBottom="3dp"
+                        android:paddingTop="3dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_format_list_numbered"
+                        android:src="@drawable/ic_menu_book"
                         android:visibility="gone"
                         app:tint="@color/white"
                         tools:ignore="ContentDescription,RtlHardcoded" />

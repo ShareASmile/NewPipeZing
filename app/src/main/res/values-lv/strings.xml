@@ -71,7 +71,6 @@
     <string name="tab_about">Par</string>
     <string name="title_licenses">Trešo pušu Licences</string>
     <string name="title_activity_about">Par NewPipe</string>
-    <string name="toast_no_player">Nav instalētu aplikāciju, lai atskaņotu šo failu</string>
     <string name="charset_most_special_characters">Lielākā daļa īpašo rakstzīmju</string>
     <string name="charset_letters_and_digits">Burti un cipari</string>
     <string name="settings_file_replacement_character_title">Aizvietošanas rakstzīme</string>
@@ -504,10 +503,6 @@
     <string name="enable_search_history_title">Meklēšanas vēsture</string>
     <string name="show_search_suggestions_summary">Izvēlieties, kādus ieteikumus rādīt, rakstot meklēšanas joslā</string>
     <string name="show_search_suggestions_title">Meklēšanas ieteikumi</string>
-    <string name="brightness_gesture_control_summary">Velkot ar pirkstu, mainiet video atskaņošanas spilgtumu</string>
-    <string name="brightness_gesture_control_title">Spilgtuma kontrole, atskaņojot video</string>
-    <string name="volume_gesture_control_summary">Velkot ar pirkstu, mainiet video atskaņošanas skaļumu</string>
-    <string name="volume_gesture_control_title">Skaļuma kontrole, atskaņojot video</string>
     <string name="auto_queue_toggle">Automātiski atskaņot</string>
     <string name="auto_queue_summary">Turpināt atskaņot videoklipus, automātiski pievienojot līdzīgus videoklipus</string>
     <string name="auto_queue_title">Automātiski atskaņot nākošo videoklipu</string>
@@ -563,7 +558,7 @@
     <string name="notification_scale_to_square_image_title">Piemērot video attēlu 1:1 proporcijai</string>
     <string name="show_play_with_kodi_summary">Rādīt opciju atskaņot video ar Kodi mediju centru</string>
     <string name="show_play_with_kodi_title">Rādīt \"Atskaņot ar Kodi\" opciju</string>
-    <string name="kore_not_found">Instalēt trūkstošo Kore aplikāciju\?</string>
+    <string name="kore_not_found">Instalēt trūkstošo Kode aplikāciju\?</string>
     <string name="play_with_kodi_title">Atskaņot ar Kodi</string>
     <string name="show_higher_resolutions_summary">Tikai dažas ierīcas var atskaņot 2K/4K videoklipus</string>
     <string name="show_higher_resolutions_title">Rādīt augstākas izšķirtspējas</string>
@@ -637,7 +632,6 @@
     <string name="description_select_enable">Ieslēgt teksta atlasīšanu video aprakstā</string>
     <string name="no_dir_yet">Lejupielādes mape vēl nav iestatīta, izvēlieties noklusējuma lejupielādes mapi</string>
     <string name="main_page_content_swipe_remove">Pārvelciet objektus, lai tos noņemtu</string>
-    <string name="feed_toggle_show_played_items">Rādīt noskatītos video</string>
     <string name="local_search_suggestions">Lokālie meklēšanas ieteikumi</string>
     <string name="show_image_indicators_title">Rādīt attēlu indikatorus</string>
     <string name="high_quality_larger">Augstas kvalitātes (lielāks)</string>
@@ -678,7 +672,6 @@
     </plurals>
     <string name="description_select_note">Tagad varat atlasīt tekstu video aprakstā.</string>
     <string name="notifications">Notifikācijas</string>
-    <string name="progressive_load_interval_summary">Izmainīt ielādēšanas intervāla izmēru (pašlaik %s). Zemāka vērtība var paātrināt sākotnējo video ielādi. Izmainot vērtību, nepieciešams restartēt atskaņotāju.</string>
     <string name="crash_the_player">Avarēt atskaņotāju</string>
     <string name="settings_category_player_notification_summary">Pielāgojiet pašlaik atskaņotās plūsmas notifikāciju</string>
     <string name="settings_category_player_notification_title">Atskaņotāja notifikācija</string>

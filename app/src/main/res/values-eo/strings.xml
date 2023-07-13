@@ -187,7 +187,6 @@
     <string name="metadata_cache_wipe_summary">Vakigi tutajn kaŝmemorigitajn retpaĝajn datumojn</string>
     <string name="metadata_cache_wipe_complete_notice">Kaŝmemorojn de metadatumojn vakigis</string>
     <string name="no_streams_available_download">Neniuj torentoj haveblaj por elŝuti</string>
-    <string name="toast_no_player">Neniu apo instalita por ludi ĉi tiun dosieron</string>
     <string name="clear_views_history_title">Forviŝi vidohistorion</string>
     <string name="clear_views_history_summary">Forviŝi la historion de viditaj filmetojn kaj ludajn poziciojn</string>
     <string name="delete_view_history_alert">Ĉu vi volas forviŝi la tutan historion \?</string>
@@ -203,10 +202,6 @@
     <string name="users">Uzantoj</string>
     <string name="unsubscribe">Malaboni</string>
     <string name="tab_choose">Elektu ongleton</string>
-    <string name="volume_gesture_control_title">Kontrolo de volumena gesto</string>
-    <string name="volume_gesture_control_summary">Uzi gestojn por kontroli la volumon</string>
-    <string name="brightness_gesture_control_title">Kontrolo de gesto de brilo</string>
-    <string name="brightness_gesture_control_summary">Uzi gestojn por kontroli la brilon</string>
     <string name="settings_category_updates_title">Ĝisdatigoj</string>
     <string name="file_deleted">Dosiero forviŝita</string>
     <string name="app_update_notification_channel_name">Sciigo por ĝisdatigi apon</string>

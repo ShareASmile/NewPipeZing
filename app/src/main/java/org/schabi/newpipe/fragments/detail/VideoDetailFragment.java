@@ -7,11 +7,10 @@ import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateRotation;
 import static org.schabi.newpipe.player.helper.PlayerHelper.globalScreenOrientationLocked;
 import static org.schabi.newpipe.player.helper.PlayerHelper.isClearingQueueConfirmationRequired;
-import static org.schabi.newpipe.player.playqueue.PlayQueueItem.RECOVERY_UNSET;
+import static org.schabi.newpipe.util.DependentPreferenceHelper.getResumePlaybackEnabled;
 import static org.schabi.newpipe.util.ExtractorHelper.showMetaInfoInTextView;
 import static org.schabi.newpipe.util.ListHelper.getUrlAndNonTorrentStreams;
 import static org.schabi.newpipe.util.NavigationHelper.openPlayQueue;
-import static org.schabi.newpipe.util.NavigationHelper.playWithKore;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
@@ -163,20 +162,24 @@ public final class VideoDetailFragment
     private boolean showRelatedItems;
     private boolean showDescription;
     private String selectedTabTag;
-    @AttrRes @NonNull final List<Integer> tabIcons = new ArrayList<>();
-    @StringRes @NonNull final List<Integer> tabContentDescriptions = new ArrayList<>();
+    @AttrRes
+    @NonNull
+    final List<Integer> tabIcons = new ArrayList<>();
+    @StringRes
+    @NonNull
+    final List<Integer> tabContentDescriptions = new ArrayList<>();
     private boolean tabSettingsChanged = false;
     private int lastAppBarVerticalOffset = Integer.MAX_VALUE; // prevents useless updates
 
     private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener =
             (sharedPreferences, key) -> {
-                if (key.equals(getString(R.string.show_comments_key))) {
+                if (getString(R.string.show_comments_key).equals(key)) {
                     showComments = sharedPreferences.getBoolean(key, true);
                     tabSettingsChanged = true;
-                } else if (key.equals(getString(R.string.show_next_video_key))) {
+                } else if (getString(R.string.show_next_video_key).equals(key)) {
                     showRelatedItems = sharedPreferences.getBoolean(key, true);
                     tabSettingsChanged = true;
-                } else if (key.equals(getString(R.string.show_description_key))) {
+                } else if (getString(R.string.show_description_key).equals(key)) {
                     showDescription = sharedPreferences.getBoolean(key, true);
                     tabSettingsChanged = true;
                 }
@@ -483,16 +486,8 @@ public final class VideoDetailFragment
                         info.getThumbnailUrl())));
         binding.detailControlsOpenInBrowser.setOnClickListener(makeOnClickListener(info ->
                 ShareUtils.openUrlInBrowser(requireContext(), info.getUrl())));
-        binding.detailControlsPlayWithKodi.setOnClickListener(makeOnClickListener(info -> {
-            try {
-                playWithKore(requireContext(), Uri.parse(info.getUrl()));
-            } catch (final Exception e) {
-                if (DEBUG) {
-                    Log.i(TAG, "Failed to start kore", e);
-                }
-                KoreUtils.showInstallKoreDialog(requireContext());
-            }
-        }));
+        binding.detailControlsPlayWithKodi.setOnClickListener(makeOnClickListener(info ->
+                KoreUtils.playWithKore(requireContext(), Uri.parse(info.getUrl()))));
         if (DEBUG) {
             binding.detailControlsCrashThePlayer.setOnClickListener(v ->
                     VideoDetailPlayerCrasher.onCrashThePlayer(requireContext(), player));
@@ -863,7 +858,8 @@ public final class VideoDetailFragment
                             if (playQueue == null) {
                                 playQueue = new SinglePlayQueue(result);
                             }
-                            if (stack.isEmpty() || !stack.peek().getPlayQueue().equals(playQueue)) {
+                            if (stack.isEmpty() || !stack.peek().getPlayQueue()
+                                    .equalStreams(playQueue)) {
                                 stack.push(new StackItem(serviceId, url, title, playQueue));
                             }
                         }
@@ -1048,26 +1044,15 @@ public final class VideoDetailFragment
             player.setRecovery();
         }
 
-        if (!useExternalAudioPlayer) {
-            openNormalBackgroundPlayer(append);
+        if (useExternalAudioPlayer) {
+            showExternalAudioPlaybackDialog();
         } else {
-            final List<AudioStream> audioStreams = getUrlAndNonTorrentStreams(
-                    currentInfo.getAudioStreams());
-            final int index = ListHelper.getDefaultAudioFormat(activity, audioStreams);
-
-            if (index == -1) {
-                Toast.makeText(activity, R.string.no_audio_streams_available_for_external_players,
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            startOnExternalPlayer(activity, currentInfo, audioStreams.get(index));
+            openNormalBackgroundPlayer(append);
         }
     }
 
     private void openPopupPlayer(final boolean append) {
-        if (!PermissionHelper.isPopupEnabled(activity)) {
-            PermissionHelper.showPopupEnablementToast(activity);
+        if (!PermissionHelper.isPopupEnabledElseAsk(activity)) {
             return;
         }
 
@@ -1115,7 +1100,7 @@ public final class VideoDetailFragment
 
         if (PreferenceManager.getDefaultSharedPreferences(activity)
                 .getBoolean(this.getString(R.string.use_external_video_player_key), false)) {
-            showExternalPlaybackDialog();
+            showExternalVideoPlaybackDialog();
         } else {
             replaceQueueIfUserConfirms(this::openMainPlayer);
         }
@@ -1455,8 +1440,8 @@ public final class VideoDetailFragment
 
         animate(binding.detailThumbnailPlayButton, false, 50);
         animate(binding.detailDurationView, false, 100);
-        animate(binding.detailPositionView, false, 100);
-        animate(binding.positionView, false, 50);
+        binding.detailPositionView.setVisibility(View.GONE);
+        binding.positionView.setVisibility(View.GONE);
 
         binding.detailVideoTitleView.setText(title);
         binding.detailVideoTitleView.setMaxLines(1);
@@ -1573,7 +1558,7 @@ public final class VideoDetailFragment
         binding.detailToggleSecondaryControlsView.setVisibility(View.VISIBLE);
         binding.detailSecondaryControlPanel.setVisibility(View.GONE);
 
-        updateProgressInfo(info);
+        checkUpdateProgressInfo(info);
         initThumbnailViews(info);
         showMetaInfoInTextView(info.getMetaInfo(), binding.detailMetaInfoTextView,
                 binding.detailMetaInfoSeparator, disposables);
@@ -1672,67 +1657,43 @@ public final class VideoDetailFragment
     // Stream Results
     //////////////////////////////////////////////////////////////////////////*/
 
-    private void updateProgressInfo(@NonNull final StreamInfo info) {
+    private void checkUpdateProgressInfo(@NonNull final StreamInfo info) {
         if (positionSubscriber != null) {
             positionSubscriber.dispose();
         }
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        final boolean playbackResumeEnabled = prefs
-                .getBoolean(activity.getString(R.string.enable_watch_history_key), true)
-                && prefs.getBoolean(activity.getString(R.string.enable_playback_resume_key), true);
-        final boolean showPlaybackPosition = prefs.getBoolean(
-                activity.getString(R.string.enable_playback_state_lists_key), true);
-        if (!playbackResumeEnabled) {
-            if (playQueue == null || playQueue.getStreams().isEmpty()
-                    || playQueue.getItem().getRecoveryPosition() == RECOVERY_UNSET
-                    || !showPlaybackPosition) {
-                binding.positionView.setVisibility(View.INVISIBLE);
-                binding.detailPositionView.setVisibility(View.GONE);
-                // TODO: Remove this check when separation of concerns is done.
-                //  (live streams weren't getting updated because they are mixed)
-                if (!StreamTypeUtil.isLiveStream(info.getStreamType())) {
-                    return;
-                }
-            } else {
-                // Show saved position from backStack if user allows it
-                showPlaybackProgress(playQueue.getItem().getRecoveryPosition(),
-                        playQueue.getItem().getDuration() * 1000);
-                animate(binding.positionView, true, 500);
-                animate(binding.detailPositionView, true, 500);
-            }
+        if (!getResumePlaybackEnabled(activity)) {
+            binding.positionView.setVisibility(View.GONE);
+            binding.detailPositionView.setVisibility(View.GONE);
             return;
         }
         final HistoryRecordManager recordManager = new HistoryRecordManager(requireContext());
-
-        // TODO: Separate concerns when updating database data.
-        //  (move the updating part to when the loading happens)
         positionSubscriber = recordManager.loadStreamState(info)
                 .subscribeOn(Schedulers.io())
                 .onErrorComplete()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state -> {
-                    showPlaybackProgress(state.getProgressMillis(), info.getDuration() * 1000);
-                    animate(binding.positionView, true, 500);
-                    animate(binding.detailPositionView, true, 500);
+                    updatePlaybackProgress(
+                            state.getProgressMillis(), info.getDuration() * 1000);
                 }, e -> {
-                    if (DEBUG) {
-                        e.printStackTrace();
-                    }
+                    // impossible since the onErrorComplete()
                 }, () -> {
                     binding.positionView.setVisibility(View.GONE);
                     binding.detailPositionView.setVisibility(View.GONE);
                 });
     }
 
-    private void showPlaybackProgress(final long progress, final long duration) {
+    private void updatePlaybackProgress(final long progress, final long duration) {
+        if (!getResumePlaybackEnabled(activity)) {
+            return;
+        }
         final int progressSeconds = (int) TimeUnit.MILLISECONDS.toSeconds(progress);
         final int durationSeconds = (int) TimeUnit.MILLISECONDS.toSeconds(duration);
-        // If the old and the new progress values have a big difference then use
-        // animation. Otherwise don't because it affects CPU
-        final boolean shouldAnimate = Math.abs(binding.positionView.getProgress()
-                - progressSeconds) > 2;
+        // If the old and the new progress values have a big difference then use animation.
+        // Otherwise don't because it affects CPU
+        final int progressDifference = Math.abs(binding.positionView.getProgress()
+                - progressSeconds);
         binding.positionView.setMax(durationSeconds);
-        if (shouldAnimate) {
+        if (progressDifference > 2) {
             binding.positionView.setProgressAnimated(progressSeconds);
         } else {
             binding.positionView.setProgress(progressSeconds);
@@ -1778,7 +1739,7 @@ public final class VideoDetailFragment
         // deleted/added items inside Channel/Playlist queue and makes possible to have
         // a history of played items
         @Nullable final StackItem stackPeek = stack.peek();
-        if (stackPeek != null && !stackPeek.getPlayQueue().equals(queue)) {
+        if (stackPeek != null && !stackPeek.getPlayQueue().equalStreams(queue)) {
             @Nullable final PlayQueueItem playQueueItem = queue.getItem();
             if (playQueueItem != null) {
                 stack.push(new StackItem(playQueueItem.getServiceId(), playQueueItem.getUrl(),
@@ -1827,7 +1788,7 @@ public final class VideoDetailFragment
         }
 
         if (player.getPlayQueue().getItem().getUrl().equals(url)) {
-            showPlaybackProgress(currentProgress, duration);
+            updatePlaybackProgress(currentProgress, duration);
         }
     }
 
@@ -1844,7 +1805,7 @@ public final class VideoDetailFragment
         // They are not equal when user watches something in popup while browsing in fragment and
         // then changes screen orientation. In that case the fragment will set itself as
         // a service listener and will receive initial call to onMetadataUpdate()
-        if (!queue.equals(playQueue)) {
+        if (!queue.equalStreams(playQueue)) {
             return;
         }
 
@@ -2046,7 +2007,10 @@ public final class VideoDetailFragment
             restoreDefaultBrightness();
         } else {
             // Do not restore if user has disabled brightness gesture
-            if (!PlayerHelper.isBrightnessGestureEnabled(activity)) {
+            if (!PlayerHelper.getActionForRightGestureSide(activity)
+                    .equals(getString(R.string.brightness_control_key))
+                    && !PlayerHelper.getActionForLeftGestureSide(activity)
+                    .equals(getString(R.string.brightness_control_key))) {
                 return;
             }
             // Restore already saved brightness level
@@ -2110,7 +2074,7 @@ public final class VideoDetailFragment
         final Iterator<StackItem> iterator = stack.descendingIterator();
         while (iterator.hasNext()) {
             final StackItem next = iterator.next();
-            if (next.getPlayQueue().equals(queue)) {
+            if (next.getPlayQueue().equalStreams(queue)) {
                 item = next;
                 break;
             }
@@ -2125,7 +2089,7 @@ public final class VideoDetailFragment
         if (isClearingQueueConfirmationRequired(activity)
                 && playerIsNotStopped()
                 && activeQueue != null
-                && !activeQueue.equals(playQueue)) {
+                && !activeQueue.equalStreams(playQueue)) {
             showClearingQueueConfirmation(onAllow);
         } else {
             onAllow.run();
@@ -2142,7 +2106,7 @@ public final class VideoDetailFragment
                 }).show();
     }
 
-    private void showExternalPlaybackDialog() {
+    private void showExternalVideoPlaybackDialog() {
         if (currentInfo == null) {
             return;
         }
@@ -2187,6 +2151,44 @@ public final class VideoDetailFragment
             });
         }
         builder.show();
+    }
+
+    private void showExternalAudioPlaybackDialog() {
+        if (currentInfo == null) {
+            return;
+        }
+
+        final List<AudioStream> audioStreams = getUrlAndNonTorrentStreams(
+                currentInfo.getAudioStreams());
+        final List<AudioStream> audioTracks =
+                ListHelper.getFilteredAudioStreams(activity, audioStreams);
+
+        if (audioTracks.isEmpty()) {
+            Toast.makeText(activity, R.string.no_audio_streams_available_for_external_players,
+                    Toast.LENGTH_SHORT).show();
+        } else if (audioTracks.size() == 1) {
+            startOnExternalPlayer(activity, currentInfo, audioTracks.get(0));
+        } else {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setTitle(R.string.select_audio_track_external_players);
+            builder.setNeutralButton(R.string.open_in_browser, (dialog, i) ->
+                    ShareUtils.openUrlInBrowser(requireActivity(), url));
+
+            final int selectedAudioStream =
+                    ListHelper.getDefaultAudioFormat(activity, audioTracks);
+            final CharSequence[] trackNames = audioTracks.stream()
+                    .map(audioStream -> Localization.audioTrackName(activity, audioStream))
+                    .toArray(CharSequence[]::new);
+
+            builder.setSingleChoiceItems(trackNames, selectedAudioStream, null);
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.setPositiveButton(R.string.ok, (dialog, i) -> {
+                final int index = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                startOnExternalPlayer(activity, currentInfo,
+                        audioTracks.get(index));
+            });
+            builder.show();
+        }
     }
 
     /*
