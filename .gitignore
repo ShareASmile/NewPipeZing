@@ -10,7 +10,7 @@
 *~
 .weblate
 *.class
-/app/Release
+/app/release
 
 # vscode / eclipse files
 *.classpath
