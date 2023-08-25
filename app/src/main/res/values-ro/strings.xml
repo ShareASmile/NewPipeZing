@@ -125,7 +125,7 @@
     <string name="notification_channel_name">Notificare NewPipe</string>
     <string name="notification_channel_description">Notificări pentru playerul NewPipe</string>
     <string name="search_no_results">Fără rezultate</string>
-    <string name="empty_subscription_feed_subtitle">Nimic aici în afară de sunetul greierilor</string>
+    <string name="empty_list_subtitle">Nimic aici în afară de sunetul greierilor</string>
     <string name="no_subscribers">Fără abonați</string>
     <plurals name="subscribers">
         <item quantity="one">%s abonat</item>
@@ -153,7 +153,7 @@
     <string name="title_activity_about">Despre NewPipe</string>
     <string name="title_licenses">Licențe terță-parte</string>
     <string name="copyright" formatted="true">© %1$s de %2$s sub %3$s</string>
-    <string name="tab_about">Despre</string>
+    <string name="tab_about">Despre &amp; FAQ</string>
     <string name="tab_licenses">Licențe</string>
     <string name="app_description">Un player de streaming „uşor” liber, pentru Android.</string>
     <string name="view_on_github">Vedeți pe GitHub</string>
@@ -348,7 +348,6 @@
     <string name="recaptcha_done_button">Gata</string>
     <string name="subtitle_activity_recaptcha">Apăsați \"Gata\" după ce ați rezolvat problema</string>
     <string name="error_report_open_issue_button_text">Raportați pe GitHub</string>
-    <string name="help">Ajutor</string>
     <string name="clear_cookie_summary">Ștergeți cookie-urile pe care NewPipe le stochează atunci când rezolvați un reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">Cookie-urile reCAPTCHA au fost șterse</string>
     <string name="clear_cookie_title">Ștergeți cookie-urile reCAPTCHA</string>
@@ -512,8 +511,7 @@
     <string name="paused">Întrerupt</string>
     <string name="missions_header_pending">În așteptare</string>
     <string name="missions_header_finished">Finalizat</string>
-    <string name="app_update_notification_content_text">Atingeți pentru a descărca</string>
-    <string name="app_update_notification_content_title">Actualizare NewPipe disponibilă!</string>
+    <string name="app_update_available_notification_title">Actualizare NewPipe disponibilă!</string>
     <string name="auto">Automat</string>
     <string name="grid">Grilă</string>
     <string name="list">Listă</string>
@@ -733,4 +731,12 @@
     <string name="feed_toggle_show_future_items">Afișați elementele din viitor</string>
     <string name="feed_toggle_hide_played_items">Ascunde elementele vizionate</string>
     <string name="feed_toggle_hide_future_items">Ascunde elementele din viitor</string>
+    <string name="faq">Vezi pe website</string>
+    <string name="faq_description">Dacă întâmpinați probleme cu utilizarea aplicației, nu uitați să consultați aceste răspunsuri la întrebări frecvente!</string>
+    <string name="faq_title">Întrebări puse frecvent</string>
+    <string name="sort">Sortează</string>
+    <string name="fast_mode">Modul rapid</string>
+    <string name="import_subscriptions_hint">Importați sau exportați abonamente din meniul cu 3 puncte</string>
+    <string name="app_update_unavailable_toast">Rulați cea mai recentă versiune NewPipe</string>
+    <string name="app_update_available_notification_text">Atingeți pentru a descărca %s</string>
 </resources>

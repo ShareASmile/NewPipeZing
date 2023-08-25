@@ -4,20 +4,20 @@ plugins {
     id "kotlin-kapt"
     id "kotlin-parcelize"
     id "checkstyle"
-    id "org.sonarqube" version "3.3"
+    id "org.sonarqube" version "3.5.0.2730"
 }
 
 android {
-    compileSdk 31
+    compileSdk 33
     namespace 'org.schabi.newpipe'
 
     defaultConfig {
         applicationId "org.schabi.newpipe"
         resValue "string", "app_name", "NewPipe"
         minSdk 21
-        targetSdk 29
-        versionCode 990
-        versionName "0.24.0"
+        targetSdk 33
+        versionCode 991
+        versionName "0.24.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -102,12 +102,12 @@ ext {
     androidxWorkVersion = '2.7.1'
 
     icepickVersion = '3.2.0'
-    exoPlayerVersion = '2.18.1'
+    exoPlayerVersion = '2.18.2'
     googleAutoServiceVersion = '1.0.1'
     groupieVersion = '2.10.1'
     markwonVersion = '4.6.2'
 
-    leakCanaryVersion = '2.5'
+    leakCanaryVersion = '2.9.1'
     stethoVersion = '1.6.0'
     mockitoVersion = '4.0.0'
     assertJVersion = '3.23.1'
@@ -116,6 +116,10 @@ ext {
 configurations {
     checkstyle
     ktlint
+
+    // This is a configuration that only contains the cronet-common dependency, so that in
+    // cronetCommonNoUserAgentLib we can get the aar without making explicit network requests
+    cronetCommon
 }
 
 checkstyle {
@@ -132,6 +136,7 @@ task runCheckstyle(type: Checkstyle) {
     exclude '**/R.java'
     exclude '**/BuildConfig.java'
     exclude 'main/java/us/shandian/giga/**'
+    exclude 'main/java/org/chromium/net/**'
 
     classpath = configurations.checkstyle
 
@@ -169,7 +174,7 @@ afterEvaluate {
     preDebugBuild.dependsOn runCheckstyle, runKtlint
 }
 
-sonarqube {
+sonar {
     properties {
         property "sonar.projectKey", "TeamNewPipe_NewPipe"
         property "sonar.organization", "teamnewpipe"
@@ -177,9 +182,45 @@ sonarqube {
     }
 }
 
+ext {
+    // Represents the folder in which to put temporary files, and also the path to the generated
+    // archive (without a `.jar` in the end)
+    cronetCommonPath = "$buildDir/cronet-common"
+    cronetVersion = "108.5359.79"
+}
+
+// These three tasks are actually just a chain of tasks that are executed one after the other
+task cronetCommonNoUserAgentLib(type: Copy) {
+    from configurations.cronetCommon
+    into (cronetCommonPath)
+    from zipTree("$cronetCommonPath/cronet-common-${cronetVersion}.aar")
+    into (cronetCommonPath)
+    from zipTree("$cronetCommonPath/classes.jar")
+    into (cronetCommonPath)
+    // We want every class except the UserAgent class, since we want to define that ourselves
+    exclude "org/chromium/net/impl/UserAgent.class"
+}
+
+task cronetCommonNoUserAgentClasses(type: Delete) {
+    dependsOn cronetCommonNoUserAgentLib
+    delete fileTree(cronetCommonPath) {
+        // Remove everything except .class files, otherwise the other files would end up in the .jar
+        exclude "**/*.class"
+    }
+}
+
+task cronetCommonNoUserAgentJar(type: Jar) {
+    dependsOn cronetCommonNoUserAgentClasses
+    from files(cronetCommonPath)
+    // create a file with the same name of the directory and with `.jar` at the end
+    destinationDirectory = file(cronetCommonPath).parentFile
+    archiveBaseName = file(cronetCommonPath).name
+    reproducibleFileOrder = true
+}
+
 dependencies {
 /** Desugaring **/
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.6'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.8'
 
 /** NewPipe libraries **/
     // You can use a local version by uncommenting a few lines in settings.gradle
@@ -187,7 +228,7 @@ dependencies {
     // name and the commit hash with the commit hash of the (pushed) commit you want to test
     // This works thanks to JitPack: https://jitpack.io/
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
-    implementation 'com.github.TeamNewPipe:NewPipeExtractor:9ffdd0948b2ecd82655f5ff2a3e127b2b7695d5b'
+    implementation 'com.github.TeamNewPipe:NewPipeExtractor:2211a24b6934a8a8cdf5547ea1b52daa4cb5de6c'
     implementation 'com.github.TeamNewPipe:NoNonsense-FilePicker:5.0.0'
 
 /** Checkstyle **/
@@ -198,7 +239,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin_version}"
 
 /** AndroidX **/
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.core:core-ktx:1.8.0'
@@ -232,6 +273,22 @@ dependencies {
     // HTTP client
     implementation "com.squareup.okhttp3:okhttp:4.10.0"
 
+    // HTTP client for playback
+    implementation ("org.chromium.net:cronet-embedded:$cronetVersion") {
+        // Exclude cronet-common module as it is added separately below
+        exclude module: "cronet-common"
+    }
+    // cronet-api is a dependency of cronet-common: we need to add it manually because the jar
+    // generated by cronetCommonNoUserAgentJar does not contain its dependencies
+    implementation "org.chromium.net:cronet-api:$cronetVersion"
+    // Remove the UserAgent class from cronet-common before adding it as a dependency, so that we
+    // can replace that class with our own implementation, which does not leak the application
+    // package name in the QUIC User-Agent ID value
+    cronetCommon "org.chromium.net:cronet-common:$cronetVersion"
+    implementation files("${cronetCommonPath}.jar") {
+        builtBy "cronetCommonNoUserAgentJar"
+    }
+
     // Media player
     implementation "com.google.android.exoplayer:exoplayer-core:${exoPlayerVersion}"
     implementation "com.google.android.exoplayer:exoplayer-dash:${exoPlayerVersion}"
@@ -241,6 +298,10 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:${exoPlayerVersion}"
     implementation "com.google.android.exoplayer:exoplayer-ui:${exoPlayerVersion}"
     implementation "com.google.android.exoplayer:extension-mediasession:${exoPlayerVersion}"
+    implementation ("com.google.android.exoplayer:extension-cronet:${exoPlayerVersion}") {
+        // Exclude Google Play Services Cronet implementation used by default by the extension
+        exclude group: "com.google.android.gms"
+    }
 
     // Metadata generator for service descriptors
     compileOnly "com.google.auto.service:auto-service-annotations:${googleAutoServiceVersion}"
@@ -259,19 +320,19 @@ dependencies {
     implementation "io.noties.markwon:linkify:${markwonVersion}"
 
     // Crash reporting
-    implementation "ch.acra:acra-core:5.9.3"
+    implementation "ch.acra:acra-core:5.9.7"
 
     // Properly restarting
     implementation 'com.jakewharton:process-phoenix:2.1.2'
 
     // Reactive extensions for Java VM
-    implementation "io.reactivex.rxjava3:rxjava:3.0.13"
-    implementation "io.reactivex.rxjava3:rxandroid:3.0.0"
+    implementation "io.reactivex.rxjava3:rxjava:3.1.5"
+    implementation "io.reactivex.rxjava3:rxandroid:3.0.2"
     // RxJava binding APIs for Android UI widgets
     implementation "com.jakewharton.rxbinding4:rxbinding:4.0.0"
 
     // Date and time formatting
-    implementation "org.ocpsoft.prettytime:prettytime:5.0.3.Final"
+    implementation "org.ocpsoft.prettytime:prettytime:5.0.6.Final"
 
 /** Debugging **/
     // Memory leak detection

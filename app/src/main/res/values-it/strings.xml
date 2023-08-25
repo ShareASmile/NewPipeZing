@@ -107,7 +107,7 @@
 \nper utilizzare il lettore popup</string>
     <string name="title_licenses">Licenze di terze parti</string>
     <string name="copyright" formatted="true">© %1$s di %2$s protetto da licenza %3$s</string>
-    <string name="tab_about">Informazioni</string>
+    <string name="tab_about">Info e domande frequenti</string>
     <string name="tab_licenses">Licenze</string>
     <string name="app_description">Streaming libero e leggero su Android.</string>
     <string name="view_on_github">Mostra su GitHub</string>
@@ -162,7 +162,7 @@
         <item quantity="many">%s video</item>
         <item quantity="other">%s video</item>
     </plurals>
-    <string name="empty_subscription_feed_subtitle">Nulla da mostrare</string>
+    <string name="empty_list_subtitle">Nulla da mostrare</string>
     <string name="delete_item_search_history">Eliminare questo elemento dalla cronologia delle ricerche\?</string>
     <string name="main_page_content">Contenuto della pagina principale</string>
     <string name="blank_page_summary">Pagina vuota</string>
@@ -359,8 +359,7 @@
     <string name="list">Lista</string>
     <string name="grid">Griglia</string>
     <string name="auto">Automatica</string>
-    <string name="app_update_notification_content_title">Aggiornamento di NewPipe disponibile!</string>
-    <string name="app_update_notification_content_text">Premi per scaricare</string>
+    <string name="app_update_available_notification_title">Aggiornamento di NewPipe disponibile!</string>
     <string name="missions_header_finished">Completati</string>
     <string name="missions_header_pending">In corso</string>
     <string name="paused">in pausa</string>
@@ -470,7 +469,6 @@
     <string name="new_seek_duration_toast">A causa delle limitazioni di ExoPlayer la durata dello spostamento rapido è stata impostata a %d secondi</string>
     <string name="mute">Silenzia</string>
     <string name="unmute">Riattiva audio</string>
-    <string name="help">Aiuto</string>
     <plurals name="minutes">
         <item quantity="one">%d minuto</item>
         <item quantity="many">%d minuti</item>
@@ -733,4 +731,12 @@
     <string name="feed_toggle_show_future_items">Mostra elementi futuri</string>
     <string name="feed_toggle_hide_played_items">Nascondi elementi visti</string>
     <string name="feed_toggle_hide_future_items">Nascondi elementi futuri</string>
+    <string name="faq_title">Domande frequenti</string>
+    <string name="faq_description">Se riscontri problemi nell\'utilizzo dell\'app, dai un\'occhiata alle risposte delle domande più comuni!</string>
+    <string name="sort">Ordina</string>
+    <string name="faq">Visualizza sul sito</string>
+    <string name="fast_mode">Recupero veloce</string>
+    <string name="app_update_available_notification_text">Premi per scaricare %s</string>
+    <string name="app_update_unavailable_toast">L\'ultima versione di NewPipe è già in esecuzione</string>
+    <string name="import_subscriptions_hint">Importa o esporta iscrizioni dal menu a 3 punti</string>
 </resources>
