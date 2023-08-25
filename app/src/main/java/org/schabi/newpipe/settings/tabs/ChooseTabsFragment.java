@@ -32,6 +32,7 @@ import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.settings.SelectChannelFragment;
+import org.schabi.newpipe.settings.SelectFeedGroupFragment;
 import org.schabi.newpipe.settings.SelectKioskFragment;
 import org.schabi.newpipe.settings.SelectPlaylistFragment;
 import org.schabi.newpipe.settings.tabs.AddTabDialog.ChooseTabListItem;
@@ -174,6 +175,14 @@ public class ChooseTabsFragment extends Fragment {
         }
 
         switch (type) {
+            case FEED:
+                final SelectFeedGroupFragment selectFeedGroupFragment =
+                        new SelectFeedGroupFragment();
+                selectFeedGroupFragment.setOnSelectedListener(
+                        (feedGroupId, feedGroupName, feedGroupIcon) ->
+                                addTab(new Tab.FeedTab(feedGroupId, feedGroupName, feedGroupIcon)));
+                selectFeedGroupFragment.show(getParentFragmentManager(), "select_feed_group");
+                return;
             case KIOSK:
                 final SelectKioskFragment selectKioskFragment = new SelectKioskFragment();
                 selectKioskFragment.setOnSelectedListener((serviceId, kioskId, kioskName) ->
@@ -226,6 +235,9 @@ public class ChooseTabsFragment extends Fragment {
                     returnList.add(new ChooseTabListItem(tab.getTabId(),
                             getString(R.string.kiosk_page_summary),
                             R.drawable.ic_whatshot));
+                    break;
+                case FEED:
+                    returnList.add(new ChooseTabListItem(context, tab));
                     break;
                 case CHANNEL:
                     returnList.add(new ChooseTabListItem(tab.getTabId(),

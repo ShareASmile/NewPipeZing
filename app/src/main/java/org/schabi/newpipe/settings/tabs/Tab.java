@@ -12,6 +12,7 @@ import com.grack.nanojson.JsonStringWriter;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.LocalItem.LocalItemType;
+import org.schabi.newpipe.database.feed.model.FeedGroupEntity;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
@@ -27,10 +28,12 @@ import org.schabi.newpipe.local.bookmark.BookmarkFragment;
 import org.schabi.newpipe.local.feed.FeedFragment;
 import org.schabi.newpipe.local.history.StatisticsPlaylistFragment;
 import org.schabi.newpipe.local.playlist.LocalPlaylistFragment;
+import org.schabi.newpipe.local.subscription.FeedGroupIcon;
 import org.schabi.newpipe.local.subscription.SubscriptionFragment;
 import org.schabi.newpipe.util.KioskTranslator;
 import org.schabi.newpipe.util.ServiceHelper;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public abstract class Tab {
@@ -87,6 +90,8 @@ public abstract class Tab {
 
         if (jsonObject != null) {
             switch (type) {
+                case FEED:
+                    return new FeedTab(jsonObject);
                 case KIOSK:
                     return new KioskTab(jsonObject);
                 case CHANNEL:
@@ -234,6 +239,28 @@ public abstract class Tab {
 
     public static class FeedTab extends Tab {
         public static final int ID = 2;
+        private static final String JSON_FEED_GROUP_ID = "feed_group_id";
+        private static final String JSON_FEED_GROUP_NAME = "feed_group_name";
+        private static final String JSON_FEED_GROUP_ICON = "feed_group_icon";
+        private long feedGroupId;
+        private String feedGroupName;
+        private FeedGroupIcon feedGroupIcon;
+
+        private FeedTab() {
+            this(FeedGroupEntity.GROUP_ALL_ID, "", FeedGroupIcon.RSS);
+        }
+
+        public FeedTab(final long feedGroupId,
+                       final String feedGroupName,
+                       final FeedGroupIcon feedGroupIcon) {
+            this.feedGroupId = feedGroupId;
+            this.feedGroupName = feedGroupName;
+            this.feedGroupIcon = feedGroupIcon;
+        }
+
+        public FeedTab(final JsonObject jsonObject) {
+            super(jsonObject);
+        }
 
         @Override
         public int getTabId() {
@@ -242,18 +269,69 @@ public abstract class Tab {
 
         @Override
         public String getTabName(final Context context) {
-            return context.getString(R.string.fragment_feed_title);
+            if (this.feedGroupId == FeedGroupEntity.GROUP_ALL_ID) {
+                return context.getString(R.string.fragment_feed_title);
+            }
+            return feedGroupName;
         }
 
         @DrawableRes
         @Override
         public int getTabIconRes(final Context context) {
-            return R.drawable.ic_rss_feed;
+            return this.feedGroupIcon.getDrawableResource();
         }
 
         @Override
         public FeedFragment getFragment(final Context context) {
-            return new FeedFragment();
+            return FeedFragment.newInstance(feedGroupId, feedGroupName);
+        }
+
+        @Override
+        protected void writeDataToJson(final JsonStringWriter writerSink) {
+            writerSink.value(JSON_FEED_GROUP_ID, feedGroupId)
+                    .value(JSON_FEED_GROUP_NAME, feedGroupName)
+                    .value(JSON_FEED_GROUP_ICON, feedGroupIcon.getId());
+        }
+
+        @Override
+        protected void readDataFromJson(final JsonObject jsonObject) {
+            feedGroupId = jsonObject.getLong(JSON_FEED_GROUP_ID, FeedGroupEntity.GROUP_ALL_ID);
+            feedGroupName = jsonObject.getString(JSON_FEED_GROUP_NAME, "");
+            final int storedIconId = jsonObject.getInt(JSON_FEED_GROUP_ICON,
+                    FeedGroupIcon.RSS.getId());
+            feedGroupIcon = Arrays.stream(FeedGroupIcon.values())
+                            .filter(icon -> icon.getId() == storedIconId)
+                            .findFirst()
+                            .orElse(FeedGroupIcon.RSS);
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (!(obj instanceof FeedTab)) {
+                return false;
+            }
+            final FeedTab other = (FeedTab) obj;
+            return super.equals(obj)
+                    && Objects.equals(feedGroupId, other.feedGroupId)
+                    && Objects.equals(feedGroupName, other.feedGroupName)
+                    && Objects.equals(feedGroupIcon, other.feedGroupIcon);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getTabId(), feedGroupId, feedGroupName, feedGroupIcon);
+        }
+
+        public long getFeedGroupId() {
+            return this.feedGroupId;
+        }
+
+        public String getFeedGroupName() {
+            return this.feedGroupName;
+        }
+
+        public FeedGroupIcon getFeedGroupIcon() {
+            return this.feedGroupIcon;
         }
     }
 
