@@ -2,8 +2,6 @@
 
 NewPipeZing Reloaded version 0.19.8 with up-to-date NewPipeExtractor dependency
 <p align="center"><a href="https://newpipe.net"><img src="assets/new_pipe_icon_5.png" width="150"></a></p> 
-<h2 align="center"><b>NewPipeZing</b></h2>
-<h4 align="center">NewPipeZing preunified version with up-to-date NewPipeExtractor dependency.</h4>
 
 <p align="center">
 <a href="https://github.com/ShareASmile/NewPipeZing/releases" alt="GitHub release"><img src="https://img.shields.io/github/release/ShareASmile/NewPipeZing.svg" ></a>
