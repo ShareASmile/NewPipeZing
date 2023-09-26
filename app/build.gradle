@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'checkstyle'
 
 android {
     compileSdkVersion 30
@@ -95,7 +94,6 @@ android {
 
 ext {
     icepickVersion = '3.2.0'
-    checkstyleVersion = '8.38'
     stethoVersion = '1.5.1'
     leakCanaryVersion = '2.5'
     exoPlayerVersion = '2.11.8'
@@ -107,33 +105,7 @@ ext {
 }
 
 configurations {
-    checkstyle
     ktlint
-}
-
-checkstyle {
-    configFile rootProject.file('checkstyle.xml')
-    ignoreFailures false
-    showViolations true
-    toolVersion = checkstyleVersion
-}
-
-task runCheckstyle(type: Checkstyle) {
-    source 'src'
-    include '**/*.java'
-    exclude '**/gen/**'
-    exclude '**/R.java'
-    exclude '**/BuildConfig.java'
-    exclude 'main/java/us/shandian/giga/**'
-
-    classpath = configurations.checkstyle
-
-    showViolations true
-
-    reports {
-        xml.enabled true
-        html.enabled true
-    }
 }
 
 task runKtlint(type: JavaExec) {
@@ -149,7 +121,7 @@ task formatKtlint(type: JavaExec) {
 }
 
 afterEvaluate {
-    //preDebugBuild.dependsOn formatKtlint, runCheckstyle, runKtlint
+    //preDebugBuild.dependsOn formatKtlint, runKtlint
 }
 
 dependencies {
@@ -165,7 +137,6 @@ dependencies {
     implementation 'com.github.ShareASmile:NewPipeExtractor:aefa538373'
 
 /** Checkstyle **/
-    checkstyle "com.puppycrawl.tools:checkstyle:${checkstyleVersion}"
     ktlint "com.pinterest:ktlint:0.40.0"
 
 /** Kotlin **/
