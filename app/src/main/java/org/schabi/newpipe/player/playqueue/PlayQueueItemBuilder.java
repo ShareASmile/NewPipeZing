@@ -5,11 +5,9 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
-import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.util.ImageDisplayConstants;
 import org.schabi.newpipe.util.Localization;
+import org.schabi.newpipe.util.PicassoHelper;
+import org.schabi.newpipe.util.ServiceHelper;
 
 public class PlayQueueItemBuilder {
     private static final String TAG = PlayQueueItemBuilder.class.toString();
@@ -27,7 +25,7 @@ public class PlayQueueItemBuilder {
             holder.itemVideoTitleView.setText(item.getTitle());
         }
         holder.itemAdditionalDetailsView.setText(Localization.concatenateStrings(item.getUploader(),
-                NewPipe.getNameOfService(item.getServiceId())));
+                ServiceHelper.getNameOfServiceById(item.getServiceId())));
 
         if (item.getDuration() > 0) {
             holder.itemDurationView.setText(Localization.getDurationString(item.getDuration()));
@@ -35,8 +33,7 @@ public class PlayQueueItemBuilder {
             holder.itemDurationView.setVisibility(View.GONE);
         }
 
-        ImageLoader.getInstance().displayImage(item.getThumbnailUrl(), holder.itemThumbnailView,
-                ImageDisplayConstants.DISPLAY_THUMBNAIL_OPTIONS);
+        PicassoHelper.loadThumbnail(item.getThumbnailUrl()).into(holder.itemThumbnailView);
 
         holder.itemRoot.setOnClickListener(view -> {
             if (onItemClickListener != null) {

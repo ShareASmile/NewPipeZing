@@ -1,15 +1,17 @@
 package org.schabi.newpipe.error;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.CookieManager;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,7 +19,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.preference.PreferenceManager;
-import androidx.webkit.WebViewClientCompat;
 
 import org.schabi.newpipe.databinding.ActivityRecaptchaBinding;
 import org.schabi.newpipe.DownloaderImpl;
@@ -66,6 +67,7 @@ public class ReCaptchaActivity extends AppCompatActivity {
     private ActivityRecaptchaBinding recaptchaBinding;
     private String foundCookies = "";
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         ThemeHelper.setTheme(this);
@@ -84,14 +86,15 @@ public class ReCaptchaActivity extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUserAgentString(DownloaderImpl.USER_AGENT);
 
-        recaptchaBinding.reCaptchaWebView.setWebViewClient(new WebViewClientCompat() {
+        recaptchaBinding.reCaptchaWebView.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
+            public boolean shouldOverrideUrlLoading(final WebView view,
+                                                    final WebResourceRequest request) {
                 if (MainActivity.DEBUG) {
-                    Log.d(TAG, "shouldOverrideUrlLoading: url=" + url);
+                    Log.d(TAG, "shouldOverrideUrlLoading: url=" + request.getUrl().toString());
                 }
 
-                handleCookiesFromUrl(url);
+                handleCookiesFromUrl(request.getUrl().toString());
                 return false;
             }
 
@@ -105,12 +108,7 @@ public class ReCaptchaActivity extends AppCompatActivity {
         // cleaning cache, history and cookies from webView
         recaptchaBinding.reCaptchaWebView.clearCache(true);
         recaptchaBinding.reCaptchaWebView.clearHistory();
-        final CookieManager cookieManager = CookieManager.getInstance();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cookieManager.removeAllCookies(value -> { });
-        } else {
-            cookieManager.removeAllCookie();
-        }
+        CookieManager.getInstance().removeAllCookies(null);
 
         recaptchaBinding.reCaptchaWebView.loadUrl(url);
     }
@@ -161,6 +159,9 @@ public class ReCaptchaActivity extends AppCompatActivity {
             DownloaderImpl.getInstance().setCookie(RECAPTCHA_COOKIES_KEY, foundCookies);
             setResult(RESULT_OK);
         }
+
+        // Navigate to blank page (unloads youtube to prevent background playback)
+        recaptchaBinding.reCaptchaWebView.loadUrl("about:blank");
 
         final Intent intent = new Intent(this, org.schabi.newpipe.MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

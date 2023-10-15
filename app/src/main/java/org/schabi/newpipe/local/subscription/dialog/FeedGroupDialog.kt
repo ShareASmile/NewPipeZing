@@ -1,7 +1,6 @@
 package org.schabi.newpipe.local.subscription.dialog
 
 import android.app.Dialog
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
@@ -9,20 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.core.widget.ImageViewCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.GroupieViewHolder
+import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.OnItemClickListener
 import com.xwray.groupie.Section
 import icepick.Icepick
@@ -78,7 +74,7 @@ class FeedGroupDialog : DialogFragment(), BackPressable {
 
     private val subscriptionMainSection = Section()
     private val subscriptionEmptyFooter = Section()
-    private lateinit var subscriptionGroupAdapter: GroupAdapter<GroupieViewHolder>
+    private lateinit var subscriptionGroupAdapter: GroupieAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,40 +122,28 @@ class FeedGroupDialog : DialogFragment(), BackPressable {
         _feedGroupCreateBinding = DialogFeedGroupCreateBinding.bind(view)
         _searchLayoutBinding = feedGroupCreateBinding.subscriptionsHeaderSearchContainer
 
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-            // KitKat doesn't apply container's theme to <include> content
-            val contrastColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.contrastColor))
-            searchLayoutBinding.toolbarSearchEditText.setTextColor(contrastColor)
-            searchLayoutBinding.toolbarSearchEditText.setHintTextColor(contrastColor.withAlpha(128))
-            ImageViewCompat.setImageTintList(searchLayoutBinding.toolbarSearchClearIcon, contrastColor)
-        }
-
         viewModel = ViewModelProvider(
             this,
-            FeedGroupDialogViewModel.Factory(
+            FeedGroupDialogViewModel.getFactory(
                 requireContext(),
-                groupId, subscriptionsCurrentSearchQuery, subscriptionsShowOnlyUngrouped
+                groupId,
+                subscriptionsCurrentSearchQuery,
+                subscriptionsShowOnlyUngrouped
             )
-        ).get(FeedGroupDialogViewModel::class.java)
+        )[FeedGroupDialogViewModel::class.java]
 
         viewModel.groupLiveData.observe(viewLifecycleOwner, Observer(::handleGroup))
-        viewModel.subscriptionsLiveData.observe(
-            viewLifecycleOwner,
-            Observer {
-                setupSubscriptionPicker(it.first, it.second)
+        viewModel.subscriptionsLiveData.observe(viewLifecycleOwner) {
+            setupSubscriptionPicker(it.first, it.second)
+        }
+        viewModel.dialogEventLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                ProcessingEvent -> disableInput()
+                SuccessEvent -> dismiss()
             }
-        )
-        viewModel.dialogEventLiveData.observe(
-            viewLifecycleOwner,
-            Observer {
-                when (it) {
-                    ProcessingEvent -> disableInput()
-                    SuccessEvent -> dismiss()
-                }
-            }
-        )
+        }
 
-        subscriptionGroupAdapter = GroupAdapter<GroupieViewHolder>().apply {
+        subscriptionGroupAdapter = GroupieAdapter().apply {
             add(subscriptionMainSection)
             add(subscriptionEmptyFooter)
             spanCount = 4
@@ -385,7 +369,7 @@ class FeedGroupDialog : DialogFragment(), BackPressable {
     }
 
     private fun setupIconPicker() {
-        val groupAdapter = GroupAdapter<GroupieViewHolder>()
+        val groupAdapter = GroupieAdapter()
         groupAdapter.addAll(FeedGroupIcon.values().map { PickerIconItem(it) })
 
         feedGroupCreateBinding.iconSelector.apply {
@@ -437,7 +421,7 @@ class FeedGroupDialog : DialogFragment(), BackPressable {
         feedGroupCreateBinding.confirmButton.setText(
             when {
                 currentScreen == InitialScreen && groupId == NO_GROUP_SELECTED -> R.string.create
-                else -> android.R.string.ok
+                else -> R.string.ok
             }
         )
 

@@ -1,72 +1,5 @@
 package us.shandian.giga.ui.adapter;
 
-import android.annotation.SuppressLint;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.util.SparseArray;
-import android.view.HapticFeedbackConstants;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import org.schabi.newpipe.BuildConfig;
-import org.schabi.newpipe.R;
-import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.error.ErrorActivity;
-import org.schabi.newpipe.error.ErrorInfo;
-import org.schabi.newpipe.error.UserAction;
-import org.schabi.newpipe.util.NavigationHelper;
-import org.schabi.newpipe.util.external_communication.ShareUtils;
-
-import java.io.File;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-import us.shandian.giga.get.DownloadMission;
-import us.shandian.giga.get.FinishedMission;
-import us.shandian.giga.get.Mission;
-import us.shandian.giga.get.MissionRecoveryInfo;
-import org.schabi.newpipe.streams.io.StoredFileHelper;
-import us.shandian.giga.service.DownloadManager;
-import us.shandian.giga.service.DownloadManagerService;
-import us.shandian.giga.ui.common.Deleter;
-import us.shandian.giga.ui.common.ProgressDrawable;
-import us.shandian.giga.util.Utility;
-
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.content.Intent.FLAG_GRANT_PREFIX_URI_PERMISSION;
 import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
@@ -87,19 +20,78 @@ import static us.shandian.giga.get.DownloadMission.ERROR_TIMEOUT;
 import static us.shandian.giga.get.DownloadMission.ERROR_UNKNOWN_EXCEPTION;
 import static us.shandian.giga.get.DownloadMission.ERROR_UNKNOWN_HOST;
 
+import android.annotation.SuppressLint;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.HapticFeedbackConstants;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import org.schabi.newpipe.BuildConfig;
+import org.schabi.newpipe.R;
+import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.ErrorUtil;
+import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.streams.io.StoredFileHelper;
+import org.schabi.newpipe.util.Localization;
+import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.external_communication.ShareUtils;
+
+import java.io.File;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import us.shandian.giga.get.DownloadMission;
+import us.shandian.giga.get.FinishedMission;
+import us.shandian.giga.get.Mission;
+import us.shandian.giga.get.MissionRecoveryInfo;
+import us.shandian.giga.service.DownloadManager;
+import us.shandian.giga.service.DownloadManagerService;
+import us.shandian.giga.ui.common.Deleter;
+import us.shandian.giga.ui.common.ProgressDrawable;
+import us.shandian.giga.util.Utility;
+
 public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callback {
-    private static final SparseArray<String> ALGORITHMS = new SparseArray<>();
     private static final String TAG = "MissionAdapter";
     private static final String UNDEFINED_PROGRESS = "--.-%";
     private static final String DEFAULT_MIME_TYPE = "*/*";
     private static final String UNDEFINED_ETA = "--:--";
-
     private static final int HASH_NOTIFICATION_ID = 123790;
-
-    static {
-        ALGORITHMS.put(R.id.md5, "MD5");
-        ALGORITHMS.put(R.id.sha1, "SHA1");
-    }
 
     private final Context mContext;
     private final LayoutInflater mInflater;
@@ -350,10 +342,8 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(resolveShareableUri(mission), mimeType);
         intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(FLAG_GRANT_PREFIX_URI_PERMISSION);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            intent.addFlags(FLAG_GRANT_PREFIX_URI_PERMISSION);
-        }
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
             intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
         }
@@ -554,7 +544,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             );
         }
 
-        builder.setNegativeButton(R.string.finish, (dialog, which) -> dialog.cancel())
+        builder.setNegativeButton(R.string.ok, (dialog, which) -> dialog.cancel())
                 .setTitle(mission.storage.getName())
                 .create()
                 .show();
@@ -580,9 +570,9 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             service = ErrorInfo.SERVICE_NONE;
         }
 
-        ErrorActivity.reportError(mContext,
+        ErrorUtil.createNotification(mContext,
                 new ErrorInfo(ErrorInfo.Companion.throwableToStringList(mission.errObject), action,
-                        service, request.toString(), reason, null));
+                        service, request.toString(), reason));
     }
 
     public void clearFinishedDownloads(boolean delete) {
@@ -596,7 +586,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             }
             applyChanges();
 
-            String msg = String.format(mContext.getString(R.string.deleted_downloads), mHidden.size());
+            String msg = Localization.deletedDownloadCount(mContext, mHidden.size());
             mSnackbar = Snackbar.make(mView, msg, Snackbar.LENGTH_INDEFINITE);
             mSnackbar.setAction(R.string.undo, s -> {
                 Iterator<Mission> i = mHidden.iterator();
@@ -699,7 +689,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
                         .build());
                 final StoredFileHelper storage = h.item.mission.storage;
                 compositeDisposable.add(
-                        Observable.fromCallable(() -> Utility.checksum(storage, ALGORITHMS.get(id)))
+                        Observable.fromCallable(() -> Utility.checksum(storage, id))
                                 .subscribeOn(Schedulers.computation())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(result -> {
@@ -870,7 +860,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             super(view);
 
             progress = new ProgressDrawable();
-            ViewCompat.setBackground(itemView.findViewById(R.id.item_bkg), progress);
+            itemView.findViewById(R.id.item_bkg).setBackground(progress);
 
             status = itemView.findViewById(R.id.item_status);
             name = itemView.findViewById(R.id.item_name);

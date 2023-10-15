@@ -22,6 +22,7 @@ You'll see *exactly* what is sent, be able to add **your comments**, and then se
 
 * NewPipe is translated via [Weblate](https://hosted.weblate.org/projects/newpipe/strings/). Log in there with your GitHub account, or register.
 * Add the language you want to translate if it is not there already: see [How to add a new language](https://github.com/TeamNewPipe/NewPipe/wiki/How-to-add-a-new-language-to-NewPipe) in the wiki.
+* NewPipe uses the [PrettyTime](https://github.com/ocpsoft/prettytime) library to display localized versions of dates and times. It needs to be translated, too. Read [these instructions to add a new language](https://www.ocpsoft.org/prettytime/#section-14) and [this issue](https://github.com/TeamNewPipe/NewPipe/issues/9134) for more info.
 
 ## Code contribution
 
@@ -38,6 +39,10 @@ You'll see *exactly* what is sent, be able to add **your comments**, and then se
 * Please show **intention to maintain your features** and code after you contribute a PR. Unmaintained code is a hassle for core developers. If you do not intend to maintain features you plan to contribute, please rethink your submission, or clearly state that in the PR description.
 * Create PRs that cover only **one specific issue/solution/bug**. Do not create PRs that are huge monoliths and could have been split into multiple independent contributions.
 * NewPipe uses [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor) to fetch data from services. If you need to change something there, you must test your changes in NewPipe. Telling NewPipe to use your extractor version can be accomplished by editing the `app/build.gradle` file: the comments under the "NewPipe libraries" section of `dependencies` will help you out.
+
+### Kotlin in NewPipe
+* NewPipe will remain mostly Java for time being
+* Contributions containing a simple conversion from Java to Kotlin should be avoided. Conversions to Kotlin should only be done if Kotlin actually brings improvements like bug fixes or better performance which are not, or only with much more effort, implementable in Java. The core team sees Java as an easier to learn and generally well adopted programming language.
 
 ### Creating a Pull Request (PR)
 
@@ -64,7 +69,7 @@ The [checkStyle](https://github.com/checkstyle/checkstyle) plugin verifies that 
 - Go to `File -> Settings -> Plugins`, search for `checkstyle` and install `CheckStyle-IDEA`.
 - Go to `File -> Settings -> Tools -> Checkstyle`.
 - Add NewPipe's configuration file by clicking the `+` in the right toolbar of the "Configuration File" list.
-- Under the "Use a local Checkstyle file" bullet, click on `Browse` and pick the file named `checkstyle.xml` in the project's root folder.
+- Under the "Use a local Checkstyle file" bullet, click on `Browse` and, enter `checkstyle` folder under the project's root path and pick the file named `checkstyle.xml`.
 - Enable "Store relative to project location" so that moving the directory around does not create issues.
 - Insert a description in the top bar, then click `Next` and then `Finish`.
 - Activate the configuration file you just added by enabling the checkbox on the left.

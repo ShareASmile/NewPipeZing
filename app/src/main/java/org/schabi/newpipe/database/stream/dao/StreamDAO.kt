@@ -6,13 +6,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import org.schabi.newpipe.database.BasicDAO
 import org.schabi.newpipe.database.stream.model.StreamEntity
 import org.schabi.newpipe.database.stream.model.StreamEntity.Companion.STREAM_ID
 import org.schabi.newpipe.extractor.stream.StreamType
-import org.schabi.newpipe.extractor.stream.StreamType.AUDIO_LIVE_STREAM
-import org.schabi.newpipe.extractor.stream.StreamType.LIVE_STREAM
+import org.schabi.newpipe.util.StreamTypeUtil
 import java.time.OffsetDateTime
 
 @Dao
@@ -29,11 +29,17 @@ abstract class StreamDAO : BasicDAO<StreamEntity> {
     @Query("SELECT * FROM streams WHERE url = :url AND service_id = :serviceId")
     abstract fun getStream(serviceId: Long, url: String): Flowable<List<StreamEntity>>
 
+    @Query("UPDATE streams SET uploader_url = :uploaderUrl WHERE url = :url AND service_id = :serviceId")
+    abstract fun setUploaderUrl(serviceId: Long, url: String, uploaderUrl: String): Completable
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     internal abstract fun silentInsertInternal(stream: StreamEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     internal abstract fun silentInsertAllInternal(streams: List<StreamEntity>): List<Long>
+
+    @Query("SELECT COUNT(*) != 0 FROM streams WHERE url = :url AND service_id = :serviceId")
+    internal abstract fun exists(serviceId: Int, url: String): Boolean
 
     @Query(
         """
@@ -84,8 +90,7 @@ abstract class StreamDAO : BasicDAO<StreamEntity> {
             ?: throw IllegalStateException("Stream cannot be null just after insertion.")
         newerStream.uid = existentMinimalStream.uid
 
-        val isNewerStreamLive = newerStream.streamType == AUDIO_LIVE_STREAM || newerStream.streamType == LIVE_STREAM
-        if (!isNewerStreamLive) {
+        if (!StreamTypeUtil.isLiveStream(newerStream.streamType)) {
 
             // Use the existent upload date if the newer stream does not have a better precision
             // (i.e. is an approximation). This is done to prevent unnecessary changes.

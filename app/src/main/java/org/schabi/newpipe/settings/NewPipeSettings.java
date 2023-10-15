@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.R;
@@ -59,20 +60,22 @@ public final class NewPipeSettings {
             isFirstRun = true;
         }
 
+        // first run migrations, then setDefaultValues, since the latter requires the correct types
+        SettingMigrations.initMigrations(context, isFirstRun);
+
+        // readAgain is true so that if new settings are added their default value is set
         PreferenceManager.setDefaultValues(context, R.xml.main_settings, true);
         PreferenceManager.setDefaultValues(context, R.xml.video_audio_settings, true);
         PreferenceManager.setDefaultValues(context, R.xml.download_settings, true);
         PreferenceManager.setDefaultValues(context, R.xml.appearance_settings, true);
         PreferenceManager.setDefaultValues(context, R.xml.history_settings, true);
         PreferenceManager.setDefaultValues(context, R.xml.content_settings, true);
-        PreferenceManager.setDefaultValues(context, R.xml.notification_settings, true);
+        PreferenceManager.setDefaultValues(context, R.xml.player_notification_settings, true);
         PreferenceManager.setDefaultValues(context, R.xml.update_settings, true);
         PreferenceManager.setDefaultValues(context, R.xml.debug_settings, true);
 
         saveDefaultVideoDownloadDirectory(context);
         saveDefaultAudioDownloadDirectory(context);
-
-        SettingMigrations.initMigrations(context, isFirstRun);
     }
 
     static void saveDefaultVideoDownloadDirectory(final Context context) {
@@ -113,7 +116,7 @@ public final class NewPipeSettings {
     public static boolean useStorageAccessFramework(final Context context) {
         // There's a FireOS bug which prevents SAF open/close dialogs from being confirmed with a
         // remote (see #6455).
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || DeviceUtils.isFireTv()) {
+        if (DeviceUtils.isFireTv()) {
             return false;
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             return true;
@@ -123,5 +126,30 @@ public final class NewPipeSettings {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         return prefs.getBoolean(key, true);
+    }
+
+    private static boolean showSearchSuggestions(final Context context,
+                                                 final SharedPreferences sharedPreferences,
+                                                 @StringRes final int key) {
+        final Set<String> enabledSearchSuggestions = sharedPreferences.getStringSet(
+                context.getString(R.string.show_search_suggestions_key), null);
+
+        if (enabledSearchSuggestions == null) {
+            return true; // defaults to true
+        } else {
+            return enabledSearchSuggestions.contains(context.getString(key));
+        }
+    }
+
+    public static boolean showLocalSearchSuggestions(final Context context,
+                                                     final SharedPreferences sharedPreferences) {
+        return showSearchSuggestions(context, sharedPreferences,
+                R.string.show_local_search_suggestions_key);
+    }
+
+    public static boolean showRemoteSearchSuggestions(final Context context,
+                                                      final SharedPreferences sharedPreferences) {
+        return showSearchSuggestions(context, sharedPreferences,
+                R.string.show_remote_search_suggestions_key);
     }
 }

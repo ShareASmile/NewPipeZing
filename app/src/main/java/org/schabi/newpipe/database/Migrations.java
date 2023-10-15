@@ -9,9 +9,20 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import org.schabi.newpipe.MainActivity;
 
 public final class Migrations {
+
+    /////////////////////////////////////////////////////////////////////////////
+    //  Test new migrations manually by importing a database from daily usage  //
+    //  and checking if the migration works (Use the Database Inspector        //
+    //  https://developer.android.com/studio/inspect/database).                //
+    //  If you add a migration point it out in the pull request, so that       //
+    //  others remember to test it themselves.                                 //
+    /////////////////////////////////////////////////////////////////////////////
+
     public static final int DB_VER_1 = 1;
     public static final int DB_VER_2 = 2;
     public static final int DB_VER_3 = 3;
+    public static final int DB_VER_4 = 4;
+    public static final int DB_VER_5 = 5;
 
     private static final String TAG = Migrations.class.getName();
     public static final boolean DEBUG = MainActivity.DEBUG;
@@ -160,5 +171,23 @@ public final class Migrations {
         }
     };
 
-    private Migrations() { }
+    public static final Migration MIGRATION_3_4 = new Migration(DB_VER_3, DB_VER_4) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            database.execSQL(
+                    "ALTER TABLE streams ADD COLUMN uploader_url TEXT"
+            );
+        }
+    };
+
+    public static final Migration MIGRATION_4_5 = new Migration(DB_VER_4, DB_VER_5) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE `subscriptions` ADD COLUMN `notification_mode` "
+                     + "INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
+    private Migrations() {
+    }
 }

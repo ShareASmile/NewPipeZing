@@ -40,7 +40,7 @@ public class ImportConfirmationDialog extends DialogFragment {
                 .setMessage(R.string.import_network_expensive_warning)
                 .setCancelable(true)
                 .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.finish, (dialogInterface, i) -> {
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
                     if (resultServiceIntent != null && getContext() != null) {
                         getContext().startService(resultServiceIntent);
                     }
@@ -61,7 +61,7 @@ public class ImportConfirmationDialog extends DialogFragment {
     }
 
     @Override
-    public void onSaveInstanceState(final Bundle outState) {
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         Icepick.saveInstanceState(this, outState);
     }

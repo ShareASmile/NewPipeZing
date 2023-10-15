@@ -1,6 +1,5 @@
 package org.schabi.newpipe.streams.io;
 
-import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +15,7 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.nononsenseapps.filepicker.Utils;
 
+import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.settings.NewPipeSettings;
 import org.schabi.newpipe.util.FilePickerActivityHelper;
 
@@ -27,6 +28,9 @@ import us.shandian.giga.io.FileStream;
 import us.shandian.giga.io.FileStreamSAF;
 
 public class StoredFileHelper implements Serializable {
+    private static final boolean DEBUG = MainActivity.DEBUG;
+    private static final String TAG = StoredFileHelper.class.getSimpleName();
+
     private static final long serialVersionUID = 0L;
     public static final String DEFAULT_MIME = "application/octet-stream";
 
@@ -69,7 +73,6 @@ public class StoredFileHelper implements Serializable {
         this.tag = tag;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     StoredFileHelper(@Nullable final Context context, final DocumentFile tree,
                      final String filename, final String mime, final boolean safe)
             throws IOException {
@@ -119,7 +122,6 @@ public class StoredFileHelper implements Serializable {
         this.srcType = mime;
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public StoredFileHelper(final Context context, @Nullable final Uri parent,
                             @NonNull final Uri path, final String tag) throws IOException {
         this.tag = tag;
@@ -285,7 +287,13 @@ public class StoredFileHelper implements Serializable {
     }
 
     public boolean existsAsFile() {
-        if (source == null) {
+        if (source == null || (docFile == null && ioFile == null)) {
+            if (DEBUG) {
+                Log.d(TAG, "existsAsFile called but something is null: source = ["
+                        + (source == null ? "null => storage is invalid" : source)
+                        + "], docFile = [" + (docFile == null ? "null" : docFile)
+                        + "], ioFile = [" + (ioFile == null ? "null" : ioFile) + "]");
+            }
             return false;
         }
 
@@ -448,11 +456,12 @@ public class StoredFileHelper implements Serializable {
         return !str1.equals(str2);
     }
 
-    public static Intent getPicker(@NonNull final Context ctx) {
+    public static Intent getPicker(@NonNull final Context ctx,
+                                   @NonNull final String mimeType) {
         if (NewPipeSettings.useStorageAccessFramework(ctx)) {
             return new Intent(Intent.ACTION_OPEN_DOCUMENT)
                     .putExtra("android.content.extra.SHOW_ADVANCED", true)
-                    .setType("*/*")
+                    .setType(mimeType)
                     .addCategory(Intent.CATEGORY_OPENABLE)
                     .addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
                             | StoredDirectoryHelper.PERMISSION_FLAGS);
@@ -466,8 +475,10 @@ public class StoredFileHelper implements Serializable {
         }
     }
 
-    public static Intent getPicker(@NonNull final Context ctx, @Nullable final Uri initialPath) {
-        return applyInitialPathToPickerIntent(ctx, getPicker(ctx), initialPath, null);
+    public static Intent getPicker(@NonNull final Context ctx,
+                                   @NonNull final String mimeType,
+                                   @Nullable final Uri initialPath) {
+        return applyInitialPathToPickerIntent(ctx, getPicker(ctx, mimeType), initialPath, null);
     }
 
     public static Intent getNewPicker(@NonNull final Context ctx,

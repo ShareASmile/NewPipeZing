@@ -6,8 +6,7 @@
     android:orientation="vertical"
     android:padding="13dp">
 
-    <TextView
-        android:id="@+id/titleTextView"
+    <org.schabi.newpipe.views.NewPipeTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -23,10 +22,10 @@
         android:id="@+id/items_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/select_channel_item"></androidx.recyclerview.widget.RecyclerView>
+        tools:listitem="@layout/select_channel_item" />
 
 
-    <TextView
+    <org.schabi.newpipe.views.NewPipeTextView
         android:id="@+id/empty_state_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

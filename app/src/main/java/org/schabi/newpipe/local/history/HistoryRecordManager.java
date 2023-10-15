@@ -42,12 +42,14 @@ import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.database.stream.model.StreamStateEntity;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import org.schabi.newpipe.local.feed.FeedViewModel;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
+import org.schabi.newpipe.util.ExtractorHelper;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import io.reactivex.rxjava3.core.Completable;
@@ -81,6 +83,57 @@ public class HistoryRecordManager {
     // Watch History
     ///////////////////////////////////////////////////////
 
+    /**
+     * Marks a stream item as watched such that it is hidden from the feed if watched videos are
+     * hidden. Adds a history entry and updates the stream progress to 100%.
+     *
+     * @see FeedViewModel#togglePlayedItems
+     * @param info the item to mark as watched
+     * @return a Maybe containing the ID of the item if successful
+     */
+    public Maybe<Long> markAsWatched(final StreamInfoItem info) {
+        if (!isStreamHistoryEnabled()) {
+            return Maybe.empty();
+        }
+
+        final OffsetDateTime currentTime = OffsetDateTime.now(ZoneOffset.UTC);
+        return Maybe.fromCallable(() -> database.runInTransaction(() -> {
+            final long streamId;
+            final long duration;
+            // Duration will not exist if the item was loaded with fast mode, so fetch it if empty
+            if (info.getDuration() < 0) {
+                final StreamInfo completeInfo = ExtractorHelper.getStreamInfo(
+                        info.getServiceId(),
+                        info.getUrl(),
+                        false
+                )
+                        .subscribeOn(Schedulers.io())
+                        .blockingGet();
+                duration = completeInfo.getDuration();
+                streamId = streamTable.upsert(new StreamEntity(completeInfo));
+            } else {
+                duration = info.getDuration();
+                streamId = streamTable.upsert(new StreamEntity(info));
+            }
+
+            // Update the stream progress to the full duration of the video
+            final StreamStateEntity entity = new StreamStateEntity(
+                    streamId,
+                    duration * 1000
+            );
+            streamStateTable.upsert(entity);
+
+            // Add a history entry
+            final StreamHistoryEntity latestEntry = streamHistoryTable.getLatestEntry(streamId);
+            if (latestEntry == null) {
+                // never actually viewed: add history entry but with 0 views
+                return streamHistoryTable.insert(new StreamHistoryEntity(streamId, currentTime, 0));
+            } else {
+                return 0L;
+            }
+        })).subscribeOn(Schedulers.io());
+    }
+
     public Maybe<Long> onViewed(final StreamInfo info) {
         if (!isStreamHistoryEnabled()) {
             return Maybe.empty();
@@ -97,7 +150,8 @@ public class HistoryRecordManager {
                 latestEntry.setRepeatCount(latestEntry.getRepeatCount() + 1);
                 return streamHistoryTable.insert(latestEntry);
             } else {
-                return streamHistoryTable.insert(new StreamHistoryEntity(streamId, currentTime));
+                // just viewed for the first time: set 1 view
+                return streamHistoryTable.insert(new StreamHistoryEntity(streamId, currentTime, 1));
             }
         })).subscribeOn(Schedulers.io());
     }
@@ -119,34 +173,12 @@ public class HistoryRecordManager {
                 .subscribeOn(Schedulers.io());
     }
 
-    public Flowable<List<StreamHistoryEntry>> getStreamHistory() {
-        return streamHistoryTable.getHistory().subscribeOn(Schedulers.io());
-    }
-
     public Flowable<List<StreamHistoryEntry>> getStreamHistorySortedById() {
         return streamHistoryTable.getHistorySortedById().subscribeOn(Schedulers.io());
     }
 
     public Flowable<List<StreamStatisticsEntry>> getStreamStatistics() {
         return streamHistoryTable.getStatistics().subscribeOn(Schedulers.io());
-    }
-
-    public Single<List<Long>> insertStreamHistory(final Collection<StreamHistoryEntry> entries) {
-        final List<StreamHistoryEntity> entities = new ArrayList<>(entries.size());
-        for (final StreamHistoryEntry entry : entries) {
-            entities.add(entry.toStreamHistoryEntity());
-        }
-        return Single.fromCallable(() -> streamHistoryTable.insertAll(entities))
-                .subscribeOn(Schedulers.io());
-    }
-
-    public Single<Integer> deleteStreamHistory(final Collection<StreamHistoryEntry> entries) {
-        final List<StreamHistoryEntity> entities = new ArrayList<>(entries.size());
-        for (final StreamHistoryEntry entry : entries) {
-            entities.add(entry.toStreamHistoryEntity());
-        }
-        return Single.fromCallable(() -> streamHistoryTable.delete(entities))
-                .subscribeOn(Schedulers.io());
     }
 
     private boolean isStreamHistoryEnabled() {
@@ -186,9 +218,9 @@ public class HistoryRecordManager {
                 .subscribeOn(Schedulers.io());
     }
 
-    public Flowable<List<SearchHistoryEntry>> getRelatedSearches(final String query,
-                                                                 final int similarQueryLimit,
-                                                                 final int uniqueQueryLimit) {
+    public Flowable<List<String>> getRelatedSearches(final String query,
+                                                     final int similarQueryLimit,
+                                                     final int uniqueQueryLimit) {
         return query.length() > 0
                 ? searchHistoryTable.getSimilarEntries(query, similarQueryLimit)
                 : searchHistoryTable.getUniqueEntries(uniqueQueryLimit);
@@ -201,13 +233,6 @@ public class HistoryRecordManager {
     ///////////////////////////////////////////////////////
     // Stream State History
     ///////////////////////////////////////////////////////
-
-    public Maybe<StreamHistoryEntity> getStreamHistory(final StreamInfo info) {
-        return Maybe.fromCallable(() -> {
-            final long streamId = streamTable.upsert(new StreamEntity(info));
-            return streamHistoryTable.getLatestEntry(streamId);
-        }).subscribeOn(Schedulers.io());
-    }
 
     public Maybe<StreamStateEntity> loadStreamState(final PlayQueueItem queueItem) {
         return queueItem.getStream()
@@ -254,28 +279,6 @@ public class HistoryRecordManager {
         }).subscribeOn(Schedulers.io());
     }
 
-    public Single<List<StreamStateEntity>> loadStreamStateBatch(final List<InfoItem> infos) {
-        return Single.fromCallable(() -> {
-            final List<StreamStateEntity> result = new ArrayList<>(infos.size());
-            for (final InfoItem info : infos) {
-                final List<StreamEntity> entities = streamTable
-                        .getStream(info.getServiceId(), info.getUrl()).blockingFirst();
-                if (entities.isEmpty()) {
-                    result.add(null);
-                    continue;
-                }
-                final List<StreamStateEntity> states = streamStateTable
-                        .getState(entities.get(0).getUid()).blockingFirst();
-                if (states.isEmpty()) {
-                    result.add(null);
-                    continue;
-                }
-                result.add(states.get(0));
-            }
-            return result;
-        }).subscribeOn(Schedulers.io());
-    }
-
     public Single<List<StreamStateEntity>> loadLocalStreamStateBatch(
             final List<? extends LocalItem> items) {
         return Single.fromCallable(() -> {
@@ -296,9 +299,9 @@ public class HistoryRecordManager {
                         .blockingFirst();
                 if (states.isEmpty()) {
                     result.add(null);
-                    continue;
+                } else {
+                    result.add(states.get(0));
                 }
-                result.add(states.get(0));
             }
             return result;
         }).subscribeOn(Schedulers.io());
