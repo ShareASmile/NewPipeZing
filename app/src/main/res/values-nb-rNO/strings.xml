@@ -46,7 +46,6 @@
     <string name="show_age_restricted_content_title">Vis aldersbegrenset innhold</string>
     <string name="general_error">Feil</string>
     <string name="could_not_load_thumbnails">Kunne ikke laste inn alle miniatyrbilder</string>
-    <string name="youtube_signature_deobfuscation_error">Kunne ikke dekryptere signaturen til videoens nettadresse</string>
     <string name="parsing_error">Kunne ikke tolke nettside</string>
     <string name="content_not_available">Innholdet er utilgjengelig</string>
     <string name="could_not_setup_download_menu">Kunne ikke sette opp nedlastingsmeny</string>
@@ -257,7 +256,6 @@
     <string name="export_ongoing">Eksporterer…</string>
     <string name="import_file_title">Importer fil</string>
     <string name="previous_export">Forrige eksport</string>
-    <string name="download_thumbnail_title">Last miniatyrbilder</string>
     <string name="thumbnail_cache_wipe_complete_notice">Bildehurtiglager tømt</string>
     <string name="metadata_cache_wipe_title">Tøm hurtiglagret metadata</string>
     <string name="metadata_cache_wipe_summary">Fjern all hurtiglagret nettsidedata</string>
@@ -304,7 +302,6 @@
 \n3. Logg inn når forespurt
 \n4. Kopier profil-nettadressen du ble videresendt til.</string>
     <string name="use_inexact_seek_summary">Unøyaktig spoling lar spilleren søke posisjoner raskere med redusert presisjon. Å søke i 5, 15 eller 25 sekunder fungerer ikke med dette</string>
-    <string name="download_thumbnail_summary">Skru av for å stoppe innlasting av miniatyrbilder, noe som sparer data- og minnebruk. Endring av dette vil tømme både disk- og minne-hurtiglager</string>
     <string name="auto_queue_summary">Fortsett fullendt (ikke-repeterende) avspillingskø ved å legge til en relatert strøm</string>
     <string name="enable_leak_canary_summary">Overvåkning av minnelekkasjer kan forårsake at appen ikke svarer under heap dumping</string>
     <string name="enable_disposed_exceptions_title">Rapporter feil utenfor livssyklusen</string>
@@ -449,7 +446,7 @@
     <string name="app_language_title">Programspråk</string>
     <string name="systems_language">Systemforvalg</string>
     <string name="subtitle_activity_recaptcha">Trykk \"Ferdig\" når den er løst</string>
-    <string name="recaptcha_done_button">Ferdig</string>
+    <string name="done">Ferdig</string>
     <string name="videos_string">Videoer</string>
     <plurals name="seconds">
         <item quantity="one">%d sekund</item>
@@ -623,7 +620,6 @@
     <string name="metadata_privacy_private">Privat</string>
     <string name="metadata_privacy_unlisted">Ulistet</string>
     <string name="metadata_privacy_public">Offentlig</string>
-    <string name="metadata_thumbnail_url">Miniatyrbilde-nettadresse</string>
     <string name="metadata_host">Tjener</string>
     <string name="metadata_support">Støtte</string>
     <string name="metadata_language">Språk</string>

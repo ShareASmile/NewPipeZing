@@ -47,7 +47,6 @@
     <string name="duration_live">實況</string>
     <string name="general_error">問題</string>
     <string name="could_not_load_thumbnails">載入唔晒全部縮圖</string>
-    <string name="youtube_signature_deobfuscation_error">影片 URL 簽章解唔到碼</string>
     <string name="parsing_error">解析唔到網站</string>
     <string name="could_not_setup_download_menu">設定唔到下載功能表</string>
     <string name="sorry_string">啫係嗱，世事講唔埋嘅，真係唔好意思。</string>
@@ -159,7 +158,6 @@
     <string name="notification_actions_summary">撳下面嘅掣去更改對應嘅通知動作。用右手邊嘅格仔剔選最多三個，擺喺精簡通知度</string>
     <string name="notification_actions_at_most_three">精簡通知最多淨係擺到三個動作！</string>
     <string name="notification_action_repeat">循環播放</string>
-    <string name="download_thumbnail_title">載入縮圖</string>
     <string name="show_comments_title">顯示留言</string>
     <string name="show_comments_summary">關閉去隱藏留言</string>
     <string name="enable_search_history_title">搜尋紀錄</string>
@@ -168,7 +166,6 @@
     <string name="show_description_title">顯示描述</string>
     <string name="thumbnail_cache_wipe_complete_notice">抹除咗影像快取</string>
     <string name="metadata_cache_wipe_summary">移除所有網頁嘅快取資料</string>
-    <string name="download_thumbnail_summary">關閉佢去避免載入條片嘅縮圖，慳返啲數據同埋用少啲 RAM。更改會抹走記憶體以及磁碟機上面嘅影像快取</string>
     <string name="use_inexact_seek_summary">粗略嘅快轉允許播放器比較籠統咁快轉去其他位置。快轉 5、15 或 25 秒就太仔細，做唔到</string>
     <string name="settings_category_player_title">播放器</string>
     <string name="default_content_country_title">預設嘅國家內容</string>
@@ -320,7 +317,7 @@
     <string name="no_dir_yet">未設定下載資料夾，請立即揀選預設嘅下載資料夾</string>
     <string name="one_item_deleted">刪除咗 1 個項目。</string>
     <string name="recaptcha_solve">執執佢</string>
-    <string name="recaptcha_done_button">搞掂</string>
+    <string name="done">搞掂</string>
     <string name="privacy_policy_encouragement">NewPipe 專案非常著重你嘅私隱。因此，呢個 app 未得你同意係唔會收集任何資料。
 \nNewPipe 嘅私隱政策會詳述，當你傳送彈 app 報告嗰陣，有咩資料會傳送同保存。</string>
     <string name="title_last_played">最近播放</string>
@@ -510,7 +507,6 @@
     <string name="metadata_category">分類</string>
     <string name="metadata_tags">標籤</string>
     <string name="metadata_privacy">公開設定</string>
-    <string name="metadata_thumbnail_url">縮圖 URL</string>
     <string name="metadata_privacy_public">公開</string>
     <string name="metadata_privacy_unlisted">憑網址瀏覽</string>
     <string name="detail_pinned_comment_view_description">置頂留言</string>

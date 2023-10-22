@@ -62,7 +62,6 @@
     <string name="general_error">Lỗi</string>
     <string name="network_error">Lỗi kết nối mạng</string>
     <string name="could_not_load_thumbnails">Không thể tải tất cả hình thu nhỏ</string>
-    <string name="youtube_signature_deobfuscation_error">Không thể giải mã chữ ký URL video</string>
     <string name="parsing_error">Không thể phân tích cú pháp trang web</string>
     <string name="content_not_available">Nội dung không khả dụng</string>
     <string name="could_not_setup_download_menu">Không thể thiết lập menu tải về</string>
@@ -133,8 +132,6 @@
     <string name="controls_add_to_playlist_title">Thêm vào</string>
     <string name="use_inexact_seek_title">Sử dụng tìm kiếm nhanh không chính xác</string>
     <string name="use_inexact_seek_summary">Tua không chính xác cho phép trình phát tua đến các vị trí nhanh hơn với độ chính xác bị giảm. Tua 5, 15 hay 25 giây không dùng được với chế độ này</string>
-    <string name="download_thumbnail_title">Tải hình thu nhỏ</string>
-    <string name="download_thumbnail_summary">Tắt để ngăn chặn việc tải các hình thu nhỏ, việc này sẽ tiết kiệm lưu lượng mạng và bộ nhớ. Các thay đổi sẽ xóa bộ nhớ đệm hình ảnh cả trong RAM và trong bộ nhớ</string>
     <string name="thumbnail_cache_wipe_complete_notice">Đã xóa bộ nhớ cache hình ảnh</string>
     <string name="metadata_cache_wipe_title">Xóa siêu dữ liệu đã lưu vào bộ nhớ cache</string>
     <string name="metadata_cache_wipe_summary">Xóa tất cả dữ liệu trang web được lưu trong bộ nhớ cache</string>
@@ -446,7 +443,7 @@
     <string name="recently_added">Thêm vào gần đây</string>
     <string name="localization_changes_requires_app_restart">Ngôn ngữ sẽ thay đổi khi ứng dụng khởi động lại</string>
     <string name="subtitle_activity_recaptcha">Bấm \"Xong\" khi hoàn thành</string>
-    <string name="recaptcha_done_button">Đã hoàn thành</string>
+    <string name="done">Đã hoàn thành</string>
     <string name="infinite_videos">∞ video</string>
     <string name="more_than_100_videos">100+ video</string>
     <plurals name="listening">
@@ -598,7 +595,6 @@
     <string name="metadata_privacy_private">Riêng tư</string>
     <string name="metadata_privacy_unlisted">Chưa được liệt kê</string>
     <string name="metadata_privacy_public">Công khai</string>
-    <string name="metadata_thumbnail_url">URL hình thu nhỏ</string>
     <string name="metadata_host">Nơi chứa</string>
     <string name="metadata_support">Hỗ trợ</string>
     <string name="metadata_language">Ngôn ngữ</string>

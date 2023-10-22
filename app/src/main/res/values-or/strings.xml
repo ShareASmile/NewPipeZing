@@ -44,7 +44,7 @@
     <string name="open_with">ଏଥିରେ ଖୋଲନ୍ତୁ</string>
     <string name="cancel">ବାତିଲ୍ କରନ୍ତୁ</string>
     <string name="mark_as_watched">ଦେଖାଯାଇଥିବା ପରି ଚିହ୍ନିତ କର</string>
-    <string name="download">ସଞ୍ଚୟ କରନ୍ତୁ</string>
+    <string name="download">ଡାଉନଲୋଡ୍ କରିବା</string>
     <string name="settings">ସେଟିଂ</string>
     <string name="did_you_mean">ତୁମେ ଏହା ଚାଂହ କି \"%1$s\"\?</string>
     <string name="controls_download_desc">ଫାଇଲ୍ ଡାଉନଲୋଡ କରନ୍ତୁ</string>
@@ -101,7 +101,6 @@
     <string name="clear_queue_confirmation_title">ଏକ ଧାଡି ସଫା କରିବା ପୂର୍ବରୁ ନିଶ୍ଚିତକରଣ ମାଗନ୍ତୁ</string>
     <string name="clear_queue_confirmation_summary">ଗୋଟିଏ ଖେଳାଳୀରୁ ଅନ୍ୟ ଖେଳାଳୀକୁ ପରିବର୍ତ୍ତନ କରିବା ଆପଣଙ୍କ ଧାଡି ବଦଳାଇପାରେ</string>
     <string name="clear_queue_confirmation_description">ସକ୍ରିୟ ପ୍ଲେୟାର କ୍ୟୁ ବଦଳାଯିବ</string>
-    <string name="download_thumbnail_title">ଥମ୍ୱନେଲ୍ ଲୋଡ୍ କରନ୍ତୁ</string>
     <string name="show_next_and_similar_title">\'ପରବର୍ତ୍ତୀ\' ଏବଂ \'ସମାନ\' ଭିଡିଓଗୁଡିକ ଦେଖାନ୍ତୁ</string>
     <string name="show_description_title">ବର୍ଣ୍ଣନା ଦେଖାନ୍ତୁ</string>
     <string name="thumbnail_cache_wipe_complete_notice">ପ୍ରତିଛବି କ୍ୟାଚ୍ ପୋଛି ଦିଆଗଲା</string>
@@ -149,7 +148,6 @@
     <string name="settings_category_video_audio_title">ଵିଡ଼ିଓ ଓ ଅଡ଼ିଓ</string>
     <string name="start_main_player_fullscreen_summary">ମିନି ପ୍ଲେୟାରରେ ଭିଡିଓ ଆରମ୍ଭ କରନ୍ତୁ ନାହିଁ, କିନ୍ତୁ ଅଟୋ ଘୂର୍ଣ୍ଣନ ବନ୍ଦ ହୋଇଗଲେ ସିଧାସଳଖ ଫୁଲ୍ ସ୍କ୍ରିନ୍ ମୋଡ୍ କୁ ଯାଆନ୍ତୁ। ଫୁଲ୍ ସ୍କ୍ରିନ୍ ଛାଡି ଆପଣ ଏପର୍ଯ୍ୟନ୍ତ ମିନି ପ୍ଲେୟାରକୁ ପ୍ରବେଶ କରିପାରିବେ</string>
     <string name="notification_actions_summary">ଏହା ଉପରେ ଟ୍ୟାପ୍ କରି ନିମ୍ନରେ ପ୍ରତ୍ୟେକ ବିଜ୍ଞପ୍ତି କାର୍ଯ୍ୟ ସଂପାଦନ କରନ୍ତୁ। ଡାହାଣରେ ଥିବା ଚେକ୍ ବକ୍ସ ବ୍ୟବହାର କରି କମ୍ପାକ୍ଟ ବିଜ୍ଞପ୍ତିରେ ଦେଖାଯିବାକୁ ସେମାନଙ୍କ ମଧ୍ୟରୁ ତିନୋଟି ପର୍ଯ୍ୟନ୍ତ ଚୟନ କରନ୍ତୁ</string>
-    <string name="download_thumbnail_summary">ଥମ୍ବନେଲ ଲୋଡିଂ, ଡାଟା ଏବଂ ମେମୋରୀ ବ୍ୟବହାରକୁ ରୋକିବା ପାଇଁ ବନ୍ଦ କରନ୍ତୁ । ପରିବର୍ତ୍ତନଗୁଡ଼ିକ ଉଭୟ ଇନ-ମେମୋରୀ ଏବଂ ଅନ୍-ଡିସ୍କ ଇମେଜ୍ କ୍ୟାଚ୍ ସଫା କରେ</string>
     <string name="show_meta_info_summary">ଷ୍ଟ୍ରିମ୍ ସୃଷ୍ଟିକର୍ତ୍ତା, ଷ୍ଟ୍ରିମ୍ ବିଷୟବସ୍ତୁ କିମ୍ବା ଏକ ସନ୍ଧାନ ଅନୁରୋଧ ବିଷୟରେ ଅତିରିକ୍ତ ସୂଚନା ସହିତ ମେଟା ସୂଚନା ବାକ୍ସଗୁଡ଼ିକୁ ଲୁଚାଇବାକୁ ବନ୍ଦ କରନ୍ତୁ</string>
     <string name="show_age_restricted_content_summary">ପିଲାମାନଙ୍କ ପାଇଁ ସମ୍ଭବତ content ଅନୁପଯୁକ୍ତ ବିଷୟବସ୍ତୁ ଦେଖାନ୍ତୁ କାରଣ ଏହାର ବୟସ ସୀମା ଅଛି (ଯେପରିକି 18+)</string>
     <string name="restricted_video_no_stream">ଏହି ଭିଡିଓ ବୟସ-ସୀମିତ ଅଟେ ।
@@ -204,7 +202,7 @@
     <string name="unsubscribe">ସଦସ୍ୟତା ରଦ୍ଦ କରନ୍ତୁ</string>
     <string name="channel_unsubscribed">ଚ୍ୟାନେଲ ସଦସ୍ୟତା ରଦ୍ଦ ହେଲା</string>
     <string name="subscription_change_failed">ସଦସ୍ୟତା ପରିବର୍ତ୍ତନ କରିପାରିଲା ନାହିଁ</string>
-    <string name="show_info">ସୂଚନା ଦେଖାନ୍ତୁ</string>
+    <string name="show_info">ସୂଚନା ଦେଖାଅ</string>
     <string name="controls_add_to_playlist_title">ଏଥିରେ ଯୋଡ଼ିବା</string>
     <string name="default_popup_resolution_title">ଡିଫଲ୍ଟ ପପ୍ଅପ୍ ରେଜୋଲୁସନ</string>
     <string name="show_higher_resolutions_summary">କେବଳ କିଛି ଡିଭାଇସ୍ 2K / 4K ଭିଡିଓ ଚଲାଇ ପାରିବେ</string>
@@ -216,7 +214,7 @@
     <string name="notification_action_4_title">ପଞ୍ଚମ କୃତ୍ୟ ବଟନ୍</string>
     <string name="notification_action_shuffle">ଶଫଲ୍</string>
     <string name="notification_action_buffering">ବଫରିଂ</string>
-    <string name="notification_action_nothing">କିଛି ନୁହେଁ</string>
+    <string name="notification_action_nothing">କିଛି ନାହିଁ</string>
     <string name="default_video_format_title">ଡିଫଲ୍ଟ ଭିଡିଓ ଫର୍ମାଟ୍</string>
     <string name="popup_remember_size_pos_title">ପପ୍ଅପ୍ ଗୁଣଗୁଡିକ ମନେରଖ</string>
     <string name="processing_may_take_a_moment">ପ୍ରକ୍ରିୟାକରଣ… କିଛି ସମୟ ନେଇପାରେ</string>
@@ -306,7 +304,7 @@
     <string name="msg_copied">କ୍ଲିପବୋର୍ଡରେ କପି କରାଯାଇଛି</string>
     <string name="one_item_deleted">1 ଆଇଟମ୍ ଡିଲିଟ୍ ହୋଇଛି ।</string>
     <string name="title_activity_recaptcha">reCAPTCHA ଆହ୍ୱାନ</string>
-    <string name="recaptcha_done_button">ସମାପ୍ତ</string>
+    <string name="done">ସମାପ୍ତ</string>
     <string name="settings_category_downloads_title">ଡାଉନଲୋଡ୍ କରନ୍ତୁ</string>
     <string name="settings_file_replacement_character_summary">ଅବୈଧ ବର୍ଣ୍ଣଗୁଡିକ ଏହି ମୂଲ୍ୟ ସହିତ ବଦଳାଯାଏ</string>
     <string name="settings_file_replacement_character_title">ପ୍ରତିସ୍ଥାପନ ବର୍ଣ୍ଣ</string>
@@ -421,7 +419,6 @@
     <string name="drawer_header_description">ଟୋଗଲ୍ ସେବା, ବର୍ତ୍ତମାନ ମନୋନୀତ:</string>
     <string name="give_back">ଫେରସ୍ତ କର</string>
     <string name="overwrite">ଓଭର୍ ରାଇଟ୍ କରନ୍ତୁ</string>
-    <string name="metadata_thumbnail_url">ଥମ୍ବନେଲ୍ URL</string>
     <string name="metadata_host">ହୋଷ୍ଟ</string>
     <string name="metadata_privacy_public">ସାର୍ଵଜନୀନ</string>
     <string name="metadata_privacy_unlisted">ତାଲିକାଭୁକ୍ତ ନୁହେଁ</string>
@@ -518,7 +515,6 @@
     <string name="delete_playback_states_alert">ସମସ୍ତ ପ୍ଲେକ୍ ପୋଜିସନ୍ ବିଲୋପ କରିବେ କି\?</string>
     <string name="clear_search_history_summary">ସନ୍ଧାନ କୀ ଶବ୍ଦର ଇତିହାସ ବିଲୋପ କରେ</string>
     <string name="general_error">ତ୍ରୁଟି</string>
-    <string name="youtube_signature_deobfuscation_error">ଭିଡିଓ URL ଦସ୍ତଖତକୁ ଡିବଫସ୍କେଟ୍ କରିପାରିଲା ନାହିଁ</string>
     <string name="player_unrecoverable_failure">ପୁନରୁଦ୍ଧାର ନ ହୋଇପାରିଲା ପରି ପ୍ଲେୟାର ତ୍ରୁଟି ଘଟିଲା</string>
     <string name="external_player_unsupported_link_type">ବହିଃ-ଚାଳକ ଏଭଳି ଲିଙ୍କ୍ ସମର୍ଥନ କରେନି</string>
     <string name="missing_file">ଫାଇଲ୍ ଘୁଞ୍ଚିଗଲା କିମ୍ବା ଡିଲିଟ୍ ହେଲା</string>

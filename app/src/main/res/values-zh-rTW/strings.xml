@@ -66,7 +66,6 @@
     <string name="best_resolution">最佳解析度</string>
     <string name="general_error">錯誤</string>
     <string name="could_not_load_thumbnails">無法載入所有縮圖</string>
-    <string name="youtube_signature_deobfuscation_error">無法解析影片 URL 簽章</string>
     <string name="parsing_error">無法解析網站</string>
     <string name="content_not_available">內容無法使用</string>
     <string name="could_not_setup_download_menu">無法設定下載選單</string>
@@ -278,8 +277,6 @@
 \n2. 移至此網址： %1$s 
 \n3. 當被提示時登入帳號 
 \n4. 複製您被重新導向到的個人設定檔網址。</string>
-    <string name="download_thumbnail_title">載入縮圖</string>
-    <string name="download_thumbnail_summary">關閉以防止載入縮圖，減少數據和儲存空間的用量。改變時將清除記憶體和磁碟上的縮圖快取</string>
     <string name="thumbnail_cache_wipe_complete_notice">已抹除圖片快取</string>
     <string name="metadata_cache_wipe_title">抹除已快取的中介資料</string>
     <string name="metadata_cache_wipe_summary">移除所有已快取的網頁資料</string>
@@ -444,7 +441,7 @@
     <string name="app_language_title">應用程式語言</string>
     <string name="systems_language">系統預設值</string>
     <string name="subtitle_activity_recaptcha">解決後請按「完成」</string>
-    <string name="recaptcha_done_button">完成</string>
+    <string name="done">完成</string>
     <string name="videos_string">影片</string>
     <plurals name="seconds">
         <item quantity="other">%d 秒</item>
@@ -594,7 +591,6 @@
     <string name="metadata_privacy_private">私人</string>
     <string name="metadata_privacy_unlisted">未列出</string>
     <string name="metadata_privacy_public">公開</string>
-    <string name="metadata_thumbnail_url">縮圖 URL</string>
     <string name="metadata_host">主機</string>
     <string name="metadata_support">支援</string>
     <string name="metadata_language">語言</string>
@@ -753,4 +749,29 @@
     <string name="disable_media_tunneling_automatic_info">因為您的裝置型號已知不支援媒體隧道，因此已預設停用。</string>
     <string name="no_streams">無串流</string>
     <string name="no_live_streams">無直播串流</string>
+    <string name="channel_tab_videos">影片</string>
+    <string name="metadata_subscribers">訂閱者</string>
+    <string name="show_channel_tabs_summary">頻道頁面上顯示哪些分頁</string>
+    <string name="show_channel_tabs">頻道分頁</string>
+    <string name="channel_tab_shorts">短片</string>
+    <string name="loading_metadata_title">正在載入詮釋資料……</string>
+    <string name="feed_fetch_channel_tabs">擷取頻道分頁</string>
+    <string name="channel_tab_about">關於</string>
+    <string name="channel_tab_albums">專輯</string>
+    <string name="feed_fetch_channel_tabs_summary">更新 feed 時要擷取的分頁。若使用快速模式更新頻道，則此選項無效。</string>
+    <string name="channel_tab_playlists">播放清單</string>
+    <string name="channel_tab_tracks">軌道</string>
+    <string name="channel_tab_channels">頻道</string>
+    <string name="channel_tab_livestreams">直播</string>
+    <string name="toggle_screen_orientation">切換螢幕方向</string>
+    <string name="toggle_fullscreen">切換全螢幕</string>
+    <string name="next_stream">下一個串流</string>
+    <string name="open_play_queue">開啟播放佇列</string>
+    <string name="forward">快轉</string>
+    <string name="rewind">倒帶</string>
+    <string name="replay">重播</string>
+    <string name="play">播放</string>
+    <string name="more_options">更多選項</string>
+    <string name="duration">持續時間</string>
+    <string name="previous_stream">上一個串流</string>
 </resources>

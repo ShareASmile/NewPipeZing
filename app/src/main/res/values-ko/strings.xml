@@ -47,7 +47,6 @@
     <string name="duration_live">라이브</string>
     <string name="general_error">오류</string>
     <string name="could_not_load_thumbnails">모든 썸네일을 불러올 수 없습니다</string>
-    <string name="youtube_signature_deobfuscation_error">비디오 URL 서명을 복호화할 수 없습니다</string>
     <string name="parsing_error">웹사이트를 가져올 수 없습니다</string>
     <string name="content_not_available">컨텐츠를 사용할 수 없습니다</string>
     <string name="could_not_setup_download_menu">다운로드 메뉴를 설정할 수 없습니다</string>
@@ -278,8 +277,6 @@
     <string name="import_network_expensive_warning">경고: 데이터가 많이 소모될 수 있습니다. 
 \n 
 \n계속하시겠습니까\?</string>
-    <string name="download_thumbnail_title">썸네일 로드하기</string>
-    <string name="download_thumbnail_summary">동영상 썸네일을 로드하지 않으며, 데이터와 메모리 사용을 최대한 줄입니다. 이 옵션을 선택 시 모든 메모리 캐시와 저장소 캐시를 삭제합니다</string>
     <string name="thumbnail_cache_wipe_complete_notice">이미지 캐시 지워짐</string>
     <string name="metadata_cache_wipe_title">캐시된 메타데이터 지우기</string>
     <string name="metadata_cache_wipe_summary">캐시된 모든 웹페이지 데이터 지우기</string>
@@ -462,7 +459,7 @@
     <string name="restricted_video">이 비디오는 연령제한이 있습니다.
 \n
 \n만약, 시청을 원한다면 설정에 \"%1$s\"를 활성화 하세요.</string>
-    <string name="recaptcha_done_button">완료</string>
+    <string name="done">완료</string>
     <string name="artists">아티스트</string>
     <string name="albums">앨범</string>
     <string name="videos_string">비디오</string>
@@ -627,7 +624,6 @@
     <string name="detail_heart_img_view_description">창작자의 마음</string>
     <string name="metadata_privacy_private">비공개</string>
     <string name="metadata_privacy_unlisted">비공개</string>
-    <string name="metadata_thumbnail_url">썸네일 URL</string>
     <string name="metadata_host">호스트</string>
     <string name="you_successfully_subscribed">이제 이 채널을 구독했습니다</string>
     <string name="get_notified">알림 받기</string>

@@ -43,7 +43,6 @@
     <string name="download_path_audio_dialog_title">Escolha a pasta para colocar os ficheiros de áudio</string>
     <string name="general_error">Erro</string>
     <string name="could_not_load_thumbnails">Não foi possível carregar todas as miniaturas</string>
-    <string name="youtube_signature_deobfuscation_error">Não foi possível decifrar a assinatura do URL</string>
     <string name="parsing_error">Não foi possível processar o site</string>
     <string name="content_not_available">Conteúdo indisponível</string>
     <string name="content">Conteúdo</string>
@@ -204,8 +203,6 @@
     <string name="controls_add_to_playlist_title">Adicionar a</string>
     <string name="use_inexact_seek_title">Utilizar pesquisa rápida</string>
     <string name="use_inexact_seek_summary">Este tipo de pesquisa e mais rápida mas reduz a precisão. Procurar por 5, 15 ou 25 segundos não funciona corretamente</string>
-    <string name="download_thumbnail_title">Carregar miniaturas</string>
-    <string name="download_thumbnail_summary">Desative para parar o carregamento de miniaturas, poupar dados e utilização da memória. As alterações limpam a cache de imagens do disco e da memória</string>
     <string name="thumbnail_cache_wipe_complete_notice">Cache de imagens limpa</string>
     <string name="default_content_country_title">País padrão para conteúdo</string>
     <string name="settings_category_debug_title">Depuração</string>
@@ -454,7 +451,7 @@
     <string name="app_language_title">Idioma da aplicação</string>
     <string name="systems_language">Predefinição do sistema</string>
     <string name="subtitle_activity_recaptcha">Prima \"Feito\" ao resolver</string>
-    <string name="recaptcha_done_button">Aceitar</string>
+    <string name="done">Aceitar</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Acha que a fonte demora muito tempo a carregar\? Se sim, tente ativar o carregamento rápido (pode alterar a opção nas definições ou no botão abaixo).
 \n
 \nNewPipe oferece duas estratégias de carregamento:
@@ -632,7 +629,6 @@
     <string name="metadata_privacy_private">Privado</string>
     <string name="metadata_privacy_unlisted">Não listado</string>
     <string name="metadata_privacy_public">Público</string>
-    <string name="metadata_thumbnail_url">URL da miniatura</string>
     <string name="metadata_host">Servidor</string>
     <string name="metadata_support">Apoio</string>
     <string name="metadata_language">Idioma</string>

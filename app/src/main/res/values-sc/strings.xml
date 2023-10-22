@@ -115,7 +115,7 @@
     <string name="settings_file_replacement_character_summary">Sos caràteres non vàlidos benint remplasados cun custu valore</string>
     <string name="settings_file_charset_title">Caràteres permìtidos in sos nùmenes de sos documentos</string>
     <string name="settings_category_downloads_title">Iscàrriga</string>
-    <string name="recaptcha_done_button">Fatu</string>
+    <string name="done">Fatu</string>
     <string name="recaptcha_request_toast">B\'at bisòngiu de risòlvere unu reCAPTCHA</string>
     <string name="subtitle_activity_recaptcha">Incarca \"Fatu\" cando est risoltu</string>
     <string name="title_activity_recaptcha">Disafiu reCAPTCHA</string>
@@ -374,7 +374,6 @@
     <string name="could_not_setup_download_menu">Impostatzione de su menù de iscarrigamentu fallida</string>
     <string name="content_not_available">Cuntenutu no a disponimentu</string>
     <string name="parsing_error">Anàlisi de su situ web fallida</string>
-    <string name="youtube_signature_deobfuscation_error">Detziframentu de sa firma URL de su vìdeu fallida</string>
     <string name="could_not_load_thumbnails">No est istadu possìbile carrigare totu sas miniaduras</string>
     <string name="network_error">Errore de retza</string>
     <string name="download_to_sdcard_error_message">Impossìbile iscarrigare in s\'ischeda SD esterna. Cheres resetare sa positzione de sa cartella de iscarrigamentu\?</string>
@@ -473,10 +472,8 @@
     <string name="metadata_cache_wipe_summary">Boga totu sos datos de sa pàgina web in sa memòria temporànea</string>
     <string name="metadata_cache_wipe_title">Iscantzella sos metadatos in sa memòria temporànea</string>
     <string name="thumbnail_cache_wipe_complete_notice">Memòria temporànea de sas immàgines isboidada</string>
-    <string name="download_thumbnail_summary">Istuda pro prevènnere su carrigamentu de sas miniaduras, su sarvamentu de sos datos e s\'impreu de sa memòria. Sas modìficas ant a isbodiare siat sa memòria temporànea de sa memòria siat cussa de su discu</string>
     <string name="show_comments_summary">Istuda pro cuare sos cummentos</string>
     <string name="show_comments_title">Ammustra sos cummentos</string>
-    <string name="download_thumbnail_title">Càrriga sas miniaduras</string>
     <string name="seek_duration_title">Longària de s\'avantzamentu e de sa torrada in segus lestros</string>
     <string name="use_inexact_seek_summary">Su moimentu inesatu permitit a su riproduidore de si mòere cara a una positzione in manera prus lestra ma prus pagu pretzisa. Su de si mòere de 5, 15 o 25 segundos non funtzionat, cun custa optzione</string>
     <string name="use_inexact_seek_title">Imprea su moimentu inesatu lestru</string>
@@ -604,7 +601,6 @@
     <string name="metadata_privacy_unlisted">No elencadu</string>
     <string name="metadata_privacy_private">Privadu</string>
     <string name="metadata_privacy_public">Pùblicu</string>
-    <string name="metadata_thumbnail_url">URL de sa miniadura</string>
     <string name="metadata_host">Istrangiadore</string>
     <string name="metadata_support">Suportu</string>
     <string name="metadata_language">Limba</string>

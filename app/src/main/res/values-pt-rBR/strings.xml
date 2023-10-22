@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="audio">Áudio</string>
-    <string name="youtube_signature_deobfuscation_error">Não foi possível decodificar assinatura da URL do vídeo</string>
     <string name="your_comment">Seu comentário (em inglês):</string>
     <string name="what_happened_headline">O que aconteceu:</string>
     <string name="what_device_headline">Informação:</string>
@@ -284,14 +283,12 @@
     <string name="import_network_expensive_warning">Tenha em mente que esta operação poderá consumir muitos dados.
 \n
 \nVocê deseja continuar\?</string>
-    <string name="download_thumbnail_title">Carregar miniaturas</string>
     <string name="thumbnail_cache_wipe_complete_notice">Cache de imagens limpo</string>
     <string name="metadata_cache_wipe_title">Limpar cache de metadados</string>
     <string name="metadata_cache_wipe_summary">Remove todos os dados de páginas em cache</string>
     <string name="metadata_cache_wipe_complete_notice">Cache de metadados limpo</string>
     <string name="playback_speed_control">Controles de velocidade de reprodução</string>
     <string name="playback_tempo">Velocidade</string>
-    <string name="download_thumbnail_summary">Desative para não carregar miniaturas e economizar no uso de dados e memória. A alteração limpa todo o cache de imagens em memória e em disco</string>
     <string name="playback_pitch">Afinação</string>
     <string name="unhook_checkbox">Desvincular (pode causar distorção)</string>
     <string name="preferred_open_action_settings_title">Ação de \'abrir\' preferida</string>
@@ -454,7 +451,7 @@
     <string name="app_language_title">Idioma do app</string>
     <string name="systems_language">Padrão do sistema</string>
     <string name="subtitle_activity_recaptcha">Toque em \"Pronto\" ao resolver</string>
-    <string name="recaptcha_done_button">Pronto</string>
+    <string name="done">Pronto</string>
     <string name="videos_string">Vídeos</string>
     <plurals name="seconds">
         <item quantity="one">%d segundo</item>
@@ -615,7 +612,6 @@
     <string name="metadata_privacy_unlisted">Não Listado</string>
     <string name="metadata_privacy_public">Público</string>
     <string name="metadata_age_limit">Limite de Idade</string>
-    <string name="metadata_thumbnail_url">URL da Miniatura</string>
     <string name="metadata_host">Hospedado em</string>
     <string name="metadata_support">Suporte</string>
     <string name="metadata_language">Idioma</string>
@@ -779,4 +775,18 @@
     <string name="no_streams">Nenhuma transmissão</string>
     <string name="no_live_streams">Nenhuma transmissão ao vivo</string>
     <string name="disable_media_tunneling_automatic_info">O tunelamento de mídia foi desabilitado por padrão em seu dispositivo porque seu modelo é conhecido por não suportá-lo.</string>
+    <string name="channel_tab_videos">Vídeos</string>
+    <string name="metadata_subscribers">Inscritos</string>
+    <string name="show_channel_tabs_summary">Quais guias são mostradas nas páginas do canal</string>
+    <string name="show_channel_tabs">Guias de canal</string>
+    <string name="channel_tab_shorts">Shorts</string>
+    <string name="loading_metadata_title">Carregando metadados…</string>
+    <string name="feed_fetch_channel_tabs">Buscar guias de canal</string>
+    <string name="channel_tab_about">Sobre</string>
+    <string name="channel_tab_albums">Álbuns</string>
+    <string name="feed_fetch_channel_tabs_summary">Guias a serem buscadas ao atualizar o feed. Esta opção não tem efeito se um canal for atualizado usando o modo rápido.</string>
+    <string name="channel_tab_playlists">Playlists</string>
+    <string name="channel_tab_tracks">Faixas</string>
+    <string name="channel_tab_channels">Canais</string>
+    <string name="channel_tab_livestreams">Ao vivo</string>
 </resources>

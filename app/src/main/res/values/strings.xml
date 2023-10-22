@@ -85,8 +85,6 @@
     <string name="clear_queue_confirmation_description">The active player queue will be replaced</string>
     <string name="ignore_hardware_media_buttons_title">Ignore hardware media button events</string>
     <string name="ignore_hardware_media_buttons_summary">Useful, for instance, if you are using a headset with broken physical buttons</string>
-    <string name="download_thumbnail_title">Load thumbnails</string>
-    <string name="download_thumbnail_summary">Turn off to prevent loading thumbnails, saving data and memory usage. Changes clear both in-memory and on-disk image cache</string>
     <string name="show_comments_title">Show comments</string>
     <string name="show_comments_summary">Turn off to hide comments</string>
     <string name="show_next_and_similar_title">Show \'Next\' and \'Similar\' videos</string>
@@ -167,6 +165,7 @@
     <string name="duration_live">Live</string>
     <string name="downloads">Downloads</string>
     <string name="downloads_title">Downloads</string>
+    <string name="loading_metadata_title">Loading Metadata…</string>
     <string name="error_report_title">Error report</string>
     <string name="all">All</string>
     <string name="channels">Channels</string>
@@ -230,7 +229,6 @@
     <string name="download_to_sdcard_error_message">Downloading to external SD card not possible. Reset download folder location?</string>
     <string name="network_error">Network error</string>
     <string name="could_not_load_thumbnails">Could not load all thumbnails</string>
-    <string name="youtube_signature_deobfuscation_error">Could not deobfuscate video URL signature</string>
     <string name="parsing_error">Could not parse website</string>
     <string name="content_not_available">Content unavailable</string>
     <string name="could_not_setup_download_menu">Could not set up download menu</string>
@@ -350,7 +348,7 @@
     <string name="subtitle_activity_recaptcha">Press \"Done\" when solved</string>
     <string name="recaptcha_request_toast">reCAPTCHA challenge requested</string>
     <string name="recaptcha_solve">Solve</string>
-    <string name="recaptcha_done_button">Done</string>
+    <string name="done">Done</string>
     <!-- Downloads -->
     <string name="settings_category_downloads_title">Download</string>
     <string name="settings_file_charset_title">Allowed characters in filenames</string>
@@ -543,6 +541,10 @@
         <item>240p</item>
         <item>144p</item>
     </string-array>
+    <string-array name="high_resolution_limit_data_usage_description_list">
+        <item>2160p</item>
+        <item>1440p</item>
+    </string-array>
     <!-- Notifications settings -->
     <string name="enable_streams_notifications_title">New streams notifications</string>
     <string name="enable_streams_notifications_summary">Notify about new streams from subscriptions</string>
@@ -713,6 +715,8 @@
 \nSo the choice boils down to what you prefer: speed or precise information.</string>
     <string name="feed_hide_streams_title">Show the following streams</string>
     <string name="feed_show_hide_streams">Show/Hide streams</string>
+    <string name="feed_fetch_channel_tabs">Fetch channel tabs</string>
+    <string name="feed_fetch_channel_tabs_summary">Tabs to fetch when updating the feed. This option has no effect if a channel is updated using fast mode.</string>
     <string name="content_not_supported">This content is not yet supported by NewPipe.\n\nIt will hopefully be supported in a future version.</string>
     <string name="detail_sub_channel_thumbnail_view_description">Channel\'s avatar thumbnail</string>
     <string name="channel_created_by">Created by %s</string>
@@ -752,11 +756,16 @@
     <string name="metadata_language">Language</string>
     <string name="metadata_support">Support</string>
     <string name="metadata_host">Host</string>
-    <string name="metadata_thumbnail_url">Thumbnail URL</string>
+    <string name="metadata_thumbnails">Thumbnails</string>
+    <string name="metadata_uploader_avatars">Uploader avatars</string>
+    <string name="metadata_subchannel_avatars">Sub-channel avatars</string>
+    <string name="metadata_avatars">Avatars</string>
+    <string name="metadata_banners">Banners</string>
     <string name="metadata_privacy_public">Public</string>
     <string name="metadata_privacy_unlisted">Unlisted</string>
     <string name="metadata_privacy_private">Private</string>
     <string name="metadata_privacy_internal">Internal</string>
+    <string name="metadata_subscribers">Subscribers</string>
     <string name="detail_pinned_comment_view_description">Pinned comment</string>
     <string name="detail_heart_img_view_description">Hearted by creator</string>
     <string name="open_website_license">Open website</string>
@@ -795,4 +804,32 @@
     <string name="audio_track_type_original">original</string>
     <string name="audio_track_type_dubbed">dubbed</string>
     <string name="audio_track_type_descriptive">descriptive</string>
+    <string name="channel_tab_videos">Videos</string>
+    <string name="channel_tab_tracks">Tracks</string>
+    <string name="channel_tab_shorts">Shorts</string>
+    <string name="channel_tab_livestreams">Live</string>
+    <string name="channel_tab_channels">Channels</string>
+    <string name="channel_tab_playlists">Playlists</string>
+    <string name="channel_tab_albums">Albums</string>
+    <string name="channel_tab_about">About</string>
+    <string name="show_channel_tabs">Channel tabs</string>
+    <string name="show_channel_tabs_summary">What tabs are shown on the channel pages</string>
+    <string name="open_play_queue">Open play queue</string>
+    <string name="toggle_fullscreen">Toggle fullscreen</string>
+    <string name="toggle_screen_orientation">Toggle screen orientation</string>
+    <string name="previous_stream">Previous stream</string>
+    <string name="next_stream">Next stream</string>
+    <string name="play">Play</string>
+    <string name="replay">Replay</string>
+    <string name="more_options">More options</string>
+    <string name="duration">Duration</string>
+    <string name="rewind">Rewind</string>
+    <string name="forward">Forward</string>
+    <string name="image_quality_title">Image quality</string>
+    <string name="image_quality_summary">Choose the quality of images and whether to load images at all, to reduce data and memory usage. Changes clear both in-memory and on-disk image cache — %s</string>
+    <string name="image_quality_none">Do not load images</string>
+    <string name="image_quality_low">Low quality</string>
+    <string name="image_quality_medium">Medium quality</string>
+    <string name="image_quality_high">High quality</string>
+    <string name="question_mark">\?</string>
 </resources>
