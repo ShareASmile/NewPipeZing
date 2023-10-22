@@ -172,7 +172,7 @@
     <string name="main_page_content">मुख्य पृष्ठ की विषयवस्तु</string>
     <string name="blank_page_summary">खाली पन्ना</string>
     <string name="kiosk_page_summary">कियोस्क पन्ना</string>
-    <string name="channel_page_summary">चैनल पेज</string>
+    <string name="channel_page_summary">चैनल पन्ना</string>
     <string name="select_a_channel">चैनल चुनें</string>
     <string name="no_channel_subscribed_yet">अभी तक किसी चैनल की सब्सक्रिप्शन नहीं है</string>
     <string name="select_a_kiosk">कियोस्क चुनें</string>
@@ -277,7 +277,7 @@
 \nन्यूपाइप की गोपनीयता नीति विस्तार से समझाती है कि कौनसा डेटा भेजा और संग्रह किया जाता है जब आप क्रेश विवरण भेजते हैं।</string>
     <string name="read_privacy_policy">गोपनीयता नीति पढें</string>
     <string name="import_settings">क्या आप सेटिंग्स भी आयात करना चाहते हैं\?</string>
-    <string name="preferred_open_action_settings_title">तरजीही \'open\' एक्शन</string>
+    <string name="preferred_open_action_settings_title">\'खोलने\' पर तरजीही एक्शन</string>
     <string name="preferred_open_action_settings_summary">सामग्री खोलते समय डिफ़ॉल्ट कारवाही — %s</string>
     <string name="caption_setting_title">अनुशीर्षक</string>
     <string name="caption_setting_description">प्लेयर कैप्शन टेक्स्ट स्केल और पृष्ठभूमि शैलियों को संशोधित करें। प्रभावी होने के लिए ऐप को पुनरारंभ करना आवश्यक है</string>
@@ -321,7 +321,7 @@
     <string name="minimize_on_exit_popup_description">पॉपअप प्लेयर में बदलें</string>
     <string name="app_license">न्यूपाइप एक काॅपीलेफ़्ट फ़्री साॅफ़्टवेर है: इसे आप अपनी इच्छा के अनुसार इस्तेमाल, जाँच, बाँट तथा और बेहतर बना सकते है। खास तौर पर आप इसे फ़्री साॅफ़्टवेर फ़ाउंडेशन के द्वारा जारी जीएनयू जनरल पब्लिक लाइसेंस के तीसरे या उसके बाद आने वाले कोई भी वर्णन के शर्तों के मुताबिक फिर से बाँट या बदल सकते हैं।</string>
     <string name="unsubscribe">अनसब्सक्राईब करें</string>
-    <string name="tab_choose">टैब चुने</string>
+    <string name="tab_choose">टैब चुनें</string>
     <string name="enqueue">कतारबद्ध करें</string>
     <string name="settings_category_updates_title">अपडेटस</string>
     <string name="file_deleted">फाइल मिटा दी गयी</string>
@@ -387,7 +387,7 @@
     <string name="enable_queue_limit_desc">एक ही समय में एक डाउनलोड चलेगा</string>
     <string name="start_downloads">डाउनलोड प्रारंभ करें</string>
     <string name="pause_downloads">डाउनलोड रोकें</string>
-    <string name="downloads_storage_ask_title">डाउनलोड कहाँ करने के लिए पूछे</string>
+    <string name="downloads_storage_ask_title">डाउनलोड कहाँ करना है, के लिए पूछें</string>
     <string name="downloads_storage_ask_summary">आपको हर डाउनलोड का स्थान पूछा जाएगा
 \nयदि आप बाहरी एसडी कार्ड में डाउनलोड करना चाहते हैं तो सिस्टम फोल्डर पिकर (SAF) को सक्षम करें</string>
     <string name="downloads_storage_use_saf_title">सिस्टम फोल्डर पिकर (SAF) का प्रयोग करें</string>
@@ -787,4 +787,23 @@
     <string name="more_options">अधिक विकल्प</string>
     <string name="duration">अवधि</string>
     <string name="previous_stream">पिछली स्ट्रीम</string>
+    <string name="image_quality_title">छवि की गुणवत्ता</string>
+    <string name="question_mark">\?</string>
+    <string name="image_quality_low">कम गुणवत्ता</string>
+    <string name="metadata_avatars">अवतार</string>
+    <string name="metadata_subchannel_avatars">उप-चैनल अवतार</string>
+    <string name="image_quality_none">छवियाँ लोड न करें</string>
+    <string name="image_quality_high">उच्च गुणवत्ता</string>
+    <string name="image_quality_medium">मध्यम गुणवत्ता</string>
+    <string name="metadata_uploader_avatars">अपलोडर अवतार</string>
+    <string name="metadata_banners">बैनर</string>
+    <string name="image_quality_summary">डेटा और मेमोरी उपयोग को कम करने के लिए छवियों की गुणवत्ता और छवियों को लोड करना है या नहीं, चुनें। परिवर्तन इन-मेमोरी और ऑन-डिस्क छवि कैश दोनों को साफ़ करते हैं - %s</string>
+    <string name="metadata_thumbnails">थंमनेल</string>
+    <string name="share_playlist_with_list">URL सूची साझा करें</string>
+    <string name="share_playlist_with_titles">शीर्षकों के साथ साझा करें</string>
+    <string name="share_playlist_content_details">%1$s
+\n%2$s</string>
+    <string name="share_playlist">प्लेलिस्ट साझा करें</string>
+    <string name="share_playlist_with_titles_message">प्लेलिस्ट को प्लेलिस्ट नाम और वीडियो शीर्षक जैसे विवरण के साथ या वीडियो यूआरएल की एक सरल सूची के रूप में साझा करें</string>
+    <string name="video_details_list_item">- %1$s: %2$s</string>
 </resources>
