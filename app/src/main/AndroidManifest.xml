@@ -35,6 +35,7 @@
         android:logo="@mipmap/ic_launcher"
         android:resizeableActivity="true"
         android:theme="@style/OpeningTheme"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:ignore="AllowBackup">
         <activity
             android:name=".MainActivity"
