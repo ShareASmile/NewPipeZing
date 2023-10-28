@@ -104,7 +104,8 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
      * The item last manually selected by the user.
      */
     @NonNull
-    private final AtomicReference<ChannelHeaderItem> lastSelectedHeaderItem = new AtomicReference<>();
+    private final AtomicReference<ChannelHeaderItem> lastSelectedHeaderItem =
+            new AtomicReference<>();
 
     /**
      * If set, the next request will use this header to enter the header pagination flow.
@@ -625,10 +626,11 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
         menu.show();
     }
 
-    private boolean matchesCurrentSelection(ChannelHeaderItem item) {
-        ChannelHeaderItem lastSelection = lastSelectedHeaderItem.get();
+    private boolean matchesCurrentSelection(final ChannelHeaderItem item) {
+        final ChannelHeaderItem lastSelection = lastSelectedHeaderItem.get();
         if (lastSelection != null) {
-            return item.getContinuationToken().equals(lastSelectedHeaderItem.get().getContinuationToken());
+            return item.getContinuationToken().equals(
+                    lastSelectedHeaderItem.get().getContinuationToken());
         } else {
             return item.isSelected();
         }
