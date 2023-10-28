@@ -41,6 +41,7 @@ import org.schabi.newpipe.extractor.MetaInfo;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.Page;
 import org.schabi.newpipe.extractor.StreamingService;
+import org.schabi.newpipe.extractor.channel.ChannelHeaderItem;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.comments.CommentsInfo;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
@@ -49,6 +50,8 @@ import org.schabi.newpipe.extractor.feed.FeedInfo;
 import org.schabi.newpipe.extractor.kiosk.KioskInfo;
 import org.schabi.newpipe.extractor.playlist.PlaylistInfo;
 import org.schabi.newpipe.extractor.search.SearchInfo;
+import org.schabi.newpipe.extractor.services.youtube.YoutubeService;
+import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeChannelExtractor;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.suggestion.SuggestionExtractor;
@@ -133,6 +136,26 @@ public final class ExtractorHelper {
         checkServiceId(serviceId);
         return Single.fromCallable(() ->
                 ChannelInfo.getMoreItems(NewPipe.getService(serviceId), url, nextPage));
+    }
+
+    public static Single<InfoItemsPage<StreamInfoItem>> getMoreChannelItems(
+            final int serviceId,
+            final String url,
+            final Page nextPage,
+            final ChannelHeaderItem headerItem) {
+        checkServiceId(serviceId);
+        return Single.fromCallable(() -> {
+            final StreamingService service = NewPipe.getService(serviceId);
+            if (headerItem != null && service instanceof YoutubeService) {
+                final YoutubeService ytService = ((YoutubeService) service);
+                final YoutubeChannelExtractor ytExtractor = (YoutubeChannelExtractor)
+                        ytService.getChannelExtractor(url);
+                ytExtractor.setSelectedHeaderItem(headerItem);
+                return ytExtractor.getPage(nextPage);
+            } else {
+                return ChannelInfo.getMoreItems(service, url, nextPage);
+            }
+        });
     }
 
     public static Single<ListInfo<StreamInfoItem>> getFeedInfoFallbackToChannelInfo(

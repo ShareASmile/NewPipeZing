@@ -6,8 +6,12 @@ import static org.schabi.newpipe.ktx.ViewUtils.animateBackgroundColor;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -17,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +32,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.jakewharton.rxbinding4.view.RxView;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.blue.BluePipeHelper;
 import org.schabi.newpipe.database.subscription.NotificationMode;
 import org.schabi.newpipe.database.subscription.SubscriptionEntity;
 import org.schabi.newpipe.databinding.ChannelHeaderBinding;
@@ -36,6 +42,7 @@ import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.ListExtractor;
+import org.schabi.newpipe.extractor.channel.ChannelHeaderItem;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
@@ -55,6 +62,7 @@ import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -91,6 +99,18 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
 
     private MenuItem menuRssButton;
     private MenuItem menuNotifyButton;
+
+    /**
+     * The item last manually selected by the user.
+     */
+    @NonNull
+    private final AtomicReference<ChannelHeaderItem> lastSelectedHeaderItem = new AtomicReference<>();
+
+    /**
+     * If set, the next request will use this header to enter the header pagination flow.
+     */
+    @NonNull
+    private final AtomicReference<ChannelHeaderItem> queuedHeaderItem = new AtomicReference<>();
 
     public static ChannelFragment getInstance(final int serviceId, final String url,
                                               final String name) {
@@ -436,7 +456,8 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
 
     @Override
     protected Single<ListExtractor.InfoItemsPage<StreamInfoItem>> loadMoreItemsLogic() {
-        return ExtractorHelper.getMoreChannelItems(serviceId, url, currentNextPage);
+        return ExtractorHelper.getMoreChannelItems(serviceId, url, currentNextPage,
+                this.queuedHeaderItem.getAndSet(null));
     }
 
     @Override
@@ -561,6 +582,56 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
             NavigationHelper.enqueueOnPlayer(activity, getPlayQueue(), PlayerType.AUDIO);
             return true;
         });
+
+        if (BluePipeHelper.isYouTube() && !result.getHeaderItems().isEmpty()) {
+            playlistControlBinding.playlistCtrlSortVideosDivider.setVisibility(View.VISIBLE);
+            playlistControlBinding.playlistCtrlSortVideosButton.setVisibility(View.VISIBLE);
+            playlistControlBinding.playlistCtrlSortVideosButton.setOnClickListener(view -> {
+                showSortVideosMenu(view, result);
+            });
+        } else {
+            playlistControlBinding.playlistCtrlSortVideosDivider.setVisibility(View.GONE);
+            playlistControlBinding.playlistCtrlSortVideosButton.setVisibility(View.GONE);
+            playlistControlBinding.playlistCtrlSortVideosButton.setOnClickListener(null);
+        }
+    }
+
+    private void showSortVideosMenu(@NonNull final View button, @NonNull final ChannelInfo result) {
+        final List<ChannelHeaderItem> items = result.getHeaderItems();
+
+        final PopupMenu menu = new PopupMenu(button.getContext(), button);
+        for (int i = 0; i < items.size(); i++) {
+            final ChannelHeaderItem item = items.get(i);
+            final String itemText = item.getHeaderText();
+
+            if (matchesCurrentSelection(item)) {
+                final StyleSpan span = new StyleSpan(Typeface.BOLD);
+                final SpannableStringBuilder sb = new SpannableStringBuilder();
+                sb.append(itemText);
+                sb.setSpan(span, 0, itemText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                menu.getMenu().add(Menu.NONE, i, Menu.NONE, sb);
+            } else {
+                menu.getMenu().add(Menu.NONE, i, Menu.NONE, item.getHeaderText());
+            }
+        }
+
+        menu.setOnMenuItemClickListener(item -> {
+            queuedHeaderItem.set(items.get(item.getItemId()));
+            lastSelectedHeaderItem.set(items.get(item.getItemId()));
+            infoListAdapter.clearStreamItemList();
+            loadMoreItems();
+            return true;
+        });
+        menu.show();
+    }
+
+    private boolean matchesCurrentSelection(ChannelHeaderItem item) {
+        ChannelHeaderItem lastSelection = lastSelectedHeaderItem.get();
+        if (lastSelection != null) {
+            return item.getContinuationToken().equals(lastSelectedHeaderItem.get().getContinuationToken());
+        } else {
+            return item.isSelected();
+        }
     }
 
     private void showContentNotSupportedIfNeeded() {
