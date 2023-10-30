@@ -60,7 +60,7 @@ android {
                 archivesBaseName = 'NewPipe_' + System.getProperty('packageSuffix')
             }
             minifyEnabled true
-            shrinkResources false // disabled to fix F-Droid's reproducible build
+            shrinkResources true // sholud be disabled to fix F-Droid's reproducible build
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             archivesBaseName = 'app'
             signingConfig signingConfigs.debug
@@ -201,7 +201,7 @@ dependencies {
     // name and the commit hash with the commit hash of the (pushed) commit you want to test
     // This works thanks to JitPack: https://jitpack.io/
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
-    implementation 'com.github.teamnewpipe:NewPipeExtractor:v0.22.7'
+    implementation 'com.github.bluemods:NewPipeExtractor:22c93fbb9e'
     implementation 'com.github.TeamNewPipe:NoNonsense-FilePicker:5.0.0'
 
 /** Checkstyle **/
