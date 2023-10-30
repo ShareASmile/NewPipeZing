@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
-      - master0.22.2
+      - spsblock
     paths-ignore:
       - 'README.md'
       - 'doc/**'
@@ -15,7 +15,7 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
   push:
     branches:
-      - master0.22.3
+      - spsblock
     paths-ignore:
       - 'README.md'
       - 'doc/**'
