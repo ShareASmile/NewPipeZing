@@ -9,9 +9,11 @@ import androidx.room.Update
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Maybe
 import org.schabi.newpipe.database.feed.model.FeedEntity
+import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.feed.model.FeedLastUpdatedEntity
 import org.schabi.newpipe.database.stream.StreamWithState
 import org.schabi.newpipe.database.stream.model.StreamStateEntity
+import org.schabi.newpipe.database.subscription.NotificationMode
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
 import java.time.OffsetDateTime
 
@@ -20,56 +22,17 @@ abstract class FeedDAO {
     @Query("DELETE FROM feed")
     abstract fun deleteAll(): Int
 
-    @Query(
-        """
-        SELECT s.*, sst.progress_time
-        FROM streams s
-
-        LEFT JOIN stream_state sst
-        ON s.uid = sst.stream_id
-
-        LEFT JOIN stream_history sh
-        ON s.uid = sh.stream_id
-
-        INNER JOIN feed f
-        ON s.uid = f.stream_id
-
-        ORDER BY s.upload_date IS NULL DESC, s.upload_date DESC, s.uploader ASC
-        LIMIT 500
-        """
-    )
-    abstract fun getAllStreams(): Maybe<List<StreamWithState>>
-
-    @Query(
-        """
-        SELECT s.*, sst.progress_time
-        FROM streams s
-
-        LEFT JOIN stream_state sst
-        ON s.uid = sst.stream_id
-
-        LEFT JOIN stream_history sh
-        ON s.uid = sh.stream_id
-
-        INNER JOIN feed f
-        ON s.uid = f.stream_id
-
-        INNER JOIN feed_group_subscription_join fgs
-        ON fgs.subscription_id = f.subscription_id
-
-        WHERE fgs.group_id = :groupId
-
-        ORDER BY s.upload_date IS NULL DESC, s.upload_date DESC, s.uploader ASC
-        LIMIT 500
-        """
-    )
-    abstract fun getAllStreamsForGroup(groupId: Long): Maybe<List<StreamWithState>>
-
     /**
+     * @param groupId          the group id to get feed streams of; use
+     *                         [FeedGroupEntity.GROUP_ALL_ID] to not filter by group
+     * @param includePlayed    if false, only return all of the live, never-played or non-finished
+     *                         feed streams (see `@see` items); if true no filter is applied
+     * @param uploadDateBefore get only streams uploaded before this date (useful to filter out
+     *                         future streams); use null to not filter by upload date
+     * @return the feed streams filtered according to the conditions provided in the parameters
      * @see StreamStateEntity.isFinished()
      * @see StreamStateEntity.PLAYBACK_FINISHED_END_MILLISECONDS
-     * @return all of the non-live, never-played and non-finished streams in the feed
-     *         (all of the cited conditions must hold for a stream to be in the returned list)
+     * @see StreamStateEntity.PLAYBACK_SAVE_THRESHOLD_START_MILLISECONDS
      */
     @Query(
         """
@@ -78,67 +41,57 @@ abstract class FeedDAO {
 
         LEFT JOIN stream_state sst
         ON s.uid = sst.stream_id
-
+        
         LEFT JOIN stream_history sh
-        ON s.uid = sh.stream_id    
-            
+        ON s.uid = sh.stream_id
+        
         INNER JOIN feed f
         ON s.uid = f.stream_id
+
+        LEFT JOIN feed_group_subscription_join fgs
+        ON (
+            :groupId <> ${FeedGroupEntity.GROUP_ALL_ID}
+            AND fgs.subscription_id = f.subscription_id
+        )
 
         WHERE (
-            sh.stream_id IS NULL
-            OR sst.stream_id IS NULL
-            OR sst.progress_time < s.duration * 1000 - ${StreamStateEntity.PLAYBACK_FINISHED_END_MILLISECONDS}
-            OR sst.progress_time < s.duration * 1000 * 3 / 4
-            OR s.stream_type = 'LIVE_STREAM'
-            OR s.stream_type = 'AUDIO_LIVE_STREAM'
+            :groupId = ${FeedGroupEntity.GROUP_ALL_ID}
+            OR fgs.group_id = :groupId
         )
-
-        ORDER BY s.upload_date IS NULL DESC, s.upload_date DESC, s.uploader ASC
-        LIMIT 500
-        """
-    )
-    abstract fun getLiveOrNotPlayedStreams(): Maybe<List<StreamWithState>>
-
-    /**
-     * @see StreamStateEntity.isFinished()
-     * @see StreamStateEntity.PLAYBACK_FINISHED_END_MILLISECONDS
-     * @param groupId the group id to get streams of
-     * @return all of the non-live, never-played and non-finished streams for the given feed group
-     *         (all of the cited conditions must hold for a stream to be in the returned list)
-     */
-    @Query(
-        """
-        SELECT s.*, sst.progress_time
-        FROM streams s
-
-        LEFT JOIN stream_state sst
-        ON s.uid = sst.stream_id
-        
-        LEFT JOIN stream_history sh
-        ON s.uid = sh.stream_id
-        
-        INNER JOIN feed f
-        ON s.uid = f.stream_id
-
-        INNER JOIN feed_group_subscription_join fgs
-        ON fgs.subscription_id = f.subscription_id
-
-        WHERE fgs.group_id = :groupId
         AND (
-            sh.stream_id IS NULL
+            :includePlayed
+            OR sh.stream_id IS NULL
             OR sst.stream_id IS NULL
             OR sst.progress_time < s.duration * 1000 - ${StreamStateEntity.PLAYBACK_FINISHED_END_MILLISECONDS}
             OR sst.progress_time < s.duration * 1000 * 3 / 4
             OR s.stream_type = 'LIVE_STREAM'
             OR s.stream_type = 'AUDIO_LIVE_STREAM'
         )
+        AND (
+            :includePartiallyPlayed
+            OR sh.stream_id IS NULL
+            OR sst.stream_id IS NULL
+            OR (sst.progress_time <= ${StreamStateEntity.PLAYBACK_SAVE_THRESHOLD_START_MILLISECONDS}
+            AND sst.progress_time <= s.duration * 1000 / 4)
+            OR (sst.progress_time >= s.duration * 1000 - ${StreamStateEntity.PLAYBACK_FINISHED_END_MILLISECONDS}
+            AND sst.progress_time >= s.duration * 1000 * 3 / 4)
+        )
+        AND (
+            :uploadDateBefore IS NULL
+            OR s.upload_date IS NULL
+            OR s.upload_date < :uploadDateBefore
+        )
 
         ORDER BY s.upload_date IS NULL DESC, s.upload_date DESC, s.uploader ASC
         LIMIT 500
         """
     )
-    abstract fun getLiveOrNotPlayedStreamsForGroup(groupId: Long): Maybe<List<StreamWithState>>
+    abstract fun getStreams(
+        groupId: Long,
+        includePlayed: Boolean,
+        includePartiallyPlayed: Boolean,
+        uploadDateBefore: OffsetDateTime?
+    ): Maybe<List<StreamWithState>>
 
     @Query(
         """
@@ -252,4 +205,21 @@ abstract class FeedDAO {
         """
     )
     abstract fun getAllOutdatedForGroup(groupId: Long, outdatedThreshold: OffsetDateTime): Flowable<List<SubscriptionEntity>>
+
+    @Query(
+        """
+        SELECT s.* FROM subscriptions s
+
+        LEFT JOIN feed_last_updated lu
+        ON s.uid = lu.subscription_id
+
+        WHERE 
+            (lu.last_updated IS NULL OR lu.last_updated < :outdatedThreshold)
+            AND s.notification_mode = :notificationMode
+        """
+    )
+    abstract fun getOutdatedWithNotificationMode(
+        outdatedThreshold: OffsetDateTime,
+        @NotificationMode notificationMode: Int
+    ): Flowable<List<SubscriptionEntity>>
 }

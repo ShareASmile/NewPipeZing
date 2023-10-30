@@ -119,11 +119,9 @@
     <string name="video">Avidyu</string>
     <string name="what_device_headline">Umelan:</string>
     <string name="general_error">Tazgelt</string>
-    <string name="help">Tiwisi</string>
     <string name="file">Afaylu</string>
     <string name="always">Ku dwal</string>
     <string name="clear">Sfeḍ</string>
-    <string name="yes">Yah</string>
     <string name="artists">Inaẓuṛen</string>
     <string name="songs">Tiɣennijin</string>
     <string name="events">Imezza</string>
@@ -134,7 +132,6 @@
     <string name="downloads_title">Tagamin</string>
     <string name="downloads">Tagamin</string>
     <string name="duration_live">Usrid</string>
-    <string name="settings_category_notification_title">Tineɣmisin</string>
     <string name="settings_category_updates_title">Tisdɣiwin</string>
     <string name="settings_category_player_title">Ameɣri</string>
     <string name="download_dialog_title">Agem</string>

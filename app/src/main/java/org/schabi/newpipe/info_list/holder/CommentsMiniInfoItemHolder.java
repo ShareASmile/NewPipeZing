@@ -1,37 +1,48 @@
 package org.schabi.newpipe.info_list.holder;
 
-import android.text.TextUtils;
+import static android.text.TextUtils.isEmpty;
+
+import android.graphics.Paint;
+import android.text.Layout;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.text.HtmlCompat;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.InfoItem;
+import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.ServiceList;
+import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
+import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.stream.Description;
 import org.schabi.newpipe.info_list.InfoItemBuilder;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
-import org.schabi.newpipe.util.CommentTextOnTouchListener;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
-import org.schabi.newpipe.util.external_communication.TimestampExtractor;
-import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.PicassoHelper;
+import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.util.text.CommentTextOnTouchListener;
+import org.schabi.newpipe.util.text.TextLinkifier;
 
-import java.util.regex.Matcher;
+import java.util.function.Consumer;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public class CommentsMiniInfoItemHolder extends InfoItemHolder {
     private static final String TAG = "CommentsMiniIIHolder";
+    private static final String ELLIPSIS = "…";
 
     private static final int COMMENT_DEFAULT_LINES = 2;
     private static final int COMMENT_EXPANDED_LINES = 1000;
@@ -39,35 +50,19 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
     private final int commentHorizontalPadding;
     private final int commentVerticalPadding;
 
+    private final Paint paintAtContentSize;
+    private final float ellipsisWidthPx;
+
     private final RelativeLayout itemRoot;
-    public final CircleImageView itemThumbnailView;
+    private final ImageView itemThumbnailView;
     private final TextView itemContentView;
     private final TextView itemLikesCountView;
     private final TextView itemPublishedTime;
 
-    private String commentText;
-    private String streamUrl;
-
-    private final Linkify.TransformFilter timestampLink = new Linkify.TransformFilter() {
-        @Override
-        public String transformUrl(final Matcher match, final String url) {
-            try {
-                final TimestampExtractor.TimestampMatchDTO timestampMatchDTO =
-                        TimestampExtractor.getTimestampFromMatcher(match, commentText);
-
-                if (timestampMatchDTO == null) {
-                    return url;
-                }
-
-                return streamUrl + url.replace(
-                        match.group(0),
-                        "#timestamp=" + timestampMatchDTO.seconds());
-            } catch (final Exception ex) {
-                Log.e(TAG, "Unable to process url='" + url + "' as timestampLink", ex);
-                return url;
-            }
-        }
-    };
+    private final CompositeDisposable disposables = new CompositeDisposable();
+    @Nullable private Description commentText;
+    @Nullable private StreamingService streamService;
+    @Nullable private String streamUrl;
 
     CommentsMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder, final int layoutId,
                                final ViewGroup parent) {
@@ -83,6 +78,10 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
                 .getResources().getDimension(R.dimen.comments_horizontal_padding);
         commentVerticalPadding = (int) infoItemBuilder.getContext()
                 .getResources().getDimension(R.dimen.comments_vertical_padding);
+
+        paintAtContentSize = new Paint();
+        paintAtContentSize.setTextSize(itemContentView.getTextSize());
+        ellipsisWidthPx = paintAtContentSize.measureText(ELLIPSIS);
     }
 
     public CommentsMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder,
@@ -112,18 +111,20 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
 
         itemThumbnailView.setOnClickListener(view -> openCommentAuthor(item));
 
-        streamUrl = item.getUrl();
-
-        itemContentView.setLines(COMMENT_DEFAULT_LINES);
-        commentText = item.getCommentText();
-        itemContentView.setText(commentText);
-        itemContentView.setOnTouchListener(CommentTextOnTouchListener.INSTANCE);
-
-        if (itemContentView.getLineCount() == 0) {
-            itemContentView.post(this::ellipsize);
-        } else {
-            ellipsize();
+        try {
+            streamService = NewPipe.getService(item.getServiceId());
+        } catch (final ExtractionException e) {
+            // should never happen
+            ErrorUtil.showUiErrorSnackbar(itemBuilder.getContext(), "Getting StreamingService", e);
+            Log.w(TAG, "Cannot obtain service from comment service id, defaulting to YouTube", e);
+            streamService = ServiceList.YouTube;
         }
+        streamUrl = item.getUrl();
+        commentText = item.getCommentText();
+        ellipsize();
+
+        //noinspection ClickableViewAccessibility
+        itemContentView.setOnTouchListener(CommentTextOnTouchListener.INSTANCE);
 
         if (item.getLikeCount() >= 0) {
             itemLikesCountView.setText(
@@ -153,14 +154,17 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
             if (DeviceUtils.isTv(itemBuilder.getContext())) {
                 openCommentAuthor(item);
             } else {
-                ShareUtils.copyToClipboard(itemBuilder.getContext(), commentText);
+                final CharSequence text = itemContentView.getText();
+                if (text != null) {
+                    ShareUtils.copyToClipboard(itemBuilder.getContext(), text.toString());
+                }
             }
             return true;
         });
     }
 
     private void openCommentAuthor(final CommentsInfoItem item) {
-        if (TextUtils.isEmpty(item.getUploaderUrl())) {
+        if (isEmpty(item.getUploaderUrl())) {
             return;
         }
         final AppCompatActivity activity = (AppCompatActivity) itemBuilder.getContext();
@@ -193,7 +197,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
         return urls != null && urls.length != 0;
     }
 
-    private void determineLinkFocus() {
+    private void determineMovementMethod() {
         if (shouldFocusLinks()) {
             allowLinkFocus();
         } else {
@@ -202,55 +206,74 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
     }
 
     private void ellipsize() {
-        boolean hasEllipsis = false;
+        itemContentView.setMaxLines(COMMENT_EXPANDED_LINES);
+        linkifyCommentContentView(v -> {
+            boolean hasEllipsis = false;
 
-        if (itemContentView.getLineCount() > COMMENT_DEFAULT_LINES) {
-            final int endOfLastLine
-                    = itemContentView.getLayout().getLineEnd(COMMENT_DEFAULT_LINES - 1);
-            int end = itemContentView.getText().toString().lastIndexOf(' ', endOfLastLine - 2);
-            if (end == -1) {
-                end = Math.max(endOfLastLine - 2, 0);
+            final CharSequence charSeqText = itemContentView.getText();
+            if (charSeqText != null && itemContentView.getLineCount() > COMMENT_DEFAULT_LINES) {
+                // Note that converting to String removes spans (i.e. links), but that's something
+                // we actually want since when the text is ellipsized we want all clicks on the
+                // comment to expand the comment, not to open links.
+                final String text = charSeqText.toString();
+
+                final Layout layout = itemContentView.getLayout();
+                final float lineWidth = layout.getLineWidth(COMMENT_DEFAULT_LINES - 1);
+                final float layoutWidth = layout.getWidth();
+                final int lineStart = layout.getLineStart(COMMENT_DEFAULT_LINES - 1);
+                final int lineEnd = layout.getLineEnd(COMMENT_DEFAULT_LINES - 1);
+
+                // remove characters up until there is enough space for the ellipsis
+                // (also summing 2 more pixels, just to be sure to avoid float rounding errors)
+                int end = lineEnd;
+                float removedCharactersWidth = 0.0f;
+                while (lineWidth - removedCharactersWidth + ellipsisWidthPx + 2.0f > layoutWidth
+                        && end >= lineStart) {
+                    end -= 1;
+                    // recalculate each time to account for ligatures or other similar things
+                    removedCharactersWidth = paintAtContentSize.measureText(
+                            text.substring(end, lineEnd));
+                }
+
+                // remove trailing spaces and newlines
+                while (end > 0 && Character.isWhitespace(text.charAt(end - 1))) {
+                    end -= 1;
+                }
+
+                final String newVal = text.substring(0, end) + ELLIPSIS;
+                itemContentView.setText(newVal);
+                hasEllipsis = true;
             }
-            final String newVal = itemContentView.getText().subSequence(0, end) + " …";
-            itemContentView.setText(newVal);
-            hasEllipsis = true;
-        }
 
-        linkify();
-
-        if (hasEllipsis) {
-            denyLinkFocus();
-        } else {
-            determineLinkFocus();
-        }
+            itemContentView.setMaxLines(COMMENT_DEFAULT_LINES);
+            if (hasEllipsis) {
+                denyLinkFocus();
+            } else {
+                determineMovementMethod();
+            }
+        });
     }
 
     private void toggleEllipsize() {
-        if (itemContentView.getText().toString().equals(commentText)) {
-            if (itemContentView.getLineCount() > COMMENT_DEFAULT_LINES) {
-                ellipsize();
-            }
-        } else {
+        final CharSequence text = itemContentView.getText();
+        if (!isEmpty(text) && text.charAt(text.length() - 1) == ELLIPSIS.charAt(0)) {
             expand();
+        } else if (itemContentView.getLineCount() > COMMENT_DEFAULT_LINES) {
+            ellipsize();
         }
     }
 
     private void expand() {
         itemContentView.setMaxLines(COMMENT_EXPANDED_LINES);
-        itemContentView.setText(commentText);
-        linkify();
-        determineLinkFocus();
+        linkifyCommentContentView(v -> determineMovementMethod());
     }
 
-    private void linkify() {
-        Linkify.addLinks(
-                itemContentView,
-                Linkify.WEB_URLS);
-        Linkify.addLinks(
-                itemContentView,
-                TimestampExtractor.TIMESTAMPS_PATTERN,
-                null,
-                null,
-                timestampLink);
+    private void linkifyCommentContentView(@Nullable final Consumer<TextView> onCompletion) {
+        disposables.clear();
+        if (commentText != null) {
+            TextLinkifier.fromDescription(itemContentView, commentText,
+                    HtmlCompat.FROM_HTML_MODE_LEGACY, streamService, streamUrl, disposables,
+                    onCompletion);
+        }
     }
 }

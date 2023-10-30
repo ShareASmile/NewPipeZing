@@ -7,6 +7,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.util.ExtractorHelper;
+import org.schabi.newpipe.util.VideoSegment;
 
 import java.io.Serializable;
 
@@ -36,6 +37,8 @@ public class PlayQueueItem implements Serializable {
     private long recoveryPosition;
     private Throwable error;
 
+    private VideoSegment[] videoSegments;
+
     PlayQueueItem(@NonNull final StreamInfo info) {
         this(info.getName(), info.getUrl(), info.getServiceId(), info.getDuration(),
                 info.getThumbnailUrl(), info.getUploaderName(),
@@ -52,6 +55,7 @@ public class PlayQueueItem implements Serializable {
                 item.getUploaderUrl(), item.getStreamType());
     }
 
+    @SuppressWarnings("ParameterNumber")
     private PlayQueueItem(@Nullable final String name, @Nullable final String url,
                           final int serviceId, final long duration,
                           @Nullable final String thumbnailUrl, @Nullable final String uploader,
@@ -135,5 +139,13 @@ public class PlayQueueItem implements Serializable {
 
     public void setAutoQueued(final boolean autoQueued) {
         isAutoQueued = autoQueued;
+    }
+
+    public VideoSegment[] getVideoSegments() {
+        return videoSegments;
+    }
+
+    public void setVideoSegments(final VideoSegment[] videoSegments) {
+        this.videoSegments = videoSegments;
     }
 }

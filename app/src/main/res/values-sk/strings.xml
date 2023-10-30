@@ -52,7 +52,7 @@
     <string name="duration_live">Naživo</string>
     <string name="could_not_setup_download_menu">Nemožno nastaviť menu preberania</string>
     <string name="sorry_string">Pardon, toto sa nemalo stať.</string>
-    <string name="error_report_button_text">Nahlásiť túto chybu mejlom</string>
+    <string name="error_report_button_text">Nahlásiť cez e-mail</string>
     <string name="error_snackbar_message">Pardon, niečo sa pokazilo.</string>
     <string name="error_snackbar_action">Správa</string>
     <string name="what_device_headline">Info:</string>
@@ -79,7 +79,7 @@
     <string name="downloads_title">Prevzaté</string>
     <string name="error_report_title">Hlásenie o chybe</string>
     <string name="app_ui_crash">Aplikácia/UP zlyhalo</string>
-    <string name="info_labels">Čo:\\nPožiadavka:\\nJazyk obsahu:\\nKrajina Obsahu:\\nJazyk Aplikácie:\\nSlužba:\\nČas v GMT:\\nBalík:\\nVerzia:\\nVerzia OS:</string>
+    <string name="info_labels">Čo:\\nPožiadavka:\\nJazyk obsahu:\\nKrajina Obsahu:\\nJazyk Aplikácie:\\nSlužba:\\nČas v GMT:\\nBalík:\\nVerzia:\\nOS:</string>
     <string name="title_activity_recaptcha">Výzva reCAPTCHA</string>
     <string name="black_theme_title">Čierna</string>
     <string name="all">Všetko</string>
@@ -87,7 +87,6 @@
     <string name="short_million">M</string>
     <string name="short_billion">B</string>
     <string name="recaptcha_request_toast">Požiadavka reCAPTCHA</string>
-    <string name="yes">Áno</string>
     <string name="open_in_popup_mode">Spustiť v okne</string>
     <string name="msg_popup_permission">Tieto práva sú potrebné pre
 \nprehrávanie v mini okne</string>
@@ -119,8 +118,8 @@
     <string name="enable_watch_history_summary">Ukladať históriu pozretých videí</string>
     <string name="resume_on_audio_focus_gain_title">Pokračovať v prehrávaní</string>
     <string name="resume_on_audio_focus_gain_summary">Pokračovať po prerušeniach (napr. telefonát)</string>
-    <string name="notification_channel_name">NewPipe notifikácie</string>
-    <string name="notification_channel_description">Notifikácie pre NewPipe na pozadí a v mini okne</string>
+    <string name="notification_channel_name">NewPipe oznámenia</string>
+    <string name="notification_channel_description">Notifikácie NewPipe prehrávača</string>
     <string name="settings_category_downloads_title">Preberanie</string>
     <string name="settings_file_charset_title">Povolené znaky v názvoch súborov</string>
     <string name="settings_file_replacement_character_summary">Neplatné znaky budú nahradené týmito znakmi</string>
@@ -130,7 +129,7 @@
     <string name="title_activity_about">O NewPipe</string>
     <string name="title_licenses">Licencie tretích strán</string>
     <string name="copyright" formatted="true">© %1$s od %2$s pod %3$s</string>
-    <string name="tab_about">O</string>
+    <string name="tab_about">O nás a často kladené otázky</string>
     <string name="tab_licenses">Licencie</string>
     <string name="app_description">Ľahké prehrávanie na Androide.</string>
     <string name="view_on_github">Pozrieť na GitHube</string>
@@ -145,7 +144,7 @@
     <string name="settings_category_history_title">História a vyrovnávacia pamäť</string>
     <string name="undo">Vrátiť</string>
     <string name="search_no_results">Žiadne výsledky</string>
-    <string name="empty_subscription_feed_subtitle">Zatiaľ je tu ticho ako v hrobe</string>
+    <string name="empty_list_subtitle">Zatiaľ je tu ticho ako v hrobe</string>
     <string name="no_subscribers">Žiadni odberatelia</string>
     <plurals name="subscribers">
         <item quantity="one">%s odberateľ</item>
@@ -253,7 +252,7 @@
     <string name="metadata_cache_wipe_title">Vymazať metadáta uložené vo vyrovnávacej pamäti</string>
     <string name="metadata_cache_wipe_summary">Odstrániť všetky údaje webových stránok vo vyrovnávacej pamäti</string>
     <string name="metadata_cache_wipe_complete_notice">Vyrovnávacia pamäť metadát bola vymazaná</string>
-    <string name="auto_queue_title">Automaticky zaradiť daľší stream</string>
+    <string name="auto_queue_title">Automaticky zaradiť ďalší stream</string>
     <string name="auto_queue_summary">Končiaci (neopakujúci sa) zoznam prehrávania bude pokračovať súvisiacim streamom</string>
     <string name="settings_category_debug_title">Ladenie</string>
     <string name="file">Súbor</string>
@@ -263,7 +262,6 @@
     <string name="file_name_empty_error">Názov súboru nesme byť prázdny</string>
     <string name="error_occurred_detail">Nastala chyba: %1$s</string>
     <string name="no_streams_available_download">Žiadne streamy nie sú k dispozícii na prevzatie</string>
-    <string name="toast_no_player">Prehrávač pre daný typ súboru nebol nájdený</string>
     <string name="preferred_open_action_settings_title">Preferovaná akcia \'otvoriť\'</string>
     <string name="preferred_open_action_settings_summary">Predvolená akcia pri otváraní obsahu — %s</string>
     <string name="caption_auto_generated">Automaticky vygenerované</string>
@@ -285,11 +283,11 @@
 \n
 \n1. Prejdite na túto adresu URL: %1$s
 \n2. Po výzve sa prihláste do svojho účtu
-\n3. Kliknite na \"Zahrnuté sú všetky údaj služby YouTube\", tam kliknite na \"Zrušiť výber\", zaškrtnite \"odbery\" a potom kliknite na OK
-\n4. Kliknite na \"Ďaľší krok\" a potom na \"Vytvoriť export\"
+\n3. Kliknite na \"Zahrnuté sú všetky údaj služby YouTube\", kliknite na \"Zrušiť výber\", zaškrtnite \"odbery\" a kliknite na OK
+\n4. Kliknite na \"Ďalší krok\" a potom na \"Vytvoriť export\"
 \n5. Po chvíli sa objaví tlačidlo s nápisom \"Stiahnuť\"
 \n6. Kliknite na IMPORT ZO SÚBORU a zvoľte stiahnutý zip súbor
-\n7. Ak import zip súbory zlyhá. Stiahnutý súbor otvorte a extraktujte .csv súbor (nachádza sa v \"/Takeout/YouTube a YouTube Music/odbery/\"), tento súbor importujte do NewPipe</string>
+\n7. Ak import zip súbory zlyhá. Stiahnutý súbor otvorte a extrahujte .csv súbor (nachádza sa v \"/Takeout/YouTube a YouTube Music/odbery/\"), tento súbor importujte do NewPipe</string>
     <string name="import_soundcloud_instructions">Importovať SoundCloud profil zadaním URL adresy alebo vášho ID:
 \n
 \n1. Prepnite režim na \"desktop\" (web nie je dostupný pre mobilné zariadenia)
@@ -319,8 +317,8 @@
 \nNewPipe v ochrane súkromia podrobne vysvetľuje, aké údaje budú odoslané a uložené pri hlásení o páde.</string>
     <string name="read_privacy_policy">Prečítajte si pravidlá ochrany osobných údajov</string>
     <string name="import_settings">Chcete zároveň importovať aj nastavenia?</string>
-    <string name="start_accept_privacy_policy">V súlade s Európskym Všeobecným Nariadením o Ochrane Údajov (GDPR), chceme upriamiť vašu pozornosť na ochranu osobných údajov v NewPipe. Starostlivo si ich prečítajte.
-\nMusíte ich prijať pred nahlásením chyby.</string>
+    <string name="start_accept_privacy_policy">V súlade s Európskym Všeobecným Nariadením o Ochrane Údajov (GDPR), chceme upriamiť Vašu pozornosť na zmluvu o ochrane osobných údajov v NewPipe. Starostlivo si ju prečítajte.
+\nMusíte ju prijať pred nahlásením chyby.</string>
     <string name="accept">Prijať</string>
     <string name="decline">Odmietnuť</string>
     <string name="limit_data_usage_none_description">Bez limitu</string>
@@ -339,10 +337,6 @@
     <string name="minimize_on_exit_popup_description">Prehrávať v okne</string>
     <string name="unsubscribe">Zrušiť odber</string>
     <string name="tab_choose">Zvoliť panel</string>
-    <string name="volume_gesture_control_title">Ovládanie hlasitosti gestom</string>
-    <string name="volume_gesture_control_summary">Používať gestá pre ovládanie hlasitosti</string>
-    <string name="brightness_gesture_control_title">Ovládanie jasu gestom</string>
-    <string name="brightness_gesture_control_summary">Použivať gestá pre ovládanie jasu</string>
     <string name="settings_category_updates_title">Aktualizácie</string>
     <string name="events">Udalosti</string>
     <string name="file_deleted">Súbor vymazaný</string>
@@ -362,8 +356,7 @@
     <string name="list">Zoznam</string>
     <string name="grid">Mriežka</string>
     <string name="auto">Auto</string>
-    <string name="app_update_notification_content_title">Aktualizácia NewPipe je k dispozícii!</string>
-    <string name="app_update_notification_content_text">Ťuknite a stiahnite</string>
+    <string name="app_update_available_notification_title">Aktualizácia NewPipe je k dispozícii!</string>
     <string name="missions_header_finished">Ukončené</string>
     <string name="missions_header_pending">Vo fronte</string>
     <string name="paused">pozastavené</string>
@@ -378,8 +371,8 @@
     <string name="overwrite_finished_warning">Stiahnutý súbor s týmto názvom už existuje</string>
     <string name="download_already_running">Sťahovanie s týmto názvom už prebieha</string>
     <string name="show_error">Zobraziť chybu</string>
-    <string name="error_path_creation">Adresár nemožno vytvoriť</string>
-    <string name="error_file_creation">Nemožno vytvoriť súbor</string>
+    <string name="error_path_creation">Adresár nie je možné vytvoriť</string>
+    <string name="error_file_creation">Nie je možné vytvoriť súbor</string>
     <string name="error_ssl_exception">Nepodarilo sa vytvoriť zabezpečené pripojenie</string>
     <string name="error_unknown_host">Server sa nepodarilo nájsť</string>
     <string name="error_connect_host">Nepodarilo sa pripojiť k serveru</string>
@@ -466,7 +459,6 @@
     <string name="new_seek_duration_toast">Pre obmedzenie ExoPlayera bolo prehľadávania nastavené na %d sekúnd</string>
     <string name="mute">Stlmiť</string>
     <string name="unmute">Povoliť</string>
-    <string name="help">Pomoc</string>
     <plurals name="seconds">
         <item quantity="one">%d sekunda</item>
         <item quantity="few">%d sekundy</item>
@@ -555,7 +547,6 @@
     <string name="no_playlist_bookmarked_yet">Zatiaľ bez záložiek zoznamu</string>
     <string name="select_a_playlist">Vyberte zoznam skladieb</string>
     <string name="error_report_open_github_notice">Skontrolujte prosím, či rovnaká chyba už nie je nahlásená. Vytváranie duplicitných hlásení komplikuje prácu vývojárov.</string>
-    <string name="settings_category_notification_title">Oznámenia</string>
     <string name="unsupported_url_dialog_message">Nemožno rozpoznať URL. Otvoriť pomocou inej aplikácie\?</string>
     <string name="auto_queue_toggle">Automatický rad</string>
     <string name="clear_queue_confirmation_description">Zoznam aktuálneho prehrávača bude prepísaný</string>
@@ -572,8 +563,8 @@
     <string name="notification_action_2_title">Akčné tlačidlo tri</string>
     <string name="notification_action_1_title">Akčné tlačidlo dva</string>
     <string name="notification_action_0_title">Akčné tlačidlo jedna</string>
-    <string name="notification_scale_to_square_image_summary">Zmeniť pomer strán videa zobrazovaného v miniatúre z 16:9 na 1:1 (čo môže spôsobovať skreslenie)</string>
-    <string name="notification_scale_to_square_image_title">Zmenšiť pomer strán miniatúry na 1: 1</string>
+    <string name="notification_scale_to_square_image_summary">Orezať pomer strán videa zobrazovaného v miniatúre z 16:9 na 1:1</string>
+    <string name="notification_scale_to_square_image_title">Orezať pomer strán miniatúry na 1: 1</string>
     <string name="show_memory_leaks">Zobraziť memory leaks</string>
     <string name="enqueued">Zaradené do poradia</string>
     <string name="enqueue_stream">Zaradiť do poradia</string>
@@ -645,17 +636,13 @@
     <string name="feed_load_error_account_info">Nemožno načítať informačný kanál \'%s\'.</string>
     <string name="feed_load_error">Chyba pri načítaní kanála</string>
     <string name="downloads_storage_use_saf_summary_api_29">\'Storage Access Framework\' je podporovaný len od Androidu 10 a vyššie</string>
-    <string name="downloads_storage_use_saf_summary_api_19">\'Storage Access Framework\' nie je podporovaný v systéme Android KitKat a ani v starších verziách</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Pri každom sťahovaní sa zobrazí výzva kam uložiť súbor</string>
     <string name="no_dir_yet">Nie je nastavený adresár na sťahovanie, nastavte ho teraz</string>
-    <string name="mark_as_watched">Označiť ako pozorované</string>
-    <string name="loading_channel_details">Načítavanie podrobností o kanáli…</string>
-    <string name="error_show_channel_details">Chyba pri zobrazení podrobností kanála</string>
+    <string name="mark_as_watched">Označiť ako videné</string>
     <string name="off">Vypnuté</string>
     <string name="on">Zapnuté</string>
     <string name="tablet_mode_title">Režim tabletu</string>
     <string name="detail_heart_img_view_description">Obľúbené autorom</string>
-    <string name="feed_toggle_show_played_items">Zobrazovať pozreté položky</string>
     <plurals name="deleted_downloads_toast">
         <item quantity="one">%1$s sťahovanie zmazané</item>
         <item quantity="few">%1$s sťahovania zmazané</item>
@@ -686,11 +673,11 @@
     <string name="checking_updates_toast">Kontrolujú sa aktualizácie…</string>
     <string name="feed_new_items">Nové položky informačného kanála</string>
     <string name="no_appropriate_file_manager_message">Pre túto akciu sa nenašiel vhodný správca súborov.
-\nNainštalujte si správcu súborov alebo skúste vypnúť \'%s\' v nastaveniach sťahovania.</string>
-    <string name="show_crash_the_player_title">Zobraziť „zlyhanie prehrávača“</string>
+\nNainštalujte si správcu súborov alebo skúste vypnúť \'%s\' v nastaveniach sťahovania</string>
+    <string name="show_crash_the_player_title">Zobraziť „zlyhať prehrávač“</string>
     <string name="leak_canary_not_available">LeakCanary nie je k dispozícii</string>
     <string name="no_appropriate_file_manager_message_android_10">Pre túto akciu sa nenašiel vhodný správca súborov.
-\nNainštalujte správcu súborov kompatibilného s rozhraním Storage Access Framework.</string>
+\nNainštalujte správcu súborov kompatibilného s rozhraním Storage Access Framework</string>
     <string name="detail_pinned_comment_view_description">Pripnutý komentár</string>
     <string name="crash_the_player">Zlyhanie prehrávača</string>
     <string name="error_report_channel_name">Nahlásenie chyby</string>
@@ -700,4 +687,91 @@
     <string name="show_crash_the_player_summary">Zobrazí možnosť zlyhania pri používaní prehrávača</string>
     <string name="show_error_snackbar">Zobraziť krátke oznámenie chyby</string>
     <string name="create_error_notification">Oznámte chybu</string>
+    <string name="progressive_load_interval_exoplayer_default">ExoPlayer preddefinovaný</string>
+    <string name="notifications">Upozornenia</string>
+    <string name="streams_notifications_interval_title">Frekvencia kontroly</string>
+    <string name="delete_downloaded_files_confirm">Vymazať všetky stiahnuté súbory z disku\?</string>
+    <string name="notifications_disabled">Upozornenia sú vypnuté</string>
+    <string name="settings_category_player_notification_title">Upozornenie z prehrávača</string>
+    <string name="settings_category_player_notification_summary">Nastavte notifikáciu aktuálneho prehrávania</string>
+    <string name="streams_notifications_network_title">Je vyžadované pripojenie na internet</string>
+    <string name="you_successfully_subscribed">Začali ste odoberať tento kanál</string>
+    <string name="enumeration_comma">,</string>
+    <string name="toggle_all">Zapnúť všetko</string>
+    <string name="streams_notification_channel_name">Nové streamy</string>
+    <string name="streams_notification_channel_description">Upozornenia na nové streamy v odberoch</string>
+    <plurals name="new_streams">
+        <item quantity="one">%s nový stream</item>
+        <item quantity="few">%s nové streamy</item>
+        <item quantity="other">%s nových streamov</item>
+    </plurals>
+    <string name="check_new_streams">Skontrolovať nové streamy</string>
+    <string name="enable_streams_notifications_title">Upozornenia na nové streamy</string>
+    <string name="enable_streams_notifications_summary">Upozorniť na nové streamy z odberov</string>
+    <string name="any_network">Akákoľvek sieť</string>
+    <string name="get_notified">Dostávať upozornenia</string>
+    <string name="semitone">Poltón</string>
+    <string name="loading_stream_details">Nahrávanie podrobností streamu…</string>
+    <string name="percent">Percent</string>
+    <string name="selected_stream_external_player_not_supported">Vybraný stream nie je podporovaný externými prehrávačmi</string>
+    <string name="no_audio_streams_available_for_external_players">Žiadne audio streamy nie sú k dispozícií pre externé prehrávače</string>
+    <string name="select_quality_external_players">Vybrať kvalitu pre externé prehrávače</string>
+    <string name="unknown_format">Neznámy formát</string>
+    <string name="progressive_load_interval_title">Interval medzipamäte</string>
+    <string name="streams_not_yet_supported_removed">Streamy nepodporované sťahovačom sa nezobrazujú</string>
+    <string name="no_video_streams_available_for_external_players">Žiadne video streamy nie sú k dispozícií pre externé prehrávače</string>
+    <string name="unknown_quality">Neznáma kvalita</string>
+    <string name="faq_title">Často kladené otázky</string>
+    <string name="faq">Pozrieť na webovej stránke</string>
+    <string name="sort">Usporiadať</string>
+    <string name="faq_description">Ak máte problémy s používaním aplikácie, určite si prečítajte tieto odpovede na časté otázky!</string>
+    <string name="unset_playlist_thumbnail">Vypnutie trvalého náhľadu</string>
+    <string name="msg_failed_to_copy">Kopírovanie do schránky zlyhalo</string>
+    <string name="duplicate_in_playlist">Zoznamy zobrazené šedou farbou už obsahujú danú položku.</string>
+    <string name="card">Karta</string>
+    <string name="app_update_available_notification_text">Dotykom stiahnite %s</string>
+    <string name="playlist_add_stream_success_duplicate">Duplikát bol pridaný %d-krát</string>
+    <string name="app_update_unavailable_toast">Používate najnovšiu verziu NewPipe</string>
+    <string name="night_theme_available">Táto možnosť je dostupná len pre motív %s</string>
+    <string name="fast_mode">Rýchly režim</string>
+    <string name="import_subscriptions_hint">Import alebo export odberov z 3-bodkovej ponuky</string>
+    <string name="left_gesture_control_title">Akcia gesta vľavo</string>
+    <string name="right_gesture_control_summary">Akcia pre gesto v pravej polovici obrazovky</string>
+    <string name="right_gesture_control_title">Akcia gesta vpravo</string>
+    <string name="left_gesture_control_summary">Akcia pre gesto v ľavej polovici obrazovky</string>
+    <string name="brightness">Jas</string>
+    <string name="volume">Hlasitosť</string>
+    <string name="none">Nič</string>
+    <string name="remove_duplicates">Odstrániť duplikáty</string>
+    <string name="remove_duplicates_title">Odstrániť duplikáty\?</string>
+    <string name="feed_show_partially_watched">Rozpozerané</string>
+    <string name="feed_show_watched">Dopozerané</string>
+    <string name="ignore_hardware_media_buttons_summary">Toto sa môže hodiť v prípade, že máte pokazené tlačidlo na slúchadlách</string>
+    <string name="ignore_hardware_media_buttons_title">Ignorovať fyzické tlačidlá</string>
+    <string name="progressive_load_interval_summary">Zmena veľkosti intervalu načítania pri progresívnom obsahu (v súčasnosti %s). Nižšia hodnota môže urýchliť ich počiatočné načítanie</string>
+    <string name="prefer_original_audio_title">Preferovať pôvodné audio</string>
+    <string name="prefer_original_audio_summary">Vyberať pôvodnú zvukový stopu bez ohľadu na nastavený jazyk</string>
+    <string name="prefer_descriptive_audio_title">Preferovať prehrávanie popisu</string>
+    <string name="play_queue_audio_track">Zvuk: %s</string>
+    <string name="audio_track">Zvuková stopa</string>
+    <string name="remove_duplicates_message">Chcete odstrániť všetky duplikátne streamy z tohoto zoznamu\?</string>
+    <string name="feed_hide_streams_title">Zobrazovať nasledovné streamy</string>
+    <string name="audio_track_present_in_video">V tomto streame by už mala byť prítomná zvuková stopa</string>
+    <string name="select_audio_track_external_players">Výber zvukovej stopy pre externé prehrávače</string>
+    <string name="unknown_audio_track">Neznáma</string>
+    <string name="feed_show_upcoming">Nadchádzajúce</string>
+    <string name="settings_category_exoplayer_summary">Úprava nastavení prehrávača ExoPlayer. Pre aplikovanie týchto zmien je nutné reštartovať ExoPlayer</string>
+    <string name="use_exoplayer_decoder_fallback_summary">Túto možnosť povoľte, ak máte problémy s inicializáciou dekodéra, ktorý sa v prípade zlyhania inicializácie primárnych dekodérov vráti k dekodérom s nižšou prioritou. To môže mať za následok nižší výkon prehrávania ako pri použití primárnych dekodérov</string>
+    <string name="use_exoplayer_decoder_fallback_title">Používať funkciu záložného dekodéra prehrávača ExoPlayer</string>
+    <string name="always_use_exoplayer_set_output_surface_workaround_title">Vždy použiť nastavenia výstupu videa ExoPlayera</string>
+    <string name="audio_track_name">%1s %2s</string>
+    <string name="audio_track_type_original">povodná</string>
+    <string name="audio_track_type_dubbed">dabovaná</string>
+    <string name="prefer_descriptive_audio_summary">Vyberať zvukovú stopu s popisom pre zrakovo postihnutých ak je k dispozicií</string>
+    <string name="feed_show_hide_streams">Zobrazovať/Skrývať streamy</string>
+    <string name="settings_category_exoplayer_title">Nastavenia ExoPlayer</string>
+    <string name="always_use_exoplayer_set_output_surface_workaround_summary">Toto riešenie spôsobí to, že pri zmene textúry sa aktuálne používaný kodek uvoľní a potom znova použije, miesto toho aby sa textúra rovno použila na kodek. Toto nastavenie, ktoré už ExoPlayer používa na niektorých zariadeniach s týmto problémom, má vplyv len na Android 6 a vyšší
+\n
+\nPovolenie tejto možnosti môže zabrániť chybám pri prehrávaní pri prepínaní aktuálneho prehrávača videa alebo prepínaní na celú obrazovku</string>
+    <string name="audio_track_type_descriptive">popisná</string>
 </resources>

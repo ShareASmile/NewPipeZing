@@ -3,7 +3,6 @@ package org.schabi.newpipe.settings.preferencesearch;
 import androidx.annotation.NonNull;
 import androidx.annotation.XmlRes;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,22 +57,27 @@ public class PreferenceSearchItem {
         this.searchIndexItemResId = searchIndexItemResId;
     }
 
+    @NonNull
     public String getKey() {
         return key;
     }
 
+    @NonNull
     public String getTitle() {
         return title;
     }
 
+    @NonNull
     public String getSummary() {
         return summary;
     }
 
+    @NonNull
     public String getEntries() {
         return entries;
     }
 
+    @NonNull
     public String getBreadcrumbs() {
         return breadcrumbs;
     }
@@ -87,14 +91,10 @@ public class PreferenceSearchItem {
     }
 
     public List<String> getAllRelevantSearchFields() {
-        return Arrays.asList(
-            getTitle(),
-            getSummary(),
-            getEntries(),
-            getBreadcrumbs());
+        return List.of(getTitle(), getSummary(), getEntries(), getBreadcrumbs());
     }
 
-
+    @NonNull
     @Override
     public String toString() {
         return "PreferenceItem: " + title + " " + summary + " " + key;

@@ -93,7 +93,6 @@
     <string name="downloads_title">Downloads</string>
     <string name="error_report_title">Foutrapport</string>
     <string name="all">Alles</string>
-    <string name="yes">Ja</string>
     <string name="disabled">Uitgeschakeld</string>
     <string name="clear">Wissen</string>
     <string name="best_resolution">Beste resolutie</string>
@@ -146,7 +145,7 @@
     <string name="detail_likes_img_view_description">Duimen</string>
     <string name="detail_dislikes_img_view_description">Duimen omlaag</string>
     <string name="search_no_results">Geen resultaten</string>
-    <string name="empty_subscription_feed_subtitle">Helemaal niets hier te zien</string>
+    <string name="empty_list_subtitle">Helemaal niets hier te zien</string>
     <string name="detail_drag_description">Versleep om de volgorde te wijzigen</string>
     <string name="video">Video</string>
     <string name="audio">Geluid</string>
@@ -195,7 +194,6 @@
     <string name="settings_file_replacement_character_title">Vervangend teken</string>
     <string name="charset_letters_and_digits">Letters en cijfers</string>
     <string name="charset_most_special_characters">Meeste speciale tekens</string>
-    <string name="toast_no_player">Er is geen app geïnstalleerd die dit bestand kan afspelen</string>
     <string name="title_activity_about">Over NewPipe</string>
     <string name="title_licenses">Derdepartijlicenties</string>
     <string name="copyright" formatted="true">© %1$s door %2$s, uitgebracht onder de %3$s</string>
@@ -336,10 +334,6 @@
     <string name="users">Gebruikers</string>
     <string name="unsubscribe">Abonnement opzeggen</string>
     <string name="tab_choose">Kiest een tabblad</string>
-    <string name="volume_gesture_control_title">Veegbesturing voor volume</string>
-    <string name="volume_gesture_control_summary">Gebruik gebaren om het volume van de speler aan te passen</string>
-    <string name="brightness_gesture_control_title">Veegbesturing voor helderheid</string>
-    <string name="brightness_gesture_control_summary">Gebruik gebaren om de helderheid van de speler aan te passen</string>
     <string name="settings_category_updates_title">Updates</string>
     <string name="events">Gebeurtenissen</string>
     <string name="file_deleted">Bestand verwijderd</string>
@@ -359,8 +353,7 @@
     <string name="list">Lijst</string>
     <string name="grid">Raster</string>
     <string name="auto">Auto</string>
-    <string name="app_update_notification_content_title">NewPipe update is beschikbaar!</string>
-    <string name="app_update_notification_content_text">Tik om te downloaden</string>
+    <string name="app_update_available_notification_title">NewPipe update is beschikbaar!</string>
     <string name="missions_header_finished">Voltooid</string>
     <string name="paused">gepauzeerd</string>
     <string name="queued">toegevoegd aan wachtrij</string>
@@ -520,7 +513,6 @@
     <string name="copy_for_github">Kopieer opgemaakt rapport</string>
     <string name="permission_display_over_apps">Geef toestemming voor weergave over andere apps</string>
     <string name="missing_file">Stream bestand downloaden</string>
-    <string name="help">Hulp</string>
     <string name="watch_history_states_deleted">Afspeelposities verwijderd</string>
     <string name="delete_playback_states_alert">Alle afspeelposities verwijderen\?</string>
     <string name="clear_playback_states_summary">Verwijdert alle geschiedenis van afspeelposities</string>
@@ -538,7 +530,6 @@
     <string name="youtube_restricted_mode_enabled_summary">YouTube biedt een \"beperkte modes\" aan, dit verbergt mogelijk materiaal voor volwassenen</string>
     <string name="youtube_restricted_mode_enabled_title">YouTube \"beperkte modus\" aanzetten</string>
     <string name="show_age_restricted_content_summary">Toon inhoud die mogelijk niet geschikt is voor kinderen omwille van een leeftijdslimiet (zoals 18+)</string>
-    <string name="settings_category_notification_title">Melding</string>
     <string name="peertube_instance_add_exists">Kanaal bestaat al</string>
     <string name="peertube_instance_add_https_only">Alleen HTTPS URL\'s worden ondersteund</string>
     <string name="peertube_instance_add_fail">Kon kanaal niet valideren</string>
@@ -569,8 +560,8 @@
     <string name="notification_action_2_title">Derde actie knop</string>
     <string name="notification_action_1_title">Tweede actie knop</string>
     <string name="notification_action_0_title">Eerste actie knop</string>
-    <string name="notification_scale_to_square_image_summary">Schaal de miniatuurafbeelding van de video die getoond wordt in de notificatie van 16:9 naar 1:1 verhouding (kan vervorming creëren)</string>
-    <string name="notification_scale_to_square_image_title">Schaal miniatuurafbeelding naar verhouding 1:1</string>
+    <string name="notification_scale_to_square_image_summary">Snij de miniatuurafbeelding van de video die getoond wordt in de notificatie bij van 16:9 naar een 1:1 verhouding</string>
+    <string name="notification_scale_to_square_image_title">Miniatuurafbeelding naar verhouding 1:1 bijknippen</string>
     <string name="show_original_time_ago_title">Toon oorspronkelijke tijd geleden op items</string>
     <string name="notification_colorize_summary">Laat Android de kleur van de notificatie aanpassen, op basis van de meest voorkomende kleur in de thumbnail (let op: niet beschikbaar op elk apparaat)</string>
     <string name="notification_colorize_title">Notificatie kleur aanpassen</string>
@@ -624,4 +615,21 @@
     <string name="dont_show">Niet tonen</string>
     <string name="comments_are_disabled">Reacties zijn uitgeschakeld</string>
     <string name="show_image_indicators_title">Toon afbeeldingsindicatoren</string>
+    <string name="settings_category_player_notification_title">Speler melding</string>
+    <string name="settings_category_player_notification_summary">Configureer actieve stream melding</string>
+    <string name="notifications">Meldingen</string>
+    <string name="streams_notification_channel_name">Nieuwe streams</string>
+    <string name="streams_notification_channel_description">Meldingen over nieuwe streams voor abonnementen</string>
+    <string name="error_report_notification_title">NewPipe meldt een fout, tik om te rapporteren</string>
+    <plurals name="new_streams">
+        <item quantity="one">%s nieuwe stream</item>
+        <item quantity="other">%s nieuwe streams</item>
+    </plurals>
+    <string name="error_report_channel_name">Foutrapport melding</string>
+    <string name="loading_stream_details">Stream details aan het laden…</string>
+    <string name="error_report_notification_toast">Een fout is opgetreden, zie melding</string>
+    <string name="crash_the_player">Crash de speler</string>
+    <string name="error_report_channel_description">Meldingen om fouten te rapporteren</string>
+    <string name="processing_may_take_a_moment">Verwerken... Dit kan even duren</string>
+    <string name="leak_canary_not_available">LeakCanary is niet beschikbaar</string>
 </resources>

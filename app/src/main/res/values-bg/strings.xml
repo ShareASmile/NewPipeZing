@@ -36,7 +36,7 @@
     <string name="show_higher_resolutions_title">Покажи по-високи резолюции</string>
     <string name="show_higher_resolutions_summary">Само някои устройства могат да възпроизвеждат 2K/4K видео</string>
     <string name="play_with_kodi_title">Въпроизвеждане с Kodi</string>
-    <string name="kore_not_found">Инсталиране на липсващото приложение \"Kore\"\?</string>
+    <string name="kore_not_found">Инсталиране на липсващото приложение \"Kode\"\?</string>
     <string name="show_play_with_kodi_title">Покажи „Възпроизвеждане с Kodi“</string>
     <string name="show_play_with_kodi_summary">Показване на опция за възпроизвеждане на видео чрез „Kodi media center“</string>
     <string name="play_audio">Аудио</string>
@@ -75,7 +75,6 @@
     <string name="downloads_title">Изтегляния</string>
     <string name="error_report_title">Съобщение за грешка</string>
     <string name="all">Всички</string>
-    <string name="yes">Да</string>
     <string name="disabled">Забранено</string>
     <string name="clear">Изчисти</string>
     <string name="best_resolution">Най-добра резолюция</string>
@@ -107,7 +106,7 @@
     <string name="detail_likes_img_view_description">Харесвания</string>
     <string name="detail_dislikes_img_view_description">Нехаресвания</string>
     <string name="search_no_results">Няма резултати</string>
-    <string name="empty_subscription_feed_subtitle">Тук няма нищо</string>
+    <string name="empty_list_subtitle">Тук няма нищо</string>
     <string name="video">Видео</string>
     <string name="audio">Аудио</string>
     <string name="retry">Опитай отново</string>
@@ -192,7 +191,6 @@
     <string name="no_subscribers">Няма абонати</string>
     <string name="create">Създай</string>
     <string name="dismiss">Откажи</string>
-    <string name="toast_no_player">Няма инсталирано приложение, което да изпълни този файл</string>
     <string name="copyright" formatted="true">© %1$s от %2$s под лиценза %3$s</string>
     <string name="contribution_title">Съдействайте</string>
     <string name="contribution_encouragement">За всичко, което се сетите: превод, промени по дизайна, изчистване на кода или много сериозни промени по кода – помощта е винаги добре дошла. Колкото повече развитие, толкова по-добре!</string>
@@ -337,10 +335,6 @@
     <string name="enable_disposed_exceptions_summary">Насили докладването на неизпращаеми Rx изключения извън фрагмента или кръговрата на активност след приключване</string>
     <string name="unhook_checkbox">Откачи (може да предизвика промени)</string>
     <string name="unsubscribe">Отписване</string>
-    <string name="volume_gesture_control_title">Контрол на звука с жестове</string>
-    <string name="volume_gesture_control_summary">Използвай жестове за контрол на звука</string>
-    <string name="brightness_gesture_control_title">Контрол на яркостта с жестове</string>
-    <string name="brightness_gesture_control_summary">Използвай жестове за контрол на яркостта</string>
     <string name="file_deleted">Файлът е изтрит</string>
     <string name="events">Събития</string>
     <string name="show_comments_title">Показвай коментари</string>
@@ -399,10 +393,9 @@
     <string name="wifi_only">Само при Wi-Fi</string>
     <string name="list_view_mode">Вид на списъка</string>
     <string name="enable_playback_resume_summary">Възстанови последната позиция</string>
-    <string name="app_update_notification_content_title">Нова версия на NewPipe е налична!</string>
+    <string name="app_update_available_notification_title">Нова версия на NewPipe е налична!</string>
     <string name="seekbar_preview_thumbnail_title">Миниатюри на лентата за превъртане</string>
     <string name="low_quality_smaller">Нискокачествени (малки)</string>
-    <string name="app_update_notification_content_text">Докоснете за изтегляне</string>
     <string name="queued">на опашка</string>
     <string name="updates_setting_title">Актуализации</string>
     <string name="overwrite">Презаписване</string>
@@ -447,7 +440,7 @@
     <string name="metadata_licence">Лиценз</string>
     <string name="service_provides_reason">%s посочва следната причина:</string>
     <string name="metadata_tags">Маркери</string>
-    <string name="metadata_privacy">Достъпност</string>
+    <string name="metadata_privacy">Поверителност</string>
     <string name="metadata_language">Език</string>
     <string name="metadata_privacy_internal">Вътрешен</string>
     <string name="on">Включен</string>
@@ -479,7 +472,6 @@
     <string name="comments_are_disabled">Коментарите са изключени</string>
     <string name="main_page_content_summary">Кои раздели се показват на началната страница</string>
     <string name="error_insufficient_storage">Няма свободно място на устройството</string>
-    <string name="help">Помощ</string>
     <plurals name="seconds">
         <item quantity="one">%d секунда</item>
         <item quantity="other">%d секунди</item>
@@ -512,7 +504,6 @@
     <string name="songs">Песни</string>
     <string name="artists">Изпълнители</string>
     <string name="albums">Албуми</string>
-    <string name="settings_category_notification_title">Известие</string>
     <string name="recent">Скорошни</string>
     <string name="metadata_category">Категория</string>
     <string name="download_has_started">Изтеглянето започна</string>
@@ -555,4 +546,17 @@
     <string name="show_image_indicators_summary">Показвай цветни Picasso-панделки в горната част на изображенията като индикатор за техния произход (червен – от мрежата, син – от диска и червен – от паметта)</string>
     <string name="auto_device_theme_title">Автоматична (тази на устройството)</string>
     <string name="notification_scale_to_square_image_summary">Мащабиране на миниатюрата в известието от 16:9 към 1:1 формат (възможни са изкривявания)</string>
+    <string name="select_a_playlist">Избете плейлист</string>
+    <string name="notifications">Известия</string>
+    <string name="clear_cookie_title">Изчистване на бисквитките от reCAPTCHA</string>
+    <string name="recaptcha_cookies_cleared">Бисквитките от reCAPTCHA бяха почистени</string>
+    <string name="checking_updates_toast">Проверяване за актуализации…</string>
+    <string name="enumeration_comma">,</string>
+    <string name="manual_update_title">Провери за актуализации</string>
+    <string name="percent">Процент</string>
+    <string name="unknown_quality">Неизвестно качество</string>
+    <string name="unknown_format">Неизвестен формат</string>
+    <string name="recently_added">Наскоро добавено</string>
+    <string name="notification_action_buffering">Буфериране</string>
+    <string name="crash_the_player">Разбийте плейъра</string>
 </resources>

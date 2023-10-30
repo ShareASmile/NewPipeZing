@@ -5,8 +5,13 @@ import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateBackgroundColor;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -16,15 +21,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.jakewharton.rxbinding4.view.RxView;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.blue.BluePipeHelper;
+import org.schabi.newpipe.database.subscription.NotificationMode;
 import org.schabi.newpipe.database.subscription.SubscriptionEntity;
 import org.schabi.newpipe.databinding.ChannelHeaderBinding;
 import org.schabi.newpipe.databinding.FragmentChannelBinding;
@@ -33,13 +42,15 @@ import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.ListExtractor;
+import org.schabi.newpipe.extractor.channel.ChannelHeaderItem;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.subscription.SubscriptionManager;
-import org.schabi.newpipe.player.MainPlayer.PlayerType;
+import org.schabi.newpipe.local.feed.notifications.NotificationHelper;
+import org.schabi.newpipe.player.PlayerType;
 import org.schabi.newpipe.player.playqueue.ChannelPlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.util.ExtractorHelper;
@@ -51,6 +62,7 @@ import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -64,7 +76,7 @@ import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
+public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, ChannelInfo>
         implements View.OnClickListener {
 
     private static final int BUTTON_DEBOUNCE_INTERVAL = 100;
@@ -72,6 +84,8 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
 
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Disposable subscribeButtonMonitor;
+
+    private boolean channelContentNotSupported = false;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Views
@@ -84,6 +98,20 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
     private PlaylistControlBinding playlistControlBinding;
 
     private MenuItem menuRssButton;
+    private MenuItem menuNotifyButton;
+
+    /**
+     * The item last manually selected by the user.
+     */
+    @NonNull
+    private final AtomicReference<ChannelHeaderItem> lastSelectedHeaderItem =
+            new AtomicReference<>();
+
+    /**
+     * If set, the next request will use this header to enter the header pagination flow.
+     */
+    @NonNull
+    private final AtomicReference<ChannelHeaderItem> queuedHeaderItem = new AtomicReference<>();
 
     public static ChannelFragment getInstance(final int serviceId, final String url,
                                               final String name) {
@@ -125,6 +153,7 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
     public void onViewCreated(@NonNull final View rootView, final Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
         channelBinding = FragmentChannelBinding.bind(rootView);
+        showContentNotSupportedIfNeeded();
     }
 
     @Override
@@ -179,6 +208,7 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
                         + "menu = [" + menu + "], inflater = [" + inflater + "]");
             }
             menuRssButton = menu.findItem(R.id.menu_item_rss);
+            menuNotifyButton = menu.findItem(R.id.menu_item_notify);
         }
     }
 
@@ -188,10 +218,14 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
             case R.id.action_settings:
                 NavigationHelper.openSettings(requireContext());
                 break;
+            case R.id.menu_item_notify:
+                final boolean value = !item.isChecked();
+                item.setEnabled(false);
+                setNotify(value);
+                break;
             case R.id.menu_item_rss:
                 if (currentInfo != null) {
-                    ShareUtils.openUrlInBrowser(
-                            requireContext(), currentInfo.getFeedUrl(), false);
+                    ShareUtils.openUrlInApp(requireContext(), currentInfo.getFeedUrl());
                 }
                 break;
             case R.id.menu_item_openInBrowser:
@@ -232,15 +266,22 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
                 .subscribe(getSubscribeUpdateMonitor(info), onError));
 
         disposables.add(observable
-                // Some updates are very rapid
-                // (for example when calling the updateSubscription(info))
-                // so only update the UI for the latest emission
-                // ("sync" the subscribe button's state)
-                .debounce(100, TimeUnit.MILLISECONDS)
+                .map(List::isEmpty)
+                .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((List<SubscriptionEntity> subscriptionEntities) ->
-                        updateSubscribeButton(!subscriptionEntities.isEmpty()), onError));
+                .subscribe(isEmpty -> updateSubscribeButton(!isEmpty), onError));
 
+        disposables.add(observable
+                .map(List::isEmpty)
+                .distinctUntilChanged()
+                .skip(1) // channel has just been opened
+                .filter(x -> NotificationHelper.areNewStreamsNotificationsEnabled(requireContext()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(isEmpty -> {
+                    if (!isEmpty) {
+                        showNotifySnackbar();
+                    }
+                }, onError));
     }
 
     private Function<Object, Object> mapOnSubscribe(final SubscriptionEntity subscription,
@@ -320,6 +361,7 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
                         info.getAvatarUrl(),
                         info.getDescription(),
                         info.getSubscriberCount());
+                updateNotifyButton(null);
                 subscribeButtonMonitor = monitorSubscribeButton(
                         headerBinding.channelSubscribeButton, mapOnSubscribe(channel, info));
             } else {
@@ -327,6 +369,7 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
                     Log.d(TAG, "Found subscription to this channel!");
                 }
                 final SubscriptionEntity subscription = subscriptionEntities.get(0);
+                updateNotifyButton(subscription);
                 subscribeButtonMonitor = monitorSubscribeButton(
                         headerBinding.channelSubscribeButton, mapOnUnsubscribe(subscription));
             }
@@ -369,13 +412,53 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
                 AnimationType.LIGHT_SCALE_AND_ALPHA);
     }
 
+    private void updateNotifyButton(@Nullable final SubscriptionEntity subscription) {
+        if (menuNotifyButton == null) {
+            return;
+        }
+        if (subscription != null) {
+            menuNotifyButton.setEnabled(
+                    NotificationHelper.areNewStreamsNotificationsEnabled(requireContext())
+            );
+            menuNotifyButton.setChecked(
+                    subscription.getNotificationMode() == NotificationMode.ENABLED
+            );
+        }
+
+        menuNotifyButton.setVisible(subscription != null);
+    }
+
+    private void setNotify(final boolean isEnabled) {
+        disposables.add(
+                subscriptionManager
+                        .updateNotificationMode(
+                                currentInfo.getServiceId(),
+                                currentInfo.getUrl(),
+                                isEnabled ? NotificationMode.ENABLED : NotificationMode.DISABLED)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe()
+        );
+    }
+
+    /**
+     * Show a snackbar with the option to enable notifications on new streams for this channel.
+     */
+    private void showNotifySnackbar() {
+        Snackbar.make(itemsList, R.string.you_successfully_subscribed, Snackbar.LENGTH_LONG)
+                .setAction(R.string.get_notified, v -> setNotify(true))
+                .setActionTextColor(Color.YELLOW)
+                .show();
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
     // Load and handle
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
-    protected Single<ListExtractor.InfoItemsPage> loadMoreItemsLogic() {
-        return ExtractorHelper.getMoreChannelItems(serviceId, url, currentNextPage);
+    protected Single<ListExtractor.InfoItemsPage<StreamInfoItem>> loadMoreItemsLogic() {
+        return ExtractorHelper.getMoreChannelItems(serviceId, url, currentNextPage,
+                this.queuedHeaderItem.getAndSet(null));
     }
 
     @Override
@@ -465,9 +548,12 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
             playlistControlBinding.getRoot().setVisibility(View.GONE);
         }
 
+        channelContentNotSupported = false;
         for (final Throwable throwable : result.getErrors()) {
             if (throwable instanceof ContentNotSupportedException) {
-                showContentNotSupported();
+                channelContentNotSupported = true;
+                showContentNotSupportedIfNeeded();
+                break;
             }
         }
 
@@ -497,9 +583,66 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
             NavigationHelper.enqueueOnPlayer(activity, getPlayQueue(), PlayerType.AUDIO);
             return true;
         });
+
+        if (BluePipeHelper.isYouTube() && !result.getHeaderItems().isEmpty()) {
+            playlistControlBinding.playlistCtrlSortVideosDivider.setVisibility(View.VISIBLE);
+            playlistControlBinding.playlistCtrlSortVideosButton.setVisibility(View.VISIBLE);
+            playlistControlBinding.playlistCtrlSortVideosButton.setOnClickListener(view -> {
+                showSortVideosMenu(view, result);
+            });
+        } else {
+            playlistControlBinding.playlistCtrlSortVideosDivider.setVisibility(View.GONE);
+            playlistControlBinding.playlistCtrlSortVideosButton.setVisibility(View.GONE);
+            playlistControlBinding.playlistCtrlSortVideosButton.setOnClickListener(null);
+        }
     }
 
-    private void showContentNotSupported() {
+    private void showSortVideosMenu(@NonNull final View button, @NonNull final ChannelInfo result) {
+        final List<ChannelHeaderItem> items = result.getHeaderItems();
+
+        final PopupMenu menu = new PopupMenu(button.getContext(), button);
+        for (int i = 0; i < items.size(); i++) {
+            final ChannelHeaderItem item = items.get(i);
+            final String itemText = item.getHeaderText();
+
+            if (matchesCurrentSelection(item)) {
+                final StyleSpan span = new StyleSpan(Typeface.BOLD);
+                final SpannableStringBuilder sb = new SpannableStringBuilder();
+                sb.append(itemText);
+                sb.setSpan(span, 0, itemText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                menu.getMenu().add(Menu.NONE, i, Menu.NONE, sb);
+            } else {
+                menu.getMenu().add(Menu.NONE, i, Menu.NONE, item.getHeaderText());
+            }
+        }
+
+        menu.setOnMenuItemClickListener(item -> {
+            queuedHeaderItem.set(items.get(item.getItemId()));
+            lastSelectedHeaderItem.set(items.get(item.getItemId()));
+            infoListAdapter.clearStreamItemList();
+            loadMoreItems();
+            return true;
+        });
+        menu.show();
+    }
+
+    private boolean matchesCurrentSelection(final ChannelHeaderItem item) {
+        final ChannelHeaderItem lastSelection = lastSelectedHeaderItem.get();
+        if (lastSelection != null) {
+            return item.getContinuationToken().equals(
+                    lastSelectedHeaderItem.get().getContinuationToken());
+        } else {
+            return item.isSelected();
+        }
+    }
+
+    private void showContentNotSupportedIfNeeded() {
+        // channelBinding might not be initialized when handleResult() is called
+        // (e.g. after rotating the screen, #6696)
+        if (!channelContentNotSupported || channelBinding == null) {
+            return;
+        }
+
         channelBinding.errorContentNotSupported.setVisibility(View.VISIBLE);
         channelBinding.channelKaomoji.setText("(︶︹︺)");
         channelBinding.channelKaomoji.setTextSize(TypedValue.COMPLEX_UNIT_SP, 45f);
@@ -507,17 +650,13 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
     }
 
     private PlayQueue getPlayQueue() {
-        return getPlayQueue(0);
-    }
-
-    private PlayQueue getPlayQueue(final int index) {
         final List<StreamInfoItem> streamItems = infoListAdapter.getItemsList().stream()
                 .filter(StreamInfoItem.class::isInstance)
                 .map(StreamInfoItem.class::cast)
                 .collect(Collectors.toList());
 
         return new ChannelPlayQueue(currentInfo.getServiceId(), currentInfo.getUrl(),
-                currentInfo.getNextPage(), streamItems, index);
+                currentInfo.getNextPage(), streamItems, 0);
     }
 
     /*//////////////////////////////////////////////////////////////////////////

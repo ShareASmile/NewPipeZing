@@ -36,7 +36,7 @@
     <string name="show_higher_resolutions_title">Näytä korkeammat resoluutiot</string>
     <string name="show_higher_resolutions_summary">Vain jotkin laitteet voivat toistaa 2K/4K-videota</string>
     <string name="play_with_kodi_title">Toista Kodissa</string>
-    <string name="kore_not_found">Asennetaanko puuttuva Kore-sovellus\?</string>
+    <string name="kore_not_found">Asennetaanko puuttuva Kode-sovellus\?</string>
     <string name="show_play_with_kodi_title">Näytä ”Toista Kodissa”-vaihtoehto</string>
     <string name="show_play_with_kodi_summary">Näyttää vaihtoehdon videon toistamiseen Kodi-mediasoittimessa</string>
     <string name="play_audio">Ääni</string>
@@ -73,7 +73,6 @@
     <string name="downloads_title">Lataukset</string>
     <string name="error_report_title">Virheraportti</string>
     <string name="all">Kaikki</string>
-    <string name="yes">Kyllä</string>
     <string name="disabled">Poistettu käytöstä</string>
     <string name="clear">Pyyhi</string>
     <string name="best_resolution">Paras resoluutio</string>
@@ -100,7 +99,7 @@
     <string name="detail_likes_img_view_description">Tykkäykset</string>
     <string name="detail_dislikes_img_view_description">Ei-tykkäykset</string>
     <string name="search_no_results">Ei tuloksia</string>
-    <string name="empty_subscription_feed_subtitle">Tyhjää täynnä</string>
+    <string name="empty_list_subtitle">Tyhjää täynnä</string>
     <string name="video">Video</string>
     <string name="audio">Ääni</string>
     <string name="retry">Toista uudelleen</string>
@@ -241,7 +240,6 @@
     <string name="dismiss">Hylkää</string>
     <string name="rename">Nimeä uudelleen</string>
     <string name="one_item_deleted">1 poistettu.</string>
-    <string name="toast_no_player">Ohjelmaa tämän toistamiseen ei ole asennettu</string>
     <string name="privacy_policy_title">NewPipen tietosuojakäytäntö</string>
     <string name="privacy_policy_encouragement">NewPipe ottaa yksityisyytesi tosissaan. Siksi se ei kerää sinulta mitään tietoja ilman lupaasi.
 \nNewPipen tietosuojakäytännössä selitetään tarkasti mitä tietoja lähetetään tai tallennetaan virheraportin yhteydessä.</string>
@@ -368,7 +366,6 @@
     <string name="missing_file">Tiedosto siirretty tai poistettu</string>
     <string name="download_to_sdcard_error_message">Lataaminen ulkoiselle SD-kortille ei ole mahdollista. Nollataanko latauskansion sijainti\?</string>
     <string name="download_to_sdcard_error_title">Ulkoinen tallennustila ei käytettävissä</string>
-    <string name="help">Ohje</string>
     <string name="app_update_notification_channel_description">Ilmoitukset uusista NewPipe-versioista</string>
     <string name="app_update_notification_channel_name">Sovelluspäivitysilmoitus</string>
     <string name="file_deleted">Tiedosto poistettu</string>
@@ -394,10 +391,6 @@
     <string name="settings_category_clear_data_title">Tietojen tyhjennys</string>
     <string name="enable_playback_resume_title">Jatka toistoa</string>
     <string name="show_original_time_ago_summary">Palvelujen alkuperäiset tekstit näkyvät suoratoistettavassa sisällössä</string>
-    <string name="brightness_gesture_control_summary">Käytä eleitä ohjataksesi soittimen kirkkautta</string>
-    <string name="brightness_gesture_control_title">Kirkkauden eleohjaus</string>
-    <string name="volume_gesture_control_summary">Käytä eleitä ohjataksesi soittimen äänenvoimakkuutta</string>
-    <string name="volume_gesture_control_title">Äänenvoimakkuuden eleohjaus</string>
     <string name="show_comments_summary">Poista käytöstä piilottaaksesi kommentit</string>
     <string name="watch_history_states_deleted">Toistokohdat poistettu</string>
     <string name="delete_playback_states_alert">Poistetaanko kaikki toistokohdat\?</string>
@@ -521,8 +514,7 @@
     <string name="pause_downloads_on_mobile_desc">Hyödyllinen vaihdettaessa mobiilidataan, vaikka joitakin latauksia ei voi pysäyttää</string>
     <string name="pause_downloads_on_mobile">Keskeytä, kun yhteys on käytön mukaan laskutettava</string>
     <string name="paused">tauotettu</string>
-    <string name="app_update_notification_content_text">Napauta ladataksesi</string>
-    <string name="app_update_notification_content_title">NewPipe-päivitys on saatavilla!</string>
+    <string name="app_update_available_notification_title">NewPipe-päivitys on saatavilla!</string>
     <string name="list_view_mode">Listanäkymän ulkoasu</string>
     <string name="auto">Automaattinen</string>
     <string name="grid">Ruudukko</string>
@@ -545,7 +537,6 @@
     <string name="wifi_only">Vain Wi-Fi-verkossa</string>
     <string name="autoplay_summary">Aloita toisto automaattisesti — %s</string>
     <string name="title_activity_play_queue">Toistojono</string>
-    <string name="settings_category_notification_title">Ilmoitus</string>
     <string name="unsupported_url_dialog_message">Ei tunnistettu URL:ää. Avataanko toisessa sovelluksessa\?</string>
     <string name="auto_queue_toggle">Automaattinen jonoon lisääminen</string>
     <string name="clear_queue_confirmation_description">Aktiivisen soittimen jono korvataan</string>
@@ -634,13 +625,11 @@
     <string name="metadata_category">Kategoria</string>
     <string name="description_select_enable">Salli tekstin valinta kuvauksessa</string>
     <string name="account_terminated">Tili suljettu</string>
-    <string name="feed_toggle_show_played_items">Näytä katsotut kohteet</string>
     <string name="feed_load_error_terminated">Tekijän käyttäjätili on suljettu.
 \nNewPipe ei pysty lataamaan tätä syötettä tulevaisuudessa.
 \nHaluatko poistaa kanavan tilauksesta\?</string>
     <string name="feed_load_error_account_info">Ei voitu ladata syötettä hakusanalle \'%s\'.</string>
     <string name="feed_load_error">Virhe syötteen lataamisessa</string>
-    <string name="downloads_storage_use_saf_summary_api_19">\'Storage Access Framework\' ei ole tuettu Android KitKatissa tai vanhemmissa versioissa</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Sinulta kysytään joka kerta, minne tiedosto ladataan</string>
     <string name="dont_show">Älä näytä</string>
     <string name="low_quality_smaller">Matala laatu (pienempi)</string>
@@ -649,8 +638,6 @@
     <string name="no_dir_yet">Latauskansiota ei vielä asetettu, valitse ensin oletuslatauskansio</string>
     <string name="comments_are_disabled">Kommentit poistettu käytöstä</string>
     <string name="mark_as_watched">Merkitse katsotuksi</string>
-    <string name="loading_channel_details">Ladataan kanavan tietoja…</string>
-    <string name="error_show_channel_details">Virhe kanavan lisätietojen näyttämisessä</string>
     <string name="show_image_indicators_summary">Näytä Picasso-värjätyt nauhat kuvien päällä osoittaakseen lähteen: punainen tarkoittaa verkkoa, sininen tarkoittaa levytilaa ja vihreä tarkoittaa muistia</string>
     <string name="show_image_indicators_title">Näytä kuvailmaisimet</string>
     <string name="remote_search_suggestions">Etähakuehdotukset</string>
@@ -688,4 +675,10 @@
     <string name="show_crash_the_player_summary">Näytä soitinta käytettäessä soittimen kaatamisen vaihtoehto</string>
     <string name="show_error_snackbar">Näytä virheen ponnahdusilmoitus</string>
     <string name="feed_new_items">Uudet syötteet</string>
+    <string name="notifications">Ilmoitukset</string>
+    <string name="always_use_exoplayer_set_output_surface_workaround_title">Käytä aina ExoPlayerin videolähtöpinnan asetusta</string>
+    <string name="audio_track_type_descriptive">kuvaileva</string>
+    <string name="audio_track_type_dubbed">dubattu</string>
+    <string name="audio_track_name">%1s %2s</string>
+    <string name="audio_track_type_original">alkuperäinen</string>
 </resources>

@@ -86,7 +86,6 @@
     <string name="downloads_title">دابەزاندنەکان</string>
     <string name="error_report_title">ناتوانرێ سکاڵابکرێ</string>
     <string name="all">گشتی</string>
-    <string name="yes">بەڵێ</string>
     <string name="disabled">ناکارایە</string>
     <string name="clear">پاککردنەوە</string>
     <string name="best_resolution">باشترین قەبارە</string>
@@ -132,7 +131,7 @@
     <string name="detail_likes_img_view_description">بەدڵبوون</string>
     <string name="detail_dislikes_img_view_description">بەدڵنەبوون</string>
     <string name="search_no_results">هیچ ئەنجامێک نییە</string>
-    <string name="empty_subscription_feed_subtitle">هیچ شتێک لێرەدا نییە</string>
+    <string name="empty_list_subtitle">هیچ شتێک لێرەدا نییە</string>
     <string name="detail_drag_description">ڕاکێشان بۆ دووبارە داواکردنەوە</string>
     <string name="video">ڤیدیۆ</string>
     <string name="audio">دەنگ</string>
@@ -257,7 +256,6 @@
     <string name="no_streams_available_download">هیچ پەخشێک نییە بۆ دابەزاندن</string>
     <string name="caption_setting_title">ژێرنووسەکان</string>
     <string name="caption_setting_description">بەهۆی گۆڕانکاری لە شێوەی ژێرنووسکردنەکە. پێویستە ئەپەکە دابخەیت و دیسانەوە بیکەیتەوە.</string>
-    <string name="toast_no_player">هیچ ئەپێک دانەمەزراوە بۆ کارپێکردنی ئەم فایلە</string>
     <string name="clear_views_history_title">سڕینەوەی مێژووی تەماشاکردن</string>
     <string name="clear_views_history_summary">مێژوو دەسڕێتەوە لەگەڵ ڤیدیۆ کارپێکراوەکان و شوێنی لیستە ڤیدیۆییەکان</string>
     <string name="delete_view_history_alert">تەواوی مێژووی تەماشاکردن بسڕدرێتەوە؟</string>
@@ -278,10 +276,6 @@
     <string name="users">بەکاربەرەکان</string>
     <string name="unsubscribe">بەشدارنەبوون</string>
     <string name="tab_choose">هەڵبژاردنی پەڕە</string>
-    <string name="volume_gesture_control_title">کۆنترۆڵی دەنگ بەجوڵەی پەنجە</string>
-    <string name="volume_gesture_control_summary">جوڵەی پەنجەت لەسەر ڕوونما بەکاربهێنە بۆ گۆڕینی ئاستی دەنگ</string>
-    <string name="brightness_gesture_control_title">کۆنترۆڵی ڕووناکی بەجوڵەی پەنجە</string>
-    <string name="brightness_gesture_control_summary">جوڵەی پەنجەت لەسەر ڕوونما بەکاربهێنە بۆ گۆڕینی ئاستی ڕووناکی ڕوونما</string>
     <string name="content_language_title">زمانی بنەڕەتی ئەپ</string>
     <string name="settings_category_updates_title">نوێکارییەکان</string>
     <string name="file_deleted">فایل سڕایەوە</string>
@@ -391,8 +385,7 @@
     <string name="list">خشتە</string>
     <string name="grid">چوارخانە</string>
     <string name="auto">خۆکاری</string>
-    <string name="app_update_notification_content_title">وەشانی نوێی ئەپ بەردەستە!</string>
-    <string name="app_update_notification_content_text">کرتە بکە بۆ دابەزاندن</string>
+    <string name="app_update_available_notification_title">وەشانی نوێی ئەپ بەردەستە!</string>
     <string name="missions_header_finished">تەواوبوو</string>
     <string name="missions_header_pending">لە نۆرەیە</string>
     <string name="paused">وەستاوە</string>
@@ -464,7 +457,6 @@
     <string name="new_seek_duration_toast">بەهۆی ExoPlayer ەوە ماوەی بردنەپێش و بردنەپاش لە %d چرکەدا دیاریکرا</string>
     <string name="mute">کپ</string>
     <string name="unmute">کپ نەکردن</string>
-    <string name="help">یارمەتی</string>
     <plurals name="minutes">
         <item quantity="one">%d خولەک</item>
         <item quantity="other">%d خولەك</item>
@@ -539,7 +531,6 @@
     <string name="autoplay_summary">دەسپێکردنی کارپێکەر بەخۆکاری — %s</string>
     <string name="title_activity_play_queue">لێدانی ڕیز</string>
     <string name="no_playlist_bookmarked_yet">هیچ لیستەلێدانێک نیشانە نەکراوە</string>
-    <string name="settings_category_notification_title">پەیام</string>
     <string name="unsupported_url_dialog_message">بەستەرەکە نەناسرایەوە. لە ئەپێکیتردا بکرێتەوە؟</string>
     <string name="auto_queue_toggle">ڕیزبوونی خۆکار</string>
     <string name="clear_queue_confirmation_description">ڕیزی لێدەری چالاک جێیدەگیرێتەوە</string>

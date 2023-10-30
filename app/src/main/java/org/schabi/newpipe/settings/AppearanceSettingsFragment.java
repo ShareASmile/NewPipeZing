@@ -44,13 +44,19 @@ public class AppearanceSettingsFragment extends BasePreferenceFragment {
                 return false;
             });
         } else {
-            removePreference(nightThemeKey);
+            // disable the night theme selection
+            final Preference preference = findPreference(nightThemeKey);
+            if (preference != null) {
+                preference.setEnabled(false);
+                preference.setSummary(getString(R.string.night_theme_available,
+                        getString(R.string.auto_device_theme_title)));
+            }
         }
     }
 
     @Override
     public boolean onPreferenceTreeClick(final Preference preference) {
-        if (preference.getKey().equals(getString(R.string.caption_settings_key))) {
+        if (getString(R.string.caption_settings_key).equals(preference.getKey())) {
             try {
                 startActivity(new Intent(Settings.ACTION_CAPTIONING_SETTINGS));
             } catch (final ActivityNotFoundException e) {
@@ -61,20 +67,13 @@ public class AppearanceSettingsFragment extends BasePreferenceFragment {
         return super.onPreferenceTreeClick(preference);
     }
 
-    private void removePreference(final String preferenceKey) {
-        final Preference preference = findPreference(preferenceKey);
-        if (preference != null) {
-            getPreferenceScreen().removePreference(preference);
-        }
-    }
-
     private void applyThemeChange(final String beginningThemeKey,
                                   final String themeKey,
                                   final Object newValue) {
         defaultPreferences.edit().putBoolean(Constants.KEY_THEME_CHANGE, true).apply();
         defaultPreferences.edit().putString(themeKey, newValue.toString()).apply();
 
-        ThemeHelper.setDayNightMode(getContext(), newValue.toString());
+        ThemeHelper.setDayNightMode(requireContext(), newValue.toString());
 
         if (!newValue.equals(beginningThemeKey) && getActivity() != null) {
             // if it's not the current theme

@@ -1,5 +1,6 @@
 package org.schabi.newpipe.local.bookmark;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.InputType;
@@ -31,6 +32,7 @@ import org.schabi.newpipe.local.playlist.RemotePlaylistManager;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import icepick.State;
@@ -98,7 +100,7 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
     protected void initListeners() {
         super.initListeners();
 
-        itemListAdapter.setSelectedListener(new OnClickGesture<LocalItem>() {
+        itemListAdapter.setSelectedListener(new OnClickGesture<>() {
             @Override
             public void selected(final LocalItem selectedItem) {
                 final FragmentManager fragmentManager = getFM();
@@ -256,25 +258,54 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
     }
 
     private void showLocalDialog(final PlaylistMetadataEntry selectedItem) {
-        final DialogEditTextBinding dialogBinding
-                = DialogEditTextBinding.inflate(getLayoutInflater());
+        final String rename = getString(R.string.rename);
+        final String delete = getString(R.string.delete);
+        final String unsetThumbnail = getString(R.string.unset_playlist_thumbnail);
+        final boolean isThumbnailPermanent = localPlaylistManager
+                .getIsPlaylistThumbnailPermanent(selectedItem.uid);
+
+        final ArrayList<String> items = new ArrayList<>();
+        items.add(rename);
+        items.add(delete);
+        if (isThumbnailPermanent) {
+            items.add(unsetThumbnail);
+        }
+
+        final DialogInterface.OnClickListener action = (d, index) -> {
+            if (items.get(index).equals(rename)) {
+                showRenameDialog(selectedItem);
+            } else if (items.get(index).equals(delete)) {
+                showDeleteDialog(selectedItem.name,
+                        localPlaylistManager.deletePlaylist(selectedItem.uid));
+            } else if (isThumbnailPermanent && items.get(index).equals(unsetThumbnail)) {
+                final long thumbnailStreamId = localPlaylistManager
+                        .getAutomaticPlaylistThumbnailStreamId(selectedItem.uid);
+                localPlaylistManager
+                        .changePlaylistThumbnail(selectedItem.uid, thumbnailStreamId, false)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe();
+            }
+        };
+
+        new AlertDialog.Builder(activity)
+                .setItems(items.toArray(new String[0]), action)
+                .show();
+    }
+
+    private void showRenameDialog(final PlaylistMetadataEntry selectedItem) {
+        final DialogEditTextBinding dialogBinding =
+                DialogEditTextBinding.inflate(getLayoutInflater());
         dialogBinding.dialogEditText.setHint(R.string.name);
         dialogBinding.dialogEditText.setInputType(InputType.TYPE_CLASS_TEXT);
         dialogBinding.dialogEditText.setText(selectedItem.name);
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setView(dialogBinding.getRoot())
+        new AlertDialog.Builder(activity)
+                .setView(dialogBinding.getRoot())
                 .setPositiveButton(R.string.rename_playlist, (dialog, which) ->
                         changeLocalPlaylistName(
                                 selectedItem.uid,
                                 dialogBinding.dialogEditText.getText().toString()))
                 .setNegativeButton(R.string.cancel, null)
-                .setNeutralButton(R.string.delete, (dialog, which) -> {
-                    showDeleteDialog(selectedItem.name,
-                            localPlaylistManager.deletePlaylist(selectedItem.uid));
-                    dialog.dismiss();
-                })
-                .create()
                 .show();
     }
 

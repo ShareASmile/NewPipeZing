@@ -1,73 +1,5 @@
 package us.shandian.giga.ui.adapter;
 
-import android.annotation.SuppressLint;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.util.SparseArray;
-import android.view.HapticFeedbackConstants;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import org.schabi.newpipe.BuildConfig;
-import org.schabi.newpipe.R;
-import org.schabi.newpipe.error.ErrorUtil;
-import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.error.ErrorInfo;
-import org.schabi.newpipe.error.UserAction;
-import org.schabi.newpipe.util.Localization;
-import org.schabi.newpipe.util.NavigationHelper;
-import org.schabi.newpipe.util.external_communication.ShareUtils;
-
-import java.io.File;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-import us.shandian.giga.get.DownloadMission;
-import us.shandian.giga.get.FinishedMission;
-import us.shandian.giga.get.Mission;
-import us.shandian.giga.get.MissionRecoveryInfo;
-import org.schabi.newpipe.streams.io.StoredFileHelper;
-import us.shandian.giga.service.DownloadManager;
-import us.shandian.giga.service.DownloadManagerService;
-import us.shandian.giga.ui.common.Deleter;
-import us.shandian.giga.ui.common.ProgressDrawable;
-import us.shandian.giga.util.Utility;
-
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.content.Intent.FLAG_GRANT_PREFIX_URI_PERMISSION;
 import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
@@ -88,19 +20,87 @@ import static us.shandian.giga.get.DownloadMission.ERROR_TIMEOUT;
 import static us.shandian.giga.get.DownloadMission.ERROR_UNKNOWN_EXCEPTION;
 import static us.shandian.giga.get.DownloadMission.ERROR_UNKNOWN_HOST;
 
+import android.annotation.SuppressLint;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.HapticFeedbackConstants;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.core.os.HandlerCompat;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import org.schabi.newpipe.App;
+import org.schabi.newpipe.BuildConfig;
+import org.schabi.newpipe.LocalPlayerActivity;
+import org.schabi.newpipe.R;
+import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.ErrorUtil;
+import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.streams.io.StoredFileHelper;
+import org.schabi.newpipe.util.Localization;
+import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.external_communication.ShareUtils;
+
+import java.io.File;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import us.shandian.giga.get.DownloadMission;
+import us.shandian.giga.get.FinishedMission;
+import us.shandian.giga.get.Mission;
+import us.shandian.giga.get.MissionRecoveryInfo;
+import us.shandian.giga.service.DownloadManager;
+import us.shandian.giga.service.DownloadManagerService;
+import us.shandian.giga.ui.common.Deleter;
+import us.shandian.giga.ui.common.ProgressDrawable;
+import us.shandian.giga.util.Utility;
+
 public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callback {
-    private static final SparseArray<String> ALGORITHMS = new SparseArray<>();
     private static final String TAG = "MissionAdapter";
     private static final String UNDEFINED_PROGRESS = "--.-%";
     private static final String DEFAULT_MIME_TYPE = "*/*";
     private static final String UNDEFINED_ETA = "--:--";
 
-    private static final int HASH_NOTIFICATION_ID = 123790;
+    private static final String UPDATER = "updater";
+    private static final String DELETE = "deleteFinishedDownloads";
 
-    static {
-        ALGORITHMS.put(R.id.md5, "MD5");
-        ALGORITHMS.put(R.id.sha1, "SHA1");
-    }
+    private static final int HASH_NOTIFICATION_ID = 123790;
 
     private final Context mContext;
     private final LayoutInflater mInflater;
@@ -119,13 +119,14 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
     private final ArrayList<Mission> mHidden;
     private Snackbar mSnackbar;
 
-    private final Runnable rUpdater = this::updater;
-    private final Runnable rDelete = this::deleteFinishedDownloads;
-
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+    private SharedPreferences mPrefs;
 
     public MissionAdapter(Context context, @NonNull DownloadManager downloadManager, View emptyMessage, View root) {
         mContext = context;
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(App.getApp());
+
         mDownloadManager = downloadManager;
 
         mInflater = LayoutInflater.from(mContext);
@@ -340,7 +341,25 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         }
     }
 
-    private void viewWithFileProvider(Mission mission) {
+    private void open(Mission mission) {
+        if (checkInvalidFile(mission)) return;
+
+        String mimeType = resolveMimeType(mission);
+
+        if (BuildConfig.DEBUG)
+            Log.v(TAG, "Mime: " + mimeType + " package: " + BuildConfig.APPLICATION_ID + ".provider");
+
+        Uri uri = resolveShareableUri(mission);
+
+        Intent intent = new Intent(mContext, LocalPlayerActivity.class);
+        intent.setDataAndType(uri, mimeType);
+        intent.putExtra("segments", mission.segmentsJson);
+        intent.setFlags(FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+        mContext.startActivity(intent);
+    }
+
+    private void openExternally(Mission mission) {
         if (checkInvalidFile(mission)) return;
 
         String mimeType = resolveMimeType(mission);
@@ -351,19 +370,8 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(resolveShareableUri(mission), mimeType);
         intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            intent.addFlags(FLAG_GRANT_PREFIX_URI_PERMISSION);
-        }
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-        }
-
-        if (intent.resolveActivity(mContext.getPackageManager()) != null) {
-            ShareUtils.openIntentInApp(mContext, intent, false);
-        } else {
-            Toast.makeText(mContext, R.string.toast_no_player, Toast.LENGTH_LONG).show();
-        }
+        intent.addFlags(FLAG_GRANT_PREFIX_URI_PERMISSION);
+        ShareUtils.openIntentInApp(mContext, intent);
     }
 
     private void shareFile(Mission mission) {
@@ -381,7 +389,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
             intent.putExtra(Intent.EXTRA_TITLE, mContext.getString(R.string.share_dialog_title));
         }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
 
         mContext.startActivity(intent);
@@ -557,7 +565,6 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
 
         builder.setNegativeButton(R.string.ok, (dialog, which) -> dialog.cancel())
                 .setTitle(mission.storage.getName())
-                .create()
                 .show();
     }
 
@@ -606,12 +613,12 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
                     i.remove();
                 }
                 applyChanges();
-                mHandler.removeCallbacks(rDelete);
+                mHandler.removeCallbacksAndMessages(DELETE);
             });
             mSnackbar.setActionTextColor(Color.YELLOW);
             mSnackbar.show();
 
-            mHandler.postDelayed(rDelete, 5000);
+            HandlerCompat.postDelayed(mHandler, this::deleteFinishedDownloads, DELETE, 5000);
         } else if (!delete) {
             mDownloadManager.forgetFinishedDownloads();
             applyChanges();
@@ -682,6 +689,9 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
                 applyChanges();
                 checkMasterButtonsVisibility();
                 return true;
+            case R.id.open_externally:
+                openExternally(h.item.mission);
+                return true;
             case R.id.md5:
             case R.id.sha1:
                 final NotificationManager notificationManager
@@ -700,11 +710,11 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
                         .build());
                 final StoredFileHelper storage = h.item.mission.storage;
                 compositeDisposable.add(
-                        Observable.fromCallable(() -> Utility.checksum(storage, ALGORITHMS.get(id)))
+                        Observable.fromCallable(() -> Utility.checksum(storage, id))
                                 .subscribeOn(Schedulers.computation())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(result -> {
-                                    Utility.copyToClipboard(mContext, result);
+                                    ShareUtils.copyToClipboard(mContext, result);
                                     notificationManager.cancel(HASH_NOTIFICATION_ID);
                                 })
                 );
@@ -797,14 +807,13 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
 
     public void onResume() {
         mDeleter.resume();
-        mHandler.post(rUpdater);
+        HandlerCompat.postDelayed(mHandler, this::updater, UPDATER, 0);
     }
 
     public void onPaused() {
         mDeleter.pause();
-        mHandler.removeCallbacks(rUpdater);
+        mHandler.removeCallbacksAndMessages(UPDATER);
     }
-
 
     public void recoverMission(DownloadMission mission) {
         ViewHolderItem h = getViewHolder(mission);
@@ -828,7 +837,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             updateProgress(h);
         }
 
-        mHandler.postDelayed(rUpdater, 1000);
+        HandlerCompat.postDelayed(mHandler, this::updater, UPDATER, 1000);
     }
 
     private boolean isNotFinite(double value) {
@@ -871,7 +880,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             super(view);
 
             progress = new ProgressDrawable();
-            ViewCompat.setBackground(itemView.findViewById(R.id.item_bkg), progress);
+            itemView.findViewById(R.id.item_bkg).setBackground(progress);
 
             status = itemView.findViewById(R.id.item_status);
             name = itemView.findViewById(R.id.item_name);
@@ -899,8 +908,14 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             itemView.setHapticFeedbackEnabled(true);
 
             itemView.setOnClickListener(v -> {
-                if (item.mission instanceof FinishedMission)
-                    viewWithFileProvider(item.mission);
+                if (item.mission instanceof FinishedMission) {
+                    if (mPrefs.getBoolean(mContext
+                            .getString(R.string.enable_local_player_key), false)) {
+                        open(item.mission);
+                    } else {
+                        openExternally(item.mission);
+                    }
+                }
             });
 
             itemView.setOnLongClickListener(v -> {

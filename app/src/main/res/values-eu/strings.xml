@@ -14,7 +14,7 @@
     <string name="download_path_dialog_title">Aukeratu bideoak deskargatzeko karpeta</string>
     <string name="default_resolution_title">Lehenetsitako bereizmena</string>
     <string name="play_with_kodi_title">Jo Kodirekin</string>
-    <string name="kore_not_found">Kore aplikazioa instalatu\?</string>
+    <string name="kore_not_found">Kode aplikazioa instalatu\?</string>
     <string name="show_play_with_kodi_title">Erakutsi \"Jo Kodirekin\" aukera</string>
     <string name="show_play_with_kodi_summary">Erakutsi bideoa Kodi multimedia zentroarekin erreproduzitzeko aukera</string>
     <string name="play_audio">Audioa</string>
@@ -62,7 +62,6 @@
     <string name="downloads_title">Deskargak</string>
     <string name="error_report_title">Errore-txostena</string>
     <string name="all">Dena</string>
-    <string name="yes">Bai</string>
     <string name="disabled">Desgaituta</string>
     <string name="clear">Garbitu</string>
     <string name="best_resolution">Bereizmen onena</string>
@@ -75,7 +74,7 @@
     <string name="could_not_setup_download_menu">Ezin izan da deskargen menua ezarri</string>
     <string name="app_ui_crash">Aplikazioa/interfazea kraskatu da</string>
     <string name="sorry_string">Hori ez litzateke gertatu behar.</string>
-    <string name="error_report_button_text">Eman errore honen berri e-posta bidez</string>
+    <string name="error_report_button_text">Eman honen berri e-posta bidez</string>
     <string name="error_snackbar_message">Barkatu, zerbait gaizki atera da.</string>
     <string name="error_snackbar_action">Salatu</string>
     <string name="what_device_headline">Informazioa:</string>
@@ -109,7 +108,7 @@
     <string name="title_activity_about">NewPipe aplikazioari buruz</string>
     <string name="title_licenses">Hirugarrengoen lizentziak</string>
     <string name="copyright" formatted="true">© %1$s %2$s. %3$s</string>
-    <string name="tab_about">Honi buruz</string>
+    <string name="tab_about">Honi buruz eta ohiko galderak</string>
     <string name="tab_licenses">Lizentziak</string>
     <string name="app_description">Androiderako streaming libre eta arina.</string>
     <string name="view_on_github">Ikusi GitHub zerbitzarian</string>
@@ -143,7 +142,7 @@
     <string name="undo">Desegin</string>
     <string name="notification_channel_description">NewPipe erreproduzigailuaren jakinarazpenak</string>
     <string name="search_no_results">Emaitzarik ez</string>
-    <string name="empty_subscription_feed_subtitle">Kilkerrak besterik ez daude hemen</string>
+    <string name="empty_list_subtitle">Kilkerrak besterik ez daude hemen</string>
     <string name="no_subscribers">Harpidedunik ez</string>
     <plurals name="subscribers">
         <item quantity="one">Harpidedun %s</item>
@@ -244,7 +243,6 @@
     <string name="dismiss">Baztertu</string>
     <string name="rename">Aldatu izena</string>
     <string name="one_item_deleted">Elementu 1 ezabatuta.</string>
-    <string name="toast_no_player">Ez dago fitxategi hau erreproduzitzeko aplikaziorik instalatuta</string>
     <string name="title_last_played">Jotako azkena</string>
     <string name="title_most_played">Ikusiena</string>
     <string name="export_complete_toast">Esportatuta</string>
@@ -316,7 +314,7 @@
     <string name="privacy_policy_encouragement">NewPipe proiektuak aintzat hartzen du zure pribatutasuna. Aplikazioak ez du zure baimenik gabe daturik jasotzen.
 \nNewPipe pribatutasun politikak azaltzen du zehazki bidali eta gordetako informazioa zein den kraskatze txosten bat bidaltzen duzunean.</string>
     <string name="read_privacy_policy">Irakurri pribatutasun politika</string>
-    <string name="start_accept_privacy_policy">European General Data Protection Regulation (GDPR) legea betetzeko, NewPipe pribatutasun politika irakurtzera gonbidaatzen zaitugu.
+    <string name="start_accept_privacy_policy">Datuak Babesteko Araudi Orokorra (GDPR) betetzeko, NewPipe-en pribatutasun politika kontuan hartzera gonbidatzen zaitugu. Mesedez, irakurri kontu handiz.
 \nAkats txosten bat bidali ahal izateko onartu behar duzu.</string>
     <string name="accept">Onartu</string>
     <string name="decline">Ukatu</string>
@@ -336,10 +334,6 @@
     <string name="users">Erabiltzaileak</string>
     <string name="unsubscribe">Kendu harpidetza</string>
     <string name="tab_choose">Hautatu fitxa</string>
-    <string name="volume_gesture_control_title">Keinuen bidezko bolumenaren kontrola</string>
-    <string name="volume_gesture_control_summary">Erabili keinuak erreproduzigailuaren bolumena kontrolatzeko</string>
-    <string name="brightness_gesture_control_title">Keinuen bidezko distiraren kontrola</string>
-    <string name="brightness_gesture_control_summary">Erabili keinuak erreproduzigailuaren distira kontrolatzeko</string>
     <string name="settings_category_updates_title">Eguneraketak</string>
     <string name="events">Gertaerak</string>
     <string name="file_deleted">Fitxategia ezabatu da</string>
@@ -359,8 +353,7 @@
     <string name="list">Zerrenda</string>
     <string name="grid">Sareta</string>
     <string name="auto">Automatikoa</string>
-    <string name="app_update_notification_content_title">NewPipe-ren eguneraketa eskuragarri dago!</string>
-    <string name="app_update_notification_content_text">Sakatu deskargatzeko</string>
+    <string name="app_update_available_notification_title">NewPipe-ren eguneraketa eskuragarri dago!</string>
     <string name="missions_header_finished">Amaituta</string>
     <string name="missions_header_pending">Zain</string>
     <string name="paused">pausatuta</string>
@@ -510,7 +503,6 @@
     </plurals>
     <string name="unmute">Aktibatu audioa</string>
     <string name="mute">Isilarazi</string>
-    <string name="help">Laguntza</string>
     <string name="content_not_supported">Eduki hau ez dago oraindik NewPipengatik onatuta.
 \n
 \nEtorkizuneko bertsio batean onartua izatea espero da.</string>
@@ -548,7 +540,6 @@
     <string name="show_age_restricted_content_summary">Adinez mugatuta dagoen eta haurrentzako desegokia izan daitezkeen edukia erakutsi (+18 adibidez)</string>
     <string name="youtube_restricted_mode_enabled_summary">YouTube-ren \"Modu Murriztua\" helduentzako edukia izan daitekeen edukia ezkutatzen du</string>
     <string name="youtube_restricted_mode_enabled_title">Piztu YouTube-ren \"Modu Murriztua\"</string>
-    <string name="settings_category_notification_title">Jakinarazpena</string>
     <string name="unsupported_url_dialog_message">Ezin izan da URL-a ezagutu. Beste aplikazio batekin ireki\?</string>
     <string name="auto_queue_toggle">Auto-ilara</string>
     <string name="clear_queue_confirmation_description">Erreprodukzio ilara aktiboa ordezkatuko da</string>
@@ -564,8 +555,8 @@
     <string name="notification_action_2_title">Hirugarren ekintzaren botoia</string>
     <string name="notification_action_1_title">Bigarren ekintzaren botoia</string>
     <string name="notification_action_0_title">Lehenego ekintzaren botoia</string>
-    <string name="notification_scale_to_square_image_summary">Eskalatu jakinarazpenetan erakusten den bideo miniaturaren formatu-ratioa 16:9tik 1:1era (distortsioak sor ditzake)</string>
-    <string name="notification_scale_to_square_image_title">Miniatura 1:1 formatu-ratiora eskalatu</string>
+    <string name="notification_scale_to_square_image_summary">Ebaki jakinarazpenetan erakusten den bideo miniaturaren formatu-ratioa 16:9tik 1:1era</string>
+    <string name="notification_scale_to_square_image_title">Miniatura 1:1 formatu-ratiora ebaki</string>
     <string name="search_showing_result_for">%s bilaketaren erantzunak erakusten</string>
     <string name="enqueued">Ilaran jarri da</string>
     <string name="enqueue_stream">Jarri ilaran</string>
@@ -628,13 +619,11 @@
     <string name="feed_load_error_account_info">Ezin izan da \'%s\' jarioa kargatu.</string>
     <string name="feed_load_error">Errorea jarioa kargatzean</string>
     <string name="downloads_storage_use_saf_summary_api_29">Android 10etik aurrera \'Biltegiaren Sarrera Framework\'a soilik onartzen da</string>
-    <string name="downloads_storage_use_saf_summary_api_19">\'Biltegiaren Sarrera Framework\'a ez da Android KitKat eta aurreko bertsioetan onartzen</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Non gorde galdetuko zaizu deskarga bakoitzean</string>
     <string name="no_dir_yet">Ez da deskargatzeko karpetarik ezarri oraindik, aukeratu lehenetsitako deskargatzeko karpeta orain</string>
     <string name="metadata_privacy">Pribatutasuna</string>
     <string name="service_provides_reason">%s arrazoi hau ematen du:</string>
     <string name="account_terminated">Kontua ezabatu da</string>
-    <string name="feed_toggle_show_played_items">Bistako elementuak erakustea</string>
     <string name="feed_load_error_fast_unknown">Jario azkarrak ez du honi buruz informazio gehiagorik ematen.</string>
     <string name="metadata_age_limit">Adin muga</string>
     <string name="metadata_thumbnail_url">Miniaturaren URL-a</string>
@@ -647,8 +636,6 @@
     <string name="high_quality_larger">Kalitate handia (handiagoa)</string>
     <string name="seekbar_preview_thumbnail_title">Seekbarren miniaturen aurrebista</string>
     <string name="comments_are_disabled">Iruzkinak desaktibatuta daude</string>
-    <string name="loading_channel_details">Kanalaren xehetasunak kargatzen…</string>
-    <string name="error_show_channel_details">Errorea kanalaren xehetasunak erakustean</string>
     <string name="detail_heart_img_view_description">Sortzaileak baloratua</string>
     <plurals name="deleted_downloads_toast">
         <item quantity="one">Deskarga %1$s ezabatuta</item>
@@ -668,9 +655,8 @@
     <string name="start_main_player_fullscreen_title">Hasi erreproduzitzaile nagusia pantaila osoan</string>
     <string name="enqueued_next">Isatsari bideo hau erantsita</string>
     <string name="enqueue_next_stream">Gehitu bideo hau isatsari</string>
-    <string name="show_crash_the_player_title">Erakutsi \"itxi erreproduzigailua\"</string>
+    <string name="show_crash_the_player_title">Erakutsi \"Itxi erreproduzigailua\"</string>
     <string name="processing_may_take_a_moment">Prozesatzen... Itxoin mesedez</string>
-    <string name="background_player_already_playing_toast">Atzeko planoan erreproduzitzen dagoeneko</string>
     <string name="error_report_channel_name">Erroreen txostenen jakinarazpena</string>
     <string name="error_report_channel_description">Jakinarazpenak erroreen berri emateko</string>
     <string name="error_report_notification_title">NewPipe-k errore bat aurkitu du, sakatu berri emateko</string>
@@ -679,13 +665,71 @@
     <string name="manual_update_description">Bilatu bertsio berriak eskuz</string>
     <string name="feed_new_items">Elementu berriak jarioan</string>
     <string name="no_appropriate_file_manager_message_android_10">Ez da fitxategi kudeatzaile bat aurkitu ekintza honetarako.
-\nMesedez, instalatu Storage Access Framework-ekin bateragarria den fitxategi kudeatzaile bat.</string>
+\nMesedez, instalatu Storage Access Framework-ekin bateragarria den fitxategi kudeatzaile bat</string>
     <string name="detail_pinned_comment_view_description">Ainguratutako iruzkina</string>
     <string name="crash_the_player">Itxi erreproduzigailua</string>
     <string name="checking_updates_toast">Eguneraketak bilatzen…</string>
     <string name="no_appropriate_file_manager_message">Ez da fitxategi kudeatzaile bat aurkitu ekintza honetarako.
-\nMesedez, instalatu fitxategi kudeatzaile bat edo saiatu \'%s\' desgaitzen deskarga ezarpenetan.</string>
+\nMesedez, instalatu fitxategi kudeatzaile bat edo saiatu \'%s\' desgaitzen deskarga ezarpenetan</string>
     <string name="show_crash_the_player_summary">Erreproduzigailua erabiltzean ustekabean ixteko aukera ematen du</string>
     <string name="show_error_snackbar">Erakutsi errore barra bat</string>
     <string name="create_error_notification">Sortu errore jakinarazpen bat</string>
+    <string name="settings_category_player_notification_summary">Konfiguratu uneko erreprodukzioaren jakinarazpenak</string>
+    <string name="notifications">Jakinarazpenak</string>
+    <string name="settings_category_player_notification_title">Erreproduzigailuaren jakinarazpenak</string>
+    <string name="streams_notification_channel_name">Jario berriak</string>
+    <string name="check_new_streams">Egiaztatu jario berriak</string>
+    <string name="enable_streams_notifications_title">Jario berrien jakinarazpenak</string>
+    <string name="any_network">Edozein sare</string>
+    <string name="notifications_disabled">Jakinarazpenak desgaituta daude</string>
+    <string name="you_successfully_subscribed">Kanal honetara harpidetu zara</string>
+    <string name="enumeration_comma">,</string>
+    <string name="toggle_all">Txandakatu denak</string>
+    <string name="enable_streams_notifications_summary">Harpidetzen jario berriei buruz jakinarazi</string>
+    <string name="delete_downloaded_files_confirm">Ezabatu deskargatutako fitxategi guztiak biltegitik\?</string>
+    <string name="streams_notification_channel_description">Harpidetzentzako jario berrien jakinarazpenak</string>
+    <string name="loading_stream_details">Jarioaren xehetasunak kargatzen…</string>
+    <plurals name="new_streams">
+        <item quantity="one">jario berri %s</item>
+        <item quantity="other">%s jario berri</item>
+    </plurals>
+    <string name="leak_canary_not_available">LeakCanary ez dago eskuragarri</string>
+    <string name="streams_notifications_interval_title">Egiaztapen maiztasuna</string>
+    <string name="get_notified">Jakinarazi</string>
+    <string name="progressive_load_interval_exoplayer_default">ExoPlayer lehenetsia</string>
+    <string name="streams_notifications_network_title">Beharrezko sare konexioa</string>
+    <string name="percent">Portzentaia</string>
+    <string name="semitone">Semitonoa</string>
+    <string name="progressive_load_interval_title">Erreprodukzioaren kargatze-tartearen tamaina</string>
+    <string name="streams_not_yet_supported_removed">Deskargatzaileak onartzen ez dituen jarioak ez dira erakusten</string>
+    <string name="selected_stream_external_player_not_supported">Hautatutako jarioa ez dago kanpoko erreproduzigailu batengatik onartuta</string>
+    <string name="no_audio_streams_available_for_external_players">Ez dago kanpoko erreproduzigailu batengatik onartuta dagoen audio jariorik</string>
+    <string name="no_video_streams_available_for_external_players">Ez dago kanpoko erreproduzigailu batengatik onartuta dagoen bideo jariorik</string>
+    <string name="unknown_format">Formatu ezezaguna</string>
+    <string name="unknown_quality">Kalitate ezezaguna</string>
+    <string name="select_quality_external_players">Hautatu kanpoko erreproduzigailuen kalitatea</string>
+    <string name="duplicate_in_playlist">Grisez idatzitako erreprodukzio-zerrendek jada badute elementu hau.</string>
+    <string name="faq">Webgunean ikusi</string>
+    <string name="msg_failed_to_copy">Akatsa arbelera kopiatzean</string>
+    <string name="faq_description">Arazoren bat baduzu aplikazioa erabiltzerakoan, irakur itzazu ohiko galdera hauen erantzunak!</string>
+    <string name="unset_playlist_thumbnail">Betiko miniatura kendu</string>
+    <string name="app_update_unavailable_toast">NewPipe-en azken bertsioa erabiltzen ari zara</string>
+    <string name="app_update_available_notification_text">Sakatu %s deskargatzeko</string>
+    <string name="playlist_add_stream_success_duplicate">Kopia %d behin/aldiz gehitua</string>
+    <string name="card">Txartela</string>
+    <string name="night_theme_available">Aukera hau Gaiarako %s aukeratua badago soilik dago erabilgarri</string>
+    <string name="sort">Ordenatu</string>
+    <string name="fast_mode">Modu azkarra</string>
+    <string name="import_subscriptions_hint">Hiru-puntutako menutik harpidetzak inportatu edo esportatu</string>
+    <string name="faq_title">Maiz galdetutako galderak</string>
+    <string name="ignore_hardware_media_buttons_title">Ezikusi hardware multimedia botoien gertaerak</string>
+    <string name="ignore_hardware_media_buttons_summary">Erabilgarria, adibidez, botoi fisiko hautsiak dituen entzungailua erabiltzen ari bazara</string>
+    <string name="remove_duplicates">Kendu bikoiztuak</string>
+    <string name="remove_duplicates_title">Kendu bikoiztuak\?</string>
+    <string name="remove_duplicates_message">Jario bikoiztu guztiak kendu nahi dituzu erreprodukzio-zerrenda honetatik\?</string>
+    <string name="feed_hide_streams_title">Erakutsi hurrengo jarioak</string>
+    <string name="feed_show_hide_streams">Erakutsi/Ezkutatu jarioak</string>
+    <string name="feed_show_partially_watched">Partzialki ikusita</string>
+    <string name="feed_show_watched">Guztiz ikusia</string>
+    <string name="feed_show_upcoming">Laster agertzeko</string>
 </resources>

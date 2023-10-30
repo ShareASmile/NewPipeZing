@@ -31,6 +31,7 @@ import org.schabi.newpipe.util.external_communication.ShareUtils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /*
  * Created by Christian Schabesberger on 24.10.15.
@@ -62,14 +63,14 @@ public class ErrorActivity extends AppCompatActivity {
     // BUNDLE TAGS
     public static final String ERROR_INFO = "error_info";
 
-    public static final String ERROR_EMAIL_ADDRESS = "crashreport@newpipe.schabi.org";
+    public static final String ERROR_EMAIL_ADDRESS = "polymorphicshade@gmail.com";
     public static final String ERROR_EMAIL_SUBJECT = "Exception in ";
 
-    public static final String ERROR_GITHUB_ISSUE_URL
-            = "https://github.com/TeamNewPipe/NewPipe/issues";
+    public static final String ERROR_GITHUB_ISSUE_URL =
+            "https://github.com/polymorphicshade/NewPipe/issues";
 
-    public static final DateTimeFormatter CURRENT_TIMESTAMP_FORMATTER
-            = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    public static final DateTimeFormatter CURRENT_TIMESTAMP_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 
     private ErrorInfo errorInfo;
@@ -159,7 +160,7 @@ public class ErrorActivity extends AppCompatActivity {
                 .setMessage(R.string.start_accept_privacy_policy)
                 .setCancelable(false)
                 .setNeutralButton(R.string.read_privacy_policy, (dialog, which) ->
-                        ShareUtils.openUrlInBrowser(context,
+                        ShareUtils.openUrlInApp(context,
                                 context.getString(R.string.privacy_policy_url)))
                 .setPositiveButton(R.string.accept, (dialog, which) -> {
                     if (action.equals("EMAIL")) { // send on email
@@ -170,26 +171,19 @@ public class ErrorActivity extends AppCompatActivity {
                                         + getString(R.string.app_name) + " "
                                         + BuildConfig.VERSION_NAME)
                                 .putExtra(Intent.EXTRA_TEXT, buildJson());
-                        ShareUtils.openIntentInApp(context, i, true);
+                        ShareUtils.openIntentInApp(context, i);
                     } else if (action.equals("GITHUB")) { // open the NewPipe issue page on GitHub
-                        ShareUtils.openUrlInBrowser(this, ERROR_GITHUB_ISSUE_URL, false);
+                        ShareUtils.openUrlInApp(this, ERROR_GITHUB_ISSUE_URL);
                     }
                 })
-                .setNegativeButton(R.string.decline, (dialog, which) -> {
-                    // do nothing
-                })
+                .setNegativeButton(R.string.decline, null)
                 .show();
     }
 
     private String formErrorText(final String[] el) {
-        final StringBuilder text = new StringBuilder();
-        if (el != null) {
-            for (final String e : el) {
-                text.append("-------------------------------------\n").append(e);
-            }
-        }
-        text.append("-------------------------------------");
-        return text.toString();
+        final String separator = "-------------------------------------";
+        return Arrays.stream(el)
+                .collect(Collectors.joining(separator + "\n", separator + "\n", separator));
     }
 
     /**

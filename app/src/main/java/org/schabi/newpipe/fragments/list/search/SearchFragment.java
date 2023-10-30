@@ -33,6 +33,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.TooltipCompat;
+import androidx.collection.SparseArrayCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -70,9 +71,7 @@ import org.schabi.newpipe.util.ServiceHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -141,7 +140,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     @State
     boolean wasSearchFocused = false;
 
-    @Nullable private Map<Integer, String> menuItemToFilterName = null;
+    private final SparseArrayCompat<String> menuItemToFilterName = new SparseArrayCompat<>();
     private StreamingService service;
     private Page nextPage;
     private boolean showLocalSuggestions = true;
@@ -200,7 +199,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         showLocalSuggestions = NewPipeSettings.showLocalSearchSuggestions(activity, prefs);
         showRemoteSuggestions = NewPipeSettings.showRemoteSearchSuggestions(activity, prefs);
 
-        suggestionListAdapter = new SuggestionListAdapter(activity);
+        suggestionListAdapter = new SuggestionListAdapter();
         historyRecordManager = new HistoryRecordManager(context);
     }
 
@@ -340,6 +339,8 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         super.initViews(rootView, savedInstanceState);
 
         searchBinding.suggestionsList.setAdapter(suggestionListAdapter);
+        // animations are just strange and useless, since the suggestions keep changing too much
+        searchBinding.suggestionsList.setItemAnimator(null);
         new ItemTouchHelper(new ItemTouchHelper.Callback() {
             @Override
             public int getMovementFlags(@NonNull final RecyclerView recyclerView,
@@ -424,8 +425,6 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        menuItemToFilterName = new HashMap<>();
-
         int itemId = 0;
         boolean isFirstItem = true;
         final Context c = getContext();
@@ -466,11 +465,8 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
-        if (menuItemToFilterName != null) {
-            final List<String> cf = new ArrayList<>(1);
-            cf.add(menuItemToFilterName.get(item.getItemId()));
-            changeContentFilter(item, cf);
-        }
+        final var filter = Collections.singletonList(menuItemToFilterName.get(item.getItemId()));
+        changeContentFilter(item, filter);
         return true;
     }
 
@@ -497,9 +493,6 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                     + lastSearchedString);
         }
         searchEditText.setText(searchString);
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-            searchEditText.setHintTextColor(searchEditText.getTextColors().withAlpha(128));
-        }
 
         if (TextUtils.isEmpty(searchString) || TextUtils.isEmpty(searchEditText.getText())) {
             searchToolbarContainer.setTranslationX(100);
@@ -533,7 +526,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
             searchBinding.correctSuggestion.setVisibility(View.GONE);
 
             searchEditText.setText("");
-            suggestionListAdapter.setItems(new ArrayList<>());
+            suggestionListAdapter.submitList(null);
             showKeyboardSearch();
         });
 
@@ -922,7 +915,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         filterItemCheckedId = item.getItemId();
         item.setChecked(true);
 
-        contentFilter = new String[]{theContentFilter.get(0)};
+        contentFilter = theContentFilter.toArray(new String[0]);
 
         if (!TextUtils.isEmpty(searchString)) {
             search(searchString, contentFilter, sortFilter);
@@ -947,8 +940,8 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         if (DEBUG) {
             Log.d(TAG, "handleSuggestions() called with: suggestions = [" + suggestions + "]");
         }
-        searchBinding.suggestionsList.smoothScrollToPosition(0);
-        searchBinding.suggestionsList.post(() -> suggestionListAdapter.setItems(suggestions));
+        suggestionListAdapter.submitList(suggestions,
+                () -> searchBinding.suggestionsList.scrollToPosition(0));
 
         if (suggestionsPanelVisible && isErrorPanelVisible()) {
             hideLoading();
@@ -983,8 +976,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         isCorrectedSearch = result.isCorrectedSearch();
 
         // List<MetaInfo> cannot be bundled without creating some containers
-        metaInfo = new MetaInfo[result.getMetaInfo().size()];
-        metaInfo = result.getMetaInfo().toArray(metaInfo);
+        metaInfo = result.getMetaInfo().toArray(new MetaInfo[0]);
         showMetaInfoInTextView(result.getMetaInfo(), searchBinding.searchMetaInfoTextView,
                 searchBinding.searchMetaInfoSeparator, disposables);
 
@@ -1070,14 +1062,14 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
             return 0;
         }
 
-        final SuggestionItem item = suggestionListAdapter.getItem(position);
+        final SuggestionItem item = suggestionListAdapter.getCurrentList().get(position);
         return item.fromHistory ? makeMovementFlags(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) : 0;
     }
 
     public void onSuggestionItemSwiped(@NonNull final RecyclerView.ViewHolder viewHolder) {
         final int position = viewHolder.getBindingAdapterPosition();
-        final String query = suggestionListAdapter.getItem(position).query;
+        final String query = suggestionListAdapter.getCurrentList().get(position).query;
         final Disposable onDelete = historyRecordManager.deleteSearchHistory(query)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

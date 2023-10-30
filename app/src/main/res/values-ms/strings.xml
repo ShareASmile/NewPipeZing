@@ -43,7 +43,7 @@
     <string name="show_higher_resolutions_title">Papar resolusi yang lebih tinggi</string>
     <string name="show_higher_resolutions_summary">Hanya peranti tertentu yang boleh bermain video 2K/4K</string>
     <string name="play_with_kodi_title">Main dengan Kodi</string>
-    <string name="kore_not_found">Pasangkan aplikasi Kore yang tidak dijumpai\?</string>
+    <string name="kore_not_found">Pasangkan aplikasi Kode yang tidak dijumpai\?</string>
     <string name="show_play_with_kodi_title">Paparkan opsyen \"Main dengan Kodi\"</string>
     <string name="show_play_with_kodi_summary">Paparkan opsyen untuk memain video dengan Kodi</string>
     <string name="play_audio">Audio</string>
@@ -65,10 +65,6 @@
     <string name="metadata_cache_wipe_complete_notice">Cache metadata dihapuskan</string>
     <string name="auto_queue_title">Automatik beratur strim seterusnya</string>
     <string name="auto_queue_summary">Tambahkan secara automatik strim berkaitan apabila memain strim terakhir dalam giliran tidak berulang.</string>
-    <string name="volume_gesture_control_title">Kontrol gestur volume</string>
-    <string name="volume_gesture_control_summary">Gunakan gestur untuk melaraskan volume pemain</string>
-    <string name="brightness_gesture_control_title">Kontrol gestur kecerahan</string>
-    <string name="brightness_gesture_control_summary">Gunakan gestur untuk melaraskan kecerahan pemain</string>
     <string name="show_search_suggestions_title">Cadangan carian</string>
     <string name="show_search_suggestions_summary">Tunjukkan cadangan semasa mencari</string>
     <string name="enable_search_history_title">Sejarah carian</string>
@@ -105,7 +101,6 @@
     <string name="tracks">Trek</string>
     <string name="users">Pengguna</string>
     <string name="events">Peristiwa</string>
-    <string name="yes">Ya</string>
     <string name="disabled">Dinyahdayakan</string>
     <string name="clear">Bersihkan</string>
     <string name="best_resolution">Resolusi terbaik</string>
@@ -174,7 +169,7 @@
     <string name="detail_likes_img_view_description">Suka</string>
     <string name="detail_dislikes_img_view_description">Tidak suka</string>
     <string name="search_no_results">Tiada keputusan</string>
-    <string name="empty_subscription_feed_subtitle">Tiada apa-apa di sini tetapi jangkrik</string>
+    <string name="empty_list_subtitle">Tiada apa-apa di sini tetapi jangkrik</string>
     <string name="detail_drag_description">Seret untuk menyusun semula</string>
     <string name="video">Video</string>
     <string name="audio">Audio</string>
@@ -219,7 +214,6 @@
     <string name="settings_file_replacement_character_title">Karakter pengganti</string>
     <string name="charset_letters_and_digits">Huruf dan angka</string>
     <string name="charset_most_special_characters">Karakter yang paling istimewa</string>
-    <string name="toast_no_player">Tiada app dipasang untuk memainkan fail ini</string>
     <string name="title_activity_about">Tentang NewPipe</string>
     <string name="title_licenses">Lesen Pihak Ketiga</string>
     <string name="copyright" formatted="true">© %1$s oleh %2$s di bawah %3$s</string>
@@ -349,8 +343,7 @@
     <string name="list">Senarai</string>
     <string name="grid">Grid</string>
     <string name="auto">Auto</string>
-    <string name="app_update_notification_content_title">Kemas kini NewPipe Tersedia!</string>
-    <string name="app_update_notification_content_text">Ketik untuk muat turun</string>
+    <string name="app_update_available_notification_title">Kemas kini NewPipe Tersedia!</string>
     <string name="missions_header_finished">Selesai</string>
     <string name="paused">dijeda</string>
     <string name="queued">telah beratur</string>
@@ -382,8 +375,6 @@
     <plurals name="days">
         <item quantity="other">%d hari</item>
     </plurals>
-    <string name="help">Bantuan</string>
-    <string name="settings_category_notification_title">Pemberitahuan</string>
     <string name="open_with">Buka dengan</string>
     <plurals name="listening">
         <item quantity="other">%s pendengar</item>

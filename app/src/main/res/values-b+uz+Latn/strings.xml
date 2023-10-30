@@ -17,10 +17,6 @@
     <string name="no_player_found">Hech qanday translatsiya pleyeri topilmadi. VLC o\'rnatilsinmi\?</string>
     <string name="upload_date_text">%1$s tomonidan e‘lon qilingan</string>
     <string name="main_bg_subtitle">Boshlash uchun \"Izlash\" tugmasini bosing</string>
-    <string name="volume_gesture_control_summary">Player tovushini boshqarish uchun imo-ishoralardan foydalanish</string>
-    <string name="brightness_gesture_control_summary">Player yorqinligini boshqarish uchun imo-ishoralardan foydalaning</string>
-    <string name="brightness_gesture_control_title">Yorqinlik ishoralarini boshqarish</string>
-    <string name="volume_gesture_control_title">Ovoz balandligini ishoralarni boshqarish</string>
     <string name="auto_queue_toggle">Avto-navbat</string>
     <string name="auto_queue_summary">Tegishli stream qo\'shib, ijro etish navbatini tugatishni (takrorlanmaydigan) davom ettirish</string>
     <string name="auto_queue_title">avtomatik navbat next stream</string>
@@ -112,7 +108,6 @@
     <string name="best_resolution">Eng yaxshi qaror</string>
     <string name="clear">Tozalash</string>
     <string name="disabled">Ijrochilar o\'chirib qo\'yilgan</string>
-    <string name="yes">Ha</string>
     <string name="artists">Artistlar</string>
     <string name="albums">Albomlar</string>
     <string name="songs">Qo\'shiqlar</string>
@@ -137,7 +132,6 @@
     <string name="content">Tarkib</string>
     <string name="popup_playing_toast">Pop-up rejimda ijro etish</string>
     <string name="background_player_playing_toast">Ijro etish foni</string>
-    <string name="settings_category_notification_title">Bildirishnoma</string>
     <string name="settings_category_updates_title">Yangilanishlar</string>
     <string name="settings_category_debug_title">Nosozliklarni tuzatish</string>
     <string name="settings_category_appearance_title">Tashqi ko\'rinish</string>
@@ -216,7 +210,6 @@
     <string name="copyright">© %1$s tomonidan %2$s gacha %3$s</string>
     <string name="title_licenses">Uchinchi tomon litsenziyalari</string>
     <string name="title_activity_about">NewPipe haqida</string>
-    <string name="toast_no_player">Ushbu faylni ijro etish uchun dastur o\'rnatilmagan</string>
     <string name="charset_most_special_characters">Ko\'pchilik maxsus belgilar</string>
     <string name="charset_letters_and_digits">Yozuvlar va raqamlar</string>
     <string name="settings_file_replacement_character_title">O\'zgartirish belgisi</string>
@@ -283,7 +276,7 @@
     <string name="audio">Audio</string>
     <string name="video">Video</string>
     <string name="detail_drag_description">Qayta tartiblash uchun tortish</string>
-    <string name="empty_subscription_feed_subtitle">Bu erda kriketlardan boshqa hech narsa yo\'q</string>
+    <string name="empty_list_subtitle">Bu erda kriketlardan boshqa hech narsa yo\'q</string>
     <string name="search_no_results">Natija yo\'q</string>
     <string name="detail_dislikes_img_view_description">Dislayklar</string>
     <string name="detail_likes_img_view_description">Layklar</string>
@@ -327,7 +320,6 @@
     <string name="download_to_sdcard_error_message">Tashqi SD-kartaga yuklab olishning iloji yo\'q. Yuklash papkasining joylashuvi tiklansinmi\?</string>
     <string name="download_to_sdcard_error_title">Tashqi xotira mavjud emas</string>
     <string name="general_error">Xato</string>
-    <string name="help">Yordam</string>
     <string name="search_history_deleted">Qidiruv tarixi o\'chirildi.</string>
     <string name="delete_search_history_alert">Butun qidiruv tarixi o\'chirilsinmi\?</string>
     <string name="clear_search_history_summary">Qidiruv kalit so\'zlar tarixini o\'chiradi</string>
@@ -455,8 +447,7 @@
     <string name="paused">to\'xtatildi</string>
     <string name="missions_header_pending">Kutilmoqda</string>
     <string name="missions_header_finished">Tugatildi</string>
-    <string name="app_update_notification_content_text">Yuklash uchun bosing</string>
-    <string name="app_update_notification_content_title">NewPipe yangilanishi mavjud!</string>
+    <string name="app_update_available_notification_title">NewPipe yangilanishi mavjud!</string>
     <string name="auto">Avto</string>
     <string name="grid">Tarmoq</string>
     <string name="list">Ro\'yxat</string>

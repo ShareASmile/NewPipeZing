@@ -1,13 +1,14 @@
 package us.shandian.giga.service;
 
+import static org.schabi.newpipe.BuildConfig.APPLICATION_ID;
+import static org.schabi.newpipe.BuildConfig.DEBUG;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Bitmap;
@@ -18,44 +19,45 @@ import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.net.Uri;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Parcelable;
 import android.util.Log;
-import android.util.SparseArray;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.collection.SparseArrayCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Builder;
+import androidx.core.app.PendingIntentCompat;
 import androidx.core.app.ServiceCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
+import com.grack.nanojson.JsonStringWriter;
+import com.grack.nanojson.JsonWriter;
+
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.download.DownloadActivity;
 import org.schabi.newpipe.player.helper.LockManager;
+import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
+import org.schabi.newpipe.streams.io.StoredFileHelper;
+import org.schabi.newpipe.util.Localization;
+import org.schabi.newpipe.util.VideoSegment;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import us.shandian.giga.get.DownloadMission;
 import us.shandian.giga.get.MissionRecoveryInfo;
-import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
-import org.schabi.newpipe.streams.io.StoredFileHelper;
-import org.schabi.newpipe.util.Localization;
-
 import us.shandian.giga.postprocessing.Postprocessing;
 import us.shandian.giga.service.DownloadManager.NetworkState;
-
-import static org.schabi.newpipe.BuildConfig.APPLICATION_ID;
-import static org.schabi.newpipe.BuildConfig.DEBUG;
 
 public class DownloadManagerService extends Service {
 
@@ -81,6 +83,7 @@ public class DownloadManagerService extends Service {
     private static final String EXTRA_PARENT_PATH = "DownloadManagerService.extra.storageParentPath";
     private static final String EXTRA_STORAGE_TAG = "DownloadManagerService.extra.storageTag";
     private static final String EXTRA_RECOVERY_INFO = "DownloadManagerService.extra.recoveryInfo";
+    private static final String EXTRA_SEGMENTS = "DownloadManagerService.extra.segments";
 
     private static final String ACTION_RESET_DOWNLOAD_FINISHED = APPLICATION_ID + ".reset_download_finished";
     private static final String ACTION_OPEN_DOWNLOADS_FINISHED = APPLICATION_ID + ".open_downloads_finished";
@@ -97,10 +100,9 @@ public class DownloadManagerService extends Service {
     private Builder downloadDoneNotification = null;
     private StringBuilder downloadDoneList = null;
 
-    private final ArrayList<Callback> mEchoObservers = new ArrayList<>(1);
+    private final List<Callback> mEchoObservers = new ArrayList<>(1);
 
     private ConnectivityManager mConnectivityManager;
-    private BroadcastReceiver mNetworkStateListener = null;
     private ConnectivityManager.NetworkCallback mNetworkStateListenerL = null;
 
     private SharedPreferences mPrefs = null;
@@ -111,7 +113,8 @@ public class DownloadManagerService extends Service {
 
     private int downloadFailedNotificationID = DOWNLOADS_NOTIFICATION_ID + 1;
     private Builder downloadFailedNotification = null;
-    private final SparseArray<DownloadMission> mFailedDownloads = new SparseArray<>(5);
+    private final SparseArrayCompat<DownloadMission> mFailedDownloads =
+            new SparseArrayCompat<>(5);
 
     private Bitmap icLauncher;
     private Bitmap icDownloadDone;
@@ -146,9 +149,9 @@ public class DownloadManagerService extends Service {
         Intent openDownloadListIntent = new Intent(this, DownloadActivity.class)
                 .setAction(Intent.ACTION_MAIN);
 
-        mOpenDownloadList = PendingIntent.getActivity(this, 0,
+        mOpenDownloadList = PendingIntentCompat.getActivity(this, 0,
                 openDownloadListIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_UPDATE_CURRENT, false);
 
         icLauncher = BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher);
 
@@ -166,28 +169,18 @@ public class DownloadManagerService extends Service {
         mConnectivityManager = ContextCompat.getSystemService(this,
                 ConnectivityManager.class);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mNetworkStateListenerL = new ConnectivityManager.NetworkCallback() {
-                @Override
-                public void onAvailable(Network network) {
-                    handleConnectivityState(false);
-                }
+        mNetworkStateListenerL = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(Network network) {
+                handleConnectivityState(false);
+            }
 
-                @Override
-                public void onLost(Network network) {
-                    handleConnectivityState(false);
-                }
-            };
-            mConnectivityManager.registerNetworkCallback(new NetworkRequest.Builder().build(), mNetworkStateListenerL);
-        } else {
-            mNetworkStateListener = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    handleConnectivityState(false);
-                }
-            };
-            registerReceiver(mNetworkStateListener, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        }
+            @Override
+            public void onLost(Network network) {
+                handleConnectivityState(false);
+            }
+        };
+        mConnectivityManager.registerNetworkCallback(new NetworkRequest.Builder().build(), mNetworkStateListenerL);
 
         mPrefs.registerOnSharedPreferenceChangeListener(mPrefChangeListener);
 
@@ -246,10 +239,7 @@ public class DownloadManagerService extends Service {
 
         manageLock(false);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            mConnectivityManager.unregisterNetworkCallback(mNetworkStateListenerL);
-        else
-            unregisterReceiver(mNetworkStateListener);
+        mConnectivityManager.unregisterNetworkCallback(mNetworkStateListenerL);
 
         mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefChangeListener);
 
@@ -263,21 +253,6 @@ public class DownloadManagerService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        /*
-        int permissionCheck;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            permissionCheck = PermissionChecker.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-            if (permissionCheck == PermissionChecker.PERMISSION_DENIED) {
-                Toast.makeText(this, "Permission denied (read)", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        permissionCheck = PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (permissionCheck == PermissionChecker.PERMISSION_DENIED) {
-            Toast.makeText(this, "Permission denied (write)", Toast.LENGTH_SHORT).show();
-        }
-        */
-
         return mBinder;
     }
 
@@ -308,7 +283,7 @@ public class DownloadManagerService extends Service {
         }
 
         if (msg.what != MESSAGE_ERROR)
-            mFailedDownloads.delete(mFailedDownloads.indexOfValue(mission));
+            mFailedDownloads.remove(mFailedDownloads.indexOfValue(mission));
 
         for (Callback observer : mEchoObservers)
             observer.handleMessage(msg);
@@ -340,7 +315,7 @@ public class DownloadManagerService extends Service {
     }
 
     private void handlePreferenceChange(SharedPreferences prefs, @NonNull String key) {
-        if (key.equals(getString(R.string.downloads_maximum_retry))) {
+        if (getString(R.string.downloads_maximum_retry).equals(key)) {
             try {
                 String value = prefs.getString(key, getString(R.string.downloads_maximum_retry_default));
                 mManager.mPrefMaxRetry = value == null ? 0 : Integer.parseInt(value);
@@ -348,13 +323,13 @@ public class DownloadManagerService extends Service {
                 mManager.mPrefMaxRetry = 0;
             }
             mManager.updateMaximumAttempts();
-        } else if (key.equals(getString(R.string.downloads_cross_network))) {
+        } else if (getString(R.string.downloads_cross_network).equals(key)) {
             mManager.mPrefMeteredDownloads = prefs.getBoolean(key, false);
-        } else if (key.equals(getString(R.string.downloads_queue_limit))) {
+        } else if (getString(R.string.downloads_queue_limit).equals(key)) {
             mManager.mPrefQueueLimit = prefs.getBoolean(key, true);
-        } else if (key.equals(getString(R.string.download_path_video_key))) {
+        } else if (getString(R.string.download_path_video_key).equals(key)) {
             mManager.mMainStorageVideo = loadMainVideoStorage();
-        } else if (key.equals(getString(R.string.download_path_audio_key))) {
+        } else if (getString(R.string.download_path_audio_key).equals(key)) {
             mManager.mMainStorageAudio = loadMainAudioStorage();
         }
     }
@@ -389,7 +364,8 @@ public class DownloadManagerService extends Service {
      */
     public static void startMission(Context context, String[] urls, StoredFileHelper storage,
                                     char kind, int threads, String source, String psName,
-                                    String[] psArgs, long nearLength, MissionRecoveryInfo[] recoveryInfo) {
+                                    String[] psArgs, long nearLength, MissionRecoveryInfo[] recoveryInfo,
+                                    VideoSegment[] segments) {
         Intent intent = new Intent(context, DownloadManagerService.class);
         intent.setAction(Intent.ACTION_RUN);
         intent.putExtra(EXTRA_URLS, urls);
@@ -404,6 +380,7 @@ public class DownloadManagerService extends Service {
         intent.putExtra(EXTRA_PARENT_PATH, storage.getParentUri());
         intent.putExtra(EXTRA_PATH, storage.getUri());
         intent.putExtra(EXTRA_STORAGE_TAG, storage.getTag());
+        intent.putExtra(EXTRA_SEGMENTS, segments);
 
         context.startService(intent);
     }
@@ -420,6 +397,7 @@ public class DownloadManagerService extends Service {
         long nearLength = intent.getLongExtra(EXTRA_NEAR_LENGTH, 0);
         String tag = intent.getStringExtra(EXTRA_STORAGE_TAG);
         Parcelable[] parcelRecovery = intent.getParcelableArrayExtra(EXTRA_RECOVERY_INFO);
+        VideoSegment[] segments = (VideoSegment[]) intent.getSerializableExtra(EXTRA_SEGMENTS);
 
         StoredFileHelper storage;
         try {
@@ -443,6 +421,25 @@ public class DownloadManagerService extends Service {
         mission.source = source;
         mission.nearLength = nearLength;
         mission.recoveryInfo = recovery;
+
+        if (segments != null && segments.length > 0) {
+            try {
+                final JsonStringWriter writer = JsonWriter.string()
+                        .object()
+                        .array("segments");
+                for (final VideoSegment segment : segments) {
+                    writer.object()
+                            .value("start", segment.startTime)
+                            .value("end", segment.endTime)
+                            .value("category", segment.category)
+                            .end();
+                }
+                writer.end().end();
+                mission.segmentsJson = writer.done();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         if (ps != null)
             ps.setTemporalDir(DownloadManager.pickAvailableTemporalDir(this));
@@ -473,12 +470,7 @@ public class DownloadManagerService extends Service {
         if (downloadDoneCount == 1) {
             downloadDoneList.append(name);
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                downloadDoneNotification.setContentTitle(getString(R.string.app_name));
-            } else {
-                downloadDoneNotification.setContentTitle(null);
-            }
-
+            downloadDoneNotification.setContentTitle(null);
             downloadDoneNotification.setContentText(Localization.downloadCount(this, downloadDoneCount));
             downloadDoneNotification.setStyle(new NotificationCompat.BigTextStyle()
                     .setBigContentTitle(Localization.downloadCount(this, downloadDoneCount))
@@ -497,7 +489,7 @@ public class DownloadManagerService extends Service {
     }
 
     public void notifyFailedDownload(DownloadMission mission) {
-        if (!mDownloadNotificationEnable || mFailedDownloads.indexOfValue(mission) >= 0) return;
+        if (!mDownloadNotificationEnable || mFailedDownloads.containsValue(mission)) return;
 
         int id = downloadFailedNotificationID++;
         mFailedDownloads.put(id, mission);
@@ -511,23 +503,18 @@ public class DownloadManagerService extends Service {
                     .setContentIntent(mOpenDownloadList);
         }
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            downloadFailedNotification.setContentTitle(getString(R.string.app_name));
-            downloadFailedNotification.setStyle(new NotificationCompat.BigTextStyle()
-                    .bigText(getString(R.string.download_failed).concat(": ").concat(mission.storage.getName())));
-        } else {
-            downloadFailedNotification.setContentTitle(getString(R.string.download_failed));
-            downloadFailedNotification.setContentText(mission.storage.getName());
-            downloadFailedNotification.setStyle(new NotificationCompat.BigTextStyle()
-                    .bigText(mission.storage.getName()));
-        }
+        downloadFailedNotification.setContentTitle(getString(R.string.download_failed));
+        downloadFailedNotification.setContentText(mission.storage.getName());
+        downloadFailedNotification.setStyle(new NotificationCompat.BigTextStyle()
+                .bigText(mission.storage.getName()));
 
         mNotificationManager.notify(id, downloadFailedNotification.build());
     }
 
     private PendingIntent makePendingIntent(String action) {
         Intent intent = new Intent(this, DownloadManagerService.class).setAction(action);
-        return PendingIntent.getService(this, intent.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntentCompat.getService(this, intent.hashCode(), intent,
+                PendingIntent.FLAG_UPDATE_CURRENT, false);
     }
 
     private void manageLock(boolean acquire) {
@@ -556,12 +543,7 @@ public class DownloadManagerService extends Service {
 
         if (path.charAt(0) == File.separatorChar) {
             Log.i(TAG, "Old save path style present: " + path);
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                path = Uri.fromFile(new File(path)).toString();
-            else
-                path = "";
-
+            path = "";
             mPrefs.edit().putString(getString(prefKey), "").apply();
         }
 

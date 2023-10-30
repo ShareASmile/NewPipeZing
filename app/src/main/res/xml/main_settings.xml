@@ -35,9 +35,9 @@
         app:iconSpaceReserved="false" />
 
     <PreferenceScreen
-        android:fragment="org.schabi.newpipe.settings.NotificationSettingsFragment"
-        android:icon="@drawable/ic_play_arrow"
-        android:title="@string/settings_category_notification_title"
+        android:fragment="org.schabi.newpipe.settings.NotificationsSettingsFragment"
+        android:icon="@drawable/ic_notifications"
+        android:title="@string/notifications"
         app:iconSpaceReserved="false" />
 
     <PreferenceScreen
@@ -45,6 +45,18 @@
         android:icon="@drawable/ic_cloud_download"
         android:key="update_pref_screen_key"
         android:title="@string/settings_category_updates_title"
+        app:iconSpaceReserved="false" />
+
+    <PreferenceScreen
+        android:fragment="org.schabi.newpipe.settings.SponsorBlockSettingsFragment"
+        android:icon="@drawable/ic_sponsor_block_enable"
+        android:title="@string/sponsor_block"
+        app:iconSpaceReserved="false" />
+
+    <PreferenceScreen
+        android:fragment="org.schabi.newpipe.settings.ExtraSettingsFragment"
+        android:icon="@drawable/ic_asterisk"
+        android:title="@string/extras"
         app:iconSpaceReserved="false" />
 
     <PreferenceScreen

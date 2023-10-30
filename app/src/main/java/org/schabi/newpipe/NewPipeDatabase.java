@@ -1,5 +1,13 @@
 package org.schabi.newpipe;
 
+import static org.schabi.newpipe.database.AppDatabase.DATABASE_NAME;
+import static org.schabi.newpipe.database.Migrations.MIGRATION_1_2;
+import static org.schabi.newpipe.database.Migrations.MIGRATION_2_3;
+import static org.schabi.newpipe.database.Migrations.MIGRATION_3_4;
+import static org.schabi.newpipe.database.Migrations.MIGRATION_4_5;
+import static org.schabi.newpipe.database.Migrations.MIGRATION_5_6;
+import static org.schabi.newpipe.database.Migrations.MIGRATION_6_7;
+
 import android.content.Context;
 import android.database.Cursor;
 
@@ -7,11 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.room.Room;
 
 import org.schabi.newpipe.database.AppDatabase;
-
-import static org.schabi.newpipe.database.AppDatabase.DATABASE_NAME;
-import static org.schabi.newpipe.database.Migrations.MIGRATION_1_2;
-import static org.schabi.newpipe.database.Migrations.MIGRATION_2_3;
-import static org.schabi.newpipe.database.Migrations.MIGRATION_3_4;
 
 public final class NewPipeDatabase {
     private static volatile AppDatabase databaseInstance;
@@ -23,7 +26,8 @@ public final class NewPipeDatabase {
     private static AppDatabase getDatabase(final Context context) {
         return Room
                 .databaseBuilder(context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
+                        MIGRATION_5_6, MIGRATION_6_7)
                 .build();
     }
 

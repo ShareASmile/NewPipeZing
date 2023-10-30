@@ -1,8 +1,15 @@
 package org.schabi.newpipe.util;
 
+import static org.schabi.newpipe.MainActivity.DEBUG;
+import static org.schabi.newpipe.extractor.utils.Utils.isBlank;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.core.graphics.BitmapCompat;
 
 import com.squareup.picasso.Cache;
 import com.squareup.picasso.LruCache;
@@ -19,12 +26,10 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 
-import static org.schabi.newpipe.extractor.utils.Utils.isBlank;
-
 public final class PicassoHelper {
-    public static final String PLAYER_THUMBNAIL_TAG = "PICASSO_PLAYER_THUMBNAIL_TAG";
-    private static final String PLAYER_THUMBNAIL_TRANSFORMATION_KEY
-            = "PICASSO_PLAYER_THUMBNAIL_TRANSFORMATION_KEY";
+    private static final String TAG = PicassoHelper.class.getSimpleName();
+    private static final String PLAYER_THUMBNAIL_TRANSFORMATION_KEY =
+            "PICASSO_PLAYER_THUMBNAIL_TRANSFORMATION_KEY";
 
     private PicassoHelper() {
     }
@@ -92,53 +97,66 @@ public final class PicassoHelper {
 
 
     public static RequestCreator loadAvatar(final String url) {
-        return loadImageDefault(url, R.drawable.buddy);
+        return loadImageDefault(url, R.drawable.placeholder_person);
     }
 
     public static RequestCreator loadThumbnail(final String url) {
-        return loadImageDefault(url, R.drawable.dummy_thumbnail);
+        return loadImageDefault(url, R.drawable.placeholder_thumbnail_video);
+    }
+
+    public static RequestCreator loadDetailsThumbnail(final String url) {
+        return loadImageDefault(url, R.drawable.placeholder_thumbnail_video, false);
     }
 
     public static RequestCreator loadBanner(final String url) {
-        return loadImageDefault(url, R.drawable.channel_banner);
+        return loadImageDefault(url, R.drawable.placeholder_channel_banner);
     }
 
     public static RequestCreator loadPlaylistThumbnail(final String url) {
-        return loadImageDefault(url, R.drawable.dummy_thumbnail_playlist);
+        return loadImageDefault(url, R.drawable.placeholder_thumbnail_playlist);
     }
 
     public static RequestCreator loadSeekbarThumbnailPreview(final String url) {
         return picassoInstance.load(url);
     }
 
+    public static RequestCreator loadNotificationIcon(final String url) {
+        return loadImageDefault(url, R.drawable.ic_newpipe_triangle_white);
+    }
+
 
     public static RequestCreator loadScaledDownThumbnail(final Context context, final String url) {
         // scale down the notification thumbnail for performance
         return PicassoHelper.loadThumbnail(url)
-                .tag(PLAYER_THUMBNAIL_TAG)
                 .transform(new Transformation() {
                     @Override
                     public Bitmap transform(final Bitmap source) {
+                        if (DEBUG) {
+                            Log.d(TAG, "Thumbnail - transform() called");
+                        }
+
                         final float notificationThumbnailWidth = Math.min(
                                 context.getResources()
                                         .getDimension(R.dimen.player_notification_thumbnail_width),
                                 source.getWidth());
 
-                        final Bitmap result = Bitmap.createScaledBitmap(
+                        final Bitmap result = BitmapCompat.createScaledBitmap(
                                 source,
                                 (int) notificationThumbnailWidth,
                                 (int) (source.getHeight()
                                         / (source.getWidth() / notificationThumbnailWidth)),
+                                null,
                                 true);
 
-                        if (result == source) {
+                        if (result == source || !result.isMutable()) {
                             // create a new mutable bitmap to prevent strange crashes on some
                             // devices (see #4638)
-                            final Bitmap copied = Bitmap.createScaledBitmap(
+                            final Bitmap copied = BitmapCompat.createScaledBitmap(
                                     source,
                                     (int) notificationThumbnailWidth - 1,
                                     (int) (source.getHeight() / (source.getWidth()
                                             / (notificationThumbnailWidth - 1))),
+                                    null,
                                     true);
                             source.recycle();
                             return copied;
@@ -155,17 +173,32 @@ public final class PicassoHelper {
                 });
     }
 
+    @Nullable
+    public static Bitmap getImageFromCacheIfPresent(final String imageUrl) {
+        // URLs in the internal cache finish with \n so we need to add \n to image URLs
+        return picassoCache.get(imageUrl + "\n");
+    }
+
 
     private static RequestCreator loadImageDefault(final String url, final int placeholderResId) {
+        return loadImageDefault(url, placeholderResId, true);
+    }
+
+    private static RequestCreator loadImageDefault(final String url, final int placeholderResId,
+                                                   final boolean showPlaceholderWhileLoading) {
         if (!shouldLoadImages || isBlank(url)) {
             return picassoInstance
                     .load((String) null)
                     .placeholder(placeholderResId) // show placeholder when no image should load
                     .error(placeholderResId);
         } else {
-            return picassoInstance
+            final RequestCreator requestCreator = picassoInstance
                     .load(url)
-                    .error(placeholderResId); // don't show placeholder while loading, only on error
+                    .error(placeholderResId);
+            if (showPlaceholderWhileLoading) {
+                requestCreator.placeholder(placeholderResId);
+            }
+            return requestCreator;
         }
     }
 }

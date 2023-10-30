@@ -34,7 +34,6 @@
     <string name="downloads_title">Shkarkimet</string>
     <string name="error_report_title">Raporti i gabimit</string>
     <string name="all">Të gjitha</string>
-    <string name="yes">Po</string>
     <string name="missions_header_pending">Në pritje</string>
     <plurals name="feed_group_dialog_selection_count">
         <item quantity="one">%d i zgjedhur</item>
@@ -111,8 +110,7 @@
     <string name="queued">e shtuar në radhë</string>
     <string name="paused">ndalur</string>
     <string name="missions_header_finished">Përfunduar</string>
-    <string name="app_update_notification_content_text">Shtyp për të shkarkuar</string>
-    <string name="app_update_notification_content_title">Përditësim i ri i NewPipe është i disponueshëm!</string>
+    <string name="app_update_available_notification_title">Përditësim i ri i NewPipe është i disponueshëm!</string>
     <string name="auto">Automatike</string>
     <string name="list">Listë</string>
     <string name="list_view_mode">Pamja e listës</string>
@@ -252,7 +250,6 @@
     <string name="copyright" formatted="true">© %1$s nga %2$s nën %3$s</string>
     <string name="title_licenses">Licensat e palëve të treta</string>
     <string name="title_activity_about">Rreth NewPipe</string>
-    <string name="toast_no_player">Nuk ka aplikacion të instaluar që mund ta luajë këtë skedar</string>
     <string name="charset_most_special_characters">Shumica e karaktereve speciale</string>
     <string name="charset_letters_and_digits">Shkronjat dhe numrat</string>
     <string name="settings_file_replacement_character_title">Karakteri zëvendësues</string>
@@ -307,7 +304,7 @@
     <string name="audio">Audio</string>
     <string name="video">Video</string>
     <string name="detail_drag_description">Tërhiqe për të ri-radhitur</string>
-    <string name="empty_subscription_feed_subtitle">Nuk ka asgjë këtu përveç bulkthave</string>
+    <string name="empty_list_subtitle">Nuk ka asgjë këtu përveç bulkthave</string>
     <string name="search_no_results">Nuk ka rezultate</string>
     <string name="detail_dislikes_img_view_description">Mospëlqimet</string>
     <string name="detail_likes_img_view_description">Pëlqimet</string>
@@ -411,7 +408,6 @@
     <string name="download_to_sdcard_error_message">Shkarkimi në kartën SD të jashtme nuk ishte i mundur. Doni të rivendosni vendndodhjen e dosjes së shkarkimeve\?</string>
     <string name="download_to_sdcard_error_title">Magazina e jashtme u padisponueshme</string>
     <string name="general_error">Gabim</string>
-    <string name="help">Ndihmë</string>
     <string name="search_history_deleted">Historiku i kërkimeve u fshi</string>
     <string name="delete_search_history_alert">Doni të fshini të gjithë historikun e kërkimeve\?</string>
     <string name="clear_search_history_summary">Fshin historikun e fjalëve kyçe të kërkuara</string>
@@ -486,10 +482,6 @@
     <string name="enable_search_history_summary">Ruani frazat e kërkuara lokalisht</string>
     <string name="enable_search_history_title">Historia e kërkimit</string>
     <string name="show_search_suggestions_summary">Shfaq sugjerime kur jeni duke kërkuar</string>
-    <string name="brightness_gesture_control_summary">Përdorni gjestet për të kontrolluar ndriçimin e luajtësit</string>
-    <string name="brightness_gesture_control_title">Kontrolli i gjesteve të ndriçimit</string>
-    <string name="volume_gesture_control_summary">Përdorni gjeste për të kontrolluar volumin e luajtësit</string>
-    <string name="volume_gesture_control_title">Kontrolli i gjesteve të volumit</string>
     <string name="auto_queue_summary">Vazhdoje radhën e luajtjes së mbarueshme (e papërsëritur) duke shtuar një stream të ngjashëm</string>
     <string name="auto_queue_title">Auto-radhit stream-in e radhës</string>
     <string name="metadata_cache_wipe_complete_notice">Depoja e të dhënave meta u boshatis</string>
@@ -545,7 +537,6 @@
     <string name="never">Kurrë</string>
     <string name="autoplay_summary">Nise luajtjen automatikisht — %s</string>
     <string name="title_activity_play_queue">Lista e luajtjes</string>
-    <string name="settings_category_notification_title">Njoftim</string>
     <string name="unsupported_url_dialog_message">Nuk u njoh URL. Të hapet me një aplikacion tjetër\?</string>
     <string name="auto_queue_toggle">Listë automatike luajtjeje</string>
     <string name="clear_queue_confirmation_description">Lista aktive e luajtjes do të zëvendësohet</string>
@@ -561,7 +552,7 @@
     <string name="notification_action_2_title">Butoni i tretë i veprimit</string>
     <string name="notification_action_1_title">Butoni i dytë i veprimit</string>
     <string name="notification_action_0_title">Butoni i parë i veprimit</string>
-    <string name="notification_scale_to_square_image_summary">Shkallëzoje pamjen miniaturë të videos së treguar në njoftim nga aspekti 16:9 në 1:1 (mund të shfaqë deformime)</string>
+    <string name="notification_scale_to_square_image_summary">Shkallëzoje pamjen miniaturë të videos së treguar në njoftim nga aspekti 16:9 në 1:1</string>
     <string name="notification_scale_to_square_image_title">Shkallëzoje pamjen miniaturë në aspektin 1:1</string>
     <string name="show_memory_leaks">Shfaq rrjedhjet e memories</string>
     <string name="recaptcha_cookies_cleared">Biskotat reCAPTCHA janë pastruar</string>
@@ -620,7 +611,6 @@
     <string name="private_content">Kjo përmbajtje është private, kështu që nuk mund të luhet apo shkarkohet nga NewPipe.</string>
     <string name="georestricted_content">Kjo përmbajtje nuk është e disponueshme në shtetin tuaj.</string>
     <string name="show_thumbnail_summary">Përdor pamje statike për sfondin e ekranit të kyçur si dhe për njoftimet</string>
-    <string name="feed_toggle_show_played_items">Shfaq objektet e para</string>
     <string name="feed_load_error_fast_unknown">Modaliteti i feed-it të shpejtë nuk mundëson më tepër informacion mbi këtë.</string>
     <string name="feed_load_error_terminated">Llogaria e autorit është bllokuar.
 \nNewPipe nuk do mund ta ngarkojë këtë feed në të ardhmen.
@@ -628,7 +618,6 @@
     <string name="feed_load_error_account_info">Nuk u arrit të ngarkohej feed-i për \'%s\'.</string>
     <string name="feed_load_error">Gabim gjatë ngarkimit të feed-it</string>
     <string name="downloads_storage_use_saf_summary_api_29">Duke nisur nga Android 10 vetëm \'Storage Access Framework\' është i mbështetur</string>
-    <string name="downloads_storage_use_saf_summary_api_19">\'Storage Access Framework\' nuk është e mbështetur në Android KitKat dhe më poshtë</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Ju do të pyeteni se ku doni të ruani çdo shkarkim</string>
     <string name="crash_the_app">Rrëzoje aplikacionin manualisht</string>
     <string name="disable_media_tunneling_summary">Ç\'aktivizo tunelin e medias nëse po hasni një ekran të zi apo ngecje gjatë luajtjes së një videoje</string>

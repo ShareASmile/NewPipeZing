@@ -1,32 +1,40 @@
 package org.schabi.newpipe.player.mediasource;
 
-import android.os.Handler;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.drm.DrmSessionEventListener;
-import com.google.android.exoplayer2.source.MediaPeriod;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
-import com.google.android.exoplayer2.upstream.Allocator;
-import com.google.android.exoplayer2.upstream.TransferListener;
+import com.google.android.exoplayer2.source.WrappingMediaSource;
 
+import org.schabi.newpipe.player.mediaitem.MediaItemTag;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 
-import java.io.IOException;
-
-public class LoadedMediaSource implements ManagedMediaSource {
-    private final MediaSource source;
+public class LoadedMediaSource extends WrappingMediaSource implements ManagedMediaSource {
     private final PlayQueueItem stream;
+    private final MediaItem mediaItem;
     private final long expireTimestamp;
 
-    public LoadedMediaSource(@NonNull final MediaSource source, @NonNull final PlayQueueItem stream,
+    /**
+     * Uses a {@link WrappingMediaSource} to wrap one child {@link MediaSource}s
+     * containing actual media. This wrapper {@link LoadedMediaSource} holds the expiration
+     * timestamp as a {@link ManagedMediaSource} to allow explicit playlist management under
+     * {@link ManagedMediaSourcePlaylist}.
+     *
+     * @param source            The child media source with actual media.
+     * @param tag               Metadata for the child media source.
+     * @param stream            The queue item associated with the media source.
+     * @param expireTimestamp   The timestamp when the media source expires and might not be
+     *                          available for playback.
+     */
+    public LoadedMediaSource(@NonNull final MediaSource source,
+                             @NonNull final MediaItemTag tag,
+                             @NonNull final PlayQueueItem stream,
                              final long expireTimestamp) {
-        this.source = source;
+        super(source);
         this.stream = stream;
         this.expireTimestamp = expireTimestamp;
+
+        this.mediaItem = tag.withExtras(this).asMediaItem();
     }
 
     public PlayQueueItem getStream() {
@@ -37,84 +45,10 @@ public class LoadedMediaSource implements ManagedMediaSource {
         return System.currentTimeMillis() >= expireTimestamp;
     }
 
-    @Override
-    public void prepareSource(final MediaSourceCaller mediaSourceCaller,
-                              @Nullable final TransferListener mediaTransferListener) {
-        source.prepareSource(mediaSourceCaller, mediaTransferListener);
-    }
-
-    @Override
-    public void maybeThrowSourceInfoRefreshError() throws IOException {
-        source.maybeThrowSourceInfoRefreshError();
-    }
-
-    @Override
-    public void enable(final MediaSourceCaller caller) {
-        source.enable(caller);
-    }
-
-    @Override
-    public MediaPeriod createPeriod(final MediaPeriodId id, final Allocator allocator,
-                                    final long startPositionUs) {
-        return source.createPeriod(id, allocator, startPositionUs);
-    }
-
-    @Override
-    public void releasePeriod(final MediaPeriod mediaPeriod) {
-        source.releasePeriod(mediaPeriod);
-    }
-
-    @Override
-    public void disable(final MediaSourceCaller caller) {
-        source.disable(caller);
-    }
-
-    @Override
-    public void releaseSource(final MediaSourceCaller mediaSourceCaller) {
-        source.releaseSource(mediaSourceCaller);
-    }
-
-    @Override
-    public void addEventListener(final Handler handler,
-                                 final MediaSourceEventListener eventListener) {
-        source.addEventListener(handler, eventListener);
-    }
-
-    @Override
-    public void removeEventListener(final MediaSourceEventListener eventListener) {
-        source.removeEventListener(eventListener);
-    }
-
-    /**
-     * Adds a {@link DrmSessionEventListener} to the list of listeners which are notified of DRM
-     * events for this media source.
-     *
-     * @param handler       A handler on the which listener events will be posted.
-     * @param eventListener The listener to be added.
-     */
-    @Override
-    public void addDrmEventListener(final Handler handler,
-                                    final DrmSessionEventListener eventListener) {
-        source.addDrmEventListener(handler, eventListener);
-    }
-
-    /**
-     * Removes a {@link DrmSessionEventListener} from the list of listeners which are notified of
-     * DRM events for this media source.
-     *
-     * @param eventListener The listener to be removed.
-     */
-    @Override
-    public void removeDrmEventListener(final DrmSessionEventListener eventListener) {
-        source.removeDrmEventListener(eventListener);
-    }
-
-    /**
-     * Returns the {@link MediaItem} whose media is provided by the source.
-     */
+    @NonNull
     @Override
     public MediaItem getMediaItem() {
-        return source.getMediaItem();
+        return mediaItem;
     }
 
     @Override

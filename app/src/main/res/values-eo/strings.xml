@@ -95,7 +95,6 @@
         <item quantity="one">%s filmeto</item>
         <item quantity="other">%s filmetoj</item>
     </plurals>
-    <string name="yes">Jes</string>
     <string name="msg_popup_permission">Tiu permeso estas necesa por
 \nmalfermi en ŝprucfenestra modo</string>
     <string name="popup_playing_toast">Ludante en ŝprucfenestra modo</string>
@@ -188,7 +187,6 @@
     <string name="metadata_cache_wipe_summary">Vakigi tutajn kaŝmemorigitajn retpaĝajn datumojn</string>
     <string name="metadata_cache_wipe_complete_notice">Kaŝmemorojn de metadatumojn vakigis</string>
     <string name="no_streams_available_download">Neniuj torentoj haveblaj por elŝuti</string>
-    <string name="toast_no_player">Neniu apo instalita por ludi ĉi tiun dosieron</string>
     <string name="clear_views_history_title">Forviŝi vidohistorion</string>
     <string name="clear_views_history_summary">Forviŝi la historion de viditaj filmetojn kaj ludajn poziciojn</string>
     <string name="delete_view_history_alert">Ĉu vi volas forviŝi la tutan historion \?</string>
@@ -204,10 +202,6 @@
     <string name="users">Uzantoj</string>
     <string name="unsubscribe">Malaboni</string>
     <string name="tab_choose">Elektu ongleton</string>
-    <string name="volume_gesture_control_title">Kontrolo de volumena gesto</string>
-    <string name="volume_gesture_control_summary">Uzi gestojn por kontroli la volumon</string>
-    <string name="brightness_gesture_control_title">Kontrolo de gesto de brilo</string>
-    <string name="brightness_gesture_control_summary">Uzi gestojn por kontroli la brilon</string>
     <string name="settings_category_updates_title">Ĝisdatigoj</string>
     <string name="file_deleted">Dosiero forviŝita</string>
     <string name="app_update_notification_channel_name">Sciigo por ĝisdatigi apon</string>
@@ -215,7 +209,7 @@
     <string name="download_to_sdcard_error_title">Ekstera konservejo malhavebla</string>
     <string name="download_to_sdcard_error_message">Elŝuti al ekstera SD-karto ne eblas. Ĉu vi volas restarigi la elŝutan dosierujon \?</string>
     <string name="queued">viciĝita</string>
-    <string name="enqueue">Atendovico</string>
+    <string name="enqueue">Envicigi</string>
     <string name="stop">Halti</string>
     <string name="max_retry_msg">Maksimuma nombro de provoj</string>
     <string name="max_retry_desc">Maksimuma nombro de provoj antaŭ fordecidi la elŝuton</string>
@@ -289,7 +283,7 @@
     <string name="title_activity_history">Historio</string>
     <string name="action_history">Historio</string>
     <string name="search_no_results">Neniuj rezultoj</string>
-    <string name="empty_subscription_feed_subtitle">Neniu enhavo</string>
+    <string name="empty_list_subtitle">Neniu enhavo</string>
     <string name="no_subscribers">Neniuj abonantoj</string>
     <plurals name="subscribers">
         <item quantity="one">%s abonanto</item>
@@ -389,8 +383,7 @@
     <string name="list">Listo</string>
     <string name="grid">Krado</string>
     <string name="auto">Aŭto</string>
-    <string name="app_update_notification_content_title">Ĝisdatigo de NewPipe havebla!</string>
-    <string name="app_update_notification_content_text">Premi por elŝuti</string>
+    <string name="app_update_available_notification_title">Ĝisdatigo de NewPipe havebla!</string>
     <string name="missions_header_finished">Finita</string>
     <string name="missions_header_pending">Pritraktata</string>
     <string name="paused">Paŭzigita</string>
@@ -498,7 +491,6 @@
     <string name="new_seek_duration_toast">Pro ExoPlayer limoj, la serĉa daŭro estas metita %d sekundojn</string>
     <string name="mute">Mutigi</string>
     <string name="unmute">Malmutigi</string>
-    <string name="help">Helpo</string>
     <string name="content_not_supported">Tio enhavo ne estas ankoraŭ subtenata per NewPipe.\n\nĜi espereble estos en sekvanta versio.</string>
     <string name="infinite_videos">∞ filmetoj</string>
     <string name="more_than_100_videos">100+ filmetoj</string>
@@ -513,11 +505,10 @@
     <string name="restricted_video">Tiu ĉi filmeto havas aĝlimon.
 \n
 \nŜalti \"%1$s\" en la agordoj, se vi volas vidi ĝin.</string>
-    <string name="settings_category_notification_title">Sciigo</string>
-    <string name="night_theme_title">Nokta etoso</string>
+    <string name="night_theme_title">Malhela etoso</string>
     <string name="notification_colorize_title">farbi sciigon</string>
     <string name="notification_action_buffering">Alŝuto</string>
-    <string name="notification_scale_to_square_image_title">Skali bildeton ĝis 1:1 proportio</string>
+    <string name="notification_scale_to_square_image_title">Stuci bildeton ĝis 1:1 proportio</string>
     <string name="off">Malŝatita</string>
     <string name="on">Ŝaltita</string>
     <string name="metadata_tags">Etikedoj</string>
@@ -542,7 +533,7 @@
     <string name="description_tab_description">Priskribo</string>
     <string name="comments_tab_description">Komentoj</string>
     <string name="show_description_title">Montri priskribon</string>
-    <string name="notification_scale_to_square_image_summary">Skali la bildeto de la video en la sciigo inter 16:9 kaj 1:1 propocio (povas kaŭzi distordo)</string>
+    <string name="notification_scale_to_square_image_summary">Stuci la bildeton de la video en la sciigo de 16:9 ĝis 1:1 propocio</string>
     <string name="show_meta_info_title">Montri metadatumojn</string>
     <string name="mark_as_watched">Marki spektita</string>
     <string name="show_meta_info_summary">Malŝatu por kaŝi metadatumujojn kio havas aldonajn informojn pri la elsendfluisto, enhavo de la fluo, aŭ serĉpto</string>
@@ -555,4 +546,7 @@
     <string name="notification_action_1_title">Dua agobutono</string>
     <string name="notification_action_2_title">Tria agobutono</string>
     <string name="notification_action_3_title">Kvara agobutono</string>
+    <string name="crash_the_player">Kraŝi la ludilo</string>
+    <string name="enqueued">Envicigita</string>
+    <string name="enqueue_stream">Envicigi</string>
 </resources>
