@@ -29,7 +29,8 @@ public class MediaSessionPlayerUi extends PlayerUi
     private static final String TAG = "MediaSessUi";
 
     private MediaSessionCompat mediaSession;
-    private MediaSessionConnector sessionConnector;
+    // Changing the visibility here is likely suspect/hacky?
+    public MediaSessionConnector sessionConnector;
 
     private final String ignoreHardwareMediaButtonsKey;
     private boolean shouldIgnoreHardwareMediaButtons = false;

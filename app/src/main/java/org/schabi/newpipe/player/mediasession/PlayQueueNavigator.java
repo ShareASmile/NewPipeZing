@@ -1,7 +1,5 @@
 package org.schabi.newpipe.player.mediasession;
 
-import static android.support.v4.media.session.PlaybackStateCompat.ACTION_SKIP_TO_NEXT;
-import static android.support.v4.media.session.PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
 import static android.support.v4.media.session.PlaybackStateCompat.ACTION_SKIP_TO_QUEUE_ITEM;
 
 import android.net.Uri;
@@ -46,7 +44,7 @@ public class PlayQueueNavigator implements MediaSessionConnector.QueueNavigator 
     @Override
     public long getSupportedQueueNavigatorActions(
             @Nullable final com.google.android.exoplayer2.Player exoPlayer) {
-        return ACTION_SKIP_TO_NEXT | ACTION_SKIP_TO_PREVIOUS | ACTION_SKIP_TO_QUEUE_ITEM;
+        return ACTION_SKIP_TO_QUEUE_ITEM;
     }
 
     @Override

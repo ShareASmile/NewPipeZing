@@ -1,10 +1,13 @@
 package org.schabi.newpipe.player.notification;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ServiceInfo;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
 import androidx.annotation.DrawableRes;
@@ -39,6 +42,8 @@ import static org.schabi.newpipe.player.notification.NotificationConstants.ACTIO
 import static org.schabi.newpipe.player.notification.NotificationConstants.ACTION_PLAY_PREVIOUS;
 import static org.schabi.newpipe.player.notification.NotificationConstants.ACTION_REPEAT;
 import static org.schabi.newpipe.player.notification.NotificationConstants.ACTION_SHUFFLE;
+
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 
 /**
  * This is a utility class for player notifications.
@@ -220,16 +225,60 @@ public final class NotificationUtil {
     @SuppressLint("RestrictedApi")
     private void updateActions(final NotificationCompat.Builder builder) {
         builder.mActions.clear();
+        final var customActionProviders =
+                new java.util.ArrayList<MediaSessionConnector.CustomActionProvider>();
         for (int i = 0; i < 5; ++i) {
-            addAction(builder, notificationSlots[i]);
+            addAction(builder, notificationSlots[i], customActionProviders);
+        }
+        player.UIs()
+                .get(MediaSessionPlayerUi.class)
+                .ifPresent(mediaSessionPlayerUi -> {
+                    mediaSessionPlayerUi.sessionConnector.setCustomActionProviders(
+                            customActionProviders.toArray(
+                                    new MediaSessionConnector.CustomActionProvider[0]));
+                });
+    }
+    // Hacky way to return a second value from getAction
+    // (Couldn't figure out a simple way to get a String out-param or return a tuple)
+    String lastIntentAction;
+
+    private static class CustomAction implements MediaSessionConnector.CustomActionProvider {
+        private final String action;
+        private final CharSequence name;
+        private final int icon;
+        private final Context context;
+        CustomAction(final String action2, final CharSequence name2,
+                     final int icon2, final Context context2) {
+            this.action = action2;
+            this.name = name2;
+            this.icon = icon2;
+            this.context = context2;
+        }
+        @Override
+        public void onCustomAction(final com.google.android.exoplayer2.Player player,
+                                   final String action2, @Nullable final Bundle extras) {
+            context.sendBroadcast(new Intent(action));
+        }
+
+        @Nullable
+        @Override
+        public PlaybackStateCompat.CustomAction
+        getCustomAction(final com.google.android.exoplayer2.Player player) {
+            return new PlaybackStateCompat.CustomAction.Builder(action, name, icon).build();
         }
     }
-
     private void addAction(final NotificationCompat.Builder builder,
-                           @NotificationConstants.Action final int slot) {
+                           @NotificationConstants.Action final int slot,
+                           final List<MediaSessionConnector.CustomActionProvider> actions) {
         final NotificationCompat.Action action = getAction(slot);
+
         if (action != null) {
             builder.addAction(action);
+            if (lastIntentAction != null && lastIntentAction != ACTION_PLAY_PAUSE) {
+                actions.add(new CustomAction(lastIntentAction,
+                        action.getTitle().toString(),
+                        action.getIcon(), player.getContext()));
+            }
         }
     }
 
@@ -277,6 +326,7 @@ public final class NotificationUtil {
                         || player.getCurrentState() == Player.STATE_BLOCKED
                         || player.getCurrentState() == Player.STATE_BUFFERING) {
                     // null intent -> show hourglass icon that does nothing when clicked
+                    lastIntentAction = null;
                     return new NotificationCompat.Action(R.drawable.ic_hourglass_top,
                             player.getContext().getString(R.string.notification_action_buffering),
                             null);
@@ -333,6 +383,7 @@ public final class NotificationUtil {
     private NotificationCompat.Action getAction(@DrawableRes final int drawable,
                                                 @StringRes final int title,
                                                 final String intentAction) {
+        this.lastIntentAction = intentAction;
         return new NotificationCompat.Action(drawable, player.getContext().getString(title),
                 PendingIntentCompat.getBroadcast(player.getContext(), NOTIFICATION_ID,
                         new Intent(intentAction), FLAG_UPDATE_CURRENT, false));
