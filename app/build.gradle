@@ -128,7 +128,10 @@ task formatKtlint(type: JavaExec) {
 }
 
 afterEvaluate {
-    preDebugBuild.dependsOn formatKtlint, runKtlint
+    if (!System.properties.containsKey('skipFormatKtlint')) {
+        preDebugBuild.dependsOn formatKtlint
+    }
+    preDebugBuild.dependsOn runKtlint
 }
 
 dependencies {
