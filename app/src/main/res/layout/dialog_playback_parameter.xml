@@ -362,7 +362,7 @@
             android:id="@+id/additionalOptions"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-			android:layout_below="@id/separatorCheckbox"
+            android:layout_below="@id/separatorCheckbox"
             android:orientation="vertical">
 
             <CheckBox

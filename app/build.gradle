@@ -13,8 +13,8 @@ android {
         minSdkVersion 19
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 29
-        versionCode 978
-        versionName "0.19.9.4"
+        versionCode 979
+        versionName "0.19.9.5"
 
         multiDexEnabled true
 
@@ -54,8 +54,8 @@ android {
             shrinkResources true // could be disabled to fix F-Droid's reproducible build
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             archivesBaseName = 'app'
-            applicationIdSuffix ".Core"
-            resValue "string", "app_name", "NewPipe " + "Core"
+            applicationIdSuffix ".Zing"
+            resValue "string", "app_name", "NewPipe " + "Zing"
         }
     }
 
@@ -167,7 +167,7 @@ dependencies {
     // name and the commit hash with the commit hash of the (pushed) commit you want to test
     // This works thanks to JitPack: https://jitpack.io/
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
-    implementation 'com.github.ShareASmile:NewPipeExtractor:aefa538373'
+    implementation 'com.github.Jtfk:NewPipeExtractor-j8:0.22.7-j8'
 
 /** Third-party libraries **/
     // Instance state boilerplate elimination
