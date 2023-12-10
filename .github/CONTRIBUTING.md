@@ -1,4 +1,4 @@
-NewPipe-Zing contribution guidelines
+FoxPipe contribution guidelines
 ===============================
 
 ## Crash reporting
@@ -9,19 +9,13 @@ You'll see exactly what is sent, be able to add your comments, and then send it.
 
 ## Issue reporting/feature requests
 
-* **Already reported**? Browse the [existing issues](https://github.com/TeamNewPipe/NewPipe/issues) to make sure your issue/feature hasn't been reported/requested.
+* **Already reported**? Browse the [existing issues](https://github.com/ShareASmile/FoxPipe/issues) to make sure your issue/feature hasn't been reported/requested.
 * **Already fixed**? Check whether your issue/feature is already fixed/implemented.
 * **Still relevant**? Check if the issue still exists in the latest release/beta version.
 * **Can you fix it**? If you are an Android/Java developer, you are always welcome to fix an issue or implement a feature yourself. PRs welcome!
 * **Is it in English**? We use English for development. Issues in other languages will be closed and ignored.
 * Please only add *one* issue at a time. Do not put multiple issues into one thread.
 * **The template**: Fill it out, Follow the template! Issues or feature requests not matching the template might be closed.
-
-
-## Translation
-
-* NewPipe is translated via [Weblate](https://hosted.weblate.org/projects/newpipe/strings/). Log in there with your GitHub account, or register.
-* Add the language you want to translate if it is not there already: see [How to add a new language](https://github.com/TeamNewPipe/NewPipe/wiki/How-to-add-a-new-language-to-NewPipe) in the wiki.
 
 ## Code contribution
 
@@ -37,7 +31,7 @@ You'll see exactly what is sent, be able to add your comments, and then send it.
 * If there is no existing issue for what you want to work on, **open a new one**  describing the changes you are planning to introduce. This gives the team and the community a chance to give **feedback** before you spend time on something that is already in development, should be done differently, or should be avoided completely.
 * Please show **intention to maintain your features** and code after you contribute a PR. Unmaintained code is a hassle for core developers. If you do not intend to maintain features you plan to contribute, please rethink your submission, or clearly state that in the PR description.
 * Create PRs that cover only **one specific issue/solution/bug**. Do not create PRs that are huge monoliths and could have been split into multiple independent contributions.
-* NewPipe uses [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor) to fetch data from services. If you need to change something there, you must test your changes in NewPipe. Telling NewPipe to use your extractor version can be accomplished by editing the `app/build.gradle` file: the comments under the "NewPipe libraries" section of `dependencies` will help you out.
+* FoxPipe uses [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor) to fetch data from services. If you need to change something there, you must test your changes in NewPipe. Telling NewPipe to use your extractor version can be accomplished by editing the `app/build.gradle` file: the comments under the "NewPipe libraries" section of `dependencies` will help you out.
 
 ### Kotlin in NewPipe
 * NewPipe will remain mostly Java for time being
@@ -56,7 +50,7 @@ You'll see exactly what is sent, be able to add your comments, and then send it.
 ### Basic setup
 
 NewPipe is developed using [Android Studio](https://developer.android.com/studio/). Learn more about how to install it and how it works in the [official documentation](https://developer.android.com/studio/intro). In particular, make sure you have accepted Android Studio's SDK licences. Once Android Studio is ready, setting up the NewPipe project is fairly simple:
-- Clone the NewPipe repository with `git clone https://github.com/TeamNewPipe/NewPipe.git` (or use the link from your own fork, if you want to open a PR).
+- Clone the NewPipe repository with `git clone https://github.com/SharASmile/FoxPipe.git` (or use the link from your own fork, if you want to open a PR).
 - Open the folder you just cloned with Android Studio.
 - Build and run it just like you would do with any other app, with the green triangle in the top bar.
 
@@ -80,6 +74,4 @@ The [ktlint](https://github.com/pinterest/ktlint) plugin does the same job as ch
 
 ## Communication
 
-* The #newpipe channel on Libera Chat (`ircs://irc.libera.chat:6697/newpipe`) has the core team and other developers in it. [Click here for webchat](https://web.libera.chat/#newpipe)!
-* You can also use a Matrix account to join the NewPipe channel at [#newpipe:libera.chat](https://matrix.to/#/#newpipe:libera.chat). Some convenient clients, available both for phone and desktop, are listed at that link.
-* You can post your suggestions, changes, ideas etc. on either GitHub or IRC.
+* You can post your suggestions, changes, ideas etc. on either GitHub
