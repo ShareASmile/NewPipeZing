@@ -8,13 +8,13 @@ android {
     buildToolsVersion '30.0.3'
 
     defaultConfig {
-        applicationId "org.schabi.newpipe"
-        resValue "string", "app_name", "NewPipe"
+        applicationId "com.soulwin.foxpipe"
+        resValue "string", "app_name", "FoxPipe"
         minSdkVersion 19
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 29
-        versionCode 979
-        versionName "0.19.9.5"
+        versionCode 955
+        versionName "0.19.8.2"
 
         multiDexEnabled true
 
@@ -38,11 +38,11 @@ android {
             if (normalizedWorkingBranch.isEmpty() || workingBranch == "master" || workingBranch == "dev") {
                 // default values when branch name could not be determined or is master or dev
                 applicationIdSuffix ".debug"
-                resValue "string", "app_name", "NewPipe debug"
+                resValue "string", "app_name", "FoxPipe debug"
             } else {
                 applicationIdSuffix ".debug." + normalizedWorkingBranch
                 resValue "string", "app_name", "NewPipe " + workingBranch
-                archivesBaseName = 'NewPipe_' + normalizedWorkingBranch
+                archivesBaseName = 'FoxPipe_' + normalizedWorkingBranch
             }
         }
 
@@ -54,8 +54,6 @@ android {
             shrinkResources true // could be disabled to fix F-Droid's reproducible build
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             archivesBaseName = 'app'
-            applicationIdSuffix ".Zing"
-            resValue "string", "app_name", "NewPipe " + "Zing"
         }
     }
 
