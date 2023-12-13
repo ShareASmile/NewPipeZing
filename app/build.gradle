@@ -8,8 +8,8 @@ android {
     buildToolsVersion '30.0.3'
 
     defaultConfig {
-        applicationId "com.soulwin.foxpipe"
-        resValue "string", "app_name", "FoxPipe"
+        applicationId "com.soulwin.justpipe"
+        resValue "string", "app_name", "JustPipe"
         minSdkVersion 19
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 29
@@ -38,11 +38,11 @@ android {
             if (normalizedWorkingBranch.isEmpty() || workingBranch == "master" || workingBranch == "dev") {
                 // default values when branch name could not be determined or is master or dev
                 applicationIdSuffix ".debug"
-                resValue "string", "app_name", "FoxPipe debug"
+                resValue "string", "app_name", "JustPipe debug"
             } else {
                 applicationIdSuffix ".debug." + normalizedWorkingBranch
-                resValue "string", "app_name", "FoxPipe " + workingBranch
-                archivesBaseName = 'FoxPipe_' + normalizedWorkingBranch
+                resValue "string", "app_name", "JustPipe " + workingBranch
+                archivesBaseName = 'JustPipe_' + normalizedWorkingBranch
             }
         }
 
