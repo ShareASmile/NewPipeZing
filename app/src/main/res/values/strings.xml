@@ -145,7 +145,7 @@
     <string name="youtube_restricted_mode_enabled_title">YouTube restricted mode</string>
     <string name="restricted_video">This video is age restricted.\n\nIf you want to view it, enable \"Age restricted content\" in the settings.</string>
     <string name="restricted_video_no_stream">This video is age-restricted.\nDue to new YouTube policies with age-restricted videos, NewPipe cannot access any of its video streams and thus is unable to play it.</string>
-	<string name="duration_live">Live</string>
+    <string name="duration_live">Live</string>
     <string name="downloads">Downloads</string>
     <string name="downloads_title">Downloads</string>
     <string name="error_report_title">Error report</string>
@@ -311,7 +311,7 @@
         <item quantity="other">%s videos</item>
     </plurals>
     <string name="no_comments">No comments</string>
-	<string name="comments_are_disabled">Comments are disabled</string>
+    <string name="comments_are_disabled">Comments are disabled</string>
     <!-- Missions -->
     <string name="start">Start</string>
     <string name="pause">Pause</string>
@@ -371,7 +371,7 @@
     <string name="app_description">Libre lightweight streaming on Android.</string>
     <string name="contribution_title">Contribute</string>
     <string name="contribution_encouragement">Whether you have ideas of; translation, design changes, code cleaning, or real heavy code changes—help is always welcome. The more is done the better it gets!</string>
-    <string name="github_url" translatable="false">https://github.com/TeamNewPipe/NewPipe</string>
+    <string name="github_url" translatable="false">https://github.com/ShareASmile/NewPipeZing</string>
     <string name="view_on_github">View on GitHub</string>
     <string name="donation_title">Donate</string>
     <string name="donation_encouragement">NewPipe is developed by volunteers spending their free time bringing you the best user experience. Give back to help developers make NewPipe even better while they enjoy a cup of coffee.</string>
@@ -404,7 +404,7 @@
     <!-- Content -->
     <string name="main_page_content">Content of main page</string>
     <string name="main_page_content_summary">What tabs are shown on the main page</string>
-	<string name="main_page_content_swipe_remove">Swipe items to remove them</string>
+    <string name="main_page_content_swipe_remove">Swipe items to remove them</string>
     <string name="selection">Selection</string>
     <string name="blank_page_summary">Blank Page</string>
     <string name="kiosk_page_summary">Kiosk Page</string>
@@ -423,7 +423,7 @@
     <string name="export_data_file_name">Export file name</string>
     <string name="export_data_file_name_hint">Please enter file name for export.</string>
     <string name="no_valid_zip_file">No valid ZIP file</string>
-	<string name="no_valid_zip_file_name">You entered an invalid name for zip file.</string>
+    <string name="no_valid_zip_file_name">You entered an invalid name for zip file.</string>
     <string name="could_not_import_all_files">Warning: Could not import all files.</string>
     <string name="override_current_data">This will override your current setup.</string>
     <string name="import_settings">Do you want to also import settings?</string>
@@ -533,10 +533,10 @@
     <string name="limit_mobile_data_usage_value" translatable="false">@string/limit_data_usage_none_key</string>
     <string-array name="limit_data_usage_description_list">
         <item>@string/limit_data_usage_none_description</item>
-		<item>2160p60</item>
-		<item>2160p</item>
-		<item>1440p60</item>
-		<item>1440p</item>
+        <item>2160p60</item>
+        <item>2160p</item>
+        <item>1440p60</item>
+        <item>1440p</item>
         <item>1080p60</item>
         <item>1080p</item>
         <item>720p60</item>
@@ -677,15 +677,15 @@
     <string name="channel_created_by">Created by %s</string>
     <string name="video_detail_by">By %s</string>
     <string name="playlist_page_summary">Playlist page</string>
-	<string name="recent">Recent</string>
-	<string name="georestricted_content">This content is not available in your country.</string>
+    <string name="recent">Recent</string>
+    <string name="georestricted_content">This content is not available in your country.</string>
     <string name="soundcloud_go_plus_content">This is a SoundCloud Go+ track, at least in your country, so it cannot be streamed or downloaded by NewPipe.</string>
     <string name="private_content">This content is private, so it cannot be streamed or downloaded by NewPipe.</string>
     <string name="youtube_music_premium_content">This video is available only to YouTube Music Premium members, so it cannot be streamed or downloaded by NewPipe.</string>
     <string name="paid_content">This content is only available to users who have paid, so it cannot be streamed or downloaded by NewPipe.</string>
-	<string name="featured">Featured</string>
+    <string name="featured">Featured</string>
     <string name="radio">Radio</string>
-	<string name="always_expand_description">Always expand description</string>
-	<string name="detail_pinned_comment_view_description">Pinned comment</string>
-	<string name="detail_heart_img_view_description">Hearted by creator</string>
+    <string name="always_expand_description">Always expand description</string>
+    <string name="detail_pinned_comment_view_description">Pinned comment</string>
+    <string name="detail_heart_img_view_description">Hearted by creator</string>
 </resources>
