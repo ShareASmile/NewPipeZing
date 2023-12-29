@@ -7,7 +7,7 @@
     <string name="install">ਸਥਾਪਤ ਕਰੋ</string>
     <string name="cancel">ਰੱਦ ਕਰੋ</string>
     <string name="open_in_browser">ਬ੍ਰਾਊਜ਼ਰ \'ਚ ਖੋਲ੍ਹੋ</string>
-    <string name="open_in_popup_mode">ਤੈਰਦੀ-ਤਸਵੀਰ \'ਚ ਖੋਲ੍ਹੋ</string>
+    <string name="open_in_popup_mode">ਪੌਪ-ਅਪ ਮੋਡ\'ਚ ਖੋਲ੍ਹੋ</string>
     <string name="share">ਸਾਂਝਾ ਕਰੋ</string>
     <string name="download">ਡਾਊਨਲੋਡ ਕਰੋ</string>
     <string name="controls_download_desc">ਸਟ੍ਰੀਮ ਫ਼ਾਈਲ ਡਾਊਨਲੋਡ ਕਰੋ</string>
@@ -16,10 +16,10 @@
     <string name="did_you_mean">ਕੀ ਤੁਹਾਡਾ ਮਤਲਬ ਸੀ \"%1$s\"\?</string>
     <string name="share_dialog_title">ਇਸ ਨਾਲ਼ ਸਾਂਝਾ ਕਰੋ</string>
     <string name="use_external_video_player_title">ਬਾਹਰੀ ਵੀਡੀਓ ਪਲੇਅਰ ਵਰਤੋ</string>
-    <string name="use_external_video_player_summary">ਕੁਝ ਰੈਜ਼ੋਲੂਸ਼ਨਾਂ \'ਤੇ ਆਵਾਜ਼ ਨੂੰ ਹਟਾ ਦਿੰਦੈ</string>
+    <string name="use_external_video_player_summary">ਕੁਝ ਰੈਜ਼ੋਲਿਊਸ਼ਨਾਂ \'ਤੇ ਆਵਾਜ਼ ਨੂੰ ਹਟਾ ਦਿੰਦੈ ਹੈ</string>
     <string name="use_external_audio_player_title">ਬਾਹਰੀ ਆਡੀਓ ਪਲੇਅਰ ਵਰਤੋ</string>
     <string name="subscribe_button_title">ਸਬਸਕ੍ਰਾਈਬ ਕਰੋ</string>
-    <string name="subscribed_button_title">ਸਬਸਕ੍ਰਾਈਬ ਹੋ ਗਿਆ</string>
+    <string name="subscribed_button_title">ਸਬਸਕ੍ਰਾਈਬ ਹੈ</string>
     <string name="channel_unsubscribed">ਚੈਨਲ ਅਨ-ਸਬਸਕ੍ਰਾਈਬ ਹੋ ਗਿਆ</string>
     <string name="subscription_change_failed">ਸਬਸਕ੍ਰਿਪਸ਼ਨ ਬਦਲਣ ਵਿੱਚ ਨਾਕਾਮੀ</string>
     <string name="show_info">ਜਾਣਕਾਰੀ ਵਿਖਾਓ</string>
@@ -27,8 +27,8 @@
     <string name="tab_subscriptions">ਸਬਸਕ੍ਰਿਪਸ਼ਨਾਂ</string>
     <string name="tab_bookmarks">ਬੁੱਕਮਾਰਕ ਕੀਤੀਆਂ ਪਲੇ-ਸੂਚੀਆਂ</string>
     <string name="fragment_feed_title">ਨਵਾਂ ਕੀ ਹੈ</string>
-    <string name="controls_background_title">ਪਿਛੋਕੜ (ਬੈਕਗਰਾਊਂਡ)</string>
-    <string name="controls_popup_title">ਤੈਰਦੀ-ਤਸਵੀਰ</string>
+    <string name="controls_background_title">ਬੈਕਗ੍ਰਾਊਂਡ ਆਡੀਓ</string>
+    <string name="controls_popup_title">ਪੌਪ-ਅਪ</string>
     <string name="controls_add_to_playlist_title">ਇਸ ਵਿੱਚ ਜੋੜੋ</string>
     <string name="download_path_title">ਵੀਡੀਓ ਲਈ ਡਾਊਨਲੋਡ ਫ਼ੋਲਡਰ</string>
     <string name="download_path_summary">ਡਾਊਨਲੋਡ ਕੀਤੀਆਂ ਵੀਡਿਓ ਇੱਥੇ ਜਮ੍ਹਾਂ ਹੁੰਦੀਆਂ ਹਨ</string>
@@ -37,7 +37,7 @@
     <string name="download_path_audio_summary">ਡਾਊਨਲੋਡ ਕੀਤੀਆਂ ਆਡੀਓ ਇੱਥੇ ਜਮ੍ਹਾਂ ਹੁੰਦੀਆਂ ਹਨ</string>
     <string name="download_path_audio_dialog_title">ਆਡੀਓ ਫ਼ਾਈਲਾਂ ਲਈ ਡਾਊਨਲੋਡ ਫ਼ੋਲਡਰ ਚੁਣੋ</string>
     <string name="default_resolution_title">ਡਿਫ਼ਾਲਟ ਰੈਜ਼ੋਲੂਸ਼ਨ</string>
-    <string name="default_popup_resolution_title">ਤੈਰਦੀ-ਤਸਵੀਰ ਲਈ ਡਿਫ਼ਾਲਟ ਰੈਜ਼ੋਲੂਸ਼ਨ</string>
+    <string name="default_popup_resolution_title">ਪੌਪ-ਅਪ ਲਈ ਡਿਫ਼ਾਲਟ ਰੈਜ਼ੋਲੂਸ਼ਨ</string>
     <string name="show_higher_resolutions_title">ਵੱਡੀਆਂ ਰੈਜ਼ੋਲੂਸ਼ਨਾਂ ਦਿਖਾਓ</string>
     <string name="show_higher_resolutions_summary">ਸਿਰਫ਼ ਕੁਝ ਹੀ ਡਿਵਾਈਸ 2K/4K ਵੀਡੀਓ ਨੂੰ ਚਲਾ ਸਕਦੇ ਹਨ</string>
     <string name="play_with_kodi_title">Kodi ਵਿੱਚ ਚਲਾਓ</string>
@@ -164,10 +164,10 @@
         <item quantity="one">%s ਸਬਸਕ੍ਰਾਇਬਰ</item>
         <item quantity="other">%s ਸਬਸਕ੍ਰਾਇਬਰਸ</item>
     </plurals>
-    <string name="no_views">ਕੋਈ views ਨਹੀਂ</string>
+    <string name="no_views">ਕੋਈ ਵਿਊਜ਼ ਨਹੀਂ</string>
     <plurals name="views">
-        <item quantity="one">%s view</item>
-        <item quantity="other">%s views</item>
+        <item quantity="one">%s ਵਿਊ</item>
+        <item quantity="other">%s ਵਿਊਜ਼</item>
     </plurals>
     <string name="no_videos">ਕੋਈ ਵੀਡੀਓ ਨਹੀਂ</string>
     <plurals name="videos">
@@ -185,7 +185,7 @@
     <string name="msg_name">ਫਾਈਲ ਦਾ ਨਾਮ</string>
     <string name="msg_threads">threads</string>
     <string name="msg_error">ERROR</string>
-    <string name="msg_running">NewPipe ਡਾਊਨਲੋਡ ਹੋ ਰਿਹਾ ਹੈ</string>
+    <string name="msg_running">ਨਿਊਪਾਈਪ ਡਾਊਨਲੋਡ ਕਰ ਰਿਹਾ ਹੈ</string>
     <string name="msg_running_detail">ਵੇਰਵਿਆਂ ਲਈ ਖੋਲੋ</string>
     <string name="msg_wait">ਕ੍ਰਿਪਾ ਕਰਕੇ ਉਡੀਕ ਕਰੋ…</string>
     <string name="msg_copied">ਕਲਿਪ-ਬੋਰਡ ਵਿੱਚ ਕਾਪੀ ਹੋ ਗਿਆ ਹੈ</string>
@@ -201,7 +201,7 @@
     <string name="charset_letters_and_digits">ਅੱਖਰ ਅਤੇ ਅੰਕ</string>
     <string name="charset_most_special_characters">ਬਹੁਤੇ ਖ਼ਾਸ ਅੱਖਰ</string>
     <string name="toast_no_player">ਇਸ ਫਾਈਲ ਨੂੰ ਚਲਾਉਣ ਲਈ ਕੋਈ ਐਪ ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ</string>
-    <string name="title_activity_about">NewPipe ਬਾਰੇ</string>
+    <string name="title_activity_about">ਨਿਊਪਾਈਪ ਬਾਰੇ</string>
     <string name="title_licenses">ਥਰਡ-ਪਾਰਟੀ ਲਾਇਸੈਂਸ</string>
     <string name="copyright" formatted="true">© %1$s ਵਲੋਂ %2$s, %3$s ਅਧੀਨ</string>
     <string name="tab_about">ਐਪ ਬਾਰੇ</string>
@@ -214,9 +214,9 @@
     <string name="donation_encouragement">ਨਿਊ-ਪਾਈਪ ਵਲੰਟੀਅਰਾਂ ਦੁਆਰਾ ਵਿਕਸਤ ਕੀਤੀ ਗਈ ਹੈ ਜੋ ਤੁਹਾਡੇ ਲਈ ਬਿਹਤਰ ਵਰਤੋਂਕਾਰ ਤਜਰਬਾ ਲਿਆਉਣ ਲਈ ਸਮਾਂ ਬਿਤਾਉਂਦੇ ਹਨ। ਡਿਵੈਲਪਰਾਂ ਵਾਸਤੇ ਇੱਕ ਕੱਪ ਕਾਫ਼ੀ ਖ਼ਰੀਦ ਦਿਓ ਤਾਂ ਕਿ ਇਸਦਾ ਆਨੰਦ ਲੈਂਦੇ ਹੋਏ ਉਹ ਨਿਊ-ਪਾਈਪ ਨੂੰ ਹੋਰ ਵਧੀਆ ਬਣਾ ਸਕਣ।</string>
     <string name="give_back">ਵਾਪਸ ਦਿਓ</string>
     <string name="website_title">ਵੈਬਸਾਈਟ</string>
-    <string name="website_encouragement">ਵਧੇਰੇ ਜਾਣਕਾਰੀ ਅਤੇ ਖ਼ਬਰਾਂ ਲਈ NewPipe ਵੈਬਸਾਈਟ ਵੇਖੋ.</string>
+    <string name="website_encouragement">ਵਧੇਰੇ ਜਾਣਕਾਰੀ ਅਤੇ ਖ਼ਬਰਾਂ ਲਈ ਨਿਊਪਾਈਪ ਵੈਬਸਾਈਟ ਵੇਖੋ.</string>
     <string name="app_license_title">NewPipe\'s ਲਾਇਸੈਂਸ</string>
-    <string name="app_license">NewPipe ਇੱਕ ਕਾੱਪੀਲਿਫਟ ਮੁਫ਼ਤ ਸਾੱਫਟਵੇਅਰ ਹੈ: ਤੁਸੀਂ ਇਸ ਦੀ ਵਰਤੋਂ, ਅਧਿਐਨ ਅਤੇ ਇਸ ਨੂੰ ਸਾਂਝਾ ਕਰ ਸਕਦੇ ਹੋ ਅਤੇ ਇਸ ਵਿੱਚ ਆਪਣੀ ਮਰਜ਼ੀ ਅਨੁਸਾਰ ਸੁਧਾਰ ਸਕਦੇ ਹੋ. ਖਾਸ ਤੌਰ \'ਤੇ ਤੁਸੀਂ ਇਸ ਨੂੰ GNU ਜਨਰਲ ਪਬਲਿਕ ਲਾਇਸੈਂਸ ਦੀਆਂ ਸ਼ਰਤਾਂ ਦੇ ਅਧੀਨ ਵੰਡ ਸਕਦੇ ਹੋ / ਜਾਂ ਸੰਸ਼ੋਧਿਤ ਕਰ ਸਕਦੇ ਹੋ ਜਿਵੇਂ ਕਿ ਮੁਫਤ ਸਾੱਫਟਵੇਅਰ ਫਾਊਂਡੇਸ਼ਨ ਦੁਆਰਾ ਪ੍ਰਕਾਸ਼ਤ ਕੀਤਾ ਗਿਆ ਹੈ, ਜਾਂ ਤਾਂ ਲਾਇਸੈਂਸ ਦਾ ਵਰਜ਼ਨ 3, ਜਾਂ (ਤੁਹਾਡੇ ਵਿਕਲਪ\' ਤੇ) ਬਾਅਦ ਦਾ ਕੋਈ ਸੰਸਕਰਣ.</string>
+    <string name="app_license">ਨਿਊਪਾਈਪ ਇੱਕ ਕਾੱਪੀਲਿਫਟ ਮੁਫ਼ਤ ਸਾੱਫਟਵੇਅਰ ਹੈ: ਤੁਸੀਂ ਇਸ ਦੀ ਵਰਤੋਂ, ਅਧਿਐਨ ਅਤੇ ਇਸ ਨੂੰ ਸਾਂਝਾ ਕਰ ਸਕਦੇ ਹੋ ਅਤੇ ਇਸ ਵਿੱਚ ਆਪਣੀ ਮਰਜ਼ੀ ਅਨੁਸਾਰ ਸੁਧਾਰ ਸਕਦੇ ਹੋ. ਖਾਸ ਤੌਰ \'ਤੇ ਤੁਸੀਂ ਇਸ ਨੂੰ GNU ਜਨਰਲ ਪਬਲਿਕ ਲਾਇਸੈਂਸ ਦੀਆਂ ਸ਼ਰਤਾਂ ਦੇ ਅਧੀਨ ਵੰਡ ਸਕਦੇ ਹੋ / ਜਾਂ ਸੰਸ਼ੋਧਿਤ ਕਰ ਸਕਦੇ ਹੋ ਜਿਵੇਂ ਕਿ ਮੁਫਤ ਸਾੱਫਟਵੇਅਰ ਫਾਊਂਡੇਸ਼ਨ ਦੁਆਰਾ ਪ੍ਰਕਾਸ਼ਤ ਕੀਤਾ ਗਿਆ ਹੈ, ਜਾਂ ਤਾਂ ਲਾਇਸੈਂਸ ਦਾ ਵਰਜ਼ਨ 3, ਜਾਂ (ਤੁਹਾਡੇ ਵਿਕਲਪ\' ਤੇ) ਬਾਅਦ ਦਾ ਕੋਈ ਸੰਸਕਰਣ.</string>
     <string name="read_full_license">ਲਾਇਸੈਂਸ ਪੜ੍ਹੋ</string>
     <string name="title_activity_history">ਹਿਸਟਰੀ</string>
     <string name="action_history">ਹਿਸਟਰੀ</string>
@@ -243,10 +243,10 @@
     <string name="play_queue_audio_settings">ਆਡੀਓ ਸੈਟਿੰਗਾਂ</string>
     <string name="hold_to_append">ਕਤਾਰਬੱਧ ਕਰਨ ਵਾਸਤੇ ਦਬਾ ਕੇ ਰੱਖੋ</string>
     <string name="start_here_on_background">ਬੈਕਗ੍ਰਾਊਂਡ ਵਿੱਚ ਚਲਾਉ</string>
-    <string name="start_here_on_popup">ਤੈਰਦੀ-ਤਸਵੀਰ ਵਿੱਚ ਚਲਾਉਣਾ ਸ਼ੁਰੂ ਕਰੋ</string>
+    <string name="start_here_on_popup">ਪੌਪ-ਅਪ ਵਿੱਚ ਚਲਾਉਣਾ ਸ਼ੁਰੂ ਕਰੋ</string>
     <string name="drawer_open">Drawer ਖੋਲੋ</string>
     <string name="drawer_close">Drawer ਬੰਦ ਕਰੋ</string>
-    <string name="preferred_open_action_settings_title">ਤਰਜੀਹੀ \'OPEN\' ਐਕਸ਼ਨ</string>
+    <string name="preferred_open_action_settings_title">ਤਰਜੀਹੀ \'ਖੋਲ੍ਹੋ\' ਐਕਸ਼ਨ</string>
     <string name="preferred_open_action_settings_summary">Content ਖੋਲ੍ਹਣ ਵੇਲੇ Default ਕਾਰਵਾਈ — %s</string>
     <string name="video_player">ਵੀਡੀਓ ਪਲੇਅਰ</string>
     <string name="background_player">ਬੈਕਗ੍ਰਾਊਂਡ ਪਲੇਅਰ</string>
