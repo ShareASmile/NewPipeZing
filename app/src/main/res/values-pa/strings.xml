@@ -10,6 +10,7 @@
     <string name="open_in_browser">ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਖੋਲ੍ਹੋ</string>
     <string name="open_in_popup_mode">ਪੌਪ-ਅਪ ਵਿੱਚ ਖੋਲੋ</string>
     <string name="share">ਸਾਂਝਾ ਕਰੋ</string>
+    <string name="share_stream">ਮੀਡੀਆ URL ਸਾਂਝਾ ਕਰੋ</string>
     <string name="download">ਡਾਊਨਲੋਡ</string>
     <string name="controls_download_desc">ਸਟ੍ਰੀਮ ਫ਼ਾਈਲ ਡਾਊਨਲੋਡ ਕਰੋ</string>
     <string name="search">ਖੋਜੋ</string>

@@ -6,7 +6,7 @@ NewPipeZing Reloaded version 0.19.8 with up-to-date NewPipeExtractor dependency
 <p align="center">
 <a href="https://github.com/ShareASmile/NewPipeZing/releases" alt="GitHub release"><img src="https://img.shields.io/github/release/ShareASmile/NewPipeZing.svg" ></a>
 <a href="https://www.gnu.org/licenses/gpl-3.0" alt="License: GPLv3"><img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg"></a>
-<a href="https://github.com/ShareASmile/NewPipeZing/actions" alt="Build Status"><img src="https://github.com/ShareASmile/NewPipeZing/workflows/CI/badge.svg?branch=dev&event=push"></a>
+<a href="https://github.com/ShareASmile/NewPipeZing/actions" alt="Build Status"><img src="https://github.com/ShareASmile/NewPipeZing/workflows/CI/badge.svg?branch=NewPipeZing&event=push"></a>
 <a href="https://hosted.weblate.org/engage/newpipe/" alt="Translation Status"><img src="https://hosted.weblate.org/widgets/newpipe/-/svg-badge.svg"></a>
 <a href="https://webchat.freenode.net/#newpipe" alt="IRC channel: #newpipe"><img src="https://img.shields.io/badge/IRC%20chat-%23newpipe-brightgreen.svg"></a>
 <a href="https://www.bountysource.com/teams/newpipe" alt="Bountysource bounties"><img src="https://img.shields.io/bountysource/team/newpipe/activity.svg?colorB=cd201f"></a>
@@ -34,7 +34,7 @@ NewPipeZing Reloaded version 0.19.8 with up-to-date NewPipeExtractor dependency
 
 
 ## Description
- This repository contains old preunified version 0.19.8 of [NewPipe](https://github.com/TeamNewPipe/NewPipe/releases/tag/v0.19.8) with up-to-date [NewPipeExtractor](https://github.com/ShareASmile/NewPipeExtractor/tree/ify) dependency.
+ This repository contains old preunified version 0.19.8 of [NewPipe](https://github.com/TeamNewPipe/NewPipe/releases/tag/v0.19.8) with up-to-date [NewPipeExtractor](https://github.com/ShareASmile/NewPipeExtractor/tree/master) dependency.
 
 The application itself heavily relies on the extractor component which is responsible for proper parsing of various video/audio streams, including Youtube site. The old NewPipe version 0.19.8 depends on old extractor version which is practically deprecated and can't handle current Youtube (and similar?) streams,thus rendering the application useless for daily use.
 NewPipeZing version 0.19.9+ in this repository uses the updated version of NewPipeExtractor for legacy devices and resolves the forementioned issue, thus making it possible to use old NewPipe version 0.19.8 with some bug fixes & features added along with updated extractor version. You don't need a YouTube account to use NewPipe, it is a copylefted libre software.
