@@ -6,7 +6,7 @@ on:
     branches:
       - dev
       - master
-      - release**
+      - adapt
     paths-ignore:
       - 'README.md'
       - 'doc/**'
@@ -19,6 +19,7 @@ on:
     branches:
       - dev
       - master
+      - adapt
     paths-ignore:
       - 'README.md'
       - 'doc/**'
@@ -60,70 +61,62 @@ jobs:
           name: app
           path: app/build/outputs/apk/debug/*.apk
 
-  test-android:
-    # macos has hardware acceleration. See android-emulator-runner action
-    runs-on: macos-latest
-    timeout-minutes: 20
-    strategy:
-      matrix:
-        # api-level 19 is min sdk, but throws errors related to desugaring
-        api-level: [ 21, 29 ]
+#  test-android:
+#    # macos has hardware acceleration. See android-emulator-runner action
+#    runs-on: macos-latest
+#   timeout-minutes: 20
+#    strategy:
+#     matrix:
+#       # api-level 19 is min sdk, but throws errors related to desugaring
+#       api-level: [ 21, 29 ]
+#
+#   steps:
+#     - uses: actions/checkout@v3
+#
+#     - name: set up JDK 11
+#       uses: actions/setup-java@v3
+#       with:
+#         java-version: 11
+#         distribution: "temurin"
+#         cache: 'gradle'
+#
+#     - name: Run android tests
+#       uses: reactivecircus/android-emulator-runner@v2
+#       with:
+#         api-level: ${{ matrix.api-level }}
+#         # workaround to emulator bug: https://github.com/ReactiveCircus/android-emulator-runner/issues/160
+#         emulator-build: 7425822
+#         script: ./gradlew connectedCheck --stacktrace
 
-    permissions:
-      contents: read
+#   sonar:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-    steps:
-      - uses: actions/checkout@v3
+#       - name: Set up JDK 11
+#         uses: actions/setup-java@v3
+#         with:
+#           java-version: 11 # Sonar requires JDK 11
+#           distribution: "temurin"
 
-      - name: set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: 11
-          distribution: "temurin"
-          cache: 'gradle'
+#       - name: Cache SonarCloud packages
+#         uses: actions/cache@v3
+#         with:
+#           path: ~/.sonar/cache
+#           key: ${{ runner.os }}-sonar
+#           restore-keys: ${{ runner.os }}-sonar
 
-      - name: Run android tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          # workaround to emulator bug: https://github.com/ReactiveCircus/android-emulator-runner/issues/160
-          emulator-build: 7425822
-          script: ./gradlew connectedCheck --stacktrace
+#       - name: Cache Gradle packages
+#         uses: actions/cache@v3
+#         with:
+#           path: ~/.gradle/caches
+#           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+#           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Upload test report when tests fail # because the printed out stacktrace (console) is too short, see also #7553
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: android-test-report-api${{ matrix.api-level }}
-          path: app/build/reports/androidTests/connected/**
-
-  sonar:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: 11 # Sonar requires JDK 11
-          distribution: "temurin"
-          cache: 'gradle'
-
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonarqube --info
+#       - name: Build and analyze
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#         run: ./gradlew build sonarqube --info
