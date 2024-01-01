@@ -6,7 +6,7 @@ NewPipeZing Reloaded version 0.19.8 with up-to-date NewPipeExtractor dependency
 <p align="center">
 <a href="https://github.com/ShareASmile/NewPipeZing/releases" alt="GitHub release"><img src="https://img.shields.io/github/release/ShareASmile/NewPipeZing.svg" ></a>
 <a href="https://www.gnu.org/licenses/gpl-3.0" alt="License: GPLv3"><img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg"></a>
-<a href="https://github.com/ShareASmile/NewPipeZing/actions" alt="Build Status"><img src="https://github.com/ShareASmile/NewPipeZing/workflows/CI/badge.svg?branch=NewPipeZing&event=push"></a>
+<a href="https://github.com/ShareASmile/NewPipeZing/actions/workflows/ci.yml" alt="Build Status"><img src="https://github.com/ShareASmile/NewPipeZing/actions/workflows/ci.yml/badge.svg"></a>
 <a href="https://hosted.weblate.org/engage/newpipe/" alt="Translation Status"><img src="https://hosted.weblate.org/widgets/newpipe/-/svg-badge.svg"></a>
 <a href="https://webchat.freenode.net/#newpipe" alt="IRC channel: #newpipe"><img src="https://img.shields.io/badge/IRC%20chat-%23newpipe-brightgreen.svg"></a>
 <a href="https://www.bountysource.com/teams/newpipe" alt="Bountysource bounties"><img src="https://img.shields.io/bountysource/team/newpipe/activity.svg?colorB=cd201f"></a>
