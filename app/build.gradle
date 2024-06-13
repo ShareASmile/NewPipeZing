@@ -167,7 +167,7 @@ dependencies {
     // name and the commit hash with the commit hash of the (pushed) commit you want to test
     // This works thanks to JitPack: https://jitpack.io/
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
-    implementation 'com.github.ShareASmile:NewPipeExtractor:4aea925d97'
+    implementation 'com.github.ShareASmile:NewPipeExtractor:9f741d54b2'
 
 /** Third-party libraries **/
     // Instance state boilerplate elimination
@@ -215,7 +215,7 @@ dependencies {
     implementation "com.jakewharton.rxbinding2:rxbinding:2.2.0"
 
     // Date and time formatting
-    implementation "org.ocpsoft.prettytime:prettytime:5.0.7.Final"
+    implementation "org.ocpsoft.prettytime:prettytime:5.0.8.Final"
 
 /** Debugging **/
     // Memory leak detection
