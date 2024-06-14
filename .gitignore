@@ -4,14 +4,14 @@
 .DS_Store
 /build
 /captures
-/app/app.iml
 /.idea
 /*.iml
 *~
 .weblate
 *.class
+/app/*.iml
+/app/build
 /app/release
-
 # vscode / eclipse files
 *.classpath
 *.project
