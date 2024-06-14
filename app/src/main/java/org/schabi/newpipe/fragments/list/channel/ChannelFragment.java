@@ -481,8 +481,8 @@ public class ChannelFragment extends BaseListInfoFragment<ChannelInfo>
 
         if (!TextUtils.isEmpty(currentInfo.getParentChannelName())) {
             headerSubChannelTitleView.setText(String.format(
-                            getString(R.string.channel_created_by),
-                            currentInfo.getParentChannelName())
+                    getString(R.string.channel_created_by),
+                    currentInfo.getParentChannelName())
             );
             headerSubChannelTitleView.setVisibility(View.VISIBLE);
             headerSubChannelAvatarView.setVisibility(View.VISIBLE);
