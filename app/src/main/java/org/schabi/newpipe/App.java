@@ -21,6 +21,7 @@ import org.acra.config.ACRAConfigurationException;
 import org.acra.config.CoreConfiguration;
 import org.acra.config.CoreConfigurationBuilder;
 import org.acra.sender.ReportSenderFactory;
+import org.conscrypt.Conscrypt;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.report.AcraReportSenderFactory;
@@ -35,6 +36,7 @@ import org.schabi.newpipe.util.StateSaver;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.security.Security;
 import java.net.SocketException;
 import java.util.Collections;
 import java.util.List;
@@ -87,6 +89,8 @@ public class App extends MultiDexApplication {
         super.onCreate();
 
         app = this;
+
+        Security.insertProviderAt(Conscrypt.newProvider(), 1);
 
         // Initialize settings first because others inits can use its values
         SettingsActivity.initSettings(this);
