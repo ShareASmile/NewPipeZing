@@ -59,8 +59,8 @@
     <dimen name="video_item_detail_likes_text_size">12sp</dimen>
     <dimen name="video_item_detail_uploader_text_size">12sp</dimen>
     <dimen name="video_item_detail_sub_channel_text_size">14sp</dimen>
-    <dimen name="video_item_detail_upload_date_text_size">13sp</dimen>
-    <dimen name="video_item_detail_description_text_size">13sp</dimen>
+    <dimen name="video_item_detail_upload_date_text_size">14sp</dimen>
+    <dimen name="video_item_detail_description_text_size">14sp</dimen>
     <dimen name="video_item_detail_next_text_size">15sp</dimen>
     <dimen name="channel_subscribers_text_size">12sp </dimen>
     <dimen name="channel_rss_title_size">12sp</dimen>
@@ -115,8 +115,8 @@
     <dimen name="file_picker_items_text_size">14sp</dimen>
 
     <!-- Text Size -->
-    <dimen name="comment_item_title_text_size">12sp</dimen>
-    <dimen name="comment_item_content_text_size">12sp</dimen>
+    <dimen name="comment_item_title_text_size">14sp</dimen>
+    <dimen name="comment_item_content_text_size">14sp</dimen>
 
     <!-- Feed Groups dimensions-->
     <dimen name="feed_group_carousel_start_end_margin">12dp</dimen>

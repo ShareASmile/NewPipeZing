@@ -80,25 +80,24 @@
             android:textSize="14sp"
             tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nec aliquam augue, eget cursus est. Ut id tristique enim, ut scelerisque tellus. Sed ultricies ipsum non mauris ultricies, commodo malesuada velit porta." />
 
-            <TextView
-                android:id="@+id/artist_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:fadingEdge="horizontal"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="12sp"
-                tools:text="Duis posuere arcu condimentum lobortis mattis." />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/artist_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="12sp"
+            tools:text="Duis posuere arcu condimentum lobortis mattis." />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/player_controls_background"
         android:orientation="horizontal"
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
