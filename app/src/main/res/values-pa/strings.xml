@@ -98,7 +98,7 @@
     <string name="settings_category_player_title">ਪਲੇਅਰ</string>
     <string name="settings_category_player_behavior_title">ਵਿਵਹਾਰ</string>
     <string name="settings_category_video_audio_title">ਵੀਡੀਓ ਅਤੇ ਆਡੀਓ</string>
-    <string name="settings_category_history_title">ਅਤੀਤ ਅਤੇ ਕੈਸ਼ੇ</string>
+    <string name="settings_category_history_title">ਇਤਿਹਾਸ ਅਤੇ ਕੈਸ਼</string>
     <string name="settings_category_popup_title">ਪੌਪ-ਅਪ</string>
     <string name="settings_category_appearance_title">ਦਿੱਖ</string>
     <string name="settings_category_other_title">ਹੋਰ</string>
@@ -110,7 +110,7 @@
     <string name="play_btn_text">ਪਲੇਅ</string>
     <string name="content">ਸਮੱਗਰੀ</string>
     <string name="show_age_restricted_content_title">ਉਮਰ-ਮੁਤਾਬਕ-ਪਾਬੰਦੀਸ਼ੁਦਾ ਸਮੱਗਰੀ ਵਿਖਾਓ</string>
-    <string name="video_is_age_restricted">ਉਮਰ ਪ੍ਰਤੀਬੰਧਿਤ ਵੀਡੀਓ ਵਿਖਾਓ ਸੈਟਿੰਗਸ ਤੋਂ ਅਜਿਹੀ ਸਮੱਗਰੀ ਦੀ ਆਗਿਆ ਦੇਣੀ ਸੰਭਵ ਹੈ.</string>
+    <string name="video_is_age_restricted">ਉਮਰ ਪ੍ਰਤੀਬੰਧਿਤ ਵੀਡੀਓ ਵਿਖਾਓ ਸੈਟਿੰਗਸ ਤੋਂ ਅਜਿਹੀ ਸਮੱਗਰੀ ਦੀ ਆਗਿਆ ਦੇਣੀ ਸੰਭਵ ਹੈ।</string>
     <string name="duration_live">ਲਾਈਵ</string>
     <string name="downloads">ਡਾਊਨਲੋਡਸ</string>
     <string name="downloads_title">ਡਾਊਨਲੋਡਸ</string>
@@ -133,7 +133,7 @@
     <string name="file">ਫਾਈਲ</string>
     <string name="notification_channel_name">ਨਿਊਪਾਈਪ ਨੋਟੀਫਿਕੇਸ਼ਨ</string>
     <string name="notification_channel_description">ਨਿਊਪਾਈਪ ਬੈਕਗ੍ਰਾਊਂਡ ਅਤੇ ਪੌਪ-ਅਪ ਪਲੇਅਰਾਂ ਲਈ ਸੂਚਨਾਵਾਂ</string>
-    <string name="unknown_content">ਅਣਜਾਣ</string>
+    <string name="unknown_content">[ਅਣਜਾਣ ਸਮੱਗਰੀ]</string>
     <string name="toggle_orientation">ਓਰੀਐਂਟੇਸ਼ਨ ਬਦਲੋ</string>
     <string name="switch_to_background">ਬੈਕਗ੍ਰਾਊਂਡ ਵਿੱਚ ਬਦਲੋ</string>
     <string name="switch_to_popup">ਪੌਪ-ਅਪ ਵਿੱਚ ਬਦਲੋ</string>
@@ -141,15 +141,15 @@
 	<string name="set_timer">ਟਾਈਮਰ ਸੈੱਟ ਕਰੋ</string>
     <string name="import_data_title">ਡਾਟਾਬੇਸ ਆਯਾਤ ਕਰੋ</string>
     <string name="export_data_title">ਡਾਟਾਬੇਸ ਨਿਰਯਾਤ ਕਰੋ</string>
-    <string name="import_data_summary">ਤੁਹਾਡੇ ਮੌਜੂਦਾ ਇਤਿਹਾਸ, ਸਬਸਕ੍ਰਿਪਸ਼ਨਸ, ਪਲੇ-ਸੂਚੀ ਅਤੇ (ਆਪਨਸ਼ਨਲੀ) ਸੈਟਿੰਗਾਂ ਨੂੰ ਨਵਿਆਂ ਨਾਲ਼ ਬਦਲ ਦਿੰਦਾ ਹੈ</string>
+    <string name="import_data_summary">ਤੁਹਾਡੇ ਮੌਜੂਦਾ ਇਤਿਹਾਸ, ਸਬਸਕ੍ਰਿਪਸ਼ਨਜ਼, ਪਲੇ-ਸੂਚੀ ਅਤੇ (ਆਪਨਸ਼ਨਲੀ) ਸੈਟਿੰਗਾਂ ਨੂੰ ਨਵਿਆਂ ਨਾਲ਼ ਬਦਲ ਦਿੰਦਾ ਹੈ</string>
     <string name="export_data_summary">ਇਤਿਹਾਸ, ਸੁਬਸਕ੍ਰਿਪਸ਼ਨਸ, ਪਲੇ-ਸੂਚੀ ਅਤੇ ਸੈਟਿੰਗਾਂ ਨਿਰਯਾਤ ਕਰੋ</string>
     <string name="clear_views_history_title">ਵੇਖੇ ਗਏ ਵੀਡੀਓਜ਼ ਦੀ ਸੂਚੀ ਮਿਟਾਓ</string>
     <string name="clear_views_history_summary">ਚਲਾਈਆਂ ਗਈਆਂ ਸਟ੍ਰੀਮਾਂ ਦੇ ਇਤਿਹਾਸ ਅਤੇ ਪਲੇ-ਸਥਿਤੀਆਂ ਨੂੰ ਮਿਟਾਉਂਦਾ ਹੈ</string>
-    <string name="delete_view_history_alert">ਕੀ ਵੇਖੇ ਗਏ ਵੀਡੀਓਜ਼ ਦਾ ਇਤਿਹਾਸ ਮਿਟਾ ਦਿੱਤਾ ਜਾਵੇ\?</string>
-    <string name="clear_search_history_title">ਖੋਜ ਸੂਚੀ ਮਿਟਾਓ</string>
+    <string name="delete_view_history_alert">ਕੀ ਚਲਾਈਆਂ ਗਈਆਂ ਸਟ੍ਰੀਮਾਂ ਦਾ ਇਤਿਹਾਸ ਮਿਟਾ ਦਿੱਤਾ ਜਾਵੇ\?</string>
+    <string name="clear_search_history_title">ਖੋਜ ਸੂਚੀ ਦਾ ਇਤਿਹਾਸ ਮਿਟਾਓ</string>
     <string name="clear_search_history_summary">ਖੋਜ ਸ਼ਬਦਾਂ ਦੀ ਸੂਚੀ ਮਿਟਾਉਂਦਾ ਹੈ</string>
     <string name="delete_search_history_alert">ਕੀ ਸਾਰੀ ਖੋਜ ਸੂਚੀ ਮਿਟਾ ਦਿਤੀ ਜਾਵੇ \?</string>
-    <string name="search_history_deleted">ਖੋਜ ਸੂਚੀ ਮਿਟਾ ਦਿਤੀ ਗਈ ਹੈ।</string>
+    <string name="search_history_deleted">ਖੋਜ ਸੂਚੀ ਦਾ ਇਤਿਹਾਸ ਮਿਟਾ ਦਿਤਾ ਗਿਆ</string>
     <string name="general_error">ਤਰੁੱਟੀ</string>
     <string name="network_error">ਨੈੱਟਵਰਕ ਗੜਬੜ</string>
     <string name="could_not_load_thumbnails">ਸਾਰੇ ਥੰਮਨੇਲ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕੇ</string>
@@ -167,8 +167,8 @@
     <string name="player_recoverable_failure">ਪਲੇਅਰ ਤਰੁੱਟੀ ਤੋਂ ਮੁੜ-ਸੁਰਜੀਤ ਹੋ ਰਿਹਾ ਹੈ</string>
     <string name="external_player_unsupported_link_type">ਬਾਹਰੀ ਪਲੇਅਰ ਇਸ ਕਿਸਮ ਦੇ ਲਿੰਕਾਂ ਦਾ ਸਮਰਥਨ ਨਹੀਂ ਕਰਦੇ</string>
     <string name="invalid_url_toast">ਅਵੈਧ URL</string>
-    <string name="video_streams_empty">ਕੋਈ ਵੀ ਵੀਡੀਓ ਸਟ੍ਰੀਮ ਨਹੀਂ ਮਿਲੀ</string>
-    <string name="audio_streams_empty">ਕੋਈ ਵੀ ਆਡੀਓ ਸਟ੍ਰੀਮ ਨਹੀਂ ਮਿਲੀ</string>
+    <string name="video_streams_empty">ਕੋਈ ਵੀਡੀਓ ਸਟ੍ਰੀਮ ਨਹੀਂ ਮਿਲੀ</string>
+    <string name="audio_streams_empty">ਕੋਈ ਆਡੀਓ ਸਟ੍ਰੀਮ ਨਹੀਂ ਮਿਲੀ</string>
     <string name="invalid_directory">ਅਜਿਹਾ ਕੋਈ ਫ਼ੋਲਡਰ ਨਹੀਂ</string>
     <string name="invalid_source">ਅਜਿਹਾ ਕੋਈ ਫਾਈਲ/ਸਮੱਗਰੀ ਸਰੋਤ ਨਹੀਂ ਹੈ</string>
     <string name="invalid_file">ਫਾਈਲ ਮੌਜੂਦ ਨਹੀਂ ਹੈ ਜਾਂ ਇਸ ਨੂੰ ਪੜ੍ਹਨ ਜਾਂ ਲਿਖਣ ਦੀ ਆਗਿਆ ਨਹੀਂ ਹੈ</string>
@@ -176,9 +176,9 @@
     <string name="error_occurred_detail">ਇੱਕ ਤਰੁੱਟੀ ਆਈ ਹੈ: %1$s</string>
     <string name="no_streams_available_download">ਡਾਊਨਲੋਡ ਕਰਨ ਲਈ ਕੋਈ ਸਟ੍ਰੀਮ ਉਪਲਬਧ ਨਹੀਂ ਹੈ</string>
     <string name="sorry_string">ਮੁਆਫ ਕਰਨਾ, ਅਜਿਹਾ ਨਹੀਂ ਹੋਣਾ ਚਾਹੀਦਾ ਸੀ।</string>
-    <string name="error_report_button_text">ਈ-ਮੇਲ ਦੁਆਰਾ ਇਸ ਤਰੁੱਟੀ ਦੀ ਇਤਲਾਹ ਦਿਓ</string>
+    <string name="error_report_button_text">ਈ-ਮੇਲ ਦੁਆਰਾ ਇਸ ਤਰੁੱਟੀ ਦੀ ਰਿਪੋਰਟ ਕਰੋ</string>
     <string name="error_snackbar_message">ਅਫ਼ਸੋਸ ਹੈ, ਕੁਝ ਤਰੁੱਟੀਆਂ ਸਾਹਮਣੇ ਆਈਆਂ ਹਨ।</string>
-    <string name="error_snackbar_action">ਰਿਪੋਰਟ</string>
+    <string name="error_snackbar_action">ਰਿਪੋਰਟ ਕਰੋ</string>
     <string name="what_device_headline">ਜਾਣਕਾਰੀ:</string>
     <string name="what_happened_headline">ਕੀ ਹੋਇਆ ਹੈ:</string>
     <string name="info_labels">ਕੀ:\\nRequest:\\nContent ਭਾਸ਼ਾ/ਬੋਲੀ:\\nContent Country:\\nApp ਭਾਸ਼ਾ/ਬੋਲੀ:\\nService:\\nGMT ਸਮਾਂ:\\nPackage:\\nVersion:\\nOS version:</string>
@@ -191,7 +191,7 @@
     <string name="detail_dislikes_img_view_description">ਨਾਪਸੰਦਾਂ</string>
     <string name="use_tor_title">TOR ਦੀ ਵਰਤੋਂ ਕਰੋ</string>
     <string name="use_tor_summary">(ਪ੍ਰਯੋਗ ਅਧੀਨ) ਗੋਪਨੀਯਤਾ ਲਈ TOR ਦੁਆਰਾ ਟਰੈਫਿਕ ਨੂੰ ਜਬਰੀ ਡਾਊਨਲੋਡ ਹੋਣ ਲਈ ਮਜਬੂਰ ਕਰੋ (ਸਟ੍ਰੀਮਿੰਗ ਵੀਡੀਓ ਅਜੇ supported ਨਹੀਂ ਹਨ)।</string>
-    <string name="report_error">ERROR ਦੀ ਇਤਲਾਹ ਦਿਓ</string>
+    <string name="report_error">ਤਰੁੱਟੀ ਦੀ ਰਿਪੋਰਟ ਕਰੋ</string>
     <string name="user_report">ਵਰਤੋਂਕਾਰ ਦੀ ਰਿਪੋਰਟ</string>
     <string name="search_no_results">ਕੋਈ ਨਤੀਜੇ ਨਹੀਂ</string>
     <string name="empty_subscription_feed_subtitle">ਇਥੇ ਦਾ ਖਾਲੀਪਣ ਦੂਰ ਕਰਨ ਲਈ ਕੁਝ ਸਰਚ ਕਰੋ ਜਾਂ ਕੋਈ ਚੈਨਲ ਸਬਸਕ੍ਰਾਇਬ ਕਰੋ</string>
@@ -217,8 +217,8 @@
     </plurals>
     <string name="no_videos">ਕੋਈ ਵੀਡੀਓ ਨਹੀਂ</string>
     <plurals name="videos">
-        <item quantity="one">%s ਵੀਡੀਓ ਹੈ</item>
-        <item quantity="other">%s ਵੀਡੀਓ ਹਨ</item>
+        <item quantity="one">%s ਵੀਡੀਓ</item>
+        <item quantity="other">%s ਵੀਡੀਓਜ਼</item>
     </plurals>
     <string name="start">ਸ਼ੁਰੂ ਕਰੋ</string>
     <string name="pause">ਰੋਕੋ</string>
@@ -243,7 +243,8 @@
     <string name="msg_wait">ਕ੍ਰਿਪਾ ਕਰਕੇ ਉਡੀਕ ਕਰੋ…</string>
     <string name="msg_copied">ਕਲਿਪ-ਬੋਰਡ ਵਿੱਚ ਕਾਪੀ ਹੋ ਗਿਆ ਹੈ</string>
     <string name="no_available_dir">ਬਾਅਦ ਵਿੱਚ ਸੈਟਿੰਗਾਂ ਵਿਚੋਂ ਇੱਕ ਡਾਉਨਲੋਡ ਫ਼ੋਲਡਰ ਨੂੰ ਚੁਣੋ</string>
-    <string name="msg_popup_permission">ਪੌਪ-ਅਪ ਮੋਡ ਵਿੱਚ ਖੋਲ੍ਹਣ ਵਾਸਤੇ ਇਸ ਇਜਾਜ਼ਤ ਦੀ ਲੋੜ ਹੈ</string>
+    <string name="msg_popup_permission">ਪੌਪ-ਅਪ ਮੋਡ ਵਿੱਚ ਖੋਲ੍ਹਣ ਵਾਸਤੇ 
+\nਇਸ ਇਜਾਜ਼ਤ ਦੀ ਲੋੜ ਹੈ</string>
     <string name="one_item_deleted">1 ਆਈਟਮ ਮਿਟਾਈ ਗਈ।</string>
     <string name="title_activity_recaptcha">ReCaptcha ਚੁਣੌਤੀ</string>
     <string name="recaptcha_request_toast">ReCaptcha ਚੁਣੌਤੀ ਲਈ ਬੇਨਤੀ</string>
@@ -257,7 +258,7 @@
     <string name="title_activity_about">ਨਿਊਪਾਈਪ ਬਾਰੇ</string>
     <string name="action_settings">ਸੈਟਿੰਗਾਂ</string>
     <string name="action_about">ਐਪ ਬਾਰੇ</string>
-    <string name="title_licenses">ਥਰਡ-ਪਾਰਟੀ ਲਾਈਸੈਂਸ</string>
+    <string name="title_licenses">ਤੀਜੀ ਧਿਰ ਦੇ ਲਾਈਸੈਂਸ</string>
     <string name="copyright" formatted="true">© %1$s ਵਲੋਂ %2$s, %3$s ਅਧੀਨ</string>
     <string name="error_unable_to_load_license">ਲਾਈਸੈਂਸ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ</string>
     <string name="action_open_website">ਵੈਬਸਾਈਟ ਖੋਲ੍ਹੋ</string>
@@ -276,17 +277,17 @@
     <string name="app_license_title">ਨਿਊਪਾਈਪ ਦਾ ਲਾਈਸੈਂਸ</string>
     <string name="app_license">ਨਿਊਪਾਈਪ ਇੱਕ ਕਾੱਪੀਲਿਫਟ ਮੁਫ਼ਤ ਸਾੱਫਟਵੇਅਰ ਹੈ: ਤੁਸੀਂ ਇਸ ਦੀ ਵਰਤੋਂ, ਅਧਿਐਨ ਅਤੇ ਇਸ ਨੂੰ ਸਾਂਝਾ ਕਰ ਸਕਦੇ ਹੋ ਅਤੇ ਇਸ ਵਿੱਚ ਆਪਣੀ ਮਰਜ਼ੀ ਅਨੁਸਾਰ ਸੁਧਾਰ ਸਕਦੇ ਹੋ. ਖਾਸ ਤੌਰ \'ਤੇ ਤੁਸੀਂ ਇਸ ਨੂੰ GNU ਜਨਰਲ ਪਬਲਿਕ ਲਾਈਸੈਂਸ ਦੀਆਂ ਸ਼ਰਤਾਂ ਦੇ ਅਧੀਨ ਵੰਡ ਸਕਦੇ ਹੋ / ਜਾਂ ਸੰਸ਼ੋਧਿਤ ਕਰ ਸਕਦੇ ਹੋ ਜਿਵੇਂ ਕਿ ਮੁਫਤ ਸਾੱਫਟਵੇਅਰ ਫਾਊਂਡੇਸ਼ਨ ਦੁਆਰਾ ਪ੍ਰਕਾਸ਼ਤ ਕੀਤਾ ਗਿਆ ਹੈ, ਜਾਂ ਤਾਂ ਲਾਈਸੈਂਸ ਦਾ ਵਰਜ਼ਨ 3, ਜਾਂ (ਤੁਹਾਡੇ ਵਿਕਲਪ\' ਤੇ) ਬਾਅਦ ਦਾ ਕੋਈ ਸੰਸਕਰਣ।</string>
     <string name="read_full_license">ਲਾਈਸੈਂਸ ਪੜ੍ਹੋ</string>
-    <string name="title_activity_history">ਹਿਸਟਰੀ</string>
+    <string name="title_activity_history">ਇਤਿਹਾਸ</string>
     <string name="title_history_search">ਖੋਜਿਆ ਗਿਆ</string>
     <string name="title_history_view">ਵੇਖਿਆ ਗਿਆ</string>
-    <string name="history_disabled">ਹਿਸਟਰੀ ਬੰਦ ਕੀਤੀ ਹੋਈ ਹੈ</string>
-    <string name="action_history">ਹਿਸਟਰੀ</string>
-    <string name="history_empty">ਹਿਸਟਰੀ ਖ਼ਾਲੀ ਹੈ</string>
-    <string name="history_cleared">ਹਿਸਟਰੀ ਮਿਟਾ ਦਿੱਤੀ ਗਈ ਹੈ</string>
+    <string name="history_disabled">ਇਤਿਹਾਸ ਬੰਦ ਕੀਤਾ ਹੋਇਆ ਹੈ</string>
+    <string name="action_history">ਇਤਿਹਾਸ</string>
+    <string name="history_empty">ਇਤਿਹਾਸ ਖ਼ਾਲੀ ਹੈ</string>
+    <string name="history_cleared">ਇਤਿਹਾਸ ਮਿਟਾ ਦਿੱਤਾ ਗਿਆ ਹੈ</string>
     <string name="item_deleted">ਆਈਟਮ ਮਿਟਾ ਦਿੱਤੀ ਗਈ ਹੈ</string>
-    <string name="delete_item_search_history">ਕੀ ਤੁਸੀਂ ਇਸ ਚੀਜ਼ ਨੂੰ ਖੋਜ ਸੂਚੀ ਵਿੱਚੋਂ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ\?</string>
-    <string name="delete_stream_history_prompt">ਕੀ ਤੁਸੀਂ ਇਸ ਨੂੰ ਵੇਖੀ ਗਈ ਸੂਚੀ ਵਿੱਚੋਂ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ \?</string>
-    <string name="delete_all_history_prompt">ਕੀ ਤੁਸੀਂ ਸੱਚਮੁੱਚ ਹਿਸਟਰੀ ਤੋਂ ਸਾਰੀਆਂ ਆਈਟਮਾਂ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ\?</string>
+    <string name="delete_item_search_history">ਕੀ ਤੁਸੀਂ ਇਸ ਚੀਜ਼ ਨੂੰ ਖੋਜ ਸੂਚੀ ਦੇ ਇਤਿਹਾਸ ਵਿੱਚੋਂ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ\?</string>
+    <string name="delete_stream_history_prompt">ਕੀ ਤੁਸੀਂ ਇਸ ਨੂੰ ਇਤਿਹਾਸ ਸੂਚੀ ਵਿੱਚੋਂ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ \?</string>
+    <string name="delete_all_history_prompt">ਕੀ ਤੁਸੀਂ ਸੱਚਮੁੱਚ ਇਤਿਹਾਸ ਤੋਂ ਸਾਰੀਆਂ ਆਈਟਮਾਂ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ\?</string>
     <string name="title_last_played">ਆਖਰੀ ਚਲਾਈ ਗਈ</string>
     <string name="title_most_played">ਸਭ ਤੋਂ ਜਿਆਦਾ ਚਲਾਈ ਗਈ</string>
     <string name="main_page_content">ਮੁੱਖ ਪੰਨੇ ਦੀ ਸਮੱਗਰੀ</string>
@@ -311,8 +312,8 @@
     <string name="trending">ਰੁਝਾਨ ਵਿੱਚ</string>
     <string name="top_50">ਸਿਖਰਲੇ 50</string>
     <string name="new_and_hot">ਨਵਾਂ ਅਤੇ ਤਾਜ਼ਾ-ਤਰੀਨ</string>
-	<string name="local">ਲੋਕਲ</string>
-	<string name="recently_added">ਹਾਲ ਹੀ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤਾ ਹੋਇਆ</string>
+	<string name="local">ਸਥਾਨਕ</string>
+	<string name="recently_added">ਹਾਲ ਹੀ ਵਿੱਚ ਸ਼ਾਮਿਲ ਕੀਤਾ ਹੋਇਆ</string>
 	<string name="most_liked">ਸਭ ਤੋਂ ਵੱਧ ਪਸੰਦ ਕੀਤਾ ਹੋਇਆ</string>
     <string name="title_activity_background_player">ਬੈਕਗ੍ਰਾਊਂਡ ਪਲੇਅਰ</string>
     <string name="title_activity_popup_player">ਪੌਪ-ਅਪ ਪਲੇਅਰ</string>
@@ -569,15 +570,15 @@
     <string name="remove_watched">ਵੇਖੀਆਂ ਹੋਈਆਂ ਹਟਾਓ</string>
     <string name="systems_language">ਸਿਸਟਮ ਡਿਫ਼ਾਲਟ</string>
     <string name="app_language_title">ਐਪ ਭਾਸ਼ਾ</string>
-    <string name="choose_instance_prompt">ਕੋਈ ਸਥਿਤੀ ਚੁਣੋ</string>
-    <string name="peertube_instance_add_exists">ਸਥਿਤੀ ਪਹਿਲਾਂ ਤੋਂ ਮੌਜੂਦ ਹੈ</string>
+    <string name="choose_instance_prompt">ਕੋਈ ਇੰਸਟੈਂਸ ਚੁਣੋ</string>
+    <string name="peertube_instance_add_exists">ਇੰਸਟੈਂਸ ਪਹਿਲਾਂ ਤੋਂ ਮੌਜੂਦ ਹੈ</string>
     <string name="peertube_instance_add_https_only">ਸਿਰਫ਼ HTTP URLs ਹੀ ਮੰਨਣਯੋਗ ਹਨ</string>
-    <string name="peertube_instance_add_fail">ਸਥਿਤੀ ਦੀ ਜਾਇਜ਼ਗੀ ਤਸਦੀਕ ਨਹੀਂ ਹੋ ਸਕੀ</string>
-    <string name="peertube_instance_add_help">ਸਥਿਤੀ URL ਦਾਖ਼ਲ ਕਰੋ</string>
-    <string name="peertube_instance_add_title">ਸਥਿਤੀਆਂ ਜੋੜੋ</string>
-    <string name="peertube_instance_url_help">ਤੁਹਾਡੀਆਂ ਪਸੰਦੀਦਾ ਸਥਿਤੀਆਂ %s \'ਤੇ ਲੱਭੋ</string>
-    <string name="peertube_instance_url_summary">ਆਪਣੀ ਪਸੰਦੀਦਾ ਪੀਅਰਟਿਊਬ ਸਥਿਤੀਆਂ ਚੁਣੋ</string>
-    <string name="peertube_instance_url_title">ਪੀਅਰਟਿਊਬ ਸਥਿਤੀਆਂ</string>
+    <string name="peertube_instance_add_fail">ਇੰਸਟੈਂਸ ਦੀ ਜਾਇਜ਼ਗੀ ਤਸਦੀਕ ਨਹੀਂ ਹੋ ਸਕੀ</string>
+    <string name="peertube_instance_add_help">ਇੰਸਟੈਂਸ URL ਦਾਖ਼ਲ ਕਰੋ</string>
+    <string name="peertube_instance_add_title">ਇੰਸਟੈਂਸ ਜੋੜੋ</string>
+    <string name="peertube_instance_url_help">ਤੁਹਾਡੀਆਂ ਪਸੰਦੀਦਾ ਇੰਸਟੈਂਸ %s \'ਤੇ ਲੱਭੋ</string>
+    <string name="peertube_instance_url_summary">ਆਪਣਾ ਪਸੰਦੀਦਾ ਪੀਅਰਟਿਊਬ ਇੰਸਟੈਂਸ ਚੁਣੋ</string>
+    <string name="peertube_instance_url_title">ਪੀਅਰਟਿਊਬ ਇੰਸਟੈਂਸ</string>
     <string name="delete_playback_states_alert">ਸਾਰੀਆਂ ਪਲੇ-ਸਥਿਤੀਆਂ ਮਿਟਾਉਣੀਆਂ ਹਨ\?</string>
     <string name="clear_playback_states_summary">ਸਾਰੀਆਂ ਪਲੇ-ਸਥਿਤੀਆਂ ਮਿਟਾਉਂਦਾ ਹੈ</string>
     <string name="clear_playback_states_title">ਪਲੇ-ਸਥਿਤੀਆਂ ਮਿਟਾਓ</string>
