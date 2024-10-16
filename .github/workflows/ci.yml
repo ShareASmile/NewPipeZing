@@ -8,6 +8,7 @@ on:
       - master
       - refactor
       - release**
+      - test
     paths-ignore:
       - 'README.md'
       - 'doc/**'
@@ -20,6 +21,7 @@ on:
     branches:
       - dev
       - master
+      - test
     paths-ignore:
       - 'README.md'
       - 'doc/**'
