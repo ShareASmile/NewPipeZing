@@ -66,7 +66,6 @@ public class PlaybackParameterDialog extends DialogFragment {
     private boolean initialSkipSilence = DEFAULT_SKIP_SILENCE;
     private double tempo = DEFAULT_TEMPO;
     private double pitch = DEFAULT_PITCH;
-    private double stepSize = DEFAULT_STEP;
 
     @Nullable
     private SeekBar tempoSlider;
@@ -127,7 +126,6 @@ public class PlaybackParameterDialog extends DialogFragment {
 
             tempo = savedInstanceState.getDouble(TEMPO_KEY, DEFAULT_TEMPO);
             pitch = savedInstanceState.getDouble(PITCH_KEY, DEFAULT_PITCH);
-            stepSize = savedInstanceState.getDouble(STEP_SIZE_KEY, DEFAULT_STEP);
         }
     }
 
@@ -139,7 +137,6 @@ public class PlaybackParameterDialog extends DialogFragment {
 
         outState.putDouble(TEMPO_KEY, getCurrentTempo());
         outState.putDouble(PITCH_KEY, getCurrentPitch());
-        outState.putDouble(STEP_SIZE_KEY, getCurrentStepSize());
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -177,7 +174,6 @@ public class PlaybackParameterDialog extends DialogFragment {
         setupTempoControl(rootView);
         setupPitchControl(rootView);
 
-        setStepSize(stepSize);
         setupStepSizeSelector(rootView);
     }
 
@@ -265,6 +261,10 @@ public class PlaybackParameterDialog extends DialogFragment {
     }
 
     private void setupStepSizeSelector(@NonNull final View rootView) {
+        setStepSize(PreferenceManager
+                .getDefaultSharedPreferences(requireContext())
+                .getFloat(getString(R.string.adjustment_step_key), (float) DEFAULT_STEP));
+
         TextView stepSizeOnePercentText = rootView.findViewById(R.id.stepSizeOnePercent);
         TextView stepSizeFivePercentText = rootView.findViewById(R.id.stepSizeFivePercent);
         TextView stepSizeTenPercentText = rootView.findViewById(R.id.stepSizeTenPercent);
@@ -307,7 +307,10 @@ public class PlaybackParameterDialog extends DialogFragment {
     }
 
     private void setStepSize(final double stepSize) {
-        this.stepSize = stepSize;
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .edit()
+                .putFloat(getString(R.string.adjustment_step_key), (float) stepSize)
+                .apply();
 
         if (tempoStepUpText != null) {
             tempoStepUpText.setText(getStepUpPercentString(stepSize));
@@ -464,10 +467,6 @@ public class PlaybackParameterDialog extends DialogFragment {
 
     private double getCurrentPitch() {
         return pitchSlider == null ? pitch : strategy.valueOf(pitchSlider.getProgress());
-    }
-
-    private double getCurrentStepSize() {
-        return stepSize;
     }
 
     private boolean getCurrentSkipSilence() {

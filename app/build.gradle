@@ -13,8 +13,8 @@ android {
         minSdkVersion 19
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 29
-        versionCode 980
-        versionName "0.19.9.6"
+        versionCode 981
+        versionName "0.19.9.7"
 
         multiDexEnabled true
 
@@ -50,12 +50,17 @@ android {
         // debug build. This seems to be a Gradle bug, therefore
         // TODO: update Gradle version
         release {
+            if (System.properties.containsKey('packageSuffix')) {
+                applicationIdSuffix System.getProperty('packageSuffix')
+                resValue "string", "app_name", "NewPipe " + System.getProperty('packageSuffix')
+                archivesBaseName = 'NewPipe_' + System.getProperty('packageSuffix')
+            }
+            applicationIdSuffix "Zing"
+            resValue "string", "app_name", "NewPipe " + "Zing"
+            archivesBaseName = 'app'
             minifyEnabled true
             shrinkResources true // could be disabled to fix F-Droid's reproducible build
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            archivesBaseName = 'app'
-            applicationIdSuffix ".Zing"
-            resValue "string", "app_name", "NewPipe " + "Zing"
         }
     }
 
@@ -96,10 +101,10 @@ ext {
     icepickVersion = '3.2.0'
     stethoVersion = '1.5.1'
     leakCanaryVersion = '2.5'
-    exoPlayerVersion = '2.11.8'
+    exoPlayerVersion = 'r2.11.8'
     androidxLifecycleVersion = '2.2.0'
     androidxRoomVersion = '2.2.5'
-    groupieVersion = '2.8.1'
+    groupieVersion = '2.9.1'
     markwonVersion = '4.6.0'
     googleAutoServiceVersion = '1.0-rc7'
 }
@@ -167,7 +172,8 @@ dependencies {
     // name and the commit hash with the commit hash of the (pushed) commit you want to test
     // This works thanks to JitPack: https://jitpack.io/
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
-    implementation 'com.github.ShareASmile:NewPipeExtractor:8787d1879dc7f1f8a2145f282ef16ee1103bbe7e'
+    //implementation 'com.github.ShareASmile.NewPipeExtractor:NewPipeExtractor:v0.22.7.3'
+    implementation 'com.github.ShareASmile:NewPipeExtractor:c6ffd3764c53b34d38961ed7f9a09d274dd9c5a0'
 
 /** Third-party libraries **/
     // Instance state boilerplate elimination
@@ -182,16 +188,20 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:3.12.13"
 
     // Media player
-    implementation "com.google.android.exoplayer:exoplayer:${exoPlayerVersion}"
-    implementation "com.google.android.exoplayer:extension-mediasession:${exoPlayerVersion}"
+    implementation "com.github.ShareASmile.ExoPlayer:library-core:${exoPlayerVersion}"
+    implementation "com.github.ShareASmile.ExoPlayer:library-dash:${exoPlayerVersion}"
+    implementation "com.github.ShareASmile.ExoPlayer:library-hls:${exoPlayerVersion}"
+    implementation "com.github.ShareASmile.ExoPlayer:library-smoothstreaming:${exoPlayerVersion}"
+    implementation "com.github.ShareASmile.ExoPlayer:library-ui:${exoPlayerVersion}"
+    implementation "com.github.ShareASmile.ExoPlayer:extension-mediasession:${exoPlayerVersion}"
 
     // Metadata generator for service descriptors
     compileOnly "com.google.auto.service:auto-service-annotations:${googleAutoServiceVersion}"
     kapt "com.google.auto.service:auto-service:${googleAutoServiceVersion}"
 
     // Manager for complex RecyclerView layouts
-    implementation "com.xwray:groupie:${groupieVersion}"
-    implementation "com.xwray:groupie-kotlin-android-extensions:${groupieVersion}"
+    implementation "com.github.ShareASmile.groupie:groupie:${groupieVersion}"
+    implementation "com.github.ShareASmile.groupie:groupie-kotlin-android-extensions:${groupieVersion}"
 
     // Circular ImageView
     implementation "de.hdodenhof:circleimageview:3.1.0"
