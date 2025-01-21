@@ -173,7 +173,7 @@ dependencies {
     // This works thanks to JitPack: https://jitpack.io/
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
     //implementation 'com.github.ShareASmile.NewPipeExtractor:NewPipeExtractor:v0.22.7.3'
-    implementation 'com.github.ShareASmile:NewPipeExtractor:c6ffd3764c53b34d38961ed7f9a09d274dd9c5a0'
+    implementation 'com.github.ShareASmile:NewPipeExtractor:0b889c000c99e1f1ba302e9c4310ed0eea585fd0'
 
 /** Third-party libraries **/
     // Instance state boilerplate elimination
