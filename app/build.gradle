@@ -13,8 +13,8 @@ android {
         minSdkVersion 19
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 29
-        versionCode 981
-        versionName "0.19.9.7"
+        versionCode 982
+        versionName "0.19.9.8"
 
         multiDexEnabled true
 
