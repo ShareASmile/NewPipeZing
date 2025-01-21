@@ -55,8 +55,8 @@ android {
                 resValue "string", "app_name", "NewPipe " + System.getProperty('packageSuffix')
                 archivesBaseName = 'NewPipe_' + System.getProperty('packageSuffix')
             }
-            applicationIdSuffix "core"
-            resValue "string", "app_name", "NewPipe " + "core"
+            applicationIdSuffix "Zing"
+            resValue "string", "app_name", "NewPipe " + "Zing"
             archivesBaseName = 'app'
             minifyEnabled true
             shrinkResources true // could be disabled to fix F-Droid's reproducible build
