@@ -5,6 +5,7 @@ on:
   pull_request:
     branches:
       - dev
+      - dev280
       - master
       - refactor
       - release**
@@ -19,6 +20,7 @@ on:
   push:
     branches:
       - dev
+      - dev280
       - master
     paths-ignore:
       - 'README.md'
