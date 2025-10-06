@@ -32,6 +32,7 @@ abstract class FeedDAO {
      * @return the feed streams filtered according to the conditions provided in the parameters
      * @see StreamStateEntity.isFinished()
      * @see StreamStateEntity.PLAYBACK_FINISHED_END_MILLISECONDS
+     * @see StreamStateEntity.PLAYBACK_SAVE_THRESHOLD_START_MILLISECONDS
      */
     @Query(
         """
@@ -67,6 +68,15 @@ abstract class FeedDAO {
             OR s.stream_type = 'AUDIO_LIVE_STREAM'
         )
         AND (
+            :includePartiallyPlayed
+            OR sh.stream_id IS NULL
+            OR sst.stream_id IS NULL
+            OR (sst.progress_time <= ${StreamStateEntity.PLAYBACK_SAVE_THRESHOLD_START_MILLISECONDS}
+            AND sst.progress_time <= s.duration * 1000 / 4)
+            OR (sst.progress_time >= s.duration * 1000 - ${StreamStateEntity.PLAYBACK_FINISHED_END_MILLISECONDS}
+            AND sst.progress_time >= s.duration * 1000 * 3 / 4)
+        )
+        AND (
             :uploadDateBefore IS NULL
             OR s.upload_date IS NULL
             OR s.upload_date < :uploadDateBefore
@@ -79,21 +89,34 @@ abstract class FeedDAO {
     abstract fun getStreams(
         groupId: Long,
         includePlayed: Boolean,
+        includePartiallyPlayed: Boolean,
         uploadDateBefore: OffsetDateTime?
     ): Maybe<List<StreamWithState>>
 
+    /**
+     * Remove links to streams that are older than the given date
+     * **but keep at least one stream per uploader**.
+     *
+     * One stream per uploader is kept because it is needed as reference
+     * when fetching new streams to check if they are new or not.
+     * @param offsetDateTime the newest date to keep, older streams are removed
+     */
     @Query(
         """
-        DELETE FROM feed WHERE
-
-        feed.stream_id IN (
-            SELECT s.uid FROM streams s
-
-            INNER JOIN feed f
-            ON s.uid = f.stream_id
-
-            WHERE s.upload_date < :offsetDateTime
-        )
+        DELETE FROM feed
+        WHERE feed.stream_id IN (SELECT uid from (
+              SELECT s.uid,
+              (SELECT MAX(upload_date)
+                    FROM streams s1
+                    INNER JOIN feed f1
+                    ON s1.uid = f1.stream_id
+                    WHERE f1.subscription_id = f.subscription_id) max_upload_date
+              FROM streams s
+              INNER JOIN feed f
+              ON s.uid = f.stream_id
+        
+              WHERE s.upload_date < :offsetDateTime
+              AND   s.upload_date <> max_upload_date))
         """
     )
     abstract fun unlinkStreamsOlderThan(offsetDateTime: OffsetDateTime)

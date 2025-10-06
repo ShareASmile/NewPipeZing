@@ -24,6 +24,7 @@ import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -49,6 +50,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.os.HandlerCompat;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
@@ -56,7 +58,9 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.schabi.newpipe.App;
 import org.schabi.newpipe.BuildConfig;
+import org.schabi.newpipe.LocalPlayerActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
@@ -117,8 +121,12 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
 
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
+    private SharedPreferences mPrefs;
+
     public MissionAdapter(Context context, @NonNull DownloadManager downloadManager, View emptyMessage, View root) {
         mContext = context;
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(App.getApp());
+
         mDownloadManager = downloadManager;
 
         mInflater = LayoutInflater.from(mContext);
@@ -333,7 +341,25 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         }
     }
 
-    private void viewWithFileProvider(Mission mission) {
+    private void open(Mission mission) {
+        if (checkInvalidFile(mission)) return;
+
+        String mimeType = resolveMimeType(mission);
+
+        if (BuildConfig.DEBUG)
+            Log.v(TAG, "Mime: " + mimeType + " package: " + BuildConfig.APPLICATION_ID + ".provider");
+
+        Uri uri = resolveShareableUri(mission);
+
+        Intent intent = new Intent(mContext, LocalPlayerActivity.class);
+        intent.setDataAndType(uri, mimeType);
+        intent.putExtra("segments", mission.segmentsJson);
+        intent.setFlags(FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+        mContext.startActivity(intent);
+    }
+
+    private void openExternally(Mission mission) {
         if (checkInvalidFile(mission)) return;
 
         String mimeType = resolveMimeType(mission);
@@ -345,16 +371,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         intent.setDataAndType(resolveShareableUri(mission), mimeType);
         intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
         intent.addFlags(FLAG_GRANT_PREFIX_URI_PERMISSION);
-
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-        }
-
-        if (intent.resolveActivity(mContext.getPackageManager()) != null) {
-            ShareUtils.openIntentInApp(mContext, intent, false);
-        } else {
-            Toast.makeText(mContext, R.string.toast_no_player, Toast.LENGTH_LONG).show();
-        }
+        ShareUtils.openIntentInApp(mContext, intent);
     }
 
     private void shareFile(Mission mission) {
@@ -372,7 +389,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
             intent.putExtra(Intent.EXTRA_TITLE, mContext.getString(R.string.share_dialog_title));
         }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
 
         mContext.startActivity(intent);
@@ -500,7 +517,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
                 showError(mission, UserAction.DOWNLOAD_POSTPROCESSING, R.string.error_postprocessing_failed);
                 return;
             case ERROR_INSUFFICIENT_STORAGE:
-                msg = R.string.error_insufficient_storage;
+                msg = R.string.error_insufficient_storage_left;
                 break;
             case ERROR_UNKNOWN_EXCEPTION:
                 if (mission.errObject != null) {
@@ -548,7 +565,6 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
 
         builder.setNegativeButton(R.string.ok, (dialog, which) -> dialog.cancel())
                 .setTitle(mission.storage.getName())
-                .create()
                 .show();
     }
 
@@ -673,8 +689,18 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
                 applyChanges();
                 checkMasterButtonsVisibility();
                 return true;
+            case R.id.open_externally:
+                openExternally(h.item.mission);
+                return true;
             case R.id.md5:
             case R.id.sha1:
+                final StoredFileHelper storage = h.item.mission.storage;
+                if (!storage.existsAsFile()) {
+                    Toast.makeText(mContext, R.string.missing_file, Toast.LENGTH_SHORT).show();
+                    mDeleter.append(h.item.mission);
+                    applyChanges();
+                    return true;
+                }
                 final NotificationManager notificationManager
                         = ContextCompat.getSystemService(mContext, NotificationManager.class);
                 final NotificationCompat.Builder progressNotificationBuilder
@@ -689,7 +715,6 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
 
                 notificationManager.notify(HASH_NOTIFICATION_ID, progressNotificationBuilder
                         .build());
-                final StoredFileHelper storage = h.item.mission.storage;
                 compositeDisposable.add(
                         Observable.fromCallable(() -> Utility.checksum(storage, id))
                                 .subscribeOn(Schedulers.computation())
@@ -889,8 +914,14 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             itemView.setHapticFeedbackEnabled(true);
 
             itemView.setOnClickListener(v -> {
-                if (item.mission instanceof FinishedMission)
-                    viewWithFileProvider(item.mission);
+                if (item.mission instanceof FinishedMission) {
+                    if (mPrefs.getBoolean(mContext
+                            .getString(R.string.enable_local_player_key), false)) {
+                        open(item.mission);
+                    } else {
+                        openExternally(item.mission);
+                    }
+                }
             });
 
             itemView.setOnLongClickListener(v -> {

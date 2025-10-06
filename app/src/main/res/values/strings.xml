@@ -7,6 +7,8 @@
     <string name="install">Install</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="open_in_browser">Open in browser</string>
     <string name="mark_as_watched">Mark as watched</string>
     <string name="open_in_popup_mode">Open in popup mode</string>
@@ -46,7 +48,7 @@
     <string name="show_higher_resolutions_title">Show higher resolutions</string>
     <string name="show_higher_resolutions_summary">Only some devices can play 2K/4K videos</string>
     <string name="play_with_kodi_title">Play with Kodi</string>
-    <string name="kore_not_found">Install missing Kore app?</string>
+    <string name="kore_not_found">Install missing Kore app\?</string>
     <string name="show_play_with_kodi_title">Show \"Play with Kodi\" option</string>
     <string name="show_play_with_kodi_summary">Display an option to play a video via Kodi media center</string>
     <string name="crash_the_player">Crash the player</string>
@@ -57,7 +59,8 @@
     <string name="notification_action_2_title">Third action button</string>
     <string name="notification_action_3_title">Fourth action button</string>
     <string name="notification_action_4_title">Fifth action button</string>
-    <string name="notification_actions_summary">Edit each notification action below by tapping on it. Select up to three of them to be shown in the compact notification by using the checkboxes on the right</string>
+    <string name="notification_actions_summary">Edit each notification action below by tapping on it. Select up to three of them to be shown in the compact notification by using the checkboxes on the right.</string>
+    <string name="notification_actions_summary_android13">Edit each notification action below by tapping on it. The first three actions (play/pause, previous and next) are set by the system and cannot be customized.</string>
     <string name="notification_actions_at_most_three">You can select at most three actions to show in the compact notification!</string>
     <string name="notification_action_repeat">Repeat</string>
     <string name="notification_action_shuffle">Shuffle</string>
@@ -69,7 +72,7 @@
     <string name="default_audio_format_title">Default audio format</string>
     <string name="default_video_format_title">Default video format</string>
     <string name="theme_title">Theme</string>
-    <string name="night_theme_title">Night Theme</string>
+    <string name="night_theme_title">Night theme</string>
     <string name="light_theme_title">Light</string>
     <string name="dark_theme_title">Dark</string>
     <string name="black_theme_title">Black</string>
@@ -79,12 +82,12 @@
     <string name="use_inexact_seek_summary">Inexact seek allows the player to seek to positions faster with reduced precision. Seeking for 5, 15 or 25 seconds doesn\'t work with this</string>
     <string name="seek_duration_title">Fast-forward/-rewind seek duration</string>
     <string name="progressive_load_interval_title">Playback load interval size</string>
-    <string name="progressive_load_interval_summary">Change the load interval size (currently %s). A lower value may speed up initial video loading. Changes require a player restart</string>
+    <string name="progressive_load_interval_summary">Change the load interval size on progressive contents (currently %s). A lower value may speed up their initial loading</string>
     <string name="clear_queue_confirmation_title">Ask for confirmation before clearing a queue</string>
     <string name="clear_queue_confirmation_summary">Switching from one player to another may replace your queue</string>
     <string name="clear_queue_confirmation_description">The active player queue will be replaced</string>
-    <string name="download_thumbnail_title">Load thumbnails</string>
-    <string name="download_thumbnail_summary">Turn off to prevent loading thumbnails, saving data and memory usage. Changes clear both in-memory and on-disk image cache</string>
+    <string name="ignore_hardware_media_buttons_title">Ignore hardware media button events</string>
+    <string name="ignore_hardware_media_buttons_summary">Useful, for instance, if you are using a headset with broken physical buttons</string>
     <string name="show_comments_title">Show comments</string>
     <string name="show_comments_summary">Turn off to hide comments</string>
     <string name="show_next_and_similar_title">Show \'Next\' and \'Similar\' videos</string>
@@ -92,6 +95,10 @@
     <string name="show_description_summary">Turn off to hide video description and additional information</string>
     <string name="show_meta_info_title">Show meta info</string>
     <string name="show_meta_info_summary">Turn off to hide meta info boxes with additional information about the stream creator, stream content or a search request</string>
+    <string name="prefer_original_audio_title">Prefer original audio</string>
+    <string name="prefer_original_audio_summary">Select the original audio track regardless of the language</string>
+    <string name="prefer_descriptive_audio_title">Prefer descriptive audio</string>
+    <string name="prefer_descriptive_audio_summary">Select an audio track with descriptions for visually impaired people if available</string>
     <string name="thumbnail_cache_wipe_complete_notice">Image cache wiped</string>
     <string name="metadata_cache_wipe_title">Wipe cached metadata</string>
     <string name="metadata_cache_wipe_summary">Remove all cached webpage data</string>
@@ -99,10 +106,13 @@
     <string name="auto_queue_title">Auto-enqueue next stream</string>
     <string name="auto_queue_summary">Continue ending (non-repeating) playback queue by appending a related stream</string>
     <string name="auto_queue_toggle">Auto-enqueuing</string>
-    <string name="volume_gesture_control_title">Volume gesture control</string>
-    <string name="volume_gesture_control_summary">Use gestures to control player volume</string>
-    <string name="brightness_gesture_control_title">Brightness gesture control</string>
-    <string name="brightness_gesture_control_summary">Use gestures to control player brightness</string>
+    <string name="left_gesture_control_summary">Choose gesture for left half of player screen</string>
+    <string name="left_gesture_control_title">Left gesture action</string>
+    <string name="right_gesture_control_summary">Choose gesture for right half of player screen</string>
+    <string name="right_gesture_control_title">Right gesture action</string>
+    <string name="brightness">Brightness</string>
+    <string name="volume">Volume</string>
+    <string name="none">None</string>
     <string name="show_search_suggestions_title">Search suggestions</string>
     <string name="show_search_suggestions_summary">Choose the suggestions to show when searching</string>
     <string name="local_search_suggestions">Local search suggestions</string>
@@ -145,19 +155,42 @@
     <string name="settings_category_updates_title">Updates</string>
     <string name="settings_category_player_notification_title">Player notification</string>
     <string name="settings_category_player_notification_summary">Configure current playing stream notification</string>
+    <string name="settings_category_backup_restore_title">Backup and restore</string>
+    <string name="settings_category_sponsor_block_title">SponsorBlock (Beta, Third-Party Service)</string>
+    <string name="settings_category_sponsor_block_categories_title">SponsorBlock Categories</string>
+    <string name="settings_category_sponsor_block_categories_summary">Customize which video segments to skip, along with their color markings on the seek bar.</string>
+    <string name="settings_category_sponsor_block_categories_reset_colors_title">Reset Colors</string>
+    <string name="settings_category_sponsor_block_category_enable_title">Enable</string>
+    <string name="settings_category_sponsor_block_category_color">Seek Bar Color</string>
+    <string name="settings_category_sponsor_block_category_sponsor_title">Sponsor</string>
+    <string name="settings_category_sponsor_block_category_sponsor_summary">Paid promotion, paid referrals and direct advertisements. Not for self-promotion or free shoutouts to causes/creators/websites/products they like.</string>
+    <string name="settings_category_sponsor_block_category_intro_title">Intermission/Intro Animation</string>
+    <string name="settings_category_sponsor_block_category_intro_summary">An interval without actual content. Could be a pause, static frame, repeating animation. This should not be used for transitions containing information or be used on music videos.</string>
+    <string name="settings_category_sponsor_block_category_outro_title">Endcards/Credits</string>
+    <string name="settings_category_sponsor_block_category_outro_summary">Credits or when the YouTube endcards appear. Not for spoken conclusions. This should not include useful content. This should not be used on music videos.</string>
+    <string name="settings_category_sponsor_block_category_interaction_title">Interaction Reminds (Subscribe)</string>
+    <string name="settings_category_sponsor_block_category_interaction_summary">When there is a short reminder to like, subscribe or follow them in the middle of content. If it is long or about something specific, it should be under self promotion instead.</string>
+    <string name="settings_category_sponsor_block_category_self_promo_title">Unpaid/Self Promotion</string>
+    <string name="settings_category_sponsor_block_category_self_promo_summary">Similar to "sponsor" except for unpaid or self promotion. This includes sections about merchandise, donations, or information about who they collaborated with.</string>
+    <string name="settings_category_sponsor_block_category_non_music_title">Music: Non-Music Section</string>
+    <string name="settings_category_sponsor_block_category_non_music_summary">Only for use in music videos. This includes introductions or outros in music videos.</string>
+    <string name="settings_category_sponsor_block_category_preview_title">Preview/Recap</string>
+    <string name="settings_category_sponsor_block_category_preview_summary">Quick recap of previous episodes, or a preview of what\'s coming up later in the current video. Meant for edited together clips, not for spoken summaries.</string>
+    <string name="settings_category_sponsor_block_category_filler_title">Filler Tangent/Jokes</string>
+    <string name="settings_category_sponsor_block_category_filler_summary">This is for tangential scenes added only for filler or humor that are not required to understand the main content of the video.</string>
     <string name="background_player_playing_toast">Playing in background</string>
     <string name="popup_playing_toast">Playing in popup mode</string>
     <string name="content">Content</string>
-    <string name="show_age_restricted_content_title">Show age restricted content</string>
-    <string name="show_age_restricted_content_summary">Show content possibly unsuitable for children because it has an age limit (like 18+)</string>
+    <string name="show_age_restricted_content_title">Show age-restricted content</string>
+    <string name="show_age_restricted_content_summary">Show content possibly unsuitable for children because it has an age restriction (like 18+)</string>
     <string name="youtube_restricted_mode_enabled_title">Turn on YouTube\'s \"Restricted Mode\"</string>
     <string name="youtube_restricted_mode_enabled_summary">YouTube provides a \"Restricted Mode\" which hides potentially mature content</string>
-    <string name="restricted_video">This video is age restricted.\n\nTurn on \"%1$s\" in the settings if you want to see it.</string>
-    <string name="restricted_video_no_stream">This video is age-restricted.
-\nDue to new YouTube policies with age-restricted videos, NewPipe cannot access any of its video streams and thus is unable to play it.</string>
+    <string name="restricted_video">This video is age-restricted.\n\nTurn on \"%1$s\" in the settings if you want to see it.</string>
+    <string name="restricted_video_no_stream">YouTube is blocking access to this age-restricted video, so it cannot be played.</string>
     <string name="duration_live">Live</string>
     <string name="downloads">Downloads</string>
     <string name="downloads_title">Downloads</string>
+    <string name="loading_metadata_title">Loading Metadata…</string>
     <string name="error_report_title">Error report</string>
     <string name="all">All</string>
     <string name="channels">Channels</string>
@@ -169,6 +202,7 @@
     <string name="songs">Songs</string>
     <string name="albums">Albums</string>
     <string name="artists">Artists</string>
+    <string name="later">Later</string>
     <string name="disabled">Disabled</string>
     <string name="clear">Clear</string>
     <string name="best_resolution">Best resolution</string>
@@ -179,10 +213,10 @@
     <string name="just_once">Just Once</string>
     <string name="file">File</string>
     <string name="notifications">Notifications</string>
-    <string name="notification_channel_name">NewPipe notification</string>
-    <string name="notification_channel_description">Notifications for NewPipe\'s player</string>
+    <string name="notification_channel_name">NewPipe X notification</string>
+    <string name="notification_channel_description">Notifications for NewPipe X\'s player</string>
     <string name="app_update_notification_channel_name">App update notification</string>
-    <string name="app_update_notification_channel_description">Notifications for new NewPipe versions</string>
+    <string name="app_update_notification_channel_description">Notifications for new NewPipe X versions</string>
     <string name="hash_channel_name">Video hash notification</string>
     <string name="hash_channel_description">Notifications for video hashing progress</string>
     <string name="streams_notification_channel_name">New streams</string>
@@ -199,7 +233,7 @@
     <string name="recaptcha_cookies_cleared">reCAPTCHA cookies have been cleared</string>
     <string name="import_data_summary">Overrides your current history, subscriptions, playlists and (optionally) settings</string>
     <string name="export_data_summary">Export history, subscriptions, playlists and settings</string>
-    <string name="clear_cookie_summary">Clear cookies that NewPipe stores when you solve a reCAPTCHA</string>
+    <string name="clear_cookie_summary">Clear cookies that are stored when you solve a reCAPTCHA</string>
     <string name="clear_views_history_title">Clear watch history</string>
     <string name="clear_views_history_summary">Deletes the history of played streams and the playback positions</string>
     <string name="delete_view_history_alert">Delete entire watch history?</string>
@@ -213,13 +247,14 @@
     <string name="delete_search_history_alert">Delete entire search history?</string>
     <string name="search_history_deleted">Search history deleted</string>
     <string name="fast_mode">Fast mode</string>
+    <string name="main_tabs_position_summary">Move main tab selector to the bottom</string>
+    <string name="main_tabs_position_title">Main tabs position</string>
     <!-- error strings -->
     <string name="general_error">Error</string>
     <string name="download_to_sdcard_error_title">External storage unavailable</string>
     <string name="download_to_sdcard_error_message">Downloading to external SD card not possible. Reset download folder location?</string>
     <string name="network_error">Network error</string>
     <string name="could_not_load_thumbnails">Could not load all thumbnails</string>
-    <string name="youtube_signature_deobfuscation_error">Could not deobfuscate video URL signature</string>
     <string name="parsing_error">Could not parse website</string>
     <string name="content_not_available">Content unavailable</string>
     <string name="could_not_setup_download_menu">Could not set up download menu</string>
@@ -241,11 +276,12 @@
     <string name="restore_defaults">Restore defaults</string>
     <string name="restore_defaults_confirmation">Do you want to restore defaults?</string>
     <string name="permission_display_over_apps">Give permission to display over other apps</string>
+    <string name="invalid_color_toast">Invalid color</string>
     <!-- error activity -->
-    <string name="error_report_notification_title">NewPipe encountered an error, tap to report</string>
+    <string name="error_report_notification_title">NewPipe X encountered an error, tap to report</string>
     <string name="error_report_notification_toast">An error occurred, see the notification</string>
     <string name="sorry_string">Sorry, that should not have happened.</string>
-    <string name="error_report_button_text">Report this error via e-mail</string>
+    <string name="error_report_button_text">Report via e-mail</string>
     <string name="copy_for_github">Copy formatted report</string>
     <string name="error_report_open_issue_button_text">Report on GitHub</string>
     <string name="error_report_open_github_notice">Please check whether an issue discussing your crash already exists. When creating duplicate tickets, you take time from us which we could spend with fixing the actual bug.</string>
@@ -253,7 +289,7 @@
     <string name="error_snackbar_action">Report</string>
     <string name="what_device_headline">Info:</string>
     <string name="what_happened_headline">What happened:</string>
-    <string name="info_labels">What:\\nRequest:\\nContent Language:\\nContent Country:\\nApp Language:\\nService:\\nGMT Time:\\nPackage:\\nVersion:\\nOS version:</string>
+    <string name="info_labels">What:\\nRequest:\\nContent Language:\\nContent Country:\\nApp Language:\\nService:\\nTimestamp:\\nPackage:\\nVersion:\\nOS version:</string>
     <string name="your_comment">Your comment (in English):</string>
     <string name="error_details_headline">Details:</string>
     <!-- Content descriptions (for better accessibility) -->
@@ -306,6 +342,8 @@
     </plurals>
     <string name="no_comments">No comments</string>
     <string name="comments_are_disabled">Comments are disabled</string>
+    <string name="no_streams">No streams</string>
+    <string name="no_live_streams">No live streams</string>
     <plurals name="new_streams">
         <item quantity="one">%s new stream</item>
         <item quantity="other">%s new streams</item>
@@ -322,11 +360,12 @@
     <string name="msg_name">Filename</string>
     <string name="msg_threads">Threads</string>
     <string name="msg_error">Error</string>
-    <string name="msg_running">NewPipe Downloading</string>
+    <string name="msg_running">Downloading…</string>
     <string name="msg_running_detail">Tap for details</string>
     <string name="msg_calculating_hash">Calculating hash</string>
     <string name="msg_wait">Please wait…</string>
     <string name="msg_copied">Copied to clipboard</string>
+    <string name="msg_failed_to_copy">Failed to copy to clipboard</string>
     <string name="no_available_dir">Please define a download folder later in settings</string>
     <string name="no_dir_yet">No download folder set yet, choose the default download folder now</string>
     <string name="msg_popup_permission">This permission is needed to\nopen in popup mode</string>
@@ -336,7 +375,7 @@
     <string name="subtitle_activity_recaptcha">Press \"Done\" when solved</string>
     <string name="recaptcha_request_toast">reCAPTCHA challenge requested</string>
     <string name="recaptcha_solve">Solve</string>
-    <string name="recaptcha_done_button">Done</string>
+    <string name="done">Done</string>
     <!-- Downloads -->
     <string name="settings_category_downloads_title">Download</string>
     <string name="settings_file_charset_title">Allowed characters in filenames</string>
@@ -344,27 +383,26 @@
     <string name="settings_file_replacement_character_title">Replacement character</string>
     <string name="charset_letters_and_digits">Letters and digits</string>
     <string name="charset_most_special_characters">Most special characters</string>
-    <string name="toast_no_player">No app installed to play this file</string>
     <!-- About -->
-    <string name="title_activity_about">About NewPipe</string>
+    <string name="title_activity_about">About NewPipe X</string>
     <string name="title_licenses">Third-party Licenses</string>
     <string name="copyright">© %1$s by %2$s under %3$s</string>
     <string name="tab_about">About \u0026 FAQ</string>
     <string name="tab_licenses">Licenses</string>
-    <string name="app_description">Libre lightweight streaming on Android.</string>
-    <string name="contribution_title">Contribute</string>
-    <string name="contribution_encouragement">Whether you have ideas of; translation, design changes, code cleaning, or real heavy code changes—help is always welcome. The more is done the better it gets!</string>
+    <string name="app_description">NewPipe, eXtended!</string>
+    <string name="contribution_title">View source code</string>
+    <string name="contribution_encouragement">NewPipe X strongly believes in open-source software principles. We are proud that every official release of NewPipe X is fully auditable, thanks to our unique build process that automatically compiles our app from its source code. This process is publicly available, alongside our source code, in our code repository.\n\nFeel free to take a look, ask questions, report bugs, request features, and/or contribute code at any time!</string>
     <string name="view_on_github">View on GitHub</string>
-    <string name="donation_title">Donate</string>
-    <string name="donation_encouragement">NewPipe is developed by volunteers spending their free time bringing you the best user experience. Give back to help developers make NewPipe even better while they enjoy a cup of coffee.</string>
-    <string name="give_back">Give back</string>
+    <string name="donation_title">Support our team</string>
+    <string name="donation_encouragement">While we don\'t accept donations, a free way you can support the NewPipe X project is by giving it a \"star\" on GitHub.</string>
+    <string name="give_back">I\'ll click a \"star\" button</string>
     <string name="website_title">Website</string>
-    <string name="website_encouragement">Visit the NewPipe Website for more info and news.</string>
-    <string name="privacy_policy_title">NewPipe\'s Privacy Policy</string>
-    <string name="privacy_policy_encouragement">The NewPipe project takes your privacy very seriously. Therefore, the app does not collect any data without your consent.\nNewPipe\'s privacy policy explains in detail what data is sent and stored when you send a crash report.</string>
+    <string name="website_encouragement">Visit the NewPipe X website for more info and news.</string>
+    <string name="privacy_policy_title">Privacy policy</string>
+    <string name="privacy_policy_encouragement">NewPipe X takes your privacy very seriously. Therefore, the app does not collect any data without your consent.\n\nThe privacy policy explains in detail what data is sent and stored when you send a crash report.</string>
     <string name="read_privacy_policy">Read privacy policy</string>
-    <string name="app_license_title">NewPipe\'s License</string>
-    <string name="app_license">NewPipe is copyleft libre software: You can use, study, share, and improve it at will. Specifically you can redistribute and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
+    <string name="app_license_title">NewPipe X\'s License</string>
+    <string name="app_license">NewPipe X is copyleft libre software: You can use, study, share, and improve it at will. Specifically you can redistribute and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
     <string name="read_full_license">Read license</string>
     <string name="faq_title">Frequently asked questions</string>
     <string name="faq_description">If you are having trouble using the app, be sure to check out these answers to common questions!</string>
@@ -409,6 +447,8 @@
     <string name="play_queue_remove">Remove</string>
     <string name="play_queue_stream_detail">Details</string>
     <string name="play_queue_audio_settings">Audio Settings</string>
+    <string name="play_queue_audio_track">Audio: %s</string>
+    <string name="audio_track">Audio track</string>
     <string name="hold_to_append">Hold to enqueue</string>
     <string name="show_channel_details">Show channel details</string>
     <string name="enqueue_stream">Enqueue</string>
@@ -432,6 +472,7 @@
     <string name="preferred_player_fetcher_notification_message">"Loading requested content"</string>
     <!-- Local Playlist -->
     <string name="create_playlist">New Playlist</string>
+    <string name="duplicate_in_playlist">The playlists that are grayed out already contain this item.</string>
     <string name="rename_playlist">Rename</string>
     <string name="name">Name</string>
     <string name="add_to_playlist">Add to playlist</string>
@@ -445,6 +486,7 @@
     <string name="delete_playlist_prompt">Delete this playlist\?</string>
     <string name="playlist_creation_success">Playlist created</string>
     <string name="playlist_add_stream_success">Playlisted</string>
+    <string name="playlist_add_stream_success_duplicate">Duplicate added %d time(s)</string>
     <string name="playlist_thumbnail_change_success">Playlist thumbnail changed.</string>
     <string name="playlist_no_uploader">Auto-generated (no uploader found)</string>
     <!-- Players -->
@@ -465,7 +507,8 @@
     <string name="show_original_time_ago_title">Show original time ago on items</string>
     <string name="show_original_time_ago_summary">Original texts from services will be visible in stream items</string>
     <string name="disable_media_tunneling_title">Disable media tunneling</string>
-    <string name="disable_media_tunneling_summary">Disable media tunneling if you experience a black screen or stuttering on video playback</string>
+    <string name="disable_media_tunneling_summary">Disable media tunneling if you experience a black screen or stuttering on video playback.</string>
+    <string name="disable_media_tunneling_automatic_info">Media tunneling was disabled by default on your device because your device model is known to not support it.</string>
     <string name="show_image_indicators_title">Show image indicators</string>
     <string name="show_image_indicators_summary">Show Picasso colored ribbons on top of images indicating their source: red for network, blue for disk and green for memory</string>
     <string name="show_crash_the_player_title">Show \"Crash the player\"</string>
@@ -507,7 +550,7 @@
     <string name="percent">Percent</string>
     <string name="semitone">Semitone</string>
     <!-- GDPR dialog -->
-    <string name="start_accept_privacy_policy">In order to comply with the European General Data Protection Regulation (GDPR), we hereby draw your attention to NewPipe\'s privacy policy. Please read it carefully.
+    <string name="start_accept_privacy_policy">In order to comply with the European General Data Protection Regulation (GDPR), we hereby draw your attention to the privacy policy. Please read it carefully.
 \nYou must accept it to send us the bug report.</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
@@ -525,6 +568,10 @@
         <item>240p</item>
         <item>144p</item>
     </string-array>
+    <string-array name="high_resolution_limit_data_usage_description_list">
+        <item>2160p</item>
+        <item>1440p</item>
+    </string-array>
     <!-- Notifications settings -->
     <string name="enable_streams_notifications_title">New streams notifications</string>
     <string name="enable_streams_notifications_summary">Notify about new streams from subscriptions</string>
@@ -534,8 +581,11 @@
     <!-- Updates Settings -->
     <string name="updates_setting_title">Updates</string>
     <string name="updates_setting_description">Show a notification to prompt app update when a new version is available</string>
-    <string name="manual_update_title">Check for updates</string>
+    <string name="check_for_updates">Check for updates</string>
+    <string name="auto_update_check_description">NewPipe X can automatically check for new versions from time to time and notify you once they are available.\nDo you want to enable this?</string>
+    <string name="manual_update_title" translatable="false">@string/check_for_updates</string>
     <string name="manual_update_description">Manually check for new versions</string>
+
     <!-- Minimize to exit action -->
     <string name="minimize_on_exit_title">Minimize on app switch</string>
     <string name="minimize_on_exit_summary">Action when switching to other app from main video player — %s</string>
@@ -549,6 +599,7 @@
     <string name="list_view_mode">List view mode</string>
     <string name="list">List</string>
     <string name="grid">Grid</string>
+    <string name="card">Card</string>
     <string name="auto">Auto</string>
     <!-- Seekbar Preview Thumbnail-->
     <string name="seekbar_preview_thumbnail_title">Seekbar thumbnail preview</string>
@@ -556,8 +607,8 @@
     <string name="low_quality_smaller">Low quality (smaller)</string>
     <string name="dont_show">Don\'t show</string>
     <!-- App update notification -->
-    <string name="app_update_unavailable_toast">You are running the latest version of NewPipe</string>
-    <string name="app_update_available_notification_title">NewPipe update is available!</string>
+    <string name="app_update_unavailable_toast">You are running the latest version of NewPipe X</string>
+    <string name="app_update_available_notification_title">NewPipe X update is available!</string>
     <string name="app_update_available_notification_text">Tap to download %s</string>
     <string name="missions_header_finished">Finished</string>
     <string name="missions_header_pending">Pending</string>
@@ -574,6 +625,10 @@
         <item quantity="one">Download finished</item>
         <item quantity="other">%s downloads finished</item>
     </plurals>
+    <string name="reset_settings_title">Reset settings</string>
+    <string name="reset_settings_summary">Reset all settings to their default values</string>
+    <!-- dialog about resetting settings -->
+    <string name="reset_all_settings">Resetting all settings will discard all of your preferred settings and restarts the app.\n\nAre you sure you want to proceed?</string>
     <!-- dialog about existing downloads -->
     <string name="generate_unique_name">Generate unique name</string>
     <string name="overwrite">Overwrite</string>
@@ -593,8 +648,9 @@
     <string name="error_http_unsupported_range">The server does not accept multi-threaded downloads, retry with @string/msg_threads = 1</string>
     <string name="error_http_not_found">Not found</string>
     <string name="error_postprocessing_failed">Post-processing failed</string>
-    <string name="error_postprocessing_stopped">NewPipe was closed while working on the file</string>
-    <string name="error_insufficient_storage">No space left on device</string>
+    <string name="error_postprocessing_stopped">NewPipe X was closed while working on the file</string>
+    <string name="error_insufficient_storage">Not enough free space on device</string>
+    <string name="error_insufficient_storage_left">No space left on device</string>
     <string name="error_progress_lost">Progress lost, because the file was deleted</string>
     <string name="error_timeout">Connection timeout</string>
     <string name="error_download_resource_gone">Cannot recover this download</string>
@@ -627,6 +683,9 @@
     <string name="systems_language">System default</string>
     <string name="remove_watched">Remove watched</string>
     <string name="remove_watched_popup_title">Remove watched videos?</string>
+    <string name="remove_duplicates">Remove duplicates</string>
+    <string name="remove_duplicates_title">Remove duplicates?</string>
+    <string name="remove_duplicates_message">Do you want to remove all duplicate streams in this playlist?</string>
     <string name="remove_watched_popup_warning">Videos that have been watched before and after being added to the playlist will be removed.
 \nAre you sure\? This cannot be undone!</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Yes, and partially watched videos</string>
@@ -672,7 +731,7 @@
     <string name="feed_update_threshold_option_always_update">Always update</string>
     <string name="feed_load_error">Error loading feed</string>
     <string name="feed_load_error_account_info">Could not load feed for \'%s\'.</string>
-    <string name="feed_load_error_terminated">The author\'s account has been terminated.\nNewPipe will not be able to load this feed in the future.\nDo you want to unsubscribe from this channel?</string>
+    <string name="feed_load_error_terminated">The author\'s account has been terminated.\nYou will not be able to load this feed in the future.\nDo you want to unsubscribe from this channel?</string>
     <string name="feed_load_error_fast_unknown">The fast feed mode does not provide more info on this.</string>
     <string name="feed_use_dedicated_fetch_method_title">Fetch from dedicated feed when available</string>
     <string name="feed_use_dedicated_fetch_method_summary">Available in some services, it is usually much faster but may return a limited amount of items and often incomplete information (e.g. no duration, item type, no live status)</string>
@@ -680,7 +739,7 @@
     <string name="feed_use_dedicated_fetch_method_disable_button">Disable fast mode</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Do you think feed loading is too slow\? If so, try enabling fast loading (you can change it in settings or by pressing the button below).
 \n
-\nNewPipe offers two feed loading strategies:
+\nThere are two feed loading strategies:
 \n• Fetching the whole subscription channel, which is slow but complete.
 \n• Using a dedicated service endpoint, which is fast but usually not complete.
 \n
@@ -689,9 +748,11 @@
 \nYouTube is an example of a service that offers this fast method with its RSS feed.
 \n
 \nSo the choice boils down to what you prefer: speed or precise information.</string>
-    <string name="feed_toggle_show_played_items">Show watched items</string>
-    <string name="feed_toggle_hide_played_items">Hide watched items</string>
-    <string name="content_not_supported">This content is not yet supported by NewPipe.\n\nIt will hopefully be supported in a future version.</string>
+    <string name="feed_hide_streams_title">Show the following streams</string>
+    <string name="feed_show_hide_streams">Show/Hide streams</string>
+    <string name="feed_fetch_channel_tabs">Fetch channel tabs</string>
+    <string name="feed_fetch_channel_tabs_summary">Tabs to fetch when updating the feed. This option has no effect if a channel is updated using fast mode.</string>
+    <string name="content_not_supported">This content is not yet supported.\n\nIt will hopefully be supported in a future version.</string>
     <string name="detail_sub_channel_thumbnail_view_description">Channel\'s avatar thumbnail</string>
     <string name="channel_created_by">Created by %s</string>
     <string name="video_detail_by">By %s</string>
@@ -706,12 +767,12 @@
     <string name="no_appropriate_file_manager_message_android_10">No appropriate file manager was found for this action.
 \nPlease install a Storage Access Framework compatible file manager</string>
     <string name="georestricted_content">This content is not available in your country.</string>
-    <string name="soundcloud_go_plus_content">This is a SoundCloud Go+ track, at least in your country, so it cannot be streamed or downloaded by NewPipe.</string>
-    <string name="private_content">This content is private, so it cannot be streamed or downloaded by NewPipe.</string>
-    <string name="youtube_music_premium_content">This video is available only to YouTube Music Premium members, so it cannot be streamed or downloaded by NewPipe.</string>
+    <string name="soundcloud_go_plus_content">This is a SoundCloud Go+ track, at least in your country, so it cannot be streamed or downloaded.</string>
+    <string name="private_content">This content is private, so it cannot be streamed or downloaded.</string>
+    <string name="youtube_music_premium_content">This video is available only to YouTube Music Premium members, so it cannot be streamed or downloaded.</string>
     <string name="account_terminated">Account terminated</string>
     <string name="service_provides_reason">%s provides this reason:</string>
-    <string name="paid_content">This content is only available to users who have paid, so it cannot be streamed or downloaded by NewPipe.</string>
+    <string name="paid_content">This content is only available to users who have paid, so it cannot be streamed or downloaded.</string>
     <string name="featured">Featured</string>
     <string name="radio">Radio</string>
     <string name="auto_device_theme_title">Automatic (device theme)</string>
@@ -730,11 +791,16 @@
     <string name="metadata_language">Language</string>
     <string name="metadata_support">Support</string>
     <string name="metadata_host">Host</string>
-    <string name="metadata_thumbnail_url">Thumbnail URL</string>
+    <string name="metadata_thumbnails">Thumbnails</string>
+    <string name="metadata_uploader_avatars">Uploader avatars</string>
+    <string name="metadata_subchannel_avatars">Sub-channel avatars</string>
+    <string name="metadata_avatars">Avatars</string>
+    <string name="metadata_banners">Banners</string>
     <string name="metadata_privacy_public">Public</string>
     <string name="metadata_privacy_unlisted">Unlisted</string>
     <string name="metadata_privacy_private">Private</string>
     <string name="metadata_privacy_internal">Internal</string>
+    <string name="metadata_subscribers">Subscribers</string>
     <string name="detail_pinned_comment_view_description">Pinned comment</string>
     <string name="detail_heart_img_view_description">Hearted by creator</string>
     <string name="open_website_license">Open website</string>
@@ -750,13 +816,117 @@
     <string name="enumeration_comma">,</string>
     <string name="toggle_all">Toggle all</string>
     <string name="streams_not_yet_supported_removed">Streams which are not yet supported by the downloader are not shown</string>
+    <string name="audio_track_present_in_video">An audio track should be already present in this stream</string>
     <string name="selected_stream_external_player_not_supported">The selected stream is not supported by external players</string>
     <string name="no_audio_streams_available_for_external_players">No audio streams are available for external players</string>
     <string name="no_video_streams_available_for_external_players">No video streams are available for external players</string>
     <string name="select_quality_external_players">Select quality for external players</string>
+    <string name="select_audio_track_external_players">Select audio track for external players</string>
     <string name="unknown_format">Unknown format</string>
     <string name="unknown_quality">Unknown quality</string>
-    <string name="feed_toggle_show_future_items">Show future items</string>
-    <string name="feed_toggle_hide_future_items">Hide future items</string>
+    <string name="unknown_audio_track">Unknown</string>
+    <string name="feed_show_watched">Fully watched</string>
+    <string name="feed_show_partially_watched">Partially watched</string>
+    <string name="feed_show_upcoming">Upcoming</string>
     <string name="sort">Sort</string>
+    <string name="settings_category_exoplayer_title">ExoPlayer settings</string>
+    <string name="settings_category_exoplayer_summary">Manage some ExoPlayer settings. These changes require a player restart to take effect</string>
+    <string name="use_exoplayer_decoder_fallback_title">Use ExoPlayer\'s decoder fallback feature</string>
+    <string name="use_exoplayer_decoder_fallback_summary">Enable this option if you have decoder initialization issues, which falls back to lower-priority decoders if primary decoders initialization fail. This may result in poor playback performance than when using primary decoders</string>
+    <string name="always_use_exoplayer_set_output_surface_workaround_title">Always use ExoPlayer\'s video output surface setting workaround</string>
+    <string name="always_use_exoplayer_set_output_surface_workaround_summary">This workaround releases and re-instantiates video codecs when a surface change occurs, instead of setting the surface to the codec directly. Already used by ExoPlayer on some devices with this issue, this setting has only an effect on Android 6 and higher\n\nEnabling this option may prevent playback errors when switching the current video player or switching to fullscreen</string>
+    <string name="audio_track_name">%1$s %2$s</string>
+    <string name="audio_track_type_original">original</string>
+    <string name="audio_track_type_dubbed">dubbed</string>
+    <string name="audio_track_type_descriptive">descriptive</string>
+    <string name="audio_track_type_secondary">secondary</string>
+    <string name="channel_tab_videos">Videos</string>
+    <string name="channel_tab_tracks">Tracks</string>
+    <string name="channel_tab_shorts">Shorts</string>
+    <string name="channel_tab_livestreams">Live</string>
+    <string name="channel_tab_channels">Channels</string>
+    <string name="channel_tab_playlists">Playlists</string>
+    <string name="channel_tab_albums">Albums</string>
+    <string name="channel_tab_about">About</string>
+    <string name="show_channel_tabs">Channel tabs</string>
+    <string name="show_channel_tabs_summary">What tabs are shown on the channel pages</string>
+    <string name="open_play_queue">Open play queue</string>
+    <string name="toggle_fullscreen">Toggle fullscreen</string>
+    <string name="toggle_screen_orientation">Toggle screen orientation</string>
+    <string name="previous_stream">Previous stream</string>
+    <string name="next_stream">Next stream</string>
+    <string name="play">Play</string>
+    <string name="replay">Replay</string>
+    <string name="more_options">More options</string>
+    <string name="duration">Duration</string>
+    <string name="rewind">Rewind</string>
+    <string name="forward">Forward</string>
+    <string name="image_quality_title">Image quality</string>
+    <string name="image_quality_summary">Choose the quality of images and whether to load images at all, to reduce data and memory usage. Changes clear both in-memory and on-disk image cache — %s</string>
+    <string name="image_quality_none">Do not load images</string>
+    <string name="image_quality_low">Low quality</string>
+    <string name="image_quality_medium">Medium quality</string>
+    <string name="image_quality_high">High quality</string>
+    <string name="question_mark">\?</string>
+    <string name="share_playlist">Share Playlist</string>
+    <string name="share_playlist_with_titles_message">Share playlist with details such as playlist name and video titles or as a simple list of video URLs</string>
+    <string name="share_playlist_with_titles">Share with Titles</string>
+    <string name="share_playlist_with_list">Share URL list</string>
+    <string name="video_details_list_item">- %1$s: %2$s</string>
+    <string name="share_playlist_content_details">%1$s\n%2$s</string>
+    <plurals name="replies">
+        <item quantity="one">%s reply</item>
+        <item quantity="other">%s replies</item>
+    </plurals>
+    <string name="show_more">Show more</string>
+    <string name="show_less">Show less</string>
+    <string name="import_settings_vulnerable_format">The settings in the export being imported use a vulnerable format that was deprecated since v0.27.0. Make sure the export being imported is from a trusted source, and prefer using only exports obtained from v0.27.0 or newer in the future. Support for importing settings in this vulnerable format will soon be removed completely, and then old versions will not be able to import settings of exports from new versions anymore.</string>
+    <!-- SponsorBlock -->
+    <string name="sponsor_block">SponsorBlock</string>
+    <string name="sponsor_block_home_page_title">View Website</string>
+    <string name="sponsor_block_home_page_summary">View the official SponsorBlock website.</string>
+    <string name="sponsor_block_enable_title">Skip Sponsors</string>
+    <string name="sponsor_block_enable_summary">Use the SponsorBlock API to automatically skip sponsors in videos. This currently only works for YouTube videos.</string>
+    <string name="sponsor_block_api_url_title">API Url</string>
+    <string name="sponsor_block_api_url_summary">The url to use when querying the SponsorBlock API. This must be set for SponsorBlock to work.</string>
+    <string name="sponsor_block_notifications_title">Notify when sponsors are skipped</string>
+    <string name="sponsor_block_notifications_summary">Show a toast notification when a sponsor is automatically skipped.</string>
+    <string name="sponsor_block_privacy_title">View Privacy Policy</string>
+    <string name="sponsor_block_privacy_summary">View SponsorBlock\'s privacy policy.</string>
+    <string name="sponsor_block_api_url_help_text">This is the URL that will be queried when the application needs to know which parts of a video to skip.\n\nYou can set the official URL by clicking the \'Use Official\' option below, though it is highly recommended you view SponsorBlock\'s privacy policy before you do.</string>
+    <string name="sponsor_block_privacy_policy_text">SponsorBlock Privacy Policy</string>
+    <string name="sponsor_block_homepage_url">https://sponsor.ajay.app/</string>
+    <string name="sponsor_block_default_api_url">https://sponsor.ajay.app/api/</string>
+    <string name="sponsor_block_privacy_policy_url">https://gist.github.com/ajayyy/aa9f8ded2b573d4f73a3ffa0ef74f796</string>
+    <string name="sponsor_block_skip_sponsor_toast">Skipped sponsor</string>
+    <string name="sponsor_block_skip_intro_toast">Skipped intermission/intro</string>
+    <string name="sponsor_block_skip_outro_toast">Skipped endcards/credits</string>
+    <string name="sponsor_block_skip_interaction_toast">Skipped interaction reminder</string>
+    <string name="sponsor_block_skip_self_promo_toast">Skipped unpaid/self promo</string>
+    <string name="sponsor_block_skip_non_music_toast">Skipped non-music</string>
+    <string name="sponsor_block_skip_preview_toast">Skipped preview/recap</string>
+    <string name="sponsor_block_skip_filler_toast">Skipped filler</string>
+    <string name="sponsor_block_toggle_skipping">Toggle skipping sponsors</string>
+    <string name="sponsor_block_clear_whitelist_title">Clear Whitelist</string>
+    <string name="sponsor_block_clear_whitelist_summary">Clear the list of uploaders SponsorBlock will ignore.</string>
+    <string name="sponsor_block_enabled_toast">SponsorBlock enabled</string>
+    <string name="sponsor_block_disabled_toast">SponsorBlock disabled</string>
+    <string name="sponsor_block_whitelist_cleared_toast">Whitelist cleared</string>
+    <string name="sponsor_block_uploader_added_to_whitelist_toast">Uploader added to whitelist</string>
+    <string name="sponsor_block_uploader_removed_from_whitelist_toast">Uploader removed from whitelist</string>
+    <string name="sponsor_block_confirm_clear_whitelist">Are you sure you want to clear the whitelist?</string>
+    <string name="sponsor_block_confirm_reset_colors">Are you sure you want to reset the category colors?</string>
+    <string name="sponsor_block_reset_colors_toast">Colors reset.</string>
+    <!-- Extras -->
+    <string name="extras">Extras</string>
+    <string name="extras_todo_summary">Tweaks, workarounds, and other miscellaneous settings belong here.</string>
+    <string name="experimental_settings">Experimental Settings</string>
+    <string name="enable_local_player_title">Enable Local Player (alpha)</string>
+    <string name="enable_local_player_summary">Use a built-in player for local playback. This is still in early development so there will probably be a lot of issues, including conflicts with the existing player.</string>
+    <string name="force_auto_fullscreen_title">Force Auto Fullscreen</string>
+    <string name="force_auto_fullscreen_summary">If enabled, when the device is set to landscape, force fullscreen mode even if the device is a tablet or TV.</string>
+    <string name="disable_error_reports_title">Disable Error Reporting</string>
+    <string name="disable_error_reports_summary">Prevent all error reporting screens from appearing. This may result in the app behaving unexpectedly. <b>USE AT YOUR OWN RISK!</b></string>
+    <string name="enable_return_youtube_dislike_title">Show Dislike Count</string>
+    <string name="enable_return_youtube_dislike_summary">Use the ReturnYouTubeDislike API to show the amount of dislikes for a video. This only works for YouTube videos.\n<b>WARNING: Your IP address will be visible to the API. Use at your own risk!</b></string>
 </resources>

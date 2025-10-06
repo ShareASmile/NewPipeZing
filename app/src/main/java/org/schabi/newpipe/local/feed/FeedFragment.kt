@@ -36,23 +36,19 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.annotation.Nullable
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.edit
-import androidx.core.math.MathUtils
 import androidx.core.os.bundleOf
-import androidx.core.view.MenuItemCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.evernote.android.state.State
 import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.OnItemClickListener
 import com.xwray.groupie.OnItemLongClickListener
-import icepick.State
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -63,12 +59,14 @@ import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
 import org.schabi.newpipe.databinding.FragmentFeedBinding
 import org.schabi.newpipe.error.ErrorInfo
+import org.schabi.newpipe.error.ErrorUtil
 import org.schabi.newpipe.error.UserAction
 import org.schabi.newpipe.extractor.exceptions.AccountTerminatedException
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty
 import org.schabi.newpipe.fragments.BaseStateFragment
+import org.schabi.newpipe.info_list.ItemViewMode
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog
 import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.ktx.animateHideRecyclerViewAllowingScrolling
@@ -80,6 +78,7 @@ import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.ThemeHelper.getGridSpanCountStreams
+import org.schabi.newpipe.util.ThemeHelper.getItemViewMode
 import org.schabi.newpipe.util.ThemeHelper.resolveDrawable
 import org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout
 import java.time.OffsetDateTime
@@ -99,8 +98,6 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     private var oldestSubscriptionUpdate: OffsetDateTime? = null
 
     private lateinit var groupAdapter: GroupieAdapter
-    @State @JvmField var showPlayedItems: Boolean = true
-    @State @JvmField var showFutureItems: Boolean = true
 
     private var onSettingsChangeListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
     private var updateListViewModeOnResume = false
@@ -120,7 +117,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         groupName = arguments?.getString(KEY_GROUP_NAME) ?: ""
 
         onSettingsChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key.equals(getString(R.string.list_view_mode_key))) {
+            if (getString(R.string.list_view_mode_key).equals(key)) {
                 updateListViewModeOnResume = true
             }
         }
@@ -139,8 +136,6 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
         val factory = FeedViewModel.getFactory(requireContext(), groupId)
         viewModel = ViewModelProvider(this, factory)[FeedViewModel::class.java]
-        showPlayedItems = viewModel.getShowPlayedItemsFromPreferences()
-        showFutureItems = viewModel.getShowFutureItemsFromPreferences()
         viewModel.stateLiveData.observe(viewLifecycleOwner) { it?.let(::handleResult) }
 
         groupAdapter = GroupieAdapter().apply {
@@ -215,8 +210,6 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         activity.supportActionBar?.subtitle = groupName
 
         inflater.inflate(R.menu.menu_feed_fragment, menu)
-        updateTogglePlayedItemsButton(menu.findItem(R.id.menu_item_feed_toggle_played_items))
-        updateToggleFutureItemsButton(menu.findItem(R.id.menu_item_feed_toggle_future_items))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -238,22 +231,40 @@ class FeedFragment : BaseStateFragment<FeedState>() {
                     }
                 }
                 .setPositiveButton(resources.getString(R.string.ok), null)
-                .create()
                 .show()
             return true
         } else if (item.itemId == R.id.menu_item_feed_toggle_played_items) {
-            showPlayedItems = !item.isChecked
-            updateTogglePlayedItemsButton(item)
-            viewModel.togglePlayedItems(showPlayedItems)
-            viewModel.saveShowPlayedItemsToPreferences(showPlayedItems)
-        } else if (item.itemId == R.id.menu_item_feed_toggle_future_items) {
-            showFutureItems = !item.isChecked
-            updateToggleFutureItemsButton(item)
-            viewModel.toggleFutureItems(showFutureItems)
-            viewModel.saveShowFutureItemsToPreferences(showFutureItems)
+            showStreamVisibilityDialog()
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun showStreamVisibilityDialog() {
+        val dialogItems = arrayOf(
+            getString(R.string.feed_show_watched),
+            getString(R.string.feed_show_partially_watched),
+            getString(R.string.feed_show_upcoming)
+        )
+
+        val checkedDialogItems = booleanArrayOf(
+            viewModel.getShowPlayedItemsFromPreferences(),
+            viewModel.getShowPartiallyPlayedItemsFromPreferences(),
+            viewModel.getShowFutureItemsFromPreferences()
+        )
+
+        AlertDialog.Builder(context!!)
+            .setTitle(R.string.feed_hide_streams_title)
+            .setMultiChoiceItems(dialogItems, checkedDialogItems) { _, which, isChecked ->
+                checkedDialogItems[which] = isChecked
+            }
+            .setPositiveButton(R.string.ok) { _, _ ->
+                viewModel.setSaveShowPlayedItems(checkedDialogItems[0])
+                viewModel.setSaveShowPartiallyPlayedItems(checkedDialogItems[1])
+                viewModel.setSaveShowFutureItems(checkedDialogItems[2])
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     override fun onDestroyOptionsMenu() {
@@ -280,40 +291,6 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         feedBinding.itemsList.adapter = null
         _feedBinding = null
         super.onDestroyView()
-    }
-
-    private fun updateTogglePlayedItemsButton(menuItem: MenuItem) {
-        menuItem.isChecked = showPlayedItems
-        menuItem.icon = AppCompatResources.getDrawable(
-            requireContext(),
-            if (showPlayedItems) R.drawable.ic_visibility_on else R.drawable.ic_visibility_off
-        )
-        MenuItemCompat.setTooltipText(
-            menuItem,
-            getString(
-                if (showPlayedItems)
-                    R.string.feed_toggle_hide_played_items
-                else
-                    R.string.feed_toggle_show_played_items
-            )
-        )
-    }
-
-    private fun updateToggleFutureItemsButton(menuItem: MenuItem) {
-        menuItem.isChecked = showFutureItems
-        menuItem.icon = AppCompatResources.getDrawable(
-            requireContext(),
-            if (showFutureItems) R.drawable.ic_history_future else R.drawable.ic_history
-        )
-        MenuItemCompat.setTooltipText(
-            menuItem,
-            getString(
-                if (showFutureItems)
-                    R.string.feed_toggle_hide_future_items
-                else
-                    R.string.feed_toggle_show_future_items
-            )
-        )
     }
 
     // //////////////////////////////////////////////////////////////////////////
@@ -416,11 +393,10 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
     @SuppressLint("StringFormatMatches")
     private fun handleLoadedState(loadedState: FeedState.LoadedState) {
-
-        val itemVersion = if (shouldUseGridLayout(context)) {
-            StreamItem.ItemVersion.GRID
-        } else {
-            StreamItem.ItemVersion.NORMAL
+        val itemVersion = when (getItemViewMode(requireContext())) {
+            ItemViewMode.GRID -> StreamItem.ItemVersion.GRID
+            ItemViewMode.CARD -> StreamItem.ItemVersion.CARD
+            else -> StreamItem.ItemVersion.NORMAL
         }
         loadedState.items.forEach { it.itemVersion = itemVersion }
 
@@ -477,29 +453,38 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             if (t is FeedLoadService.RequestException &&
                 t.cause is ContentNotAvailableException
             ) {
-                Single.fromCallable {
-                    NewPipeDatabase.getInstance(requireContext()).subscriptionDAO()
-                        .getSubscription(t.subscriptionId)
-                }.subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        { subscriptionEntity ->
-                            handleFeedNotAvailable(
-                                subscriptionEntity,
-                                t.cause,
-                                errors.subList(i + 1, errors.size)
-                            )
-                        },
-                        { throwable -> Log.e(TAG, "Unable to process", throwable) }
-                    )
-                return // this will be called on the remaining errors by handleFeedNotAvailable()
+                disposables.add(
+                    Single.fromCallable {
+                        NewPipeDatabase.getInstance(requireContext()).subscriptionDAO()
+                            .getSubscription(t.subscriptionId)
+                    }
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            { subscriptionEntity ->
+                                handleFeedNotAvailable(
+                                    subscriptionEntity,
+                                    t.cause,
+                                    errors.subList(i + 1, errors.size)
+                                )
+                            },
+                            { throwable -> Log.e(TAG, "Unable to process", throwable) }
+                        )
+                )
+                // this will be called on the remaining errors by handleFeedNotAvailable()
+                return@handleItemsErrors
             }
+        }
+
+        if (errors.isNotEmpty()) {
+            // if no error was a ContentNotAvailableException, show a general error snackbar
+            ErrorUtil.showSnackbar(this, ErrorInfo(errors, UserAction.REQUESTED_FEED, ""))
         }
     }
 
     private fun handleFeedNotAvailable(
         subscriptionEntity: SubscriptionEntity,
-        @Nullable cause: Throwable?,
+        cause: Throwable?,
         nextItemsErrors: List<Throwable>
     ) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -509,15 +494,13 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
         val builder = AlertDialog.Builder(requireContext())
             .setTitle(R.string.feed_load_error)
-            .setPositiveButton(
-                R.string.unsubscribe
-            ) { _, _ ->
-                SubscriptionManager(requireContext()).deleteSubscription(
-                    subscriptionEntity.serviceId, subscriptionEntity.url
-                ).subscribe()
+            .setPositiveButton(R.string.unsubscribe) { _, _ ->
+                SubscriptionManager(requireContext())
+                    .deleteSubscription(subscriptionEntity.serviceId, subscriptionEntity.url)
+                    .subscribe()
                 handleItemsErrors(nextItemsErrors)
             }
-            .setNegativeButton(R.string.cancel) { _, _ -> }
+            .setNegativeButton(R.string.cancel, null)
 
         var message = getString(R.string.feed_load_error_account_info, subscriptionEntity.name)
         if (cause is AccountTerminatedException) {
@@ -534,7 +517,8 @@ class FeedFragment : BaseStateFragment<FeedState>() {
                 message += "\n" + cause.message
             }
         }
-        builder.setMessage(message).create().show()
+        builder.setMessage(message)
+            .show()
     }
 
     private fun updateRelativeTimeViews() {
@@ -565,7 +549,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
             var typeface = Typeface.DEFAULT
             var backgroundSupplier = { ctx: Context ->
-                resolveDrawable(ctx, R.attr.selectableItemBackground)
+                resolveDrawable(ctx, android.R.attr.selectableItemBackground)
             }
             if (doCheck) {
                 // If the uploadDate is null or true we should highlight the item
@@ -578,7 +562,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
                         LayerDrawable(
                             arrayOf(
                                 resolveDrawable(ctx, R.attr.dashed_border),
-                                resolveDrawable(ctx, R.attr.selectableItemBackground)
+                                resolveDrawable(ctx, android.R.attr.selectableItemBackground)
                             )
                         )
                     }
@@ -604,7 +588,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         // state until the user scrolls them out of the visible area which causes a update/bind-call
         groupAdapter.notifyItemRangeChanged(
             0,
-            MathUtils.clamp(highlightCount, lastNewItemsCount, groupAdapter.itemCount)
+            highlightCount.coerceIn(lastNewItemsCount, groupAdapter.itemCount)
         )
 
         if (highlightCount > 0) {
@@ -623,9 +607,13 @@ class FeedFragment : BaseStateFragment<FeedState>() {
                 execOnEnd = {
                     // Disabled animations would result in immediately hiding the button
                     // after it showed up
-                    if (DeviceUtils.hasAnimationsAnimatorDurationEnabled(context)) {
-                        // Hide the new items-"popup" after 10s
-                        hideNewItemsLoaded(true, 10000)
+                    // Context can be null in some cases, so we have to make sure it is not null in
+                    // order to avoid a NullPointerException
+                    context?.let {
+                        if (DeviceUtils.hasAnimationsAnimatorDurationEnabled(it)) {
+                            // Hide the new items button after 10s
+                            hideNewItemsLoaded(true, 10000)
+                        }
                     }
                 }
             )

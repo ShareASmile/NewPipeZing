@@ -1,6 +1,7 @@
 package org.schabi.newpipe.util;
 
-import static org.schabi.newpipe.util.external_communication.ShareUtils.installApp;
+import static android.text.TextUtils.isEmpty;
+import static org.schabi.newpipe.util.ListHelper.getUrlAndNonTorrentStreams;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -29,8 +31,10 @@ import org.schabi.newpipe.RouterActivity;
 import org.schabi.newpipe.about.AboutActivity;
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity;
 import org.schabi.newpipe.download.DownloadActivity;
+import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
+import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
@@ -41,6 +45,7 @@ import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.fragments.MainFragment;
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
 import org.schabi.newpipe.fragments.list.channel.ChannelFragment;
+import org.schabi.newpipe.fragments.list.comments.CommentRepliesFragment;
 import org.schabi.newpipe.fragments.list.kiosk.KioskFragment;
 import org.schabi.newpipe.fragments.list.playlist.PlaylistFragment;
 import org.schabi.newpipe.fragments.list.search.SearchFragment;
@@ -50,9 +55,9 @@ import org.schabi.newpipe.local.history.StatisticsPlaylistFragment;
 import org.schabi.newpipe.local.playlist.LocalPlaylistFragment;
 import org.schabi.newpipe.local.subscription.SubscriptionFragment;
 import org.schabi.newpipe.local.subscription.SubscriptionsImportFragment;
-import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.PlayQueueActivity;
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.PlayerType;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.helper.PlayerHolder;
@@ -62,8 +67,6 @@ import org.schabi.newpipe.settings.SettingsActivity;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.List;
-
-import static org.schabi.newpipe.util.ListHelper.getUrlAndNonTorrentStreams;
 
 public final class NavigationHelper {
     public static final String MAIN_FRAGMENT_TAG = "main_fragment_tag";
@@ -156,8 +159,7 @@ public final class NavigationHelper {
     public static void playOnPopupPlayer(final Context context,
                                          final PlayQueue queue,
                                          final boolean resumePlayback) {
-        if (!PermissionHelper.isPopupEnabled(context)) {
-            PermissionHelper.showPopupEnablementToast(context);
+        if (!PermissionHelper.isPopupEnabledElseAsk(context)) {
             return;
         }
 
@@ -183,8 +185,7 @@ public final class NavigationHelper {
     public static void enqueueOnPlayer(final Context context,
                                        final PlayQueue queue,
                                        final PlayerType playerType) {
-        if ((playerType == PlayerType.POPUP) && !PermissionHelper.isPopupEnabled(context)) {
-            PermissionHelper.showPopupEnablementToast(context);
+        if (playerType == PlayerType.POPUP && !PermissionHelper.isPopupEnabledElseAsk(context)) {
             return;
         }
 
@@ -325,17 +326,15 @@ public final class NavigationHelper {
 
     public static void resolveActivityOrAskToInstall(@NonNull final Context context,
                                                      @NonNull final Intent intent) {
-        if (intent.resolveActivity(context.getPackageManager()) != null) {
-            ShareUtils.openIntentInApp(context, intent, false);
-        } else {
+        if (!ShareUtils.tryOpenIntentInApp(context, intent)) {
             if (context instanceof Activity) {
                 new AlertDialog.Builder(context)
                         .setMessage(R.string.no_player_found)
-                        .setPositiveButton(R.string.install,
-                                (dialog, which) -> ShareUtils.openUrlInBrowser(context,
-                                        context.getString(R.string.fdroid_vlc_url), false))
-                        .setNegativeButton(R.string.cancel, (dialog, which)
-                                -> Log.i("NavigationHelper", "You unlocked a secret unicorn."))
+                        .setPositiveButton(R.string.install, (dialog, which) ->
+                                ShareUtils.installApp(context,
+                                        context.getString(R.string.vlc_package)))
+                        .setNegativeButton(R.string.cancel, (dialog, which) ->
+                                Log.i("NavigationHelper", "You unlocked a secret unicorn."))
                         .show();
             } else {
                 Toast.makeText(context, R.string.no_player_found_toast, Toast.LENGTH_LONG).show();
@@ -453,8 +452,12 @@ public final class NavigationHelper {
         if (fragment instanceof VideoDetailFragment && fragment.isVisible()) {
             onVideoDetailFragmentReady.run((VideoDetailFragment) fragment);
         } else {
+            // Specify no url here, otherwise the VideoDetailFragment will start loading the
+            // stream automatically if it's the first time it is being opened, but then
+            // onVideoDetailFragmentReady will kick in and start another loading process.
+            // See VideoDetailFragment.wasCleared() and its usage in doInitialLoadLogic().
             final VideoDetailFragment instance = VideoDetailFragment
-                    .getInstance(serviceId, url, title, playQueue);
+                    .getInstance(serviceId, null, title, playQueue);
             instance.setAutoPlay(autoPlay);
 
             defaultTransaction(fragmentManager)
@@ -480,6 +483,35 @@ public final class NavigationHelper {
         openChannelFragment(
                 fragment.requireActivity().getSupportFragmentManager(),
                 item.getServiceId(), uploaderUrl, item.getUploaderName());
+    }
+
+    /**
+     * Opens the comment author channel fragment, if the {@link CommentsInfoItem#getUploaderUrl()}
+     * of {@code comment} is non-null. Shows a UI-error snackbar if something goes wrong.
+     *
+     * @param activity the activity with the fragment manager and in which to show the snackbar
+     * @param comment the comment whose uploader/author will be opened
+     */
+    public static void openCommentAuthorIfPresent(@NonNull final FragmentActivity activity,
+                                                  @NonNull final CommentsInfoItem comment) {
+        if (isEmpty(comment.getUploaderUrl())) {
+            return;
+        }
+        try {
+            openChannelFragment(activity.getSupportFragmentManager(), comment.getServiceId(),
+                    comment.getUploaderUrl(), comment.getUploaderName());
+        } catch (final Exception e) {
+            ErrorUtil.showUiErrorSnackbar(activity, "Opening channel fragment", e);
+        }
+    }
+
+    public static void openCommentRepliesFragment(@NonNull final FragmentActivity activity,
+                                                  @NonNull final CommentsInfoItem comment) {
+        defaultTransaction(activity.getSupportFragmentManager())
+                .replace(R.id.fragment_holder, new CommentRepliesFragment(comment),
+                        CommentRepliesFragment.TAG)
+                .addToBackStack(CommentRepliesFragment.TAG)
+                .commit();
     }
 
     public static void openPlaylistFragment(final FragmentManager fragmentManager,
@@ -569,11 +601,8 @@ public final class NavigationHelper {
                                        @Nullable final PlayQueue playQueue,
                                        final boolean switchingPlayers) {
 
-        final Intent intent = getOpenIntent(context, url, serviceId,
-                StreamingService.LinkType.STREAM);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(Constants.KEY_TITLE, title);
-        intent.putExtra(VideoDetailFragment.KEY_SWITCHING_PLAYERS, switchingPlayers);
+        final Intent intent = getStreamIntent(context, serviceId, url, title)
+                .putExtra(VideoDetailFragment.KEY_SWITCHING_PLAYERS, switchingPlayers);
 
         if (playQueue != null) {
             final String cacheKey = SerializedCache.getInstance().put(playQueue, PlayQueue.class);
@@ -686,32 +715,13 @@ public final class NavigationHelper {
         return getOpenIntent(context, url, serviceId, StreamingService.LinkType.CHANNEL);
     }
 
-    /**
-     * Start an activity to install Kore.
-     *
-     * @param context the context
-     */
-    public static void installKore(final Context context) {
-        installApp(context, context.getString(R.string.kore_package));
-    }
-
-    /**
-     * Start Kore app to show a video on Kodi.
-     * <p>
-     * For a list of supported urls see the
-     * <a href="https://github.com/xbmc/Kore/blob/master/app/src/main/AndroidManifest.xml">
-     * Kore source code
-     * </a>.
-     *
-     * @param context  the context to use
-     * @param videoURL the url to the video
-     */
-    public static void playWithKore(final Context context, final Uri videoURL) {
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setPackage(context.getString(R.string.kore_package));
-        intent.setData(videoURL);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    public static Intent getStreamIntent(final Context context,
+                                         final int serviceId,
+                                         final String url,
+                                         @Nullable final String title) {
+        return getOpenIntent(context, url, serviceId, StreamingService.LinkType.STREAM)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .putExtra(Constants.KEY_TITLE, title);
     }
 
     /**

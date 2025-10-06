@@ -175,6 +175,10 @@ public final class PopupPlayerUi extends VideoPlayerUi {
         binding.topControls.setFocusable(false);
         binding.bottomControls.bringToFront();
         super.setupElementsVisibility();
+
+        // hide the SponsorBlock button from the pop-up player because
+        // it looks bad and the UI is going to change in Tubular anyway...
+        binding.switchSponsorBlocking.setVisibility(View.GONE);
     }
 
     @Override
@@ -424,9 +428,8 @@ public final class PopupPlayerUi extends VideoPlayerUi {
 
     @Override
     protected void setupSubtitleView(final float captionScale) {
-        final float captionRatio = (captionScale - 1.0f) / 5.0f + 1.0f;
         binding.subtitleView.setFractionalTextSize(
-                SubtitleView.DEFAULT_TEXT_SIZE_FRACTION * captionRatio);
+                SubtitleView.DEFAULT_TEXT_SIZE_FRACTION * captionScale);
     }
 
     @Override
@@ -435,7 +438,6 @@ public final class PopupPlayerUi extends VideoPlayerUi {
         isSomePopupMenuVisible = true;
     }
     //endregion
-
 
     /*//////////////////////////////////////////////////////////////////////////
     // Gestures

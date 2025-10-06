@@ -1,0 +1,32 @@
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this form! :hugs:
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "I made sure that my question *has not* already been asked by searching the [existing questions](https://github.com/NewPipeX/NewPipeX/discussions/categories/questions?discussions_q=)"
+          required: true
+        - label: "I have read the *entire* [README](https://github.com/NewPipeX/NewPipeX#readme), and I am sure it does not answer my question."
+          required: true
+        - label: "I have taken the time to completely fill in the required details. I understand that my question may be dismissed otherwise."
+          required: true
+        - label: "I have read and understood the [contribution guidelines](https://github.com/NewPipeX/NewPipeX/blob/main/.github/CONTRIBUTING.md)."
+          required: true
+
+  - type: textarea
+    id: what-is-the-question
+    attributes:
+      label: What is your question?
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: Additional information
+      description: Any other information you'd like to include, for instance sketches, mockups, pictures of cats, etc.

@@ -7,11 +7,10 @@ import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateRotation;
 import static org.schabi.newpipe.player.helper.PlayerHelper.globalScreenOrientationLocked;
 import static org.schabi.newpipe.player.helper.PlayerHelper.isClearingQueueConfirmationRequired;
-import static org.schabi.newpipe.player.playqueue.PlayQueueItem.RECOVERY_UNSET;
+import static org.schabi.newpipe.util.DependentPreferenceHelper.getResumePlaybackEnabled;
 import static org.schabi.newpipe.util.ExtractorHelper.showMetaInfoInTextView;
 import static org.schabi.newpipe.util.ListHelper.getUrlAndNonTorrentStreams;
 import static org.schabi.newpipe.util.NavigationHelper.openPlayQueue;
-import static org.schabi.newpipe.util.NavigationHelper.playWithKore;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
@@ -25,7 +24,6 @@ import android.content.pm.ActivityInfo;
 import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,14 +53,15 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
+import com.evernote.android.state.State;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
-import com.squareup.picasso.Callback;
 
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
@@ -73,8 +72,9 @@ import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.error.UserAction;
-import org.schabi.newpipe.extractor.InfoItem;
+import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.stream.AudioStream;
@@ -85,11 +85,13 @@ import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.EmptyFragment;
+import org.schabi.newpipe.fragments.MainFragment;
 import org.schabi.newpipe.fragments.list.comments.CommentsFragment;
 import org.schabi.newpipe.fragments.list.videos.RelatedItemsFragment;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
+import org.schabi.newpipe.local.playlist.LocalPlaylistFragment;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.PlayerType;
@@ -105,15 +107,18 @@ import org.schabi.newpipe.player.ui.VideoPlayerUi;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
+import org.schabi.newpipe.util.InfoCache;
 import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PermissionHelper;
-import org.schabi.newpipe.util.PicassoHelper;
+import org.schabi.newpipe.util.PlayButtonHelper;
+import org.schabi.newpipe.util.ReturnYouTubeDislikeUtils;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.util.image.PicassoHelper;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -124,7 +129,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -163,20 +167,24 @@ public final class VideoDetailFragment
     private boolean showRelatedItems;
     private boolean showDescription;
     private String selectedTabTag;
-    @AttrRes @NonNull final List<Integer> tabIcons = new ArrayList<>();
-    @StringRes @NonNull final List<Integer> tabContentDescriptions = new ArrayList<>();
+    @AttrRes
+    @NonNull
+    final List<Integer> tabIcons = new ArrayList<>();
+    @StringRes
+    @NonNull
+    final List<Integer> tabContentDescriptions = new ArrayList<>();
     private boolean tabSettingsChanged = false;
     private int lastAppBarVerticalOffset = Integer.MAX_VALUE; // prevents useless updates
 
     private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener =
             (sharedPreferences, key) -> {
-                if (key.equals(getString(R.string.show_comments_key))) {
+                if (getString(R.string.show_comments_key).equals(key)) {
                     showComments = sharedPreferences.getBoolean(key, true);
                     tabSettingsChanged = true;
-                } else if (key.equals(getString(R.string.show_next_video_key))) {
+                } else if (getString(R.string.show_next_video_key).equals(key)) {
                     showRelatedItems = sharedPreferences.getBoolean(key, true);
                     tabSettingsChanged = true;
-                } else if (key.equals(getString(R.string.show_description_key))) {
+                } else if (getString(R.string.show_description_key).equals(key)) {
                     showDescription = sharedPreferences.getBoolean(key, true);
                     tabSettingsChanged = true;
                 }
@@ -276,11 +284,11 @@ public final class VideoDetailFragment
     /*////////////////////////////////////////////////////////////////////////*/
 
     public static VideoDetailFragment getInstance(final int serviceId,
-                                                  @Nullable final String videoUrl,
+                                                  @Nullable final String url,
                                                   @NonNull final String name,
                                                   @Nullable final PlayQueue queue) {
         final VideoDetailFragment instance = new VideoDetailFragment();
-        instance.setInitialData(serviceId, videoUrl, name, queue);
+        instance.setInitialData(serviceId, url, name, queue);
         return instance;
     }
 
@@ -468,10 +476,23 @@ public final class VideoDetailFragment
 
         binding.detailControlsBackground.setOnClickListener(v -> openBackgroundPlayer(false));
         binding.detailControlsPopup.setOnClickListener(v -> openPopupPlayer(false));
-        binding.detailControlsPlaylistAppend.setOnClickListener(makeOnClickListener(info ->
+        binding.detailControlsPlaylistAppend.setOnClickListener(makeOnClickListener(info -> {
+            if (getFM() != null && currentInfo != null) {
+                final Fragment fragment = getParentFragmentManager().
+                        findFragmentById(R.id.fragment_holder);
+
+                // commit previous pending changes to database
+                if (fragment instanceof LocalPlaylistFragment) {
+                    ((LocalPlaylistFragment) fragment).saveImmediate();
+                } else if (fragment instanceof MainFragment) {
+                    ((MainFragment) fragment).commitPlaylistTabs();
+                }
+
                 disposables.add(PlaylistDialog.createCorrespondingDialog(requireContext(),
                         List.of(new StreamEntity(info)),
-                        dialog -> dialog.show(getParentFragmentManager(), TAG)))));
+                        dialog -> dialog.show(getParentFragmentManager(), TAG)));
+            }
+        }));
         binding.detailControlsDownload.setOnClickListener(v -> {
             if (PermissionHelper.checkStoragePermissions(activity,
                     PermissionHelper.DOWNLOAD_DIALOG_REQUEST_CODE)) {
@@ -480,19 +501,11 @@ public final class VideoDetailFragment
         });
         binding.detailControlsShare.setOnClickListener(makeOnClickListener(info ->
                 ShareUtils.shareText(requireContext(), info.getName(), info.getUrl(),
-                        info.getThumbnailUrl())));
+                        info.getThumbnails())));
         binding.detailControlsOpenInBrowser.setOnClickListener(makeOnClickListener(info ->
                 ShareUtils.openUrlInBrowser(requireContext(), info.getUrl())));
-        binding.detailControlsPlayWithKodi.setOnClickListener(makeOnClickListener(info -> {
-            try {
-                playWithKore(requireContext(), Uri.parse(info.getUrl()));
-            } catch (final Exception e) {
-                if (DEBUG) {
-                    Log.i(TAG, "Failed to start kore", e);
-                }
-                KoreUtils.showInstallKoreDialog(requireContext());
-            }
-        }));
+        binding.detailControlsPlayWithKodi.setOnClickListener(makeOnClickListener(info ->
+                KoreUtils.playWithKore(requireContext(), Uri.parse(info.getUrl()))));
         if (DEBUG) {
             binding.detailControlsCrashThePlayer.setOnClickListener(v ->
                     VideoDetailPlayerCrasher.onCrashThePlayer(requireContext(), player));
@@ -541,9 +554,11 @@ public final class VideoDetailFragment
         }));
 
         binding.detailControlsBackground.setOnLongClickListener(makeOnLongClickListener(info ->
-                openBackgroundPlayer(true)));
+            openBackgroundPlayer(true)
+        ));
         binding.detailControlsPopup.setOnLongClickListener(makeOnLongClickListener(info ->
-                openPopupPlayer(true)));
+            openPopupPlayer(true)
+        ));
         binding.detailControlsDownload.setOnLongClickListener(makeOnLongClickListener(info ->
                 NavigationHelper.openDownloads(activity)));
 
@@ -626,8 +641,7 @@ public final class VideoDetailFragment
 
         final View.OnTouchListener controlsTouchListener = (view, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN
-                && PreferenceManager.getDefaultSharedPreferences(activity)
-                    .getBoolean(getString(R.string.show_hold_to_append_key), true)) {
+                    && PlayButtonHelper.shouldShowHoldToAppendTip(activity)) {
 
                 animate(binding.touchAppendDetail, true, 250, AnimationType.ALPHA, 0, () ->
                         animate(binding.touchAppendDetail, false, 1500, AnimationType.ALPHA, 1000));
@@ -652,27 +666,6 @@ public final class VideoDetailFragment
         } else {
             playerHolder.startService(false, this);
         }
-    }
-
-    private void initThumbnailViews(@NonNull final StreamInfo info) {
-        PicassoHelper.loadDetailsThumbnail(info.getThumbnailUrl()).tag(PICASSO_VIDEO_DETAILS_TAG)
-                .into(binding.detailThumbnailImageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        // nothing to do, the image was loaded correctly into the thumbnail
-                    }
-
-                    @Override
-                    public void onError(final Exception e) {
-                        showSnackBarError(new ErrorInfo(e, UserAction.LOAD_IMAGE,
-                                info.getThumbnailUrl(), info));
-                    }
-                });
-
-        PicassoHelper.loadAvatar(info.getSubChannelAvatarUrl()).tag(PICASSO_VIDEO_DETAILS_TAG)
-                .into(binding.detailSubChannelThumbnailView);
-        PicassoHelper.loadAvatar(info.getUploaderAvatarUrl()).tag(PICASSO_VIDEO_DETAILS_TAG)
-                .into(binding.detailUploaderThumbnailView);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -748,7 +741,7 @@ public final class VideoDetailFragment
         final boolean isPlayerStopped = !isPlayerAvailable() || player.isStopped();
         if (playQueueItem != null && isPlayerStopped) {
             updateOverlayData(playQueueItem.getTitle(),
-                    playQueueItem.getUploader(), playQueueItem.getThumbnailUrl());
+                    playQueueItem.getUploader(), playQueueItem.getThumbnails());
         }
     }
 
@@ -863,7 +856,8 @@ public final class VideoDetailFragment
                             if (playQueue == null) {
                                 playQueue = new SinglePlayQueue(result);
                             }
-                            if (stack.isEmpty() || !stack.peek().getPlayQueue().equals(playQueue)) {
+                            if (stack.isEmpty() || !stack.peek().getPlayQueue()
+                                    .equalStreams(playQueue)) {
                                 stack.push(new StackItem(serviceId, url, title, playQueue));
                             }
                         }
@@ -1020,6 +1014,20 @@ public final class VideoDetailFragment
         updateTabLayoutVisibility();
     }
 
+    public void scrollToComment(final CommentsInfoItem comment) {
+        final int commentsTabPos = pageAdapter.getItemPositionByTitle(COMMENTS_TAB_TAG);
+        final Fragment fragment = pageAdapter.getItem(commentsTabPos);
+        if (!(fragment instanceof CommentsFragment)) {
+            return;
+        }
+
+        // unexpand the app bar only if scrolling to the comment succeeded
+        if (((CommentsFragment) fragment).scrollToComment(comment)) {
+            binding.appBarLayout.setExpanded(false, false);
+            binding.viewPager.setCurrentItem(commentsTabPos, false);
+        }
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
     // Play Utils
     //////////////////////////////////////////////////////////////////////////*/
@@ -1048,26 +1056,15 @@ public final class VideoDetailFragment
             player.setRecovery();
         }
 
-        if (!useExternalAudioPlayer) {
-            openNormalBackgroundPlayer(append);
+        if (useExternalAudioPlayer) {
+            showExternalAudioPlaybackDialog();
         } else {
-            final List<AudioStream> audioStreams = getUrlAndNonTorrentStreams(
-                    currentInfo.getAudioStreams());
-            final int index = ListHelper.getDefaultAudioFormat(activity, audioStreams);
-
-            if (index == -1) {
-                Toast.makeText(activity, R.string.no_audio_streams_available_for_external_players,
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            startOnExternalPlayer(activity, currentInfo, audioStreams.get(index));
+            openNormalBackgroundPlayer(append);
         }
     }
 
     private void openPopupPlayer(final boolean append) {
-        if (!PermissionHelper.isPopupEnabled(activity)) {
-            PermissionHelper.showPopupEnablementToast(activity);
+        if (!PermissionHelper.isPopupEnabledElseAsk(activity)) {
             return;
         }
 
@@ -1115,7 +1112,7 @@ public final class VideoDetailFragment
 
         if (PreferenceManager.getDefaultSharedPreferences(activity)
                 .getBoolean(this.getString(R.string.use_external_video_player_key), false)) {
-            showExternalPlaybackDialog();
+            showExternalVideoPlaybackDialog();
         } else {
             replaceQueueIfUserConfirms(this::openMainPlayer);
         }
@@ -1449,14 +1446,14 @@ public final class VideoDetailFragment
         super.showLoading();
 
         //if data is already cached, transition from VISIBLE -> INVISIBLE -> VISIBLE is not required
-        if (!ExtractorHelper.isCached(serviceId, url, InfoItem.InfoType.STREAM)) {
+        if (!ExtractorHelper.isCached(serviceId, url, InfoCache.Type.STREAM)) {
             binding.detailContentRootHiding.setVisibility(View.INVISIBLE);
         }
 
         animate(binding.detailThumbnailPlayButton, false, 50);
         animate(binding.detailDurationView, false, 100);
-        animate(binding.detailPositionView, false, 100);
-        animate(binding.positionView, false, 50);
+        binding.detailPositionView.setVisibility(View.GONE);
+        binding.positionView.setVisibility(View.GONE);
 
         binding.detailVideoTitleView.setText(title);
         binding.detailVideoTitleView.setMaxLines(1);
@@ -1495,18 +1492,10 @@ public final class VideoDetailFragment
         binding.detailSubChannelThumbnailView.setVisibility(View.GONE);
 
         if (!isEmpty(info.getSubChannelName())) {
-            displayBothUploaderAndSubChannel(info, activity);
-        } else if (!isEmpty(info.getUploaderName())) {
-            displayUploaderAsSubChannel(info, activity);
+            displayBothUploaderAndSubChannel(info);
         } else {
-            binding.detailUploaderTextView.setVisibility(View.GONE);
-            binding.detailUploaderThumbnailView.setVisibility(View.GONE);
+            displayUploaderAsSubChannel(info);
         }
-
-        final Drawable buddyDrawable =
-                AppCompatResources.getDrawable(activity, R.drawable.placeholder_person);
-        binding.detailSubChannelThumbnailView.setImageDrawable(buddyDrawable);
-        binding.detailUploaderThumbnailView.setImageDrawable(buddyDrawable);
 
         if (info.getViewCount() >= 0) {
             if (info.getStreamType().equals(StreamType.AUDIO_LIVE_STREAM)) {
@@ -1532,6 +1521,26 @@ public final class VideoDetailFragment
 
             binding.detailThumbsDisabledView.setVisibility(View.VISIBLE);
         } else {
+            if (info.getDislikeCount() == -1) {
+                new Thread(() -> {
+                    info.setDislikeCount(ReturnYouTubeDislikeUtils.getDislikes(getContext(), info));
+                    if (info.getDislikeCount() >= 0) {
+                        if (activity == null) {
+                            return;
+                        }
+                        activity.runOnUiThread(() -> {
+                            if (binding != null && binding.detailThumbsDownCountView != null) {
+                                binding.detailThumbsDownCountView.setText(Localization
+                                        .shortCount(activity, info.getDislikeCount()));
+                                binding.detailThumbsDownCountView.setVisibility(View.VISIBLE);
+                            }
+                            if (binding != null && binding.detailThumbsDownImgView != null) {
+                                binding.detailThumbsDownImgView.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+                }).start();
+            }
             if (info.getDislikeCount() >= 0) {
                 binding.detailThumbsDownCountView.setText(Localization
                         .shortCount(activity, info.getDislikeCount()));
@@ -1573,13 +1582,14 @@ public final class VideoDetailFragment
         binding.detailToggleSecondaryControlsView.setVisibility(View.VISIBLE);
         binding.detailSecondaryControlPanel.setVisibility(View.GONE);
 
-        updateProgressInfo(info);
-        initThumbnailViews(info);
+        checkUpdateProgressInfo(info);
+        PicassoHelper.loadDetailsThumbnail(info.getThumbnails()).tag(PICASSO_VIDEO_DETAILS_TAG)
+                .into(binding.detailThumbnailImageView);
         showMetaInfoInTextView(info.getMetaInfo(), binding.detailMetaInfoTextView,
                 binding.detailMetaInfoSeparator, disposables);
 
         if (!isPlayerAvailable() || player.isStopped()) {
-            updateOverlayData(info.getName(), info.getUploaderName(), info.getThumbnailUrl());
+            updateOverlayData(info.getName(), info.getUploaderName(), info.getThumbnails());
         }
 
         if (!info.getErrors().isEmpty()) {
@@ -1611,26 +1621,29 @@ public final class VideoDetailFragment
                 noVideoStreams ? R.drawable.ic_headset_shadow : R.drawable.ic_play_arrow_shadow);
     }
 
-    private void displayUploaderAsSubChannel(final StreamInfo info, final Context context) {
+    private void displayUploaderAsSubChannel(final StreamInfo info) {
         binding.detailSubChannelTextView.setText(info.getUploaderName());
         binding.detailSubChannelTextView.setVisibility(View.VISIBLE);
         binding.detailSubChannelTextView.setSelected(true);
 
         if (info.getUploaderSubscriberCount() > -1) {
             binding.detailUploaderTextView.setText(
-                    Localization.shortSubscriberCount(context, info.getUploaderSubscriberCount()));
+                    Localization.shortSubscriberCount(activity, info.getUploaderSubscriberCount()));
             binding.detailUploaderTextView.setVisibility(View.VISIBLE);
         } else {
             binding.detailUploaderTextView.setVisibility(View.GONE);
         }
+
+        PicassoHelper.loadAvatar(info.getUploaderAvatars()).tag(PICASSO_VIDEO_DETAILS_TAG)
+                .into(binding.detailSubChannelThumbnailView);
+        binding.detailSubChannelThumbnailView.setVisibility(View.VISIBLE);
+        binding.detailUploaderThumbnailView.setVisibility(View.GONE);
     }
 
-    private void displayBothUploaderAndSubChannel(final StreamInfo info, final Context context) {
+    private void displayBothUploaderAndSubChannel(final StreamInfo info) {
         binding.detailSubChannelTextView.setText(info.getSubChannelName());
         binding.detailSubChannelTextView.setVisibility(View.VISIBLE);
         binding.detailSubChannelTextView.setSelected(true);
-
-        binding.detailSubChannelThumbnailView.setVisibility(View.VISIBLE);
 
         final StringBuilder subText = new StringBuilder();
         if (!isEmpty(info.getUploaderName())) {
@@ -1642,7 +1655,7 @@ public final class VideoDetailFragment
                 subText.append(Localization.DOT_SEPARATOR);
             }
             subText.append(
-                    Localization.shortSubscriberCount(context, info.getUploaderSubscriberCount()));
+                    Localization.shortSubscriberCount(activity, info.getUploaderSubscriberCount()));
         }
 
         if (subText.length() > 0) {
@@ -1652,6 +1665,13 @@ public final class VideoDetailFragment
         } else {
             binding.detailUploaderTextView.setVisibility(View.GONE);
         }
+
+        PicassoHelper.loadAvatar(info.getSubChannelAvatars()).tag(PICASSO_VIDEO_DETAILS_TAG)
+                .into(binding.detailSubChannelThumbnailView);
+        binding.detailSubChannelThumbnailView.setVisibility(View.VISIBLE);
+        PicassoHelper.loadAvatar(info.getUploaderAvatars()).tag(PICASSO_VIDEO_DETAILS_TAG)
+                .into(binding.detailUploaderThumbnailView);
+        binding.detailUploaderThumbnailView.setVisibility(View.VISIBLE);
     }
 
     public void openDownloadDialog() {
@@ -1672,67 +1692,43 @@ public final class VideoDetailFragment
     // Stream Results
     //////////////////////////////////////////////////////////////////////////*/
 
-    private void updateProgressInfo(@NonNull final StreamInfo info) {
+    private void checkUpdateProgressInfo(@NonNull final StreamInfo info) {
         if (positionSubscriber != null) {
             positionSubscriber.dispose();
         }
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        final boolean playbackResumeEnabled = prefs
-                .getBoolean(activity.getString(R.string.enable_watch_history_key), true)
-                && prefs.getBoolean(activity.getString(R.string.enable_playback_resume_key), true);
-        final boolean showPlaybackPosition = prefs.getBoolean(
-                activity.getString(R.string.enable_playback_state_lists_key), true);
-        if (!playbackResumeEnabled) {
-            if (playQueue == null || playQueue.getStreams().isEmpty()
-                    || playQueue.getItem().getRecoveryPosition() == RECOVERY_UNSET
-                    || !showPlaybackPosition) {
-                binding.positionView.setVisibility(View.INVISIBLE);
-                binding.detailPositionView.setVisibility(View.GONE);
-                // TODO: Remove this check when separation of concerns is done.
-                //  (live streams weren't getting updated because they are mixed)
-                if (!StreamTypeUtil.isLiveStream(info.getStreamType())) {
-                    return;
-                }
-            } else {
-                // Show saved position from backStack if user allows it
-                showPlaybackProgress(playQueue.getItem().getRecoveryPosition(),
-                        playQueue.getItem().getDuration() * 1000);
-                animate(binding.positionView, true, 500);
-                animate(binding.detailPositionView, true, 500);
-            }
+        if (!getResumePlaybackEnabled(activity)) {
+            binding.positionView.setVisibility(View.GONE);
+            binding.detailPositionView.setVisibility(View.GONE);
             return;
         }
         final HistoryRecordManager recordManager = new HistoryRecordManager(requireContext());
-
-        // TODO: Separate concerns when updating database data.
-        //  (move the updating part to when the loading happens)
         positionSubscriber = recordManager.loadStreamState(info)
                 .subscribeOn(Schedulers.io())
                 .onErrorComplete()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state -> {
-                    showPlaybackProgress(state.getProgressMillis(), info.getDuration() * 1000);
-                    animate(binding.positionView, true, 500);
-                    animate(binding.detailPositionView, true, 500);
+                    updatePlaybackProgress(
+                            state.getProgressMillis(), info.getDuration() * 1000);
                 }, e -> {
-                    if (DEBUG) {
-                        e.printStackTrace();
-                    }
+                    // impossible since the onErrorComplete()
                 }, () -> {
                     binding.positionView.setVisibility(View.GONE);
                     binding.detailPositionView.setVisibility(View.GONE);
                 });
     }
 
-    private void showPlaybackProgress(final long progress, final long duration) {
+    private void updatePlaybackProgress(final long progress, final long duration) {
+        if (!getResumePlaybackEnabled(activity)) {
+            return;
+        }
         final int progressSeconds = (int) TimeUnit.MILLISECONDS.toSeconds(progress);
         final int durationSeconds = (int) TimeUnit.MILLISECONDS.toSeconds(duration);
-        // If the old and the new progress values have a big difference then use
-        // animation. Otherwise don't because it affects CPU
-        final boolean shouldAnimate = Math.abs(binding.positionView.getProgress()
-                - progressSeconds) > 2;
+        // If the old and the new progress values have a big difference then use animation.
+        // Otherwise don't because it affects CPU
+        final int progressDifference = Math.abs(binding.positionView.getProgress()
+                - progressSeconds);
         binding.positionView.setMax(durationSeconds);
-        if (shouldAnimate) {
+        if (progressDifference > 2) {
             binding.positionView.setProgressAnimated(progressSeconds);
         } else {
             binding.positionView.setProgress(progressSeconds);
@@ -1761,7 +1757,7 @@ public final class VideoDetailFragment
         playQueue = queue;
         if (DEBUG) {
             Log.d(TAG, "onQueueUpdate() called with: serviceId = ["
-                    + serviceId + "], videoUrl = [" + url + "], name = ["
+                    + serviceId + "], url = [" + url + "], name = ["
                     + title + "], playQueue = [" + playQueue + "]");
         }
 
@@ -1778,7 +1774,7 @@ public final class VideoDetailFragment
         // deleted/added items inside Channel/Playlist queue and makes possible to have
         // a history of played items
         @Nullable final StackItem stackPeek = stack.peek();
-        if (stackPeek != null && !stackPeek.getPlayQueue().equals(queue)) {
+        if (stackPeek != null && !stackPeek.getPlayQueue().equalStreams(queue)) {
             @Nullable final PlayQueueItem playQueueItem = queue.getItem();
             if (playQueueItem != null) {
                 stack.push(new StackItem(playQueueItem.getServiceId(), playQueueItem.getUrl(),
@@ -1827,7 +1823,7 @@ public final class VideoDetailFragment
         }
 
         if (player.getPlayQueue().getItem().getUrl().equals(url)) {
-            showPlaybackProgress(currentProgress, duration);
+            updatePlaybackProgress(currentProgress, duration);
         }
     }
 
@@ -1844,11 +1840,11 @@ public final class VideoDetailFragment
         // They are not equal when user watches something in popup while browsing in fragment and
         // then changes screen orientation. In that case the fragment will set itself as
         // a service listener and will receive initial call to onMetadataUpdate()
-        if (!queue.equals(playQueue)) {
+        if (!queue.equalStreams(playQueue)) {
             return;
         }
 
-        updateOverlayData(info.getName(), info.getUploaderName(), info.getThumbnailUrl());
+        updateOverlayData(info.getName(), info.getUploaderName(), info.getThumbnails());
         if (currentInfo != null && info.getUrl().equals(currentInfo.getUrl())) {
             return;
         }
@@ -1877,7 +1873,7 @@ public final class VideoDetailFragment
         if (currentInfo != null) {
             updateOverlayData(currentInfo.getName(),
                     currentInfo.getUploaderName(),
-                    currentInfo.getThumbnailUrl());
+                    currentInfo.getThumbnails());
         }
         updateOverlayPlayQueueButtonVisibility();
     }
@@ -2046,7 +2042,10 @@ public final class VideoDetailFragment
             restoreDefaultBrightness();
         } else {
             // Do not restore if user has disabled brightness gesture
-            if (!PlayerHelper.isBrightnessGestureEnabled(activity)) {
+            if (!PlayerHelper.getActionForRightGestureSide(activity)
+                    .equals(getString(R.string.brightness_control_key))
+                    && !PlayerHelper.getActionForLeftGestureSide(activity)
+                    .equals(getString(R.string.brightness_control_key))) {
                 return;
             }
             // Restore already saved brightness level
@@ -2110,7 +2109,7 @@ public final class VideoDetailFragment
         final Iterator<StackItem> iterator = stack.descendingIterator();
         while (iterator.hasNext()) {
             final StackItem next = iterator.next();
-            if (next.getPlayQueue().equals(queue)) {
+            if (next.getPlayQueue().equalStreams(queue)) {
                 item = next;
                 break;
             }
@@ -2125,7 +2124,7 @@ public final class VideoDetailFragment
         if (isClearingQueueConfirmationRequired(activity)
                 && playerIsNotStopped()
                 && activeQueue != null
-                && !activeQueue.equals(playQueue)) {
+                && !activeQueue.equalStreams(playQueue)) {
             showClearingQueueConfirmation(onAllow);
         } else {
             onAllow.run();
@@ -2139,10 +2138,11 @@ public final class VideoDetailFragment
                 .setPositiveButton(R.string.ok, (dialog, which) -> {
                     onAllow.run();
                     dialog.dismiss();
-                }).show();
+                })
+                .show();
     }
 
-    private void showExternalPlaybackDialog() {
+    private void showExternalVideoPlaybackDialog() {
         if (currentInfo == null) {
             return;
         }
@@ -2189,6 +2189,43 @@ public final class VideoDetailFragment
         builder.show();
     }
 
+    private void showExternalAudioPlaybackDialog() {
+        if (currentInfo == null) {
+            return;
+        }
+
+        final List<AudioStream> audioStreams = getUrlAndNonTorrentStreams(
+                currentInfo.getAudioStreams());
+        final List<AudioStream> audioTracks =
+                ListHelper.getFilteredAudioStreams(activity, audioStreams);
+
+        if (audioTracks.isEmpty()) {
+            Toast.makeText(activity, R.string.no_audio_streams_available_for_external_players,
+                    Toast.LENGTH_SHORT).show();
+        } else if (audioTracks.size() == 1) {
+            startOnExternalPlayer(activity, currentInfo, audioTracks.get(0));
+        } else {
+            final int selectedAudioStream =
+                    ListHelper.getDefaultAudioFormat(activity, audioTracks);
+            final CharSequence[] trackNames = audioTracks.stream()
+                    .map(audioStream -> Localization.audioTrackName(activity, audioStream))
+                    .toArray(CharSequence[]::new);
+
+            new AlertDialog.Builder(activity)
+                    .setTitle(R.string.select_audio_track_external_players)
+                    .setNeutralButton(R.string.open_in_browser, (dialog, i) ->
+                            ShareUtils.openUrlInBrowser(requireActivity(), url))
+                    .setSingleChoiceItems(trackNames, selectedAudioStream, null)
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.ok, (dialog, i) -> {
+                        final int index = ((AlertDialog) dialog).getListView()
+                                .getCheckedItemPosition();
+                        startOnExternalPlayer(activity, currentInfo, audioTracks.get(index));
+                    })
+                    .show();
+        }
+    }
+
     /*
      * Remove unneeded information while waiting for a next task
      * */
@@ -2201,7 +2238,7 @@ public final class VideoDetailFragment
         playerHolder.stopService();
         setInitialData(0, null, "", null);
         currentInfo = null;
-        updateOverlayData(null, null, null);
+        updateOverlayData(null, null, List.of());
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -2383,11 +2420,11 @@ public final class VideoDetailFragment
 
     private void updateOverlayData(@Nullable final String overlayTitle,
                                    @Nullable final String uploader,
-                                   @Nullable final String thumbnailUrl) {
+                                   @NonNull final List<Image> thumbnails) {
         binding.overlayTitleTextView.setText(isEmpty(overlayTitle) ? "" : overlayTitle);
         binding.overlayChannelTextView.setText(isEmpty(uploader) ? "" : uploader);
         binding.overlayThumbnail.setImageDrawable(null);
-        PicassoHelper.loadDetailsThumbnail(thumbnailUrl).tag(PICASSO_VIDEO_DETAILS_TAG)
+        PicassoHelper.loadDetailsThumbnail(thumbnails).tag(PICASSO_VIDEO_DETAILS_TAG)
                 .into(binding.overlayThumbnail);
     }
 

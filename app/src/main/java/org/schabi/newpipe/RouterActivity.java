@@ -41,10 +41,14 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.preference.PreferenceManager;
 
+import com.evernote.android.state.State;
+import com.livefront.bridge.Bridge;
+
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.ListRadioIconItemBinding;
 import org.schabi.newpipe.databinding.SingleChoiceDialogViewBinding;
 import org.schabi.newpipe.download.DownloadDialog;
+import org.schabi.newpipe.download.LoadingDialog;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.ReCaptchaActivity;
@@ -64,6 +68,7 @@ import org.schabi.newpipe.extractor.exceptions.PrivateContentException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.exceptions.SoundCloudGoPlusContentException;
 import org.schabi.newpipe.extractor.exceptions.YoutubeMusicPremiumContentException;
+import org.schabi.newpipe.extractor.linkhandler.ListLinkHandler;
 import org.schabi.newpipe.extractor.playlist.PlaylistInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.ktx.ExceptionUtils;
@@ -71,10 +76,11 @@ import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.player.PlayerType;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.helper.PlayerHolder;
-import org.schabi.newpipe.player.playqueue.ChannelPlayQueue;
+import org.schabi.newpipe.player.playqueue.ChannelTabPlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlaylistPlayQueue;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
+import org.schabi.newpipe.util.ChannelTabHelper;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
@@ -95,8 +101,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import icepick.Icepick;
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
@@ -149,7 +153,7 @@ public class RouterActivity extends AppCompatActivity {
         getWindow().setAttributes(params);
 
         super.onCreate(savedInstanceState);
-        Icepick.restoreInstanceState(this, savedInstanceState);
+        Bridge.restoreInstanceState(this, savedInstanceState);
 
         // FragmentManager will take care to recreate (Playlist|Download)Dialog when screen rotates
         // We used to .setOnDismissListener(dialog -> finish()); when creating these DialogFragments
@@ -194,7 +198,7 @@ public class RouterActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        Bridge.saveInstanceState(this, outState);
     }
 
     @Override
@@ -631,8 +635,7 @@ public class RouterActivity extends AppCompatActivity {
         }
 
         if (selectedChoiceKey.equals(getString(R.string.popup_player_key))
-                && !PermissionHelper.isPopupEnabled(this)) {
-            PermissionHelper.showPopupEnablementToast(this);
+                && !PermissionHelper.isPopupEnabledElseAsk(this)) {
             finish();
             return;
         }
@@ -790,10 +793,10 @@ public class RouterActivity extends AppCompatActivity {
                     }
                 }
 
-            }, () -> {
+            }, () ->
                 // this branch is executed if there is no activity context
-                inFlight(false);
-            });
+                inFlight(false)
+            );
         }
 
         <T> Single<T> pleaseWait(final Single<T> single) {
@@ -813,19 +816,24 @@ public class RouterActivity extends AppCompatActivity {
         @SuppressLint("CheckResult")
         private void openDownloadDialog(final int currentServiceId, final String currentUrl) {
             inFlight(true);
+            final LoadingDialog loadingDialog = new LoadingDialog(R.string.loading_metadata_title);
+            loadingDialog.show(getParentFragmentManager(), "loadingDialog");
             disposables.add(ExtractorHelper.getStreamInfo(currentServiceId, currentUrl, true)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .compose(this::pleaseWait)
                     .subscribe(result ->
                         runOnVisible(ctx -> {
+                            loadingDialog.dismiss();
                             final FragmentManager fm = ctx.getSupportFragmentManager();
                             final DownloadDialog downloadDialog = new DownloadDialog(ctx, result);
                             // dismiss listener to be handled by FragmentManager
                             downloadDialog.show(fm, "downloadDialog");
                         }
-                    ), throwable -> runOnVisible(ctx ->
-                            ((RouterActivity) ctx).showUnsupportedUrlDialog(currentUrl))));
+                        ), throwable -> runOnVisible(ctx -> {
+                        loadingDialog.dismiss();
+                        ((RouterActivity) ctx).showUnsupportedUrlDialog(currentUrl);
+                    })));
         }
 
         private void openAddToPlaylistDialog(final int currentServiceId, final String currentUrl) {
@@ -1017,7 +1025,16 @@ public class RouterActivity extends AppCompatActivity {
                     }
                     playQueue = new SinglePlayQueue((StreamInfo) info);
                 } else if (info instanceof ChannelInfo) {
-                    playQueue = new ChannelPlayQueue((ChannelInfo) info);
+                    final Optional<ListLinkHandler> playableTab = ((ChannelInfo) info).getTabs()
+                            .stream()
+                            .filter(ChannelTabHelper::isStreamsTab)
+                            .findFirst();
+
+                    if (playableTab.isPresent()) {
+                        playQueue = new ChannelTabPlayQueue(info.getServiceId(), playableTab.get());
+                    } else {
+                        return; // there is no playable tab
+                    }
                 } else if (info instanceof PlaylistInfo) {
                     playQueue = new PlaylistPlayQueue((PlaylistInfo) info);
                 } else {

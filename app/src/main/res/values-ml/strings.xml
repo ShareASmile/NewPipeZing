@@ -125,14 +125,13 @@
     <string name="copyright" formatted="true">%3$s ന്റെ കീഴിൽ %2$s ന്റെ ©%1$s</string>
     <string name="title_licenses">തേർഡ്-പാർട്ടി ലൈസൻസുകൾ</string>
     <string name="title_activity_about">ന്യൂപൈപ്പിനെക്കുറിച്ച്</string>
-    <string name="toast_no_player">ഈ ഫയൽ പ്ലേ ചെയ്യാൻ കഴിയുന്ന ഒരു അപ്പും ഇൻസ്റ്റാൾ ചെയ്തിട്ടില്ല</string>
     <string name="charset_most_special_characters">പ്രത്യേക അടയാളങ്ങൾ</string>
     <string name="charset_letters_and_digits">അക്ഷരങ്ങളും അക്കങ്ങളും</string>
     <string name="settings_file_replacement_character_title">പകരം ഉപയോഗിക്കാവുന്ന അടയാളം</string>
     <string name="settings_file_replacement_character_summary">സ്വീകാര്യമല്ലാത്ത അടയാളങ്ങൾ ഈ അടയാളം കൊണ്ട് മാറ്റുന്നതാണ്</string>
     <string name="settings_file_charset_title">ഫയൽനാമങ്ങളിൽ അനുവദിച്ചിട്ടുള്ള അടയാളങ്ങൾ</string>
     <string name="settings_category_downloads_title">ഡൗൺലോഡ്</string>
-    <string name="recaptcha_done_button">ഓകെ</string>
+    <string name="done">ഓകെ</string>
     <string name="recaptcha_request_toast">reCAPTCHA ചാലഞ്ചിനായി അഭ്യർത്ഥിച്ചു</string>
     <string name="subtitle_activity_recaptcha">തീർന്നാൽ \"Done\" അമർത്തുക</string>
     <string name="title_activity_recaptcha">reCAPTCHA ചാലഞ്ച്</string>
@@ -227,7 +226,6 @@
     <string name="could_not_setup_download_menu">ഡൗൺലോഡ് മെനു തുറക്കാനായില്ല</string>
     <string name="content_not_available">കന്റെന്റ് ലഭ്യമല്ല</string>
     <string name="parsing_error">വെബ്സൈറ്റ് വ്യാപരിക്കാനായില്ല</string>
-    <string name="youtube_signature_deobfuscation_error">വീഡിയോ URL സിഗ്നേച്ചർ ഡീക്രിപ്റ്റ് ചെയ്യാൻ സാധിച്ചില്ല</string>
     <string name="could_not_load_thumbnails">ലഘുചിത്രങ്ങൾ ലോഡ് ചെയ്യാനായില്ല</string>
     <string name="network_error">നെറ്റ്‌വർക്ക് പിശക്</string>
     <string name="download_to_sdcard_error_message">എസ്ഡി കാർഡിലേക്ക്‌ ഡൗൺലോഡ് അസാധ്യം. ഡൗൺലോഡ് ഫോൾഡർ മാറ്റട്ടെ\?</string>
@@ -326,20 +324,14 @@
     <string name="enable_search_history_title">അന്വേഷണ ചരിത്രം</string>
     <string name="show_search_suggestions_summary">സെർച്ച് ചെയ്യുമ്പോൾ നിർദ്ദേശങ്ങൾ തിരഞ്ഞെടുക്കുക</string>
     <string name="show_search_suggestions_title">സെർച്ച് നിർദ്ദേശങ്ങൾ</string>
-    <string name="brightness_gesture_control_summary">ആംഗ്യത്തിലൂടെ പ്ലയറിലെ പ്രകാശം നിയന്ത്രിക്കാം</string>
-    <string name="brightness_gesture_control_title">ആംഗ്യത്തിലൂടെ പ്രകാശം നിയന്ത്രിക്കുക</string>
-    <string name="volume_gesture_control_summary">ആംഗ്യം ഉപയോഗിച്ച് വോള്യം നിയന്ത്രിക്കാം</string>
-    <string name="volume_gesture_control_title">ആംഗ്യത്തിലൂടെ വോള്യം നിയന്ത്രിക്കുക</string>
     <string name="auto_queue_summary">തീരാറായ പ്ലേബാക്ക് ക്യൂവിനെ മറ്റൊരു അനുബന്ധ സ്‌ട്രീമുമായി കൂട്ടിച്ചേർത്ത് തുടരുക</string>
     <string name="auto_queue_title">അടുത്ത സ്ട്രീം ഓട്ടോക്യൂ ചെയ്യുക</string>
     <string name="metadata_cache_wipe_complete_notice">കാഷെ ആയ മെറ്റാഡേറ്റ തുടച്ചുനീക്കി</string>
     <string name="metadata_cache_wipe_summary">കാഷെ ആയ ഡേറ്റ നീക്കംചെയ്യുക</string>
     <string name="metadata_cache_wipe_title">കാഷെ ആയ മെറ്റാഡേറ്റ തുടച്ചുനീക്കി</string>
     <string name="thumbnail_cache_wipe_complete_notice">ഇമേജ് കാചെ തുടച്ചുമാറ്റി</string>
-    <string name="download_thumbnail_summary">ലഘുചിങ്ങൾ ലോഡ് ചെയ്യാതിരിക്കാനും ഡേറ്റയും മെമ്മറിയും ലാഭിക്കാനുമായി ഓഫ്ചെയ്യുക. എസ് ഡീ കാർഡിലെയും മെമ്മറിയിലെയും കാച്ചേ ക്ലിയർ ചെയ്യും</string>
     <string name="show_comments_summary">കമന്റുകൾ മറയ്ക്കാനായി ഓഫ് ചെയ്യുക</string>
     <string name="show_comments_title">കമന്റുകൾ കാണിക്കുക</string>
-    <string name="download_thumbnail_title">ലഘുചിത്രങ്ങൾ ലോഡ്‌ ചെയ്യുക</string>
     <string name="seek_duration_title">ഫാസ്റ്റ്-ഫോർവേർഡ്/റീവൈൻഡ് സമയദൈർഘ്യം</string>
     <string name="use_inexact_seek_title">Inexact seek ഉപയോഗിക്കുക</string>
     <string name="use_inexact_seek_summary">കുറഞ്ഞ കൃത്യതയോടെ സീക് ചെയ്യാൻ ഇൻ എക്സക്ട് സഹായിക്കുന്നു. 5,15,25 സെക്കൻഡ് സീക്‌ ഈ മോഡിൽ പ്രവർത്തിക്കുകയില്ല</string>
@@ -502,7 +494,7 @@
     <string name="error_download_resource_gone">ഈ ഡൗൺലോഡ് വീണ്ടെടുക്കാനാവില്ല</string>
     <string name="error_timeout">കണക്ഷൻ കാലഹരണപ്പെട്ടു</string>
     <string name="error_progress_lost">ഫയൽ ഇല്ലാതാക്കിയതിനാൽ പുരോഗതി നഷ്‌ടപ്പെട്ടു</string>
-    <string name="error_insufficient_storage">ഉപകരണത്തിൽ ഇനിയൊരു സ്ഥലവും ബാക്കിയില്ല</string>
+    <string name="error_insufficient_storage_left">ഉപകരണത്തിൽ ഇനിയൊരു സ്ഥലവും ബാക്കിയില്ല</string>
     <string name="error_postprocessing_stopped">ഫയലിൽ പ്രവർത്തിക്കുമ്പോൾ ന്യൂപൈപ്പ് അടച്ചു</string>
     <string name="error_postprocessing_failed">പോസ്റ്റ്-പ്രോസസ്സിംഗ് പരാജയപ്പെട്ടു</string>
     <string name="error_http_not_found">കണ്ടെത്താനായില്ല</string>
@@ -616,7 +608,6 @@
     <string name="metadata_privacy_private">സ്വകാര്യം</string>
     <string name="metadata_privacy_unlisted">ലിസ്റ്റ് ചെയ്യപ്പെടാത്തത്</string>
     <string name="metadata_privacy_public">പൊതുവായത്</string>
-    <string name="metadata_thumbnail_url">ചെറുചിത്രം URL</string>
     <string name="metadata_host">ഹോസ്റ്റ്</string>
     <string name="metadata_support">പിന്തുണ</string>
     <string name="metadata_language">ഭാഷ</string>
@@ -628,7 +619,6 @@
     <string name="description_select_note">താക്കൾക് ഇപ്പോൾ ഡിസ്ക്രിപ്ഷൻ ബോക്സിലെ ടെക്സ്റ്റ്‌ തിരഞ്ഞെടുക്കാൻ സാധിക്കും. ശ്രെദ്ധിക്കുക സെലെക്ഷൻ മോഡിൽ പേജ് ചിലപ്പോൾ മിന്നുകയും ലിങ്കുകൾ ക്ലിക്ക് ചെയ്യാനാകാതെയും വന്നേക്കാം.</string>
     <string name="service_provides_reason">ഇതിന്റെ കാരണം %s നൽകും:</string>
     <string name="account_terminated">അക്കൗണ്ട് ഇല്ലാതായിരിക്കുന്നു</string>
-    <string name="feed_toggle_show_played_items">കണ്ട ഐറ്റംസ് കാണിക്കുക</string>
     <string name="feed_load_error_fast_unknown">ഫാസ്റ്റ് ഫീഡ് മോഡ് കൂടുതൽ വിവരങ്ങൾ നൽകില്ല.</string>
     <string name="feed_load_error_terminated">സൃഷ്ടാവിന്റെ അക്കൗണ്ട് ഇല്ലാതായിരിക്കുന്നു.
 \nഭാവിയിൽ ഫീഡ് ലോഡ് ചെയ്യാൻ ന്യൂ പൈപ്പിന് സാധിക്കില്ല.
@@ -654,6 +644,7 @@
     <string name="notifications">അറിയിപ്പുകൾ</string>
     <string name="settings_category_player_notification_title">പ്ലേയർ അറിയിപ്പ്</string>
     <string name="streams_notification_channel_name">പുതിയ സ്ട്രീമുകൾ</string>
-    <string name="progressive_load_interval_summary">ലോഡ് ഇടവേള മാറ്റുക (ഇപ്പൊൾ %s). കുറഞ്ഞ മൂല്യം വീഡിയോ വേഗത്തിൽ ലോഡ് ചെയ്യാൻ ഇടയാക്കാം. മാറ്റങ്ങൾ പ്രാഭല്യതിൽ വരുത്താൻ പ്ലേയർ പുനരാരംഭിക്കണം.</string>
     <string name="crash_the_player">പ്ലേയർ തകർക്കുക</string>
+    <string name="prefer_original_audio_title">യഥാർത്ഥ ശബ്ദത്തിന് പരിഗണന കൊടുക്കുക</string>
+    <string name="prefer_original_audio_summary">ഭാഷ ഏതായാലും യഥാർത്ഥ ശബ്ദം തിരഞ്ഞെടുക്കുക</string>
 </resources>

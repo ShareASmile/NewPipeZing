@@ -5,14 +5,16 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.PendingIntentCompat
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import org.schabi.newpipe.R
-import org.schabi.newpipe.util.PendingIntentCompat
 
 /**
  * This class contains all of the methods that should be used to let the user know that an error has
@@ -40,6 +42,10 @@ class ErrorUtil {
          */
         @JvmStatic
         fun openActivity(context: Context, errorInfo: ErrorInfo) {
+            if (getIsErrorReportsDisabled(context)) {
+                return
+            }
+
             context.startActivity(getErrorActivityIntent(context, errorInfo))
         }
 
@@ -54,7 +60,7 @@ class ErrorUtil {
          */
         @JvmStatic
         fun showSnackbar(context: Context, errorInfo: ErrorInfo) {
-            val rootView = if (context is Activity) context.findViewById<View>(R.id.content) else null
+            val rootView = (context as? Activity)?.findViewById<View>(android.R.id.content)
             showSnackbar(context, rootView, errorInfo)
         }
 
@@ -71,7 +77,7 @@ class ErrorUtil {
         fun showSnackbar(fragment: Fragment, errorInfo: ErrorInfo) {
             var rootView = fragment.view
             if (rootView == null && fragment.activity != null) {
-                rootView = fragment.requireActivity().findViewById(R.id.content)
+                rootView = fragment.requireActivity().findViewById(android.R.id.content)
             }
             showSnackbar(fragment.requireContext(), rootView, errorInfo)
         }
@@ -104,6 +110,15 @@ class ErrorUtil {
          */
         @JvmStatic
         fun createNotification(context: Context, errorInfo: ErrorInfo) {
+            if (getIsErrorReportsDisabled(context)) {
+                return
+            }
+
+            var pendingIntentFlags = PendingIntent.FLAG_UPDATE_CURRENT
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                pendingIntentFlags = pendingIntentFlags or PendingIntent.FLAG_IMMUTABLE
+            }
+
             val notificationBuilder: NotificationCompat.Builder =
                 NotificationCompat.Builder(
                     context,
@@ -118,7 +133,8 @@ class ErrorUtil {
                             context,
                             0,
                             getErrorActivityIntent(context, errorInfo),
-                            PendingIntent.FLAG_UPDATE_CURRENT
+                            PendingIntent.FLAG_UPDATE_CURRENT,
+                            false
                         )
                     )
 
@@ -138,6 +154,10 @@ class ErrorUtil {
         }
 
         private fun showSnackbar(context: Context, rootView: View?, errorInfo: ErrorInfo) {
+            if (getIsErrorReportsDisabled(context)) {
+                return
+            }
+
             if (rootView == null) {
                 // fallback to showing a notification if no root view is available
                 createNotification(context, errorInfo)
@@ -148,6 +168,13 @@ class ErrorUtil {
                         openActivity(context, errorInfo)
                     }.show()
             }
+        }
+
+        private fun getIsErrorReportsDisabled(context: Context): Boolean {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+            return prefs.getBoolean(
+                context.getString(R.string.disable_error_reports_key), false
+            )
         }
     }
 }

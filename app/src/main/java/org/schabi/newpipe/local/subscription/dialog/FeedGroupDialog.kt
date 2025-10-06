@@ -18,11 +18,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.evernote.android.state.State
+import com.livefront.bridge.Bridge
 import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.OnItemClickListener
 import com.xwray.groupie.Section
-import icepick.Icepick
-import icepick.State
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.databinding.DialogFeedGroupCreateBinding
@@ -55,10 +55,10 @@ class FeedGroupDialog : DialogFragment(), BackPressable {
     private var groupSortOrder: Long = -1
 
     sealed class ScreenState : Serializable {
-        object InitialScreen : ScreenState()
-        object IconPickerScreen : ScreenState()
-        object SubscriptionsPickerScreen : ScreenState()
-        object DeleteScreen : ScreenState()
+        data object InitialScreen : ScreenState()
+        data object IconPickerScreen : ScreenState()
+        data object SubscriptionsPickerScreen : ScreenState()
+        data object DeleteScreen : ScreenState()
     }
 
     @State @JvmField var selectedIcon: FeedGroupIcon? = null
@@ -78,7 +78,7 @@ class FeedGroupDialog : DialogFragment(), BackPressable {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Icepick.restoreInstanceState(this, savedInstanceState)
+        Bridge.restoreInstanceState(this, savedInstanceState)
 
         setStyle(STYLE_NO_TITLE, ThemeHelper.getMinWidthDialogTheme(requireContext()))
         groupId = arguments?.getLong(KEY_GROUP_ID, NO_GROUP_SELECTED) ?: NO_GROUP_SELECTED
@@ -114,7 +114,7 @@ class FeedGroupDialog : DialogFragment(), BackPressable {
         iconsListState = feedGroupCreateBinding.iconSelector.layoutManager?.onSaveInstanceState()
         subscriptionsListState = feedGroupCreateBinding.subscriptionsSelectorList.layoutManager?.onSaveInstanceState()
 
-        Icepick.saveInstanceState(this, outState)
+        Bridge.saveInstanceState(this, outState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -370,7 +370,7 @@ class FeedGroupDialog : DialogFragment(), BackPressable {
 
     private fun setupIconPicker() {
         val groupAdapter = GroupieAdapter()
-        groupAdapter.addAll(FeedGroupIcon.values().map { PickerIconItem(it) })
+        groupAdapter.addAll(FeedGroupIcon.entries.map { PickerIconItem(it) })
 
         feedGroupCreateBinding.iconSelector.apply {
             layoutManager = GridLayoutManager(requireContext(), 7, RecyclerView.VERTICAL, false)

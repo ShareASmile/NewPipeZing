@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.core.content.IntentCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.reactivestreams.Subscriber;
@@ -65,7 +66,7 @@ public class SubscriptionsExportService extends BaseImportExportService {
             return START_NOT_STICKY;
         }
 
-        final Uri path = intent.getParcelableExtra(KEY_FILE_PATH);
+        final Uri path = IntentCompat.getParcelableExtra(intent, KEY_FILE_PATH, Uri.class);
         if (path == null) {
             stopAndReportError(new IllegalStateException(
                     "Exporting to a file, but the path is null"),
@@ -75,7 +76,10 @@ public class SubscriptionsExportService extends BaseImportExportService {
 
         try {
             outFile = new StoredFileHelper(this, path, "application/json");
-            outputStream = new SharpOutputStream(outFile.getStream());
+            // truncate the file before writing to it, otherwise if the new content is smaller than
+            // the previous file size, the file will retain part of the previous content and be
+            // corrupted
+            outputStream = new SharpOutputStream(outFile.openAndTruncateStream());
         } catch (final IOException e) {
             handleError(e);
             return START_NOT_STICKY;
