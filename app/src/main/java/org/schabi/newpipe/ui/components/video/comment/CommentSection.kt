@@ -59,7 +59,9 @@ private fun CommentSection(
 
     LazyColumnThemedScrollbar(state = state) {
         LazyColumn(
-            modifier = Modifier.nestedScroll(nestedScrollInterop),
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(nestedScrollInterop),
             state = state
         ) {
             when (uiState) {
