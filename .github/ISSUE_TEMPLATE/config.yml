@@ -1,11 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: ❓ Question
-    url: https://github.com/TeamNewPipe/NewPipe/discussions/new?category=questions
-    about: Ask about anything NewPipe-related
-  - name: 💬 Matrix
-    url: https://matrix.to/#/#newpipe:matrix.newpipe-ev.de
-    about: Chat with us via Matrix for quick Q/A
-  - name: 💬 IRC
-    url: https://web.libera.chat/#newpipe
-    about: Chat with us via IRC for quick Q/A
+    url: https://github.com/NewPipeX/NewPipeX/discussions/new?category=questions
+    about: Ask a question about the project

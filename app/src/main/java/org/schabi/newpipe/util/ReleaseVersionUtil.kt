@@ -11,9 +11,9 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 object ReleaseVersionUtil {
-    // Public key of the certificate that is used in NewPipe release versions
+    // Public key of the certificate that is used in NewPipe X release versions
     private const val RELEASE_CERT_PUBLIC_KEY_SHA256 =
-        "cb84069bd68116bafae5ee4ee5b08a567aa6d898404e7cb12f9e756df5cf5cab"
+        "8c5c1fa014845691dfb0ce85f113fa09dbe9b7b302bf61af462f522191e1848e"
 
     @OptIn(ExperimentalStdlibApi::class)
     val isReleaseApk by lazy {

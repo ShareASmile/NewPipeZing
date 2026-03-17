@@ -21,6 +21,7 @@ import com.grack.nanojson.JsonParserException
 import org.schabi.newpipe.extractor.downloader.Response
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
 import org.schabi.newpipe.util.ReleaseVersionUtil
+import org.schabi.newpipe.util.Version
 import java.io.IOException
 
 class NewVersionWorker(
@@ -34,14 +35,16 @@ class NewVersionWorker(
      *
      * @param versionName    Name of new version
      * @param apkLocationUrl Url with the new apk
-     * @param versionCode    Code of new version
      */
     private fun compareAppVersionAndShowNotification(
         versionName: String,
-        apkLocationUrl: String?,
-        versionCode: Int
+        apkLocationUrl: String?
     ) {
-        if (BuildConfig.VERSION_CODE >= versionCode) {
+        val sourceVersion = Version.fromString(BuildConfig.VERSION_NAME)
+        val targetVersion = Version.fromString(versionName)
+
+        // abort if source version is the same or newer than target version
+        if (sourceVersion >= targetVersion) {
             if (inputData.getBoolean(IS_MANUAL, false)) {
                 // Show toast stating that the app is up-to-date if the update check was manual.
                 ContextCompat.getMainExecutor(applicationContext).execute {
@@ -54,7 +57,6 @@ class NewVersionWorker(
             return
         }
 
-        // A pending intent to open the apk location url in the browser.
         val intent = Intent(Intent.ACTION_VIEW, apkLocationUrl?.toUri())
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         val pendingIntent = PendingIntentCompat.getActivity(
@@ -97,7 +99,7 @@ class NewVersionWorker(
         }
 
         // Make a network request to get latest NewPipe data.
-        val response = DownloaderImpl.getInstance().get(NEWPIPE_API_URL)
+        val response = DownloaderImpl.getInstance().get(API_URL)
         handleResponse(response)
     }
 
@@ -118,19 +120,18 @@ class NewVersionWorker(
 
         // Parse the json from the response.
         try {
-            val newpipeVersionInfo = JsonParser.`object`()
-                .from(response.responseBody()).getObject("flavors")
-                .getObject("newpipe")
-
-            val versionName = newpipeVersionInfo.getString("version")
-            val versionCode = newpipeVersionInfo.getInt("version_code")
-            val apkLocationUrl = newpipeVersionInfo.getString("apk")
-            compareAppVersionAndShowNotification(versionName, apkLocationUrl, versionCode)
+            val jObj = JsonParser.`object`().from(response.responseBody())
+            val versionName = jObj.getString("tag_name")
+            val apkLocationUrl = jObj
+                .getArray("assets")
+                .getObject(0)
+                .getString("browser_download_url")
+            compareAppVersionAndShowNotification(versionName, apkLocationUrl)
         } catch (e: JsonParserException) {
-            // Most likely something is wrong in data received from NEWPIPE_API_URL.
+            // Most likely something is wrong in data received from API_URL.
             // Do not alarm user and fail silently.
             if (DEBUG) {
-                Log.w(TAG, "Could not get NewPipe API: invalid json", e)
+                Log.w(TAG, "Could not get Github API: invalid json", e)
             }
         }
     }
@@ -151,7 +152,8 @@ class NewVersionWorker(
     companion object {
         private val DEBUG = MainActivity.DEBUG
         private val TAG = NewVersionWorker::class.java.simpleName
-        private const val NEWPIPE_API_URL = "https://newpipe.net/api/data.json"
+        private const val API_URL =
+            "https://api.github.com/repos/NewPipeX/NewPipeX/releases/latest"
         private const val IS_MANUAL = "isManual"
 
         /**

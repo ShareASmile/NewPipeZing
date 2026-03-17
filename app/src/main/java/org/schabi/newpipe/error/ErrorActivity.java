@@ -61,11 +61,11 @@ public class ErrorActivity extends AppCompatActivity {
     // BUNDLE TAGS
     public static final String ERROR_INFO = "error_info";
 
-    public static final String ERROR_EMAIL_ADDRESS = "crashreport@newpipe.schabi.org";
+    public static final String ERROR_EMAIL_ADDRESS = "crashreport@newpipex.org";
     public static final String ERROR_EMAIL_SUBJECT = "Exception in ";
 
     public static final String ERROR_GITHUB_ISSUE_URL =
-            "https://github.com/TeamNewPipe/NewPipe/issues";
+            "https://github.com/NewPipeX/NewPipeX/issues";
 
     private ErrorInfo errorInfo;
     private String currentTimeStamp;

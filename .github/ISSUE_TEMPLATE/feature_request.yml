@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thank you for helping to make NewPipe better by suggesting a feature. :hugs:
+        Thank you for helping to make `NewPipe X` better by suggesting a feature. :hugs:
 
         Your ideas are highly welcome! The app is made for you, the users, after all.
   - type: checkboxes
@@ -13,26 +13,19 @@ body:
     attributes:
       label: "Checklist"
       options:
-        - label: "I made sure that there are *no existing issues* - [open](https://github.com/TeamNewPipe/NewPipe/issues) or [closed](https://github.com/TeamNewPipe/NewPipe/issues?q=is%3Aissue+is%3Aclosed) - which I could contribute my information to."
+        - label: "I made sure that there are *no feature requests* - [open](https://github.com/NewPipeX/NewPipeX/issues?q=is%3Aissue+is%3Aopen+label%3A%22feature+request%22) or [closed](https://github.com/NewPipeX/NewPipeX/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22) - that already cover my request."
           required: true
-        - label: "I have read the [FAQ](https://newpipe.net/FAQ/) and my problem isn't listed."
+        - label: "My feature request has a well-defined scope and is described in sufficient detail."
           required: true
-        - label: "I'm aware that this is a request for NewPipe itself and that requests for adding a new service need to be made at [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/issues)."
+        - label: "I have read and understood the [contribution guidelines](https://github.com/NewPipeX/NewPipeX/blob/main/.github/CONTRIBUTING.md)."
           required: true
-        - label: "I have taken the time to fill in all the required details. I understand that the feature request will be dismissed otherwise."
-          required: true
-        - label: "This issue contains only one feature request."
-          required: true
-        - label: "I have read and understood the [contribution guidelines](https://github.com/TeamNewPipe/NewPipe/blob/dev/.github/CONTRIBUTING.md)."
-          required: true
-
 
   - type: textarea
     id: feature-description
     attributes:
       label: Feature description
       description: |
-        Explain how you want the app's look or behavior to change to suit your needs.
+        Explain how you want the app's look or behavior to change.
     validations:
       required: true
 

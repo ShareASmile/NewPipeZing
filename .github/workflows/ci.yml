@@ -5,9 +5,7 @@ on:
   pull_request:
     branches:
       - dev
-      - master
-      - refactor
-      - release**
+      - main
     paths-ignore:
       - 'README.md'
       - 'doc/**'
@@ -19,7 +17,7 @@ on:
   push:
     branches:
       - dev
-      - master
+      - main
     paths-ignore:
       - 'README.md'
       - 'doc/**'
