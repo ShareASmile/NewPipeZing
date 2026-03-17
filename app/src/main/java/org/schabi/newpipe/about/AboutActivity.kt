@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -57,13 +58,9 @@ class AboutActivity : AppCompatActivity() {
      * A placeholder fragment containing a simple view.
      */
     class AboutFragment : Fragment() {
-        private fun Button.openLink(url: Int) {
+        private fun Button.openLink(@StringRes url: Int) {
             setOnClickListener {
-                ShareUtils.openUrlInBrowser(
-                    context,
-                    requireContext().getString(url),
-                    false
-                )
+                ShareUtils.openUrlInApp(context, requireContext().getString(url))
             }
         }
 
@@ -119,7 +116,7 @@ class AboutActivity : AppCompatActivity() {
         /**
          * List of all software components.
          */
-        private val SOFTWARE_COMPONENTS = arrayOf(
+        private val SOFTWARE_COMPONENTS = arrayListOf(
             SoftwareComponent(
                 "ACRA", "2013", "Kevin Gaudin",
                 "https://github.com/ACRA/acra", StandardLicenses.APACHE2
@@ -141,8 +138,12 @@ class AboutActivity : AppCompatActivity() {
                 "https://github.com/lisawray/groupie", StandardLicenses.MIT
             ),
             SoftwareComponent(
-                "Icepick", "2015", "Frankie Sardo",
-                "https://github.com/frankiesardo/icepick", StandardLicenses.EPL1
+                "Android-State", "2018", "Evernote",
+                "https://github.com/Evernote/android-state", StandardLicenses.EPL1
+            ),
+            SoftwareComponent(
+                "Bridge", "2021", "Livefront",
+                "https://github.com/livefront/bridge", StandardLicenses.APACHE2
             ),
             SoftwareComponent(
                 "Jsoup", "2009 - 2020", "Jonathan Hedley",

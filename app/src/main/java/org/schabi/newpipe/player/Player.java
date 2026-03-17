@@ -29,7 +29,6 @@ import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
 import static com.google.android.exoplayer2.Player.RepeatMode;
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
-import static org.schabi.newpipe.player.helper.PlayerHelper.isPlaybackResumeEnabled;
 import static org.schabi.newpipe.player.helper.PlayerHelper.nextRepeatMode;
 import static org.schabi.newpipe.player.helper.PlayerHelper.retrievePlaybackParametersFromPrefs;
 import static org.schabi.newpipe.player.helper.PlayerHelper.retrieveSeekDurationFromPreferences;
@@ -70,7 +69,6 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player.PositionInfo;
-import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -78,7 +76,6 @@ import com.google.android.exoplayer2.text.CueGroup;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -89,6 +86,8 @@ import org.schabi.newpipe.databinding.PlayerBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.extractor.stream.AudioStream;
+import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.extractor.stream.VideoStream;
@@ -97,6 +96,7 @@ import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.event.PlayerEventListener;
 import org.schabi.newpipe.player.event.PlayerServiceEventListener;
 import org.schabi.newpipe.player.helper.AudioReactor;
+import org.schabi.newpipe.player.helper.CustomRenderersFactory;
 import org.schabi.newpipe.player.helper.LoadController;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
@@ -115,10 +115,10 @@ import org.schabi.newpipe.player.ui.PlayerUi;
 import org.schabi.newpipe.player.ui.PlayerUiList;
 import org.schabi.newpipe.player.ui.PopupPlayerUi;
 import org.schabi.newpipe.player.ui.VideoPlayerUi;
-import org.schabi.newpipe.util.DeviceUtils;
+import org.schabi.newpipe.util.DependentPreferenceHelper;
 import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.NavigationHelper;
-import org.schabi.newpipe.util.PicassoHelper;
+import org.schabi.newpipe.util.image.PicassoHelper;
 import org.schabi.newpipe.util.SerializedCache;
 import org.schabi.newpipe.util.StreamTypeUtil;
 
@@ -181,13 +181,18 @@ public final class Player implements PlaybackListener, Listener {
     //////////////////////////////////////////////////////////////////////////*/
 
     // play queue might be null e.g. while player is starting
-    @Nullable private PlayQueue playQueue;
+    @Nullable
+    private PlayQueue playQueue;
 
-    @Nullable private MediaSourceManager playQueueManager;
+    @Nullable
+    private MediaSourceManager playQueueManager;
 
-    @Nullable private PlayQueueItem currentItem;
-    @Nullable private MediaItemTag currentMetadata;
-    @Nullable private Bitmap currentThumbnail;
+    @Nullable
+    private PlayQueueItem currentItem;
+    @Nullable
+    private MediaItemTag currentMetadata;
+    @Nullable
+    private Bitmap currentThumbnail;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Player
@@ -196,12 +201,17 @@ public final class Player implements PlaybackListener, Listener {
     private ExoPlayer simpleExoPlayer;
     private AudioReactor audioReactor;
 
-    @NonNull private final DefaultTrackSelector trackSelector;
-    @NonNull private final LoadController loadController;
-    @NonNull private final RenderersFactory renderFactory;
+    @NonNull
+    private final DefaultTrackSelector trackSelector;
+    @NonNull
+    private final LoadController loadController;
+    @NonNull
+    private final DefaultRenderersFactory renderFactory;
 
-    @NonNull private final VideoPlaybackResolver videoResolver;
-    @NonNull private final AudioPlaybackResolver audioResolver;
+    @NonNull
+    private final VideoPlaybackResolver videoResolver;
+    @NonNull
+    private final AudioPlaybackResolver audioResolver;
 
     private final PlayerService service; //TODO try to remove and replace everything with context
 
@@ -226,24 +236,32 @@ public final class Player implements PlaybackListener, Listener {
 
     private BroadcastReceiver broadcastReceiver;
     private IntentFilter intentFilter;
-    @Nullable private PlayerServiceEventListener fragmentListener = null;
-    @Nullable private PlayerEventListener activityListener = null;
+    @Nullable
+    private PlayerServiceEventListener fragmentListener = null;
+    @Nullable
+    private PlayerEventListener activityListener = null;
 
-    @NonNull private final SerialDisposable progressUpdateDisposable = new SerialDisposable();
-    @NonNull private final CompositeDisposable databaseUpdateDisposable = new CompositeDisposable();
+    @NonNull
+    private final SerialDisposable progressUpdateDisposable = new SerialDisposable();
+    @NonNull
+    private final CompositeDisposable databaseUpdateDisposable = new CompositeDisposable();
 
     // This is the only listener we need for thumbnail loading, since there is always at most only
     // one thumbnail being loaded at a time. This field is also here to maintain a strong reference,
     // which would otherwise be garbage collected since Picasso holds weak references to targets.
-    @NonNull private final Target currentThumbnailTarget;
+    @NonNull
+    private final Target currentThumbnailTarget;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Utils
     //////////////////////////////////////////////////////////////////////////*/
 
-    @NonNull private final Context context;
-    @NonNull private final SharedPreferences prefs;
-    @NonNull private final HistoryRecordManager recordManager;
+    @NonNull
+    private final Context context;
+    @NonNull
+    private final SharedPreferences prefs;
+    @NonNull
+    private final HistoryRecordManager recordManager;
 
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -263,7 +281,16 @@ public final class Player implements PlaybackListener, Listener {
         final PlayerDataSource dataSource = new PlayerDataSource(context,
                 new DefaultBandwidthMeter.Builder(context).build());
         loadController = new LoadController();
-        renderFactory = new DefaultRenderersFactory(context);
+
+        renderFactory = prefs.getBoolean(
+                context.getString(
+                        R.string.always_use_exoplayer_set_output_surface_workaround_key), false)
+                ? new CustomRenderersFactory(context) : new DefaultRenderersFactory(context);
+
+        renderFactory.setEnableDecoderFallback(
+                prefs.getBoolean(
+                        context.getString(
+                                R.string.use_exoplayer_decoder_fallback_key), false));
 
         videoResolver = new VideoPlaybackResolver(context, dataSource, getQualityResolver());
         audioResolver = new AudioPlaybackResolver(context, dataSource);
@@ -326,7 +353,7 @@ public final class Player implements PlaybackListener, Listener {
         isAudioOnly = audioPlayerSelected();
 
         if (intent.hasExtra(PLAYBACK_QUALITY)) {
-            setPlaybackQuality(intent.getStringExtra(PLAYBACK_QUALITY));
+            videoResolver.setPlaybackQuality(intent.getStringExtra(PLAYBACK_QUALITY));
         }
 
         // Resolve enqueue intents
@@ -334,7 +361,7 @@ public final class Player implements PlaybackListener, Listener {
             playQueue.append(newQueue.getStreams());
             return;
 
-        // Resolve enqueue next intents
+            // Resolve enqueue next intents
         } else if (intent.getBooleanExtra(ENQUEUE_NEXT, false) && playQueue != null) {
             final int currentIndex = playQueue.getIndex();
             playQueue.append(newQueue.getStreams());
@@ -348,7 +375,7 @@ public final class Player implements PlaybackListener, Listener {
         final boolean playbackSkipSilence = getPrefs().getBoolean(getContext().getString(
                 R.string.playback_skip_silence_key), getPlaybackSkipSilence());
 
-        final boolean samePlayQueue = playQueue != null && playQueue.equals(newQueue);
+        final boolean samePlayQueue = playQueue != null && playQueue.equalStreamsAndIndex(newQueue);
         final int repeatMode = intent.getIntExtra(REPEAT_MODE, getRepeatMode());
         final boolean playWhenReady = intent.getBooleanExtra(PLAY_WHEN_READY, true);
         final boolean isMuted = intent.getBooleanExtra(IS_MUTED, isMuted());
@@ -391,7 +418,7 @@ public final class Player implements PlaybackListener, Listener {
             simpleExoPlayer.setPlayWhenReady(playWhenReady);
 
         } else if (intent.getBooleanExtra(RESUME_PLAYBACK, false)
-                && isPlaybackResumeEnabled(this)
+                && DependentPreferenceHelper.getResumePlaybackEnabled(context)
                 && !samePlayQueue
                 && !newQueue.isEmpty()
                 && newQueue.getItem() != null
@@ -435,7 +462,6 @@ public final class Player implements PlaybackListener, Listener {
         if (oldPlayerType != playerType && playQueue != null) {
             // If playerType changes from one to another we should reload the player
             // (to disable/enable video stream or to set quality)
-            setRecovery();
             reloadPlayQueueManager();
         }
 
@@ -520,16 +546,11 @@ public final class Player implements PlaybackListener, Listener {
         // Setup UIs
         UIs.call(PlayerUi::initPlayer);
 
-        // enable media tunneling
-        if (DEBUG && PreferenceManager.getDefaultSharedPreferences(context)
+        // Disable media tunneling if requested by the user from ExoPlayer settings
+        if (!PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.disable_media_tunneling_key), false)) {
-            Log.d(TAG, "[" + Util.DEVICE_DEBUG_INFO + "] "
-                    + "media tunneling disabled in debug preferences");
-        } else if (DeviceUtils.shouldSupportMediaTunneling()) {
             trackSelector.setParameters(trackSelector.buildUponParameters()
                     .setTunnelingEnabled(true));
-        } else if (DEBUG) {
-            Log.d(TAG, "[" + Util.DEVICE_DEBUG_INFO + "] does not support media tunneling");
         }
     }
     //endregion
@@ -784,10 +805,10 @@ public final class Player implements PlaybackListener, Listener {
         };
     }
 
-    private void loadCurrentThumbnail(final String url) {
+    private void loadCurrentThumbnail(final List<Image> thumbnails) {
         if (DEBUG) {
-            Log.d(TAG, "Thumbnail - loadCurrentThumbnail() called with url = ["
-                    + (url == null ? "null" : url) + "]");
+            Log.d(TAG, "Thumbnail - loadCurrentThumbnail() called with thumbnails = ["
+                    + thumbnails.size() + "]");
         }
 
         // first cancel any previous loading
@@ -796,12 +817,12 @@ public final class Player implements PlaybackListener, Listener {
         // Unset currentThumbnail, since it is now outdated. This ensures it is not used in media
         // session metadata while the new thumbnail is being loaded by Picasso.
         onThumbnailLoaded(null);
-        if (isNullOrEmpty(url)) {
+        if (thumbnails.isEmpty()) {
             return;
         }
 
         // scale down the notification thumbnail for performance
-        PicassoHelper.loadScaledDownThumbnail(context, url)
+        PicassoHelper.loadScaledDownThumbnail(context, thumbnails)
                 .tag(PICASSO_PLAYER_THUMBNAIL_TAG)
                 .into(currentThumbnailTarget);
     }
@@ -911,14 +932,13 @@ public final class Player implements PlaybackListener, Listener {
 
     private Disposable getProgressUpdateDisposable() {
         return Observable.interval(PROGRESS_LOOP_INTERVAL_MILLIS, MILLISECONDS,
-                AndroidSchedulers.mainThread())
+                        AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> triggerProgressUpdate(),
                         error -> Log.e(TAG, "Progress update failure: ", error));
     }
 
     //endregion
-
 
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -1062,7 +1082,7 @@ public final class Player implements PlaybackListener, Listener {
 
         UIs.call(PlayerUi::onPrepared);
 
-        if (playWhenReady) {
+        if (playWhenReady && !isMuted()) {
             audioReactor.requestAudioFocus();
         }
     }
@@ -1203,6 +1223,11 @@ public final class Player implements PlaybackListener, Listener {
     public void toggleMute() {
         final boolean wasMuted = isMuted();
         simpleExoPlayer.setVolume(wasMuted ? 1 : 0);
+        if (wasMuted) {
+            audioReactor.requestAudioFocus();
+        } else {
+            audioReactor.abandonAudioFocus();
+        }
         UIs.call(playerUi -> playerUi.onMuteUnmuteChanged(!wasMuted));
         notifyPlaybackUpdateToListeners();
     }
@@ -1242,6 +1267,9 @@ public final class Player implements PlaybackListener, Listener {
             }
             final StreamInfo previousInfo = Optional.ofNullable(currentMetadata)
                     .flatMap(MediaItemTag::getMaybeStreamInfo).orElse(null);
+            final MediaItemTag.AudioTrack previousAudioTrack =
+                    Optional.ofNullable(currentMetadata)
+                            .flatMap(MediaItemTag::getMaybeAudioTrack).orElse(null);
             currentMetadata = tag;
 
             if (!currentMetadata.getErrors().isEmpty()) {
@@ -1262,6 +1290,12 @@ public final class Player implements PlaybackListener, Listener {
                 if (previousInfo == null || !previousInfo.getUrl().equals(info.getUrl())) {
                     // only update with the new stream info if it has actually changed
                     updateMetadataWith(info);
+                } else if (previousAudioTrack == null
+                        || tag.getMaybeAudioTrack()
+                        .map(t -> t.getSelectedAudioStreamIndex()
+                                != previousAudioTrack.getSelectedAudioStreamIndex())
+                        .orElse(false)) {
+                    notifyAudioTrackUpdateToListeners();
                 }
             });
         });
@@ -1349,6 +1383,7 @@ public final class Player implements PlaybackListener, Listener {
     // Errors
     //////////////////////////////////////////////////////////////////////////*/
     //region Errors
+
     /**
      * Process exceptions produced by {@link com.google.android.exoplayer2.ExoPlayer ExoPlayer}.
      * <p>There are multiple types of errors:</p>
@@ -1375,8 +1410,9 @@ public final class Player implements PlaybackListener, Listener {
      * For any error above that is <b>not</b> explicitly <b>catchable</b>, the player will
      * create a notification so users are aware.
      * </ul>
+     *
      * @see com.google.android.exoplayer2.Player.Listener#onPlayerError(PlaybackException)
-     * */
+     */
     // Any error code not explicitly covered here are either unrelated to NewPipe use case
     // (e.g. DRM) or not recoverable (e.g. Decoder error). In both cases, the player should
     // shutdown.
@@ -1589,7 +1625,9 @@ public final class Player implements PlaybackListener, Listener {
             return;
         }
 
-        audioReactor.requestAudioFocus();
+        if (!isMuted()) {
+            audioReactor.requestAudioFocus();
+        }
 
         if (currentState == STATE_COMPLETED) {
             if (playQueue.getIndex() == 0) {
@@ -1754,10 +1792,11 @@ public final class Player implements PlaybackListener, Listener {
 
         maybeAutoQueueNextStream(info);
 
-        loadCurrentThumbnail(info.getThumbnailUrl());
+        loadCurrentThumbnail(info.getThumbnails());
         registerStreamViewed();
 
         notifyMetadataUpdateToListeners();
+        notifyAudioTrackUpdateToListeners();
         UIs.call(playerUi -> playerUi.onMetadataChanged(info));
     }
 
@@ -1885,6 +1924,12 @@ public final class Player implements PlaybackListener, Listener {
                 })
                 .map(quality -> quality.getSortedVideoStreams()
                         .get(quality.getSelectedVideoStreamIndex()));
+    }
+
+    public Optional<AudioStream> getSelectedAudioStream() {
+        return Optional.ofNullable(currentMetadata)
+                .flatMap(MediaItemTag::getMaybeAudioTrack)
+                .map(MediaItemTag.AudioTrack::getSelectedAudioStream);
     }
     //endregion
 
@@ -2017,44 +2062,46 @@ public final class Player implements PlaybackListener, Listener {
         }
     }
 
+    private void notifyAudioTrackUpdateToListeners() {
+        if (fragmentListener != null) {
+            fragmentListener.onAudioTrackUpdate();
+        }
+        if (activityListener != null) {
+            activityListener.onAudioTrackUpdate();
+        }
+    }
+
     public void useVideoSource(final boolean videoEnabled) {
-        if (playQueue == null || isAudioOnly == !videoEnabled || audioPlayerSelected()) {
+        if (playQueue == null || audioPlayerSelected()) {
             return;
         }
 
         isAudioOnly = !videoEnabled;
 
-        // The current metadata may be null sometimes (for e.g. when using an unstable connection
-        // in livestreams) so we will be not able to execute the block below.
-        // Reload the play queue manager in this case, which is the behavior when we don't know the
-        // index of the video renderer or playQueueManagerReloadingNeeded returns true.
         getCurrentStreamInfo().ifPresentOrElse(info -> {
-            // In the case we don't know the source type, fallback to the one with video with audio
-            // or audio-only source.
+            // In case we don't know the source type, fall back to either video-with-audio, or
+            // audio-only source type
             final SourceType sourceType = videoResolver.getStreamSourceType()
                     .orElse(SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY);
 
             if (playQueueManagerReloadingNeeded(sourceType, info, getVideoRendererIndex())) {
                 reloadPlayQueueManager();
-            } else {
-                if (StreamTypeUtil.isAudio(info.getStreamType())) {
-                    // Nothing to do more than setting the recovery position
-                    setRecovery();
-                    return;
-                }
-
-                final var parametersBuilder = trackSelector.buildUponParameters();
-
-                // Enable/disable the video track and the ability to select subtitles
-                parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, !videoEnabled);
-                parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, !videoEnabled);
-
-                trackSelector.setParameters(parametersBuilder);
             }
 
             setRecovery();
+
+            // Disable or enable video and subtitles renderers depending of the videoEnabled value
+            trackSelector.setParameters(trackSelector.buildUponParameters()
+                    .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, !videoEnabled)
+                    .setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, !videoEnabled));
         }, () -> {
-            // This is executed when the current stream info is not available.
+            /*
+            The current metadata may be null sometimes (for e.g. when using an unstable connection
+            in livestreams) so we will be not able to execute the block below
+
+            Reload the play queue manager in this case, which is the behavior when we don't know the
+            index of the video renderer or playQueueManagerReloadingNeeded returns true
+            */
             reloadPlayQueueManager();
             setRecovery();
         });
@@ -2113,7 +2160,7 @@ public final class Player implements PlaybackListener, Listener {
         // because the stream source will be probably the same as the current played
         if (sourceType == SourceType.VIDEO_WITH_SEPARATED_AUDIO
                 || (sourceType == SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY
-                    && isNullOrEmpty(streamInfo.getAudioStreams()))) {
+                && isNullOrEmpty(streamInfo.getAudioStreams()))) {
             // It's not needed to reload the play queue manager only if the content's stream type
             // is a video stream, a live stream or an ended live stream
             return !StreamTypeUtil.isVideo(streamType);
@@ -2175,7 +2222,18 @@ public final class Player implements PlaybackListener, Listener {
     }
 
     public void setPlaybackQuality(@Nullable final String quality) {
+        saveStreamProgressState();
+        setRecovery();
         videoResolver.setPlaybackQuality(quality);
+        reloadPlayQueueManager();
+    }
+
+    public void setAudioTrack(@Nullable final String audioTrackId) {
+        saveStreamProgressState();
+        setRecovery();
+        videoResolver.setAudioTrack(audioTrackId);
+        audioResolver.setAudioTrack(audioTrackId);
+        reloadPlayQueueManager();
     }
 
 
@@ -2253,7 +2311,7 @@ public final class Player implements PlaybackListener, Listener {
 
     /**
      * Get the video renderer index of the current playing stream.
-     *
+     * <p>
      * This method returns the video renderer index of the current
      * {@link MappingTrackSelector.MappedTrackInfo} or {@link #RENDERER_UNAVAILABLE} if the current
      * {@link MappingTrackSelector.MappedTrackInfo} is null or if there is no video renderer index.

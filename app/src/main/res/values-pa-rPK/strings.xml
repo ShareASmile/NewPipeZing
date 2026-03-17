@@ -7,7 +7,7 @@
     <string name="default_popup_resolution_title">تیردی تصویر لئی ریزولوشن دا مول</string>
     <string name="search_showing_result_for">%s لئی نتیجے وِکھاۓ جا رہے ہن</string>
     <string name="use_external_video_player_summary">کجھ ریزولوشناں تے آواز نوں ہٹا دِندے</string>
-    <string name="download_path_audio_dialog_title">آڈیو فائلاں لئی لئی فولڈر چݨو</string>
+    <string name="download_path_audio_dialog_title">آڈیو فائلاں لئی ڈاؤن لوڈ فولڈر دا انتخاب کرو</string>
     <string name="play_with_kodi_title">کوڈی نال چلاؤ</string>
     <string name="notification_colorize_summary">اینڈروئیڈ نوں تھمنیل دے رکھ مطابق نوٹ دا رنگ بدلݨ دیو (دھیان دیو کہ ایہہ ہریک ڈِوائیس تے اًپلبدھ نہیں اے)</string>
     <string name="upload_date_text">%1$s نوں جاری کیتی گئی</string>
@@ -38,7 +38,6 @@
     <string name="dark_theme_title">گوڑی</string>
     <string name="seek_duration_title">اگے لنگھاؤݨ یا پچھے کرن دی سماں معد</string>
     <string name="clear_queue_confirmation_description">سرگرم پکیئر کتار جاوےگا</string>
-    <string name="download_thumbnail_title">تھمنیل لوڈ کرو</string>
     <string name="clear_queue_confirmation_title">کتار نوں خالی کرن توں پہلاں تصویر کرن لئی پچھو</string>
     <string name="show_comments_summary">ٹپݨیاں وکھاؤݨا روکݨ لئی ایسنوں بند کرو</string>
     <string name="show_comments_title">ٹپݨیاں دِکھاؤ</string>
@@ -48,8 +47,6 @@
     <string name="thumbnail_cache_wipe_complete_notice">تصویر دی کیش ہٹا دتی گئی اے</string>
     <string name="metadata_cache_wipe_summary">کیش وچ سارے ویب‌سائیٹ دے ڈیٹے ہٹاؤ</string>
     <string name="auto_queue_summary">اِکّ نا دہراؤݨ والی کتار نوں، سمبندھت سٹریم جوڑدیاں، مُکاؤندے رہو</string>
-    <string name="volume_gesture_control_title">آواز اشرہ کنٹرول</string>
-    <string name="volume_gesture_control_summary">آواز کنٹرول کرن لئی شواواں دی ورتون کرو</string>
     <string name="download_dialog_title">ڈاؤن‌لوڈ</string>
     <string name="enable_watch_history_title">پہلاں توں ویکھیاں ہوئیاں چیزاں دی لسٹ</string>
     <string name="enable_playback_resume_title">پلےبیک دوبارہ شروع کرو</string>

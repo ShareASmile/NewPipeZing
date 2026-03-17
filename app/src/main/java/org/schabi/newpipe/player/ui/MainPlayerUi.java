@@ -25,9 +25,7 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +42,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.video.VideoSize;
 
 import org.schabi.newpipe.R;
@@ -434,7 +433,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
             return;
         }
 
-        final boolean showQueue = playQueue.getStreams().size() > 1;
+        final boolean showQueue = !playQueue.getStreams().isEmpty();
         final boolean showSegment = !player.getCurrentStreamInfo()
                 .map(StreamInfo::getStreamSegments)
                 .map(List::isEmpty)
@@ -522,11 +521,8 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
 
     @Override
     protected void setupSubtitleView(final float captionScale) {
-        final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        final int minimumLength = Math.min(metrics.heightPixels, metrics.widthPixels);
-        final float captionRatioInverse = 20f + 4f * (1.0f - captionScale);
-        binding.subtitleView.setFixedTextSize(
-                TypedValue.COMPLEX_UNIT_PX, minimumLength / captionRatioInverse);
+        binding.subtitleView.setFractionalTextSize(
+                SubtitleView.DEFAULT_TEXT_SIZE_FRACTION * captionScale);
     }
     //endregion
 
@@ -740,7 +736,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
                     String videoUrl = player.getVideoUrl();
                     videoUrl += ("&t=" + seconds);
                     ShareUtils.shareText(context, currentItem.getTitle(),
-                            videoUrl, currentItem.getThumbnailUrl());
+                            videoUrl, currentItem.getThumbnails());
                 }
             }
         };

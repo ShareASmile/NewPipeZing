@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
 
+import com.evernote.android.state.State;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.reactivestreams.Subscriber;
@@ -28,14 +29,16 @@ import org.schabi.newpipe.databinding.StatisticPlaylistControlBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import org.schabi.newpipe.fragments.list.playlist.PlaylistControlViewHolder;
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
+import org.schabi.newpipe.info_list.dialog.StreamDialogDefaultEntry;
 import org.schabi.newpipe.local.BaseLocalListFragment;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.settings.HistorySettingsFragment;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
-import org.schabi.newpipe.info_list.dialog.StreamDialogDefaultEntry;
+import org.schabi.newpipe.util.PlayButtonHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,13 +46,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 public class StatisticsPlaylistFragment
-        extends BaseLocalListFragment<List<StreamStatisticsEntry>, Void> {
+        extends BaseLocalListFragment<List<StreamStatisticsEntry>, Void>
+        implements PlaylistControlViewHolder {
     private final CompositeDisposable disposables = new CompositeDisposable();
     @State
     Parcelable itemsListState;
@@ -195,14 +198,9 @@ public class StatisticsPlaylistFragment
         if (itemListAdapter != null) {
             itemListAdapter.unsetSelectedListener();
         }
-        if (playlistControlBinding != null) {
-            playlistControlBinding.playlistCtrlPlayBgButton.setOnClickListener(null);
-            playlistControlBinding.playlistCtrlPlayAllButton.setOnClickListener(null);
-            playlistControlBinding.playlistCtrlPlayPopupButton.setOnClickListener(null);
 
-            headerBinding = null;
-            playlistControlBinding = null;
-        }
+        headerBinding = null;
+        playlistControlBinding = null;
 
         if (databaseSubscription != null) {
             databaseSubscription.cancel();
@@ -276,12 +274,8 @@ public class StatisticsPlaylistFragment
             itemsListState = null;
         }
 
-        playlistControlBinding.playlistCtrlPlayAllButton.setOnClickListener(view ->
-                NavigationHelper.playOnMainPlayer(activity, getPlayQueue()));
-        playlistControlBinding.playlistCtrlPlayPopupButton.setOnClickListener(view ->
-                NavigationHelper.playOnPopupPlayer(activity, getPlayQueue(), false));
-        playlistControlBinding.playlistCtrlPlayBgButton.setOnClickListener(view ->
-                NavigationHelper.playOnBackgroundPlayer(activity, getPlayQueue(), false));
+        PlayButtonHelper.initPlaylistControlClickListener(activity, playlistControlBinding, this);
+
         headerBinding.sortButton.setOnClickListener(view -> toggleSortMode());
 
         hideLoading();
@@ -338,10 +332,6 @@ public class StatisticsPlaylistFragment
                             StreamDialogDefaultEntry.DELETE,
                             (f, i) -> deleteEntry(
                                     Math.max(itemListAdapter.getItemsList().indexOf(item), 0)))
-                    .setAction(
-                            StreamDialogDefaultEntry.START_HERE_ON_BACKGROUND,
-                            (f, i) -> NavigationHelper.playOnBackgroundPlayer(
-                                    context, getPlayQueueStartingAt(item), true))
                     .create()
                     .show();
         } catch (final IllegalArgumentException e) {
@@ -374,7 +364,8 @@ public class StatisticsPlaylistFragment
         }
     }
 
-    private PlayQueue getPlayQueue() {
+    @Override
+    public PlayQueue getPlayQueue() {
         return getPlayQueue(0);
     }
 

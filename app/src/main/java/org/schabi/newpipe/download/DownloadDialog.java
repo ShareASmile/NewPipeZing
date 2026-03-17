@@ -7,8 +7,6 @@ import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -16,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +39,8 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceManager;
 
+import com.evernote.android.state.State;
+import com.livefront.bridge.Bridge;
 import com.nononsenseapps.filepicker.Utils;
 
 import org.schabi.newpipe.MainActivity;
@@ -60,6 +61,8 @@ import org.schabi.newpipe.settings.NewPipeSettings;
 import org.schabi.newpipe.streams.io.NoFileManagerSafeGuard;
 import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
+import org.schabi.newpipe.util.AudioTrackAdapter;
+import org.schabi.newpipe.util.AudioTrackAdapter.AudioTracksWrapper;
 import org.schabi.newpipe.util.FilePickerActivityHelper;
 import org.schabi.newpipe.util.FilenameUtils;
 import org.schabi.newpipe.util.ListHelper;
@@ -67,18 +70,17 @@ import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.SecondaryStreamHelper;
 import org.schabi.newpipe.util.SimpleOnSeekBarChangeListener;
 import org.schabi.newpipe.util.StreamItemAdapter;
-import org.schabi.newpipe.util.StreamItemAdapter.StreamSizeWrapper;
+import org.schabi.newpipe.util.StreamItemAdapter.StreamInfoWrapper;
 import org.schabi.newpipe.util.ThemeHelper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
-import icepick.Icepick;
-import icepick.State;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import us.shandian.giga.get.MissionRecoveryInfo;
 import us.shandian.giga.postprocessing.Postprocessing;
@@ -95,11 +97,13 @@ public class DownloadDialog extends DialogFragment
     @State
     StreamInfo currentInfo;
     @State
-    StreamSizeWrapper<AudioStream> wrappedAudioStreams;
+    StreamInfoWrapper<VideoStream> wrappedVideoStreams;
     @State
-    StreamSizeWrapper<VideoStream> wrappedVideoStreams;
+    StreamInfoWrapper<SubtitlesStream> wrappedSubtitleStreams;
     @State
-    StreamSizeWrapper<SubtitlesStream> wrappedSubtitleStreams;
+    AudioTracksWrapper wrappedAudioTracks;
+    @State
+    int selectedAudioTrackIndex;
     @State
     int selectedVideoIndex; // set in the constructor
     @State
@@ -107,16 +111,14 @@ public class DownloadDialog extends DialogFragment
     @State
     int selectedSubtitleIndex = 0; // default to the first item
 
-    @Nullable
-    private OnDismissListener onDismissListener = null;
-
     private StoredDirectoryHelper mainStorageAudio = null;
     private StoredDirectoryHelper mainStorageVideo = null;
     private DownloadManager downloadManager = null;
     private ActionMenuItemView okButton = null;
-    private Context context;
+    private Context context = null;
     private boolean askForSavePath;
 
+    private AudioTrackAdapter audioTrackAdapter;
     private StreamItemAdapter<AudioStream, Stream> audioStreamsAdapter;
     private StreamItemAdapter<VideoStream, AudioStream> videoStreamsAdapter;
     private StreamItemAdapter<SubtitlesStream, Stream> subtitleStreamsAdapter;
@@ -141,7 +143,6 @@ public class DownloadDialog extends DialogFragment
             registerForActivityResult(
                     new StartActivityForResult(), this::requestDownloadPickVideoFolderResult);
 
-
     /*//////////////////////////////////////////////////////////////////////////
     // Instance creation
     //////////////////////////////////////////////////////////////////////////*/
@@ -163,29 +164,30 @@ public class DownloadDialog extends DialogFragment
     public DownloadDialog(@NonNull final Context context, @NonNull final StreamInfo info) {
         this.currentInfo = info;
 
+        final List<AudioStream> audioStreams =
+                getStreamsOfSpecifiedDelivery(info.getAudioStreams(), PROGRESSIVE_HTTP);
+        final List<List<AudioStream>> groupedAudioStreams =
+                ListHelper.getGroupedAudioStreams(context, audioStreams);
+        this.wrappedAudioTracks = new AudioTracksWrapper(groupedAudioStreams, context);
+        this.selectedAudioTrackIndex =
+                ListHelper.getDefaultAudioTrackGroup(context, groupedAudioStreams);
+
         // TODO: Adapt this code when the downloader support other types of stream deliveries
         final List<VideoStream> videoStreams = ListHelper.getSortedStreamVideosList(
                 context,
                 getStreamsOfSpecifiedDelivery(info.getVideoStreams(), PROGRESSIVE_HTTP),
                 getStreamsOfSpecifiedDelivery(info.getVideoOnlyStreams(), PROGRESSIVE_HTTP),
                 false,
-                false
+                // If there are multiple languages available, prefer streams without audio
+                // to allow language selection
+                wrappedAudioTracks.size() > 1
         );
 
-        this.wrappedVideoStreams = new StreamSizeWrapper<>(videoStreams, context);
-        this.wrappedAudioStreams = new StreamSizeWrapper<>(
-                getStreamsOfSpecifiedDelivery(info.getAudioStreams(), PROGRESSIVE_HTTP), context);
-        this.wrappedSubtitleStreams = new StreamSizeWrapper<>(
+        this.wrappedVideoStreams = new StreamInfoWrapper<>(videoStreams, context);
+        this.wrappedSubtitleStreams = new StreamInfoWrapper<>(
                 getStreamsOfSpecifiedDelivery(info.getSubtitles(), PROGRESSIVE_HTTP), context);
 
         this.selectedVideoIndex = ListHelper.getDefaultResolutionIndex(context, videoStreams);
-    }
-
-    /**
-     * @param onDismissListener the listener to call in {@link #onDismiss(DialogInterface)}
-     */
-    public void setOnDismissListener(@Nullable final OnDismissListener onDismissListener) {
-        this.onDismissListener = onDismissListener;
     }
 
 
@@ -207,38 +209,16 @@ public class DownloadDialog extends DialogFragment
             return;
         }
 
+        // context will remain null if dismiss() was called above, allowing to check whether the
+        // dialog is being dismissed in onViewCreated()
         context = getContext();
 
         setStyle(STYLE_NO_TITLE, ThemeHelper.getDialogTheme(context));
-        Icepick.restoreInstanceState(this, savedInstanceState);
+        Bridge.restoreInstanceState(this, savedInstanceState);
 
-        final var secondaryStreams = new SparseArrayCompat<SecondaryStreamHelper<AudioStream>>(4);
-        final List<VideoStream> videoStreams = wrappedVideoStreams.getStreamsList();
-
-        for (int i = 0; i < videoStreams.size(); i++) {
-            if (!videoStreams.get(i).isVideoOnly()) {
-                continue;
-            }
-            final AudioStream audioStream = SecondaryStreamHelper
-                    .getAudioStreamFor(wrappedAudioStreams.getStreamsList(), videoStreams.get(i));
-
-            if (audioStream != null) {
-                secondaryStreams.append(i, new SecondaryStreamHelper<>(wrappedAudioStreams,
-                        audioStream));
-            } else if (DEBUG) {
-                final MediaFormat mediaFormat = videoStreams.get(i).getFormat();
-                if (mediaFormat != null) {
-                    Log.w(TAG, "No audio stream candidates for video format "
-                            + mediaFormat.name());
-                } else {
-                    Log.w(TAG, "No audio stream candidates for unknown video format");
-                }
-            }
-        }
-
-        this.videoStreamsAdapter = new StreamItemAdapter<>(wrappedVideoStreams, secondaryStreams);
-        this.audioStreamsAdapter = new StreamItemAdapter<>(wrappedAudioStreams);
+        this.audioTrackAdapter = new AudioTrackAdapter(wrappedAudioTracks);
         this.subtitleStreamsAdapter = new StreamItemAdapter<>(wrappedSubtitleStreams);
+        updateSecondaryStreams();
 
         final Intent intent = new Intent(context, DownloadManagerService.class);
         context.startService(intent);
@@ -265,6 +245,39 @@ public class DownloadDialog extends DialogFragment
         }, Context.BIND_AUTO_CREATE);
     }
 
+    /**
+     * Update the displayed video streams based on the selected audio track.
+     */
+    private void updateSecondaryStreams() {
+        final StreamInfoWrapper<AudioStream> audioStreams = getWrappedAudioStreams();
+        final var secondaryStreams = new SparseArrayCompat<SecondaryStreamHelper<AudioStream>>(4);
+        final List<VideoStream> videoStreams = wrappedVideoStreams.getStreamsList();
+        wrappedVideoStreams.resetInfo();
+
+        for (int i = 0; i < videoStreams.size(); i++) {
+            if (!videoStreams.get(i).isVideoOnly()) {
+                continue;
+            }
+            final AudioStream audioStream = SecondaryStreamHelper.getAudioStreamFor(
+                    context, audioStreams.getStreamsList(), videoStreams.get(i));
+
+            if (audioStream != null) {
+                secondaryStreams.append(i, new SecondaryStreamHelper<>(audioStreams, audioStream));
+            } else if (DEBUG) {
+                final MediaFormat mediaFormat = videoStreams.get(i).getFormat();
+                if (mediaFormat != null) {
+                    Log.w(TAG, "No audio stream candidates for video format "
+                            + mediaFormat.name());
+                } else {
+                    Log.w(TAG, "No audio stream candidates for unknown video format");
+                }
+            }
+        }
+
+        this.videoStreamsAdapter = new StreamItemAdapter<>(wrappedVideoStreams, secondaryStreams);
+        this.audioStreamsAdapter = new StreamItemAdapter<>(audioStreams);
+    }
+
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              final ViewGroup container,
@@ -282,16 +295,20 @@ public class DownloadDialog extends DialogFragment
                               @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         dialogBinding = DownloadDialogBinding.bind(view);
+        if (context == null) {
+            return; // the dialog is being dismissed, see the call to dismiss() in onCreate()
+        }
 
         dialogBinding.fileName.setText(FilenameUtils.createFilename(getContext(),
                 currentInfo.getName()));
-        selectedAudioIndex = ListHelper
-                .getDefaultAudioFormat(getContext(), wrappedAudioStreams.getStreamsList());
+        selectedAudioIndex = ListHelper.getDefaultAudioFormat(getContext(),
+                getWrappedAudioStreams().getStreamsList());
 
         selectedSubtitleIndex = getSubtitleIndexBy(subtitleStreamsAdapter.getAll());
 
         dialogBinding.qualitySpinner.setOnItemSelectedListener(this);
-
+        dialogBinding.audioStreamSpinner.setOnItemSelectedListener(this);
+        dialogBinding.audioTrackSpinner.setOnItemSelectedListener(this);
         dialogBinding.videoAudioGroup.setOnCheckedChangeListener(this);
 
         initToolbar(dialogBinding.toolbarLayout.toolbar);
@@ -341,14 +358,6 @@ public class DownloadDialog extends DialogFragment
     }
 
     @Override
-    public void onDismiss(@NonNull final DialogInterface dialog) {
-        super.onDismiss(dialog);
-        if (onDismissListener != null) {
-            onDismissListener.onDismiss(dialog);
-        }
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         disposables.clear();
@@ -363,7 +372,7 @@ public class DownloadDialog extends DialogFragment
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        Bridge.saveInstanceState(this, outState);
     }
 
 
@@ -373,7 +382,7 @@ public class DownloadDialog extends DialogFragment
 
     private void fetchStreamsSize() {
         disposables.clear();
-        disposables.add(StreamSizeWrapper.fetchSizeForWrapper(wrappedVideoStreams)
+        disposables.add(StreamInfoWrapper.fetchMoreInfoForWrapper(wrappedVideoStreams)
                 .subscribe(result -> {
                     if (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()
                             == R.id.video_button) {
@@ -383,7 +392,7 @@ public class DownloadDialog extends DialogFragment
                         new ErrorInfo(throwable, UserAction.DOWNLOAD_OPEN_DIALOG,
                                 "Downloading video stream size",
                                 currentInfo.getServiceId()))));
-        disposables.add(StreamSizeWrapper.fetchSizeForWrapper(wrappedAudioStreams)
+        disposables.add(StreamInfoWrapper.fetchMoreInfoForWrapper(getWrappedAudioStreams())
                 .subscribe(result -> {
                     if (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()
                             == R.id.audio_button) {
@@ -393,7 +402,7 @@ public class DownloadDialog extends DialogFragment
                         new ErrorInfo(throwable, UserAction.DOWNLOAD_OPEN_DIALOG,
                                 "Downloading audio stream size",
                                 currentInfo.getServiceId()))));
-        disposables.add(StreamSizeWrapper.fetchSizeForWrapper(wrappedSubtitleStreams)
+        disposables.add(StreamInfoWrapper.fetchMoreInfoForWrapper(wrappedSubtitleStreams)
                 .subscribe(result -> {
                     if (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()
                             == R.id.subtitle_button) {
@@ -405,14 +414,28 @@ public class DownloadDialog extends DialogFragment
                                 currentInfo.getServiceId()))));
     }
 
+    private void setupAudioTrackSpinner() {
+        if (getContext() == null) {
+            return;
+        }
+
+        dialogBinding.audioTrackSpinner.setAdapter(audioTrackAdapter);
+        dialogBinding.audioTrackSpinner.setSelection(selectedAudioTrackIndex);
+    }
+
     private void setupAudioSpinner() {
         if (getContext() == null) {
             return;
         }
 
-        dialogBinding.qualitySpinner.setAdapter(audioStreamsAdapter);
-        dialogBinding.qualitySpinner.setSelection(selectedAudioIndex);
+        dialogBinding.qualitySpinner.setVisibility(View.GONE);
         setRadioButtonsState(true);
+        dialogBinding.audioStreamSpinner.setAdapter(audioStreamsAdapter);
+        dialogBinding.audioStreamSpinner.setSelection(selectedAudioIndex);
+        dialogBinding.audioStreamSpinner.setVisibility(View.VISIBLE);
+        dialogBinding.audioTrackSpinner.setVisibility(
+                wrappedAudioTracks.size() > 1 ? View.VISIBLE : View.GONE);
+        dialogBinding.audioTrackPresentInVideoText.setVisibility(View.GONE);
     }
 
     private void setupVideoSpinner() {
@@ -422,7 +445,19 @@ public class DownloadDialog extends DialogFragment
 
         dialogBinding.qualitySpinner.setAdapter(videoStreamsAdapter);
         dialogBinding.qualitySpinner.setSelection(selectedVideoIndex);
+        dialogBinding.qualitySpinner.setVisibility(View.VISIBLE);
         setRadioButtonsState(true);
+        dialogBinding.audioStreamSpinner.setVisibility(View.GONE);
+        onVideoStreamSelected();
+    }
+
+    private void onVideoStreamSelected() {
+        final boolean isVideoOnly = videoStreamsAdapter.getItem(selectedVideoIndex).isVideoOnly();
+
+        dialogBinding.audioTrackSpinner.setVisibility(
+                isVideoOnly && wrappedAudioTracks.size() > 1 ? View.VISIBLE : View.GONE);
+        dialogBinding.audioTrackPresentInVideoText.setVisibility(
+                !isVideoOnly && wrappedAudioTracks.size() > 1 ? View.VISIBLE : View.GONE);
     }
 
     private void setupSubtitleSpinner() {
@@ -432,7 +467,11 @@ public class DownloadDialog extends DialogFragment
 
         dialogBinding.qualitySpinner.setAdapter(subtitleStreamsAdapter);
         dialogBinding.qualitySpinner.setSelection(selectedSubtitleIndex);
+        dialogBinding.qualitySpinner.setVisibility(View.VISIBLE);
         setRadioButtonsState(true);
+        dialogBinding.audioStreamSpinner.setVisibility(View.GONE);
+        dialogBinding.audioTrackSpinner.setVisibility(View.GONE);
+        dialogBinding.audioTrackPresentInVideoText.setVisibility(View.GONE);
     }
 
 
@@ -511,7 +550,6 @@ public class DownloadDialog extends DialogFragment
         }
     }
 
-
     /*//////////////////////////////////////////////////////////////////////////
     // Listeners
     //////////////////////////////////////////////////////////////////////////*/
@@ -550,18 +588,31 @@ public class DownloadDialog extends DialogFragment
                     + "parent = [" + parent + "], view = [" + view + "], "
                     + "position = [" + position + "], id = [" + id + "]");
         }
-        switch (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()) {
-            case R.id.audio_button:
+
+        switch (parent.getId()) {
+            case R.id.quality_spinner:
+                switch (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()) {
+                    case R.id.video_button:
+                        selectedVideoIndex = position;
+                        onVideoStreamSelected();
+                        break;
+                    case R.id.subtitle_button:
+                        selectedSubtitleIndex = position;
+                        break;
+                }
+                onItemSelectedSetFileName();
+                break;
+            case R.id.audio_track_spinner:
+                final boolean trackChanged = selectedAudioTrackIndex != position;
+                selectedAudioTrackIndex = position;
+                if (trackChanged) {
+                    updateSecondaryStreams();
+                    fetchStreamsSize();
+                }
+                break;
+            case R.id.audio_stream_spinner:
                 selectedAudioIndex = position;
-                break;
-            case R.id.video_button:
-                selectedVideoIndex = position;
-                break;
-            case R.id.subtitle_button:
-                selectedSubtitleIndex = position;
-                break;
         }
-        onItemSelectedSetFileName();
     }
 
     private void onItemSelectedSetFileName() {
@@ -607,6 +658,7 @@ public class DownloadDialog extends DialogFragment
 
     protected void setupDownloadOptions() {
         setRadioButtonsState(false);
+        setupAudioTrackSpinner();
 
         final boolean isVideoStreamsAvailable = videoStreamsAdapter.getCount() > 0;
         final boolean isAudioStreamsAvailable = audioStreamsAdapter.getCount() > 0;
@@ -657,6 +709,13 @@ public class DownloadDialog extends DialogFragment
         dialogBinding.subtitleButton.setEnabled(enabled);
     }
 
+    private StreamInfoWrapper<AudioStream> getWrappedAudioStreams() {
+        if (selectedAudioTrackIndex < 0 || selectedAudioTrackIndex > wrappedAudioTracks.size()) {
+            return StreamInfoWrapper.empty();
+        }
+        return wrappedAudioTracks.getTracksList().get(selectedAudioTrackIndex);
+    }
+
     private int getSubtitleIndexBy(@NonNull final List<SubtitlesStream> streams) {
         final Localization preferredLocalization = NewPipe.getPreferredLocalization();
 
@@ -692,12 +751,11 @@ public class DownloadDialog extends DialogFragment
     }
 
     private void showFailedDialog(@StringRes final int msg) {
-        assureCorrectAppLanguage(getContext());
+        assureCorrectAppLanguage(requireContext());
         new AlertDialog.Builder(context)
                 .setTitle(R.string.general_error)
                 .setMessage(msg)
                 .setNegativeButton(getString(R.string.ok), null)
-                .create()
                 .show();
     }
 
@@ -710,6 +768,7 @@ public class DownloadDialog extends DialogFragment
         final StoredDirectoryHelper mainStorage;
         final MediaFormat format;
         final String selectedMediaType;
+        final long size;
 
         // first, build the filename and get the output folder (if possible)
         // later, run a very very very large file checking logic
@@ -721,35 +780,38 @@ public class DownloadDialog extends DialogFragment
                 selectedMediaType = getString(R.string.last_download_type_audio_key);
                 mainStorage = mainStorageAudio;
                 format = audioStreamsAdapter.getItem(selectedAudioIndex).getFormat();
+                size = getWrappedAudioStreams().getSizeInBytes(selectedAudioIndex);
                 if (format == MediaFormat.WEBMA_OPUS) {
                     mimeTmp = "audio/ogg";
                     filenameTmp += "opus";
                 } else if (format != null) {
                     mimeTmp = format.mimeType;
-                    filenameTmp += format.suffix;
+                    filenameTmp += format.getSuffix();
                 }
                 break;
             case R.id.video_button:
                 selectedMediaType = getString(R.string.last_download_type_video_key);
                 mainStorage = mainStorageVideo;
                 format = videoStreamsAdapter.getItem(selectedVideoIndex).getFormat();
+                size = wrappedVideoStreams.getSizeInBytes(selectedVideoIndex);
                 if (format != null) {
                     mimeTmp = format.mimeType;
-                    filenameTmp += format.suffix;
+                    filenameTmp += format.getSuffix();
                 }
                 break;
             case R.id.subtitle_button:
                 selectedMediaType = getString(R.string.last_download_type_subtitle_key);
                 mainStorage = mainStorageVideo; // subtitle & video files go together
                 format = subtitleStreamsAdapter.getItem(selectedSubtitleIndex).getFormat();
+                size = wrappedSubtitleStreams.getSizeInBytes(selectedSubtitleIndex);
                 if (format != null) {
                     mimeTmp = format.mimeType;
                 }
 
                 if (format == MediaFormat.TTML) {
-                    filenameTmp += MediaFormat.SRT.suffix;
+                    filenameTmp += MediaFormat.SRT.getSuffix();
                 } else if (format != null) {
-                    filenameTmp += format.suffix;
+                    filenameTmp += format.getSuffix();
                 }
                 break;
             default:
@@ -794,6 +856,21 @@ public class DownloadDialog extends DialogFragment
                     StoredFileHelper.getNewPicker(context, filenameTmp, mimeTmp, initialPath), TAG,
                     context);
 
+            return;
+        }
+
+        // Check for free storage space
+        final long freeSpace = mainStorage.getFreeStorageSpace();
+        if (freeSpace <= size) {
+            Toast.makeText(context, getString(R.
+                    string.error_insufficient_storage), Toast.LENGTH_LONG).show();
+            // move the user to storage setting tab
+            final Intent storageSettingsIntent = new Intent(Settings.
+                    ACTION_INTERNAL_STORAGE_SETTINGS);
+            if (storageSettingsIntent.resolveActivity(context.getPackageManager())
+                    != null) {
+                startActivity(storageSettingsIntent);
+            }
             return;
         }
 
@@ -910,7 +987,7 @@ public class DownloadDialog extends DialogFragment
                     break;
             }
 
-            askDialog.create().show();
+            askDialog.show();
             return;
         }
 
@@ -954,7 +1031,7 @@ public class DownloadDialog extends DialogFragment
             }
         });
 
-        askDialog.create().show();
+        askDialog.show();
     }
 
     private void continueSelectedDownload(@NonNull final StoredFileHelper storage) {
@@ -979,7 +1056,7 @@ public class DownloadDialog extends DialogFragment
         final char kind;
         int threads = dialogBinding.threads.getProgress() + 1;
         final String[] urls;
-        final MissionRecoveryInfo[] recoveryInfo;
+        final List<MissionRecoveryInfo> recoveryInfo;
         String psName = null;
         String[] psArgs = null;
         long nearLength = 0;
@@ -1013,7 +1090,6 @@ public class DownloadDialog extends DialogFragment
                         psName = Postprocessing.ALGORITHM_WEBM_MUXER;
                     }
 
-                    psArgs = null;
                     final long videoSize = wrappedVideoStreams.getSizeInBytes(
                             (VideoStream) selectedStream);
 
@@ -1045,9 +1121,7 @@ public class DownloadDialog extends DialogFragment
             urls = new String[] {
                     selectedStream.getContent()
             };
-            recoveryInfo = new MissionRecoveryInfo[] {
-                    new MissionRecoveryInfo(selectedStream)
-            };
+            recoveryInfo = List.of(new MissionRecoveryInfo(selectedStream));
         } else {
             if (secondaryStream.getDeliveryMethod() != PROGRESSIVE_HTTP) {
                 throw new IllegalArgumentException("Unsupported stream delivery format"
@@ -1057,12 +1131,14 @@ public class DownloadDialog extends DialogFragment
             urls = new String[] {
                     selectedStream.getContent(), secondaryStream.getContent()
             };
-            recoveryInfo = new MissionRecoveryInfo[] {new MissionRecoveryInfo(selectedStream),
-                    new MissionRecoveryInfo(secondaryStream)};
+            recoveryInfo = List.of(
+                    new MissionRecoveryInfo(selectedStream),
+                    new MissionRecoveryInfo(secondaryStream)
+            );
         }
 
         DownloadManagerService.startMission(context, urls, storage, kind, threads,
-                currentInfo.getUrl(), psName, psArgs, nearLength, recoveryInfo);
+                currentInfo.getUrl(), psName, psArgs, nearLength, new ArrayList<>(recoveryInfo));
 
         Toast.makeText(context, getString(R.string.download_has_started),
                 Toast.LENGTH_SHORT).show();

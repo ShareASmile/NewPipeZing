@@ -17,12 +17,17 @@ import org.acra.config.CoreConfigurationBuilder;
 import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.downloader.Downloader;
+import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor;
 import org.schabi.newpipe.ktx.ExceptionUtils;
 import org.schabi.newpipe.settings.NewPipeSettings;
+import org.schabi.newpipe.util.BridgeStateSaverInitializer;
 import org.schabi.newpipe.util.Localization;
-import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.StateSaver;
+import org.schabi.newpipe.util.image.ImageStrategy;
+import org.schabi.newpipe.util.image.PicassoHelper;
+import org.schabi.newpipe.util.image.PreferredImageQuality;
+import org.schabi.newpipe.util.potoken.PoTokenProviderImpl;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -58,6 +63,8 @@ import io.reactivex.rxjava3.plugins.RxJavaPlugins;
 public class App extends Application {
     public static final String PACKAGE_NAME = BuildConfig.APPLICATION_ID;
     private static final String TAG = App.class.toString();
+
+    private boolean isFirstRun = false;
     private static App app;
 
     @NonNull
@@ -83,7 +90,13 @@ public class App extends Application {
             return;
         }
 
-        // Initialize settings first because others inits can use its values
+        // check if the last used preference version is set
+        // to determine whether this is the first app run
+        final int lastUsedPrefVersion = PreferenceManager.getDefaultSharedPreferences(this)
+                .getInt(getString(R.string.last_used_preferences_version), -1);
+        isFirstRun = lastUsedPrefVersion == -1;
+
+        // Initialize settings first because other initializations can use its values
         NewPipeSettings.initSettings(this);
 
         NewPipe.init(getDownloader(),
@@ -91,6 +104,7 @@ public class App extends Application {
             Localization.getPreferredContentCountry(this));
         Localization.initPrettyTime(Localization.resolvePrettyTime(getApplicationContext()));
 
+        BridgeStateSaverInitializer.init(this);
         StateSaver.init(this);
         initNotificationChannels();
 
@@ -99,12 +113,15 @@ public class App extends Application {
         // Initialize image loader
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         PicassoHelper.init(this);
-        PicassoHelper.setShouldLoadImages(
-                prefs.getBoolean(getString(R.string.download_thumbnail_key), true));
+        ImageStrategy.setPreferredImageQuality(PreferredImageQuality.fromPreferenceKey(this,
+                prefs.getString(getString(R.string.image_quality_key),
+                        getString(R.string.image_quality_default))));
         PicassoHelper.setIndicatorsEnabled(MainActivity.DEBUG
                 && prefs.getBoolean(getString(R.string.show_image_indicators_key), false));
 
         configureRxJavaErrorHandler();
+
+        YoutubeStreamExtractor.setPoTokenProvider(PoTokenProviderImpl.INSTANCE);
     }
 
     @Override
@@ -252,4 +269,7 @@ public class App extends Application {
         return false;
     }
 
+    public boolean isFirstRun() {
+        return isFirstRun;
+    }
 }

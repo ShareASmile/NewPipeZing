@@ -23,10 +23,13 @@ import androidx.core.content.FileProvider;
 
 import org.schabi.newpipe.BuildConfig;
 import org.schabi.newpipe.R;
-import org.schabi.newpipe.util.PicassoHelper;
+import org.schabi.newpipe.extractor.Image;
+import org.schabi.newpipe.util.image.ImageStrategy;
+import org.schabi.newpipe.util.image.PicassoHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 
 public final class ShareUtils {
     private static final String TAG = ShareUtils.class.getSimpleName();
@@ -41,123 +44,126 @@ public final class ShareUtils {
      * second param (a system chooser will be opened if there are multiple markets and no default)
      * and falls back to Google Play Store web URL if no app to handle the market scheme was found.
      * <p>
-     * It uses {@link #openIntentInApp(Context, Intent, boolean)} to open market scheme
-     * and {@link #openUrlInBrowser(Context, String, boolean)} to open Google Play Store
-     * web URL with false for the boolean param.
+     * It uses {@link #openIntentInApp(Context, Intent)} to open market scheme and {@link
+     * #openUrlInBrowser(Context, String)} to open Google Play Store web URL.
      *
      * @param context   the context to use
      * @param packageId the package id of the app to be installed
      */
     public static void installApp(@NonNull final Context context, final String packageId) {
         // Try market scheme
-        final boolean marketSchemeResult = openIntentInApp(context, new Intent(Intent.ACTION_VIEW,
+        final Intent marketSchemeIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("market://details?id=" + packageId))
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), false);
-        if (!marketSchemeResult) {
-            // Fall back to Google Play Store Web URL (F-Droid can handle it)
-            openUrlInBrowser(context,
-                    "https://play.google.com/store/apps/details?id=" + packageId, false);
-        }
-    }
-
-    /**
-     * Open the url with the system default browser.
-     * <p>
-     * If no browser is set as default, fallbacks to
-     * {@link #openAppChooser(Context, Intent, boolean)}
-     *
-     * @param context                the context to use
-     * @param url                    the url to browse
-     * @param httpDefaultBrowserTest the boolean to set if the test for the default browser will be
-     *                               for HTTP protocol or for the created intent
-     * @return true if the URL can be opened or false if it cannot
-     */
-    public static boolean openUrlInBrowser(@NonNull final Context context,
-                                           final String url,
-                                           final boolean httpDefaultBrowserTest) {
-        final String defaultPackageName;
-        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        if (httpDefaultBrowserTest) {
-            defaultPackageName = getDefaultAppPackageName(context, new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("http://")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        } else {
-            defaultPackageName = getDefaultAppPackageName(context, intent);
+        if (!tryOpenIntentInApp(context, marketSchemeIntent)) {
+            // Fall back to Google Play Store Web URL (F-Droid can handle it)
+            openUrlInApp(context, "https://play.google.com/store/apps/details?id=" + packageId);
         }
-
-        if (defaultPackageName.equals("android")) {
-            // No browser set as default (doesn't work on some devices)
-            openAppChooser(context, intent, true);
-        } else {
-            if (defaultPackageName.isEmpty()) {
-                // No app installed to open a web url
-                Toast.makeText(context, R.string.no_app_to_open_intent, Toast.LENGTH_LONG).show();
-                return false;
-            } else {
-                try {
-                    intent.setPackage(defaultPackageName);
-                    context.startActivity(intent);
-                } catch (final ActivityNotFoundException e) {
-                    // Not a browser but an app chooser because of OEMs changes
-                    intent.setPackage(null);
-                    openAppChooser(context, intent, true);
-                }
-            }
-        }
-
-        return true;
     }
 
     /**
-     * Open the url with the system default browser.
+     * Open the url with the system default browser. If no browser is set as default, falls back to
+     * {@link #openAppChooser(Context, Intent, boolean)}.
      * <p>
-     * If no browser is set as default, fallbacks to
-     * {@link #openAppChooser(Context, Intent, boolean)}
+     * This function selects the package to open based on which apps respond to the {@code http://}
+     * schema alone, which should exclude special non-browser apps that are can handle the url (e.g.
+     * the official YouTube app).
      * <p>
-     * This calls {@link #openUrlInBrowser(Context, String, boolean)} with true
-     * for the boolean parameter
+     * Therefore <b>please prefer {@link #openUrlInApp(Context, String)}</b>, that handles package
+     * resolution in a standard way, unless this is the action of an explicit "Open in browser"
+     * button.
      *
      * @param context the context to use
      * @param url     the url to browse
-     * @return true if the URL can be opened or false if it cannot be
      **/
-    public static boolean openUrlInBrowser(@NonNull final Context context, final String url) {
-        return openUrlInBrowser(context, url, true);
+    public static void openUrlInBrowser(@NonNull final Context context, final String url) {
+        // Resolve using a generic http://, so we are sure to get a browser and not e.g. the yt app.
+        // Note that this requires the `http` schema to be added to `<queries>` in the manifest.
+        final ResolveInfo defaultBrowserInfo;
+        final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            defaultBrowserInfo = context.getPackageManager().resolveActivity(browserIntent,
+                    PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY));
+        } else {
+            defaultBrowserInfo = context.getPackageManager().resolveActivity(browserIntent,
+                    PackageManager.MATCH_DEFAULT_ONLY);
+        }
+
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        if (defaultBrowserInfo == null) {
+            // No app installed to open a web URL, but it may be handled by other apps so try
+            // opening a system chooser for the link in this case (it could be bypassed by the
+            // system if there is only one app which can open the link or a default app associated
+            // with the link domain on Android 12 and higher)
+            openAppChooser(context, intent, true);
+            return;
+        }
+
+        final String defaultBrowserPackage = defaultBrowserInfo.activityInfo.packageName;
+
+        if (defaultBrowserPackage.equals("android")) {
+            // No browser set as default (doesn't work on some devices)
+            openAppChooser(context, intent, true);
+        } else {
+            try {
+                intent.setPackage(defaultBrowserPackage);
+                context.startActivity(intent);
+            } catch (final ActivityNotFoundException e) {
+                // Not a browser but an app chooser because of OEMs changes
+                intent.setPackage(null);
+                openAppChooser(context, intent, true);
+            }
+        }
+    }
+
+    /**
+     * Open a url with the system default app using {@link Intent#ACTION_VIEW}, showing a toast in
+     * case of failure.
+     *
+     * @param context the context to use
+     * @param url     the url to open
+     */
+    public static void openUrlInApp(@NonNull final Context context, final String url) {
+        openIntentInApp(context, new Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     /**
      * Open an intent with the system default app.
      * <p>
-     * The intent can be of every type, excepted a web intent for which
-     * {@link #openUrlInBrowser(Context, String, boolean)} should be used.
-     * <p>
-     * If no app can open the intent, a toast with the message {@code No app on your device can
-     * open this} is shown.
+     * Use {@link #openIntentInApp(Context, Intent)} to show a toast in case of failure.
      *
-     * @param context   the context to use
-     * @param intent    the intent to open
-     * @param showToast a boolean to set if a toast is displayed to user when no app is installed
-     *                  to open the intent (true) or not (false)
-     * @return true if the intent can be opened or false if it cannot be
+     * @param context the context to use
+     * @param intent  the intent to open
+     * @return true if the intent could be opened successfully, false otherwise
      */
-    public static boolean openIntentInApp(@NonNull final Context context,
-                                          @NonNull final Intent intent,
-                                          final boolean showToast) {
-        final String defaultPackageName = getDefaultAppPackageName(context, intent);
-
-        if (defaultPackageName.isEmpty()) {
-            // No app installed to open the intent
-            if (showToast) {
-                Toast.makeText(context, R.string.no_app_to_open_intent, Toast.LENGTH_LONG)
-                        .show();
-            }
-            return false;
-        } else {
+    public static boolean tryOpenIntentInApp(@NonNull final Context context,
+                                             @NonNull final Intent intent) {
+        try {
             context.startActivity(intent);
+        } catch (final ActivityNotFoundException e) {
+            return false;
         }
-
         return true;
+    }
+
+    /**
+     * Open an intent with the system default app, showing a toast in case of failure.
+     * <p>
+     * Use {@link #tryOpenIntentInApp(Context, Intent)} if you don't want the toast. Use {@link
+     * #openUrlInApp(Context, String)} as a shorthand for {@link Intent#ACTION_VIEW} with urls.
+     *
+     * @param context the context to use
+     * @param intent  the intent to
+     */
+    public static void openIntentInApp(@NonNull final Context context,
+                                       @NonNull final Intent intent) {
+        if (!tryOpenIntentInApp(context, intent)) {
+            Toast.makeText(context, R.string.no_app_to_open_intent, Toast.LENGTH_LONG)
+                    .show();
+        }
     }
 
     /**
@@ -206,31 +212,11 @@ public final class ShareUtils {
                 chooserIntent.addFlags(permFlags);
             }
         }
-        context.startActivity(chooserIntent);
-    }
 
-    /**
-     * Get the default app package name.
-     * <p>
-     * If no app is set as default, it will return "android" (not on some devices because some
-     * OEMs changed the app chooser).
-     * <p>
-     * If no app is installed on user's device to handle the intent, it will return an empty string.
-     *
-     * @param context the context to use
-     * @param intent  the intent to get default app
-     * @return the package name of the default app, an empty string if there's no app installed to
-     * handle the intent or the app chooser if there's no default
-     */
-    private static String getDefaultAppPackageName(@NonNull final Context context,
-                                                   @NonNull final Intent intent) {
-        final ResolveInfo resolveInfo = context.getPackageManager().resolveActivity(intent,
-                PackageManager.MATCH_DEFAULT_ONLY);
-
-        if (resolveInfo == null) {
-            return "";
-        } else {
-            return resolveInfo.activityInfo.packageName;
+        try {
+            context.startActivity(chooserIntent);
+        } catch (final ActivityNotFoundException e) {
+            Toast.makeText(context, R.string.no_app_to_open_intent, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -266,7 +252,7 @@ public final class ShareUtils {
         // If loading of images has been disabled, don't try to generate a content preview
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
                 && !TextUtils.isEmpty(imagePreviewUrl)
-                && PicassoHelper.getShouldLoadImages()) {
+                && ImageStrategy.shouldLoadImages()) {
 
             final ClipData clipData = generateClipDataForImagePreview(context, imagePreviewUrl);
             if (clipData != null) {
@@ -276,6 +262,29 @@ public final class ShareUtils {
         }
 
         openAppChooser(context, shareIntent, false);
+    }
+
+    /**
+     * Open the android share sheet to share a content.
+     *
+     * <p>
+     * For Android 10+ users, a content preview is shown, which includes the title of the shared
+     * content and an image preview the content, if the preferred image chosen by {@link
+     * ImageStrategy#choosePreferredImage(List)} is in the image cache.
+     * </p>
+     *
+     * @param context the context to use
+     * @param title   the title of the content
+     * @param content the content to share
+     * @param images  a set of possible {@link Image}s of the subject, among which to choose with
+     *                {@link ImageStrategy#choosePreferredImage(List)} since that's likely to
+     *                provide an image that is in Picasso's cache
+     */
+    public static void shareText(@NonNull final Context context,
+                                 @NonNull final String title,
+                                 final String content,
+                                 final List<Image> images) {
+        shareText(context, title, content, ImageStrategy.choosePreferredImage(images));
     }
 
     /**
@@ -313,10 +322,15 @@ public final class ShareUtils {
             return;
         }
 
-        clipboardManager.setPrimaryClip(ClipData.newPlainText(null, text));
-        if (Build.VERSION.SDK_INT < 33) {
-            // Android 13 has its own "copied to clipboard" dialog
-            Toast.makeText(context, R.string.msg_copied, Toast.LENGTH_SHORT).show();
+        try {
+            clipboardManager.setPrimaryClip(ClipData.newPlainText(null, text));
+            if (Build.VERSION.SDK_INT < 33) {
+                // Android 13 has its own "copied to clipboard" dialog
+                Toast.makeText(context, R.string.msg_copied, Toast.LENGTH_SHORT).show();
+            }
+        } catch (final Exception e) {
+            Log.e(TAG, "Error when trying to copy text to clipboard", e);
+            Toast.makeText(context, R.string.msg_failed_to_copy, Toast.LENGTH_SHORT).show();
         }
     }
 

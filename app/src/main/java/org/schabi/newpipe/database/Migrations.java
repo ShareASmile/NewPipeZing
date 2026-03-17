@@ -24,6 +24,9 @@ public final class Migrations {
     public static final int DB_VER_4 = 4;
     public static final int DB_VER_5 = 5;
     public static final int DB_VER_6 = 6;
+    public static final int DB_VER_7 = 7;
+    public static final int DB_VER_8 = 8;
+    public static final int DB_VER_9 = 9;
 
     private static final String TAG = Migrations.class.getName();
     public static final boolean DEBUG = MainActivity.DEBUG;
@@ -185,7 +188,7 @@ public final class Migrations {
         @Override
         public void migrate(@NonNull final SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE `subscriptions` ADD COLUMN `notification_mode` "
-                     + "INTEGER NOT NULL DEFAULT 0");
+                    + "INTEGER NOT NULL DEFAULT 0");
         }
     };
 
@@ -194,6 +197,108 @@ public final class Migrations {
         public void migrate(@NonNull final SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE `playlists` ADD COLUMN `is_thumbnail_permanent` "
                     + "INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
+    public static final Migration MIGRATION_6_7 = new Migration(DB_VER_6, DB_VER_7) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            // Create a new column thumbnail_stream_id
+            database.execSQL("ALTER TABLE `playlists` ADD COLUMN `thumbnail_stream_id` "
+                    + "INTEGER NOT NULL DEFAULT -1");
+
+            // Migrate the thumbnail_url to the thumbnail_stream_id
+            database.execSQL("UPDATE playlists SET thumbnail_stream_id = ("
+                    + " SELECT CASE WHEN COUNT(*) != 0 then stream_uid ELSE -1 END"
+                    + " FROM ("
+                    + " SELECT p.uid AS playlist_uid, s.uid AS stream_uid"
+                    + " FROM playlists p"
+                    + " LEFT JOIN playlist_stream_join ps ON p.uid = ps.playlist_id"
+                    + " LEFT JOIN streams s ON s.uid = ps.stream_id"
+                    + " WHERE s.thumbnail_url = p.thumbnail_url) AS temporary_table"
+                    + " WHERE playlist_uid = playlists.uid)");
+
+            // Remove the thumbnail_url field in the playlist table
+            database.execSQL("CREATE TABLE IF NOT EXISTS `playlists_new`"
+                    + "(uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "name TEXT, "
+                    + "is_thumbnail_permanent INTEGER NOT NULL, "
+                    + "thumbnail_stream_id INTEGER NOT NULL)");
+
+            database.execSQL("INSERT INTO playlists_new"
+                    + " SELECT uid, name, is_thumbnail_permanent, thumbnail_stream_id "
+                    + " FROM playlists");
+
+
+            database.execSQL("DROP TABLE playlists");
+            database.execSQL("ALTER TABLE playlists_new RENAME TO playlists");
+            database.execSQL("CREATE INDEX IF NOT EXISTS "
+                    + "`index_playlists_name` ON `playlists` (`name`)");
+        }
+    };
+
+    public static final Migration MIGRATION_7_8 = new Migration(DB_VER_7, DB_VER_8) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            database.execSQL("DELETE FROM search_history WHERE id NOT IN (SELECT id FROM (SELECT "
+                    + "MIN(id) as id FROM search_history GROUP BY trim(search), service_id ) tmp)");
+            database.execSQL("UPDATE search_history SET search = trim(search)");
+        }
+    };
+
+    public static final Migration MIGRATION_8_9 = new Migration(DB_VER_8, DB_VER_9) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            try {
+                database.beginTransaction();
+
+                // Update playlists.
+                // Create a temp table to initialize display_index.
+                database.execSQL("CREATE TABLE `playlists_tmp` "
+                        + "(`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                        + "`name` TEXT, `is_thumbnail_permanent` INTEGER NOT NULL, "
+                        + "`thumbnail_stream_id` INTEGER NOT NULL, "
+                        + "`display_index` INTEGER NOT NULL)");
+                database.execSQL("INSERT INTO `playlists_tmp` "
+                        + "(`uid`, `name`, `is_thumbnail_permanent`, `thumbnail_stream_id`, "
+                        + "`display_index`) "
+                        + "SELECT `uid`, `name`, `is_thumbnail_permanent`, `thumbnail_stream_id`, "
+                        + "-1 "
+                        + "FROM `playlists`");
+
+                // Replace the old table, note that this also removes the index on the name which
+                // we don't need anymore.
+                database.execSQL("DROP TABLE `playlists`");
+                database.execSQL("ALTER TABLE `playlists_tmp` RENAME TO `playlists`");
+
+
+                // Update remote_playlists.
+                // Create a temp table to initialize display_index.
+                database.execSQL("CREATE TABLE `remote_playlists_tmp` "
+                        + "(`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                        + "`service_id` INTEGER NOT NULL, `name` TEXT, `url` TEXT, "
+                        + "`thumbnail_url` TEXT, `uploader` TEXT, "
+                        + "`display_index` INTEGER NOT NULL,"
+                        + "`stream_count` INTEGER)");
+                database.execSQL("INSERT INTO `remote_playlists_tmp` (`uid`, `service_id`, "
+                        + "`name`, `url`, `thumbnail_url`, `uploader`, `display_index`, "
+                        + "`stream_count`)"
+                        + "SELECT `uid`, `service_id`, `name`, `url`, `thumbnail_url`, `uploader`, "
+                        + "-1, `stream_count` FROM `remote_playlists`");
+
+                // Replace the old table, note that this also removes the index on the name which
+                // we don't need anymore.
+                database.execSQL("DROP TABLE `remote_playlists`");
+                database.execSQL("ALTER TABLE `remote_playlists_tmp` RENAME TO `remote_playlists`");
+
+                // Create index on the new table.
+                database.execSQL("CREATE UNIQUE INDEX `index_remote_playlists_service_id_url` "
+                        + "ON `remote_playlists` (`service_id`, `url`)");
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
         }
     };
 
