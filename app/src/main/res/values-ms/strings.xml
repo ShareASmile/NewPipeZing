@@ -41,11 +41,11 @@
     <string name="default_resolution_title">Resolusi asal</string>
     <string name="default_popup_resolution_title">Resolusi asal tetingkap timbul</string>
     <string name="show_higher_resolutions_title">Papar resolusi yang lebih tinggi</string>
-    <string name="show_higher_resolutions_summary">Hanya peranti tertentu sahaja yang boleh memainkan video 2K/4K</string>
-    <string name="play_with_kodi_title">Main menggunakan Kodi</string>
-    <string name="kore_not_found">Pasang aplikasi Kore yang tidak ditemui?</string>
-    <string name="show_play_with_kodi_title">Paparkan pilihan \"Main menggunakan Kodi\"</string>
-    <string name="show_play_with_kodi_summary">Paparkan pilihan untuk memainkan video melalui Kodi</string>
+    <string name="show_higher_resolutions_summary">Hanya peranti tertentu yang boleh bermain video 1440p/4K</string>
+    <string name="play_with_kodi_title">Main dengan Kodi</string>
+    <string name="kore_not_found">Pasangkan aplikasi Kode yang tidak dijumpai\?</string>
+    <string name="show_play_with_kodi_title">Paparkan opsyen \"Main dengan Kodi\"</string>
+    <string name="show_play_with_kodi_summary">Paparkan opsyen untuk memain video dengan Kodi</string>
     <string name="play_audio">Audio</string>
     <string name="default_audio_format_title">Format audio asal</string>
     <string name="default_video_format_title">Format video asal</string>
