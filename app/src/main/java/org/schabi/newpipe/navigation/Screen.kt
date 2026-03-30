@@ -5,13 +5,13 @@
 
 package org.schabi.newpipe.navigation
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
-
 @Serializable
-sealed interface Screen {
+sealed interface Screen : NavKey {
 
-    sealed interface Settings: Screen {
+    sealed interface Settings : Screen {
         @Serializable
         data object Home : Settings
 
@@ -51,5 +51,4 @@ sealed interface Screen {
         @Serializable
         data object Debug : Settings
     }
-
 }
