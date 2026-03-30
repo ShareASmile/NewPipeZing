@@ -86,7 +86,7 @@ fun ScaffoldWithToolbar(
                         )
                     },
                     expanded = true,
-                    onExpandedChange = { isSearchActive = it },
+                    onExpandedChange = { isSearchActive = it }
                 ) {
                     val suggestions = onSearchQueryChange?.invoke(query) ?: emptyList()
                     if (suggestions.isNotEmpty()) {
@@ -96,7 +96,7 @@ fun ScaffoldWithToolbar(
                             }
                         }
                     } else {
-                            DefaultSearchNoResults()
+                        DefaultSearchNoResults()
                     }
                 }
             } else {
@@ -107,7 +107,7 @@ fun ScaffoldWithToolbar(
                         scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,
                         navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     ),
                     navigationIcon = {
                         IconButton(onClick = onBackClick) {

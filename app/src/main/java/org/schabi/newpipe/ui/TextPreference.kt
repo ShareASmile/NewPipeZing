@@ -7,7 +7,6 @@
 package org.schabi.newpipe.ui
 
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,9 +28,9 @@ import org.schabi.newpipe.ui.theme.SizeTokens
 @Composable
 fun TextPreference(
     modifier: Modifier = Modifier,
-    @StringRes title: Int,
+    title: String,
     @DrawableRes icon: Int? = null,
-    @StringRes summary: Int? = null,
+    summary: String? = null,
     onClick: () -> Unit,
     enabled: Boolean = true
 ) {
@@ -47,7 +46,7 @@ fun TextPreference(
         icon?.let {
             Icon(
                 painter = painterResource(id = icon),
-                contentDescription = "icon for $title preference",
+                contentDescription = null,
                 tint = if (enabled) Color.Unspecified else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
             )
             Spacer(modifier = Modifier.width(SizeTokens.SpacingSmall))

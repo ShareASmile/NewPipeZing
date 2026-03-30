@@ -10,7 +10,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import dagger.hilt.android.AndroidEntryPoint
-import org.schabi.newpipe.settings.navigation.SettingsNavigation
+import org.schabi.newpipe.ui.screens.settings.navigation.SettingsNavigation
 import org.schabi.newpipe.ui.theme.AppTheme
 
 @AndroidEntryPoint
@@ -22,7 +22,7 @@ class SettingsV2Activity : ComponentActivity() {
         setContent {
             AppTheme {
                 SettingsNavigation(
-                    onExitSettings = { finish() },
+                    onExitSettings = { finish() }
                 )
             }
         }

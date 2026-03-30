@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-package org.schabi.newpipe.navigation
+package org.schabi.newpipe.ui.screens.settings.navigation
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,8 +14,9 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import org.schabi.newpipe.R
-import org.schabi.newpipe.ui.screens.DebugScreen
-import org.schabi.newpipe.ui.screens.SettingsScreen
+import org.schabi.newpipe.navigation.Screen
+import org.schabi.newpipe.ui.screens.settings.debug.DebugScreen
+import org.schabi.newpipe.ui.screens.settings.home.SettingsHomeScreen
 
 @Composable
 fun SettingsNavigation(onExitSettings: () -> Unit) {
@@ -33,7 +34,12 @@ fun SettingsNavigation(onExitSettings: () -> Unit) {
         backStack = backStack,
         onBack = handleBack,
         entryProvider = entryProvider {
-            entry<Screen.Settings.Home> { SettingsScreen(backStack, handleBack) }
+            entry<Screen.Settings.Home> {
+                SettingsHomeScreen(
+                    onNavigate = { screen -> backStack.add(screen) },
+                    onBackClick = handleBack
+                )
+            }
             entry<Screen.Settings.Player> { Text(stringResource(id = R.string.settings_category_player_title)) }
             entry<Screen.Settings.Behaviour> { Text(stringResource(id = R.string.settings_category_player_behavior_title)) }
             entry<Screen.Settings.Download> { Text(stringResource(id = R.string.settings_category_downloads_title)) }
@@ -45,7 +51,9 @@ fun SettingsNavigation(onExitSettings: () -> Unit) {
             entry<Screen.Settings.Language> { Text(stringResource(id = R.string.settings_category_language_title)) }
             entry<Screen.Settings.BackupRestore> { Text(stringResource(id = R.string.settings_category_backup_restore_title)) }
             entry<Screen.Settings.Updates> { Text(stringResource(id = R.string.settings_category_updates_title)) }
-            entry<Screen.Settings.Debug> { DebugScreen(backStack) }
+            entry<Screen.Settings.Debug> {
+                DebugScreen(onBackClick = { backStack.removeLastOrNull() })
+            }
         },
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),

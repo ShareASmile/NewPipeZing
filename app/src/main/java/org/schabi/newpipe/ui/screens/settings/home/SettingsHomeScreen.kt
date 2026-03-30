@@ -3,32 +3,29 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-package org.schabi.newpipe.ui.screens
+package org.schabi.newpipe.ui.screens.settings.home
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
 import org.schabi.newpipe.BuildConfig
 import org.schabi.newpipe.R
 import org.schabi.newpipe.navigation.Screen
 import org.schabi.newpipe.ui.TextPreference
 import org.schabi.newpipe.ui.components.common.ScaffoldWithToolbar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(backStack: NavBackStack<NavKey>, handleBack: () -> Unit) {
+fun SettingsHomeScreen(
+    onNavigate: (Screen.Settings) -> Unit,
+    onBackClick: () -> Unit
+) {
     ScaffoldWithToolbar(
         title = stringResource(id = R.string.settings),
-        onBackClick = {
-            handleBack()
-        }
+        onBackClick = onBackClick
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -37,81 +34,81 @@ fun SettingsScreen(backStack: NavBackStack<NavKey>, handleBack: () -> Unit) {
         ) {
             item {
                 TextPreference(
-                    title = R.string.settings_category_player_title,
+                    title = stringResource(R.string.settings_category_player_title),
                     icon = R.drawable.ic_play_arrow,
-                    onClick = { backStack.add(Screen.Settings.Player) }
+                    onClick = { onNavigate(Screen.Settings.Player) }
                 )
             }
             item {
                 TextPreference(
-                    title = R.string.settings_category_player_behavior_title,
+                    title = stringResource(R.string.settings_category_player_behavior_title),
                     icon = R.drawable.ic_settings,
-                    onClick = { backStack.add(Screen.Settings.Behaviour) }
+                    onClick = { onNavigate(Screen.Settings.Behaviour) }
                 )
             }
             item {
                 TextPreference(
-                    title = R.string.settings_category_downloads_title,
+                    title = stringResource(R.string.settings_category_downloads_title),
                     icon = R.drawable.ic_file_download,
-                    onClick = { backStack.add(Screen.Settings.Download) }
+                    onClick = { onNavigate(Screen.Settings.Download) }
                 )
             }
             item {
                 TextPreference(
-                    title = R.string.settings_category_look_and_feel_title,
+                    title = stringResource(R.string.settings_category_look_and_feel_title),
                     icon = R.drawable.ic_palette,
-                    onClick = { backStack.add(Screen.Settings.LookFeel) }
+                    onClick = { onNavigate(Screen.Settings.LookFeel) }
                 )
             }
             item {
                 TextPreference(
-                    title = R.string.settings_category_history_title,
+                    title = stringResource(R.string.settings_category_history_title),
                     icon = R.drawable.ic_history,
-                    onClick = { backStack.add(Screen.Settings.HistoryCache) }
+                    onClick = { onNavigate(Screen.Settings.HistoryCache) }
                 )
             }
             item {
                 TextPreference(
-                    title = R.string.settings_category_content_title,
+                    title = stringResource(R.string.settings_category_content_title),
                     icon = R.drawable.ic_tv,
-                    onClick = { backStack.add(Screen.Settings.Content) }
+                    onClick = { onNavigate(Screen.Settings.Content) }
                 )
             }
             item {
                 TextPreference(
-                    title = R.string.settings_category_feed_title,
+                    title = stringResource(R.string.settings_category_feed_title),
                     icon = R.drawable.ic_rss_feed,
-                    onClick = { backStack.add(Screen.Settings.Feed) }
+                    onClick = { onNavigate(Screen.Settings.Feed) }
                 )
             }
             item {
                 TextPreference(
-                    title = R.string.settings_category_services_title,
+                    title = stringResource(R.string.settings_category_services_title),
                     icon = R.drawable.ic_subscriptions,
-                    onClick = { backStack.add(Screen.Settings.Services) }
+                    onClick = { onNavigate(Screen.Settings.Services) }
                 )
             }
             item {
                 TextPreference(
-                    title = R.string.settings_category_language_title,
+                    title = stringResource(R.string.settings_category_language_title),
                     icon = R.drawable.ic_language,
-                    onClick = { backStack.add(Screen.Settings.Language) }
+                    onClick = { onNavigate(Screen.Settings.Language) }
                 )
             }
             item {
                 TextPreference(
-                    title = R.string.settings_category_backup_restore_title,
+                    title = stringResource(R.string.settings_category_backup_restore_title),
                     icon = R.drawable.ic_backup,
-                    onClick = { backStack.add(Screen.Settings.BackupRestore) }
+                    onClick = { onNavigate(Screen.Settings.BackupRestore) }
                 )
             }
             // Show Updates only on release builds
             if (!BuildConfig.DEBUG) {
                 item {
                     TextPreference(
-                        title = R.string.settings_category_updates_title,
+                        title = stringResource(R.string.settings_category_updates_title),
                         icon = R.drawable.ic_newpipe_update,
-                        onClick = { backStack.add(Screen.Settings.Updates) }
+                        onClick = { onNavigate(Screen.Settings.Updates) }
                     )
                 }
             }
@@ -119,9 +116,9 @@ fun SettingsScreen(backStack: NavBackStack<NavKey>, handleBack: () -> Unit) {
             if (BuildConfig.DEBUG) {
                 item {
                     TextPreference(
-                        title = R.string.settings_category_debug_title,
+                        title = stringResource(R.string.settings_category_debug_title),
                         icon = R.drawable.ic_bug_report,
-                        onClick = { backStack.add(Screen.Settings.Debug) }
+                        onClick = { onNavigate(Screen.Settings.Debug) }
                     )
                 }
             }
@@ -131,4 +128,4 @@ fun SettingsScreen(backStack: NavBackStack<NavKey>, handleBack: () -> Unit) {
 
 @Preview
 @Composable
-fun SettingsScreenPreview() = SettingsScreen(backStack = NavBackStack(), handleBack = {})
+private fun SettingsHomeScreenPreview() = SettingsHomeScreen(onNavigate = {}, onBackClick = {})

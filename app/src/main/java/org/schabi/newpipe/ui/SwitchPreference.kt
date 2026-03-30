@@ -6,7 +6,6 @@
 
 package org.schabi.newpipe.ui
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,10 +21,10 @@ import org.schabi.newpipe.ui.theme.SizeTokens
 @Composable
 fun SwitchPreference(
     modifier: Modifier = Modifier,
-    @StringRes title: Int,
+    title: String,
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    @StringRes summary: Int? = null,
+    summary: String? = null,
     enabled: Boolean = true
 ) {
     Row(
