@@ -3,14 +3,11 @@ package org.schabi.newpipe.util
 import android.content.Context
 import android.content.res.Resources
 import android.net.ConnectivityManager
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import java.util.Collections
 import java.util.Locale
-import java.util.Objects
-import java.util.function.Predicate
-import java.util.stream.Collectors
 import org.schabi.newpipe.MainActivity
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.MediaFormat
@@ -22,6 +19,8 @@ import org.schabi.newpipe.extractor.stream.Stream
 import org.schabi.newpipe.extractor.stream.VideoStream
 
 object ListHelper {
+    private const val TAG = "ListHelper"
+
     // Video format in order of quality. 0=lowest quality, n=highest quality
     private val VIDEO_FORMAT_QUALITY_RANKING =
         listOf(MediaFormat.v3GPP, MediaFormat.WEBM, MediaFormat.MPEG_4)
@@ -69,6 +68,8 @@ object ListHelper {
             160, 133, 134, 135, 212, 136, 298, 137, 299, 266, // video only
             278, 242, 243, 244, 245, 246, 247, 248, 271, 272, 302, 303, 308, 313, 315
         )
+
+    private val QUALITY_REGEX = Regex("""^(\d+)p(\d+)?(?:@(\d+)([km])?)?$""", RegexOption.IGNORE_CASE)
 
     /**
      * @param context      Android app context
@@ -197,10 +198,9 @@ object ListHelper {
         streamList: List<S>?,
         deliveryMethod: DeliveryMethod
     ): List<S> {
-        return getFilteredStreamList(
-            streamList
-        )
-        { stream -> stream.deliveryMethod == deliveryMethod }
+        return getFilteredStreamList(streamList) { stream ->
+            stream.deliveryMethod == deliveryMethod
+        }
     }
 
     /**
@@ -214,10 +214,9 @@ object ListHelper {
     fun <S : Stream> getUrlAndNonTorrentStreams(
         streamList: List<S>?
     ): List<S> {
-        return getFilteredStreamList(
-            streamList
-        )
-        { stream -> stream.isUrl && stream.deliveryMethod != DeliveryMethod.TORRENT }
+        return getFilteredStreamList(streamList) { stream ->
+            stream.isUrl && stream.deliveryMethod != DeliveryMethod.TORRENT
+        }
     }
 
     /**
@@ -238,10 +237,7 @@ object ListHelper {
         serviceId: Int
     ): List<S> {
         val youtubeServiceId = ServiceList.YouTube.serviceId
-        return getFilteredStreamList(
-            streamList
-        )
-        { stream ->
+        return getFilteredStreamList(streamList) { stream ->
             stream.deliveryMethod != DeliveryMethod.TORRENT &&
                 (
                     stream.deliveryMethod != DeliveryMethod.HLS ||
@@ -249,8 +245,7 @@ object ListHelper {
                     ) &&
                 (
                     serviceId != youtubeServiceId ||
-                        stream.itagItem == null ||
-                        SUPPORTED_ITAG_IDS.contains(stream.itagItem!!.id)
+                        stream.itagItem?.id?.let { SUPPORTED_ITAG_IDS.contains(it) } != false
                     )
         }
     }
@@ -351,9 +346,9 @@ object ListHelper {
         audioStreams: List<AudioStream>?
     ): List<AudioStream> {
         if (audioStreams == null) {
-            return Collections.emptyList()
+            return emptyList()
         }
-        val collectedStreams: HashMap<String, AudioStream> = HashMap()
+        val collectedStreams = mutableMapOf<String, AudioStream>()
         val cmp = getAudioFormatComparator(context)
         for (stream in audioStreams) {
             if (stream.deliveryMethod == DeliveryMethod.TORRENT ||
@@ -364,7 +359,7 @@ object ListHelper {
             ) {
                 continue
             }
-            val trackId = Objects.toString(stream.audioTrackId, "")
+            val trackId = stream.audioTrackId ?: ""
             val presentStream = collectedStreams[trackId]
             if (presentStream == null || cmp.compare(stream, presentStream) > 0) {
                 collectedStreams[trackId] = stream
@@ -391,19 +386,11 @@ object ListHelper {
         audioStreams: List<AudioStream>?
     ): List<List<AudioStream>> {
         if (audioStreams == null) {
-            return Collections.emptyList()
+            return emptyList()
         }
-        val collectedStreams: HashMap<String, MutableList<AudioStream>> = HashMap()
-        for (stream in audioStreams) {
-            val trackId = Objects.toString(stream.audioTrackId, "")
-            if (collectedStreams.containsKey(trackId)) {
-                collectedStreams[trackId]!!.add(stream)
-            } else {
-                val list: MutableList<AudioStream> = ArrayList()
-                list.add(stream)
-                collectedStreams[trackId] = list
-            }
-        }
+        val collectedStreams = audioStreams
+            .groupBy { it.audioTrackId ?: "" }
+            .toMutableMap()
         // Filter unknown audio tracks if there are multiple tracks
         if (collectedStreams.size > 1) {
             collectedStreams.remove("")
@@ -421,23 +408,21 @@ object ListHelper {
     // ////////////////////////////////////////////////////////////////////////
 
     /**
-     * Get a filtered stream list, by using Java 8 Stream's API and the given predicate.
+     * Get a filtered stream list using the given predicate.
      *
      * @param streamList          the stream list to filter
-     * @param streamListPredicate the predicate which will be used to filter streams
+     * @param predicate           the predicate which will be used to filter streams
      * @param <S>                 the item type's class that extends [Stream]
      * @return a new stream list filtered using the given predicate
      */
     private fun <S : Stream> getFilteredStreamList(
         streamList: List<S>?,
-        streamListPredicate: Predicate<S>
+        predicate: (S) -> Boolean
     ): List<S> {
         if (streamList == null) {
-            return Collections.emptyList()
+            return emptyList()
         }
-        return streamList.stream()
-            .filter(streamListPredicate)
-            .collect(Collectors.toList())
+        return streamList.filter(predicate)
     }
 
     private fun computeDefaultResolution(
@@ -569,8 +554,8 @@ object ListHelper {
         // preferred. They might have been overridden if allInitialStreams has more than one stream
         // for the same resolution key but a none 'defaultFormat' stream was added later.
         // See 'qualityKeyOf'.
-        defaultFormat?.let { defaultFormat ->
-            allInitialStreams.filter { it.stream.format == defaultFormat }
+        defaultFormat?.let { fmt ->
+            allInitialStreams.filter { it.stream.format == fmt }
                 .forEach { streamsWithDefaultFormatPreferred[qualityKeyOf(it)] = it }
         }
 
@@ -641,7 +626,7 @@ object ListHelper {
      * The algorithm iterates over all available streams and assigns each one
      * a "priority class". Lower numbers represent a better match.
      *
-     * Matching priority (best → worst):
+     * Matching priority (best -> worst):
      *
      * 1. Format + resolution + fps + exact bitrate
      * 2. Format + resolution + fps
@@ -797,39 +782,32 @@ object ListHelper {
         val defaultFormatString = preferences.getString(
             context.getString(defaultFormatKey),
             defaultFormat
-        )
-        return getMediaFormatFromKey(context, defaultFormatString!!)
+        ) ?: defaultFormat
+        return getMediaFormatFromKey(context, defaultFormatString)
     }
 
     private fun getMediaFormatFromKey(
         context: Context,
         formatKey: String
     ): MediaFormat? {
-        var format: MediaFormat? = null
-        when (formatKey) {
-            context.getString(R.string.video_webm_key) -> {
-                format = MediaFormat.WEBM
-            }
-
-            context.getString(R.string.video_mp4_key) -> {
-                format = MediaFormat.MPEG_4
-            }
-
-            context.getString(R.string.video_3gp_key) -> {
-                format = MediaFormat.v3GPP
-            }
-
-            context.getString(R.string.audio_webm_key) -> {
-                format = MediaFormat.WEBMA
-            }
-
-            context.getString(R.string.audio_m4a_key) -> {
-                format = MediaFormat.M4A
-            }
+        return when (formatKey) {
+            context.getString(R.string.video_webm_key) -> MediaFormat.WEBM
+            context.getString(R.string.video_mp4_key) -> MediaFormat.MPEG_4
+            context.getString(R.string.video_3gp_key) -> MediaFormat.v3GPP
+            context.getString(R.string.audio_webm_key) -> MediaFormat.WEBMA
+            context.getString(R.string.audio_m4a_key) -> MediaFormat.M4A
+            else -> null
         }
-        return format
     }
 
+    /**
+     * Compares two video stream resolution strings in descending order.
+     *
+     * Returns a negative value if r1 has higher quality than r2, zero if equal,
+     * and a positive value if r1 has lower quality than r2.
+     * Note: arguments are intentionally compared in reverse order (r2 vs r1)
+     * to produce descending comparison, matching the original Java behavior.
+     */
     private fun compareVideoStreamResolution(
         r1: String,
         r2: String
@@ -855,34 +833,31 @@ object ListHelper {
      * @param context App context
      * @return maximum resolution allowed or null if there is no maximum
      */
-    fun getResolutionLimit(context: Context): String? {
-        var resolutionLimit: String? = null
-        if (isMeteredNetwork(context)) {
-            val preferences =
-                PreferenceManager.getDefaultSharedPreferences(context)
-            val defValue = context.getString(R.string.limit_data_usage_none_key)
-            val value = preferences.getString(
-                context.getString(R.string.limit_mobile_data_usage_key),
-                defValue
-            )
-            resolutionLimit = if (defValue == value) null else value
+    private fun getResolutionLimit(context: Context): String? {
+        if (!isMeteredNetwork(context)) {
+            return null
         }
-        return resolutionLimit
+        val preferences =
+            PreferenceManager.getDefaultSharedPreferences(context)
+        val defValue = context.getString(R.string.limit_data_usage_none_key)
+        val value = preferences.getString(
+            context.getString(R.string.limit_mobile_data_usage_key),
+            defValue
+        )
+        return if (defValue == value) null else value
     }
 
     /**
      * The current network is metered (like mobile data)?
      *
      * @param context App context
-     * @return {@code true} if connected to a metered network
+     * @return `true` if connected to a metered network
      */
     @JvmStatic
     fun isMeteredNetwork(context: Context): Boolean {
         val manager =
             ContextCompat.getSystemService(context, ConnectivityManager::class.java)
-        if (manager == null || manager.activeNetworkInfo == null) {
-            return false
-        }
+                ?: return false
         return manager.isActiveNetworkMetered
     }
 
@@ -933,7 +908,7 @@ object ListHelper {
             { it.format },
             Comparator { o1: MediaFormat?, o2: MediaFormat? ->
                 if (defaultFormat != null) {
-                    java.lang.Boolean.compare(o1 == defaultFormat, o2 == defaultFormat)
+                    (o1 == defaultFormat).compareTo(o2 == defaultFormat)
                 } else {
                     0
                 }
@@ -1020,10 +995,7 @@ object ListHelper {
             { it.audioTrackType },
             Comparator { o1: AudioTrackType?, o2: AudioTrackType? ->
                 if (preferOriginalAudio) {
-                    java.lang.Boolean.compare(
-                        o1 == AudioTrackType.ORIGINAL,
-                        o2 == AudioTrackType.ORIGINAL
-                    )
+                    (o1 == AudioTrackType.ORIGINAL).compareTo(o2 == AudioTrackType.ORIGINAL)
                 } else {
                     0
                 }
@@ -1066,20 +1038,6 @@ object ListHelper {
             )
     }
 
-    // ------Extensions--------
-    fun VideoStream.toQuality(): VideoQuality {
-        return parseQuality(getResolution(), format)
-    }
-
-    /**
-     * Extension on Iterable<VideoStream> that maps each VideoStream
-     * to a [VideoStreamWithQuality] using its toQuality() function.
-     * This avoids repeatedly parsing the quality string during matching.
-     */
-    fun Iterable<VideoStream>.wrapWithQuality(): List<VideoStreamWithQuality> {
-        return this.map { stream -> VideoStreamWithQuality(stream, stream.toQuality()) }
-    }
-
     // --------data classes----------
 
     /**
@@ -1097,16 +1055,26 @@ object ListHelper {
         val formatRank: Int
     )
 
-    // -------- helper ------------
+    // -------- private helpers ------------
 
-    val QUALITY_REGEX = Regex("""^(\d+)p(\d+)?(?:@(\d+)([km])?)?$""", RegexOption.IGNORE_CASE)
+    private fun VideoStream.toQuality(): VideoQuality {
+        return parseQuality(getResolution(), format)
+    }
+
+    /**
+     * Maps each VideoStream to a [VideoStreamWithQuality] using its toQuality() function.
+     * This avoids repeatedly parsing the quality string during matching.
+     */
+    private fun Iterable<VideoStream>.wrapWithQuality(): List<VideoStreamWithQuality> {
+        return map { stream -> VideoStreamWithQuality(stream, stream.toQuality()) }
+    }
 
     /**
      * Parses a video quality string into a [VideoQuality] object.
      *
      * Supports strings like: `"720p"`, `"720p60"`, `"720p60@1500k"` or `"1080p@2m"`.
      * The components represent resolution, optional fps, and optional bitrate.
-     * Bitrate units `k` and `m` are interpreted as ×1000 and ×1_000_000 respectively.
+     * Bitrate units `k` and `m` are interpreted as x1000 and x1_000_000 respectively.
      *
      * @param resFpsBitrate string to parse for quality information (e.g. `"720p60@1500k"`), may be null
      * @param format        optional media format used to determine the format rank
@@ -1121,7 +1089,9 @@ object ListHelper {
 
         val match = QUALITY_REGEX.matchEntire(resFpsBitrateStr)
             ?: run {
-                if (MainActivity.DEBUG) println("QualityParser" + "Cannot parse: \"$resFpsBitrateStr\"")
+                if (MainActivity.DEBUG) {
+                    Log.d(TAG, "Cannot parse quality: \"$resFpsBitrateStr\"")
+                }
                 return VideoQuality(0, 0, 0L, -1)
             }
 
@@ -1138,7 +1108,9 @@ object ListHelper {
                     else -> bitrate
                 }
             } catch (e: ArithmeticException) {
-                if (MainActivity.DEBUG) println("QualityParser" + "Bitrate overflow in \"$resFpsBitrateStr\"")
+                if (MainActivity.DEBUG) {
+                    Log.d(TAG, "Bitrate overflow in \"$resFpsBitrateStr\"", e)
+                }
                 bitrate = 0L
             }
         }
