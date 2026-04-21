@@ -220,7 +220,6 @@ aboutLibraries {
     // note: offline mode prevents the plugin from fetching licenses at build time, which would be
     // harmful for reproducible builds
     offlineMode = true
-    duplicationMode = DuplicateMode.MERGE
 }
 
 dependencies {
