@@ -139,6 +139,28 @@ private fun CommentSection(
                                 items(comments.itemCount) {
                                     Comment(comment = comments[it]!!) {}
                                 }
+
+                                // handle append (next page) errors
+                                if (comments.loadState.append is LoadState.Error) {
+                                    item {
+                                        ErrorPanel(
+                                            errorInfo = ErrorInfo(
+                                                throwable = (comments.loadState.append as LoadState.Error).error,
+                                                userAction = UserAction.REQUESTED_COMMENTS,
+                                                request = "comments"
+                                            ),
+                                            onRetry = { comments.retry() },
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                    }
+                                }
+//
+                                // show loading indicator while appending
+                                if (comments.loadState.append is LoadState.Loading) {
+                                    item {
+                                        LoadingIndicator(modifier = Modifier.padding(top = 8.dp))
+                                    }
+                                }
                             }
                         }
                     }
