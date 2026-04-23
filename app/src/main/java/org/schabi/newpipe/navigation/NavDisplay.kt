@@ -22,6 +22,8 @@ import org.schabi.newpipe.ComposeActivity
 import org.schabi.newpipe.R
 import org.schabi.newpipe.error.ErrorInfo
 import org.schabi.newpipe.error.ErrorReportHelper
+import org.schabi.newpipe.ui.components.common.ScaffoldWithToolbar
+import org.schabi.newpipe.ui.screens.AboutScreen
 import org.schabi.newpipe.ui.screens.ErrorReportEvent
 import org.schabi.newpipe.ui.screens.ErrorReportScreen
 import org.schabi.newpipe.ui.screens.settings.debug.DebugScreen
@@ -55,6 +57,16 @@ fun NavDisplay(startDestination: NavKey) {
             rememberViewModelStoreNavEntryDecorator()
         ),
         entryProvider = entryProvider {
+            // About
+            entry<Screen.About> {
+                ScaffoldWithToolbar(
+                    title = stringResource(R.string.title_activity_about),
+                    onBackClick = ::onNavigateUp
+                ) { padding ->
+                    AboutScreen(padding)
+                }
+            }
+
             // Error Report
             entry<Screen.Error> {
                 val errorInfo = remember {
