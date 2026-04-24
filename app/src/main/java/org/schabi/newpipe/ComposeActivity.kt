@@ -49,6 +49,8 @@ class ComposeActivity : ComponentActivity() {
 
     private fun resolveStartDestination(intent: Intent): NavKey {
         return when (intent.getStringExtra(EXTRA_SCREEN)) {
+            SCREEN_ABOUT -> Screen.About
+
             SCREEN_ERROR -> Screen.Error
 
             SCREEN_SETTINGS -> Screen.Settings.Home
@@ -60,11 +62,20 @@ class ComposeActivity : ComponentActivity() {
     }
 
     companion object {
+
+        const val SCREEN_ABOUT = "about"
+
         const val EXTRA_SCREEN = "extra_screen"
         const val EXTRA_ERROR_INFO = "extra_error_info"
 
         const val SCREEN_ERROR = "error"
         const val SCREEN_SETTINGS = "settings"
+
+        fun aboutIntent(context: Context): Intent {
+            return Intent(context, ComposeActivity::class.java).apply {
+                putExtra(EXTRA_SCREEN, SCREEN_ABOUT)
+            }
+        }
 
         fun errorIntent(context: Context, errorInfo: ErrorInfo): Intent {
             return Intent(context, ComposeActivity::class.java).apply {
