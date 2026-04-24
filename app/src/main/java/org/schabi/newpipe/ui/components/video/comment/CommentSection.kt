@@ -141,25 +141,34 @@ private fun CommentSection(
                                 }
 
                                 // handle append (next page) errors
-                                if (comments.loadState.append is LoadState.Error) {
-                                    item {
-                                        ErrorPanel(
-                                            errorInfo = ErrorInfo(
-                                                throwable = (comments.loadState.append as LoadState.Error).error,
-                                                userAction = UserAction.REQUESTED_COMMENTS,
-                                                request = "comments"
-                                            ),
-                                            onRetry = { comments.retry() },
-                                            modifier = Modifier.fillMaxWidth()
-                                        )
+                                when (comments.loadState.append) {
+                                    is LoadState.Error -> {
+                                        item {
+                                            ErrorPanel(
+                                                errorInfo = ErrorInfo(
+                                                    throwable = (comments.loadState.append as LoadState.Error).error,
+                                                    userAction = UserAction.REQUESTED_COMMENTS,
+                                                    request = "comments"
+                                                ),
+                                                onRetry = { comments.retry() },
+                                                modifier = Modifier.fillMaxWidth()
+                                            )
+                                        }
                                     }
-                                }
-//
-                                // show loading indicator while appending
-                                if (comments.loadState.append is LoadState.Loading) {
-                                    item {
-                                        LoadingIndicator(modifier = Modifier.padding(top = 8.dp))
+
+                                    // show loading indicator while appending
+                                    is LoadState.Loading -> {
+                                        item {
+                                            LoadingIndicator(
+                                                modifier = Modifier.padding(
+                                                    top = 8.dp,
+                                                    bottom = 8.dp
+                                                )
+                                            )
+                                        }
                                     }
+
+                                    else -> {}
                                 }
                             }
                         }
